@@ -1,0 +1,245 @@
+// Whitetail Ridge Golf Dome — Event Booking Engine
+// Phase 1 schema: Instant Book (birthday parties) on an internal managed calendar.
+// Postgres (Supabase-compatible). Money stored in integer cents.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Configuration (single row) — tunable in admin later
+// ---------------------------------------------------------------------------
+model Setting {
+  id                  Int      @id @default(1)
+  // Operating rules
+  openHour            Int      @default(9)   // 9am
+  closeHour           Int      @default(22)  // 10pm
+  bayCapacity         Int      @default(6)   // guests per bay
+  bufferMinutes       Int      @default(30)  // cleaning/turnover before & after
+  leadTimeDaysOnline  Int      @default(7)   // online bookings must be >= 7 days out
+  // Money (percent values are basis-point-free integers, e.g. 10 = 10%)
+  depositPercent      Int      @default(10)
+  serviceChargePct    Int      @default(20)  // auto service charge on F&B + staffed portion
+  taxPct              Float    @default(7.25) // Oswego, IL placeholder — confirm exact rate
+  // Cancellation policy (informational copy, enforced operationally)
+  cancelHoursLarge    Int      @default(48)  // > cancelLargeThreshold guests
+  cancelHoursSmall    Int      @default(24)
+  cancelLargeThreshold Int     @default(15)
+  updatedAt           DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Bookable resources: bays, specialty simulators, event/bar space
+// ---------------------------------------------------------------------------
+enum ResourceType {
+  BAY
+  SIMULATOR
+  EVENT_SPACE
+}
+
+model Resource {
+  id        String       @id @default(cuid())
+  name      String
+  type      ResourceType @default(BAY)
+  floor     String?      // "Upstairs" | "Downstairs" | null
+  capacity  Int          @default(6)
+  active    Boolean      @default(true)
+  sortOrder Int          @default(0)
+
+  bookings  BookingResource[]
+}
+
+// ---------------------------------------------------------------------------
+// Tiered packages (Good/Better/Best), F&B packages, and add-ons
+// ---------------------------------------------------------------------------
+enum PricingType {
+  PER_PERSON
+  FLAT
+}
+
+enum EventType {
+  BIRTHDAY
+  GROUP
+  CORPORATE
+  LEAGUE
+  BACHELOR
+  OTHER
+}
+
+model Package {
+  id              String      @id @default(cuid())
+  name            String      // vibe-named, e.g. "The Eagle"
+  tier            String      // "Good" | "Better" | "Best"
+  eventType       EventType   @default(BIRTHDAY)
+  description     String
+  includes        String[]    // bullet list of inclusions
+  durationMinutes Int         @default(120)
+  pricingType     PricingType @default(PER_PERSON)
+  pricePerPerson  Int         @default(0) // cents
+  flatPrice       Int         @default(0) // cents
+  minGuests       Int         @default(1)
+  maxGuests       Int         @default(180)
+  popular         Boolean     @default(false) // "Most Popular" anchor
+  active          Boolean     @default(true)
+  sortOrder       Int         @default(0)
+
+  bookings        Booking[]
+}
+
+model FnbPackage {
+  id            String      @id @default(cuid())
+  name          String
+  description   String
+  pricingType   PricingType @default(PER_PERSON)
+  price         Int         @default(0) // cents (per person or flat)
+  dietaryNotes  String?
+  serviceCharge Boolean     @default(true) // does the 20% service charge apply
+  active        Boolean     @default(true)
+  sortOrder     Int         @default(0)
+
+  bookings      Booking[]
+}
+
+enum AddOnUnit {
+  FLAT
+  PER_PERSON
+  PER_30_MIN
+}
+
+model AddOn {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  category    String    @default("Extras") // Beverages | Food | Time | Experience | Décor | Extras
+  price       Int       @default(0) // cents
+  unit        AddOnUnit @default(FLAT)
+  serviceCharge Boolean @default(false)
+  active      Boolean   @default(true)
+  sortOrder   Int       @default(0)
+
+  bookings    BookingAddOn[]
+}
+
+// ---------------------------------------------------------------------------
+// Bookings (Instant Book) + draft capture for abandoned-cart recovery
+// ---------------------------------------------------------------------------
+enum BookingStatus {
+  DRAFT        // email captured / in-progress (recovery target)
+  PENDING      // hold placed, awaiting deposit
+  CONFIRMED    // deposit paid
+  CANCELLED
+  COMPLETED
+}
+
+model Booking {
+  id           String        @id @default(cuid())
+  reference    String        @unique // human-friendly code, e.g. WTR-7F3K2
+  status       BookingStatus @default(DRAFT)
+  eventType    EventType     @default(BIRTHDAY)
+
+  // Schedule
+  date         DateTime      // event date (date portion)
+  startMinutes Int           // minutes from midnight, e.g. 600 = 10:00
+  endMinutes   Int
+  partySize    Int           @default(1)
+  baysNeeded   Int           @default(1)
+
+  // Selections
+  packageId    String?
+  package      Package?      @relation(fields: [packageId], references: [id])
+  fnbPackageId String?
+  fnbPackage   FnbPackage?   @relation(fields: [fnbPackageId], references: [id])
+  addOns       BookingAddOn[]
+  resources    BookingResource[]
+
+  // Customer
+  customerName  String?
+  customerEmail String?
+  customerPhone String?
+  notes         String?
+
+  // Waiver
+  waiverSigned     Boolean   @default(false)
+  waiverSignedName String?
+  waiverGuardian   Boolean   @default(false)
+  waiverSignedAt   DateTime?
+
+  // Money (all cents)
+  packageTotal  Int     @default(0)
+  fnbTotal      Int     @default(0)
+  addOnsTotal   Int     @default(0)
+  serviceCharge Int     @default(0)
+  taxAmount     Int     @default(0)
+  total         Int     @default(0)
+  depositAmount Int     @default(0)
+  depositPaid   Boolean @default(false)
+  balanceDue    Int     @default(0)
+
+  // Payment
+  stripePaymentIntentId String?
+  paidAt                DateTime?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([date, status])
+  @@index([status, updatedAt])
+}
+
+model BookingAddOn {
+  id        String  @id @default(cuid())
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  addOnId   String
+  addOn     AddOn   @relation(fields: [addOnId], references: [id])
+  quantity  Int     @default(1)
+  unitPrice Int     @default(0) // cents, snapshot at booking time
+  lineTotal Int     @default(0)
+
+  @@unique([bookingId, addOnId])
+}
+
+model BookingResource {
+  id         String   @id @default(cuid())
+  bookingId  String
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  resourceId String
+  resource   Resource @relation(fields: [resourceId], references: [id])
+
+  @@unique([bookingId, resourceId])
+}
+
+// ---------------------------------------------------------------------------
+// Inquiry / lead capture (Phase 2 flow; table seeded now)
+// ---------------------------------------------------------------------------
+enum LeadStatus {
+  NEW
+  CONTACTED
+  PROPOSAL_SENT
+  WON
+  LOST
+}
+
+model Lead {
+  id            String     @id @default(cuid())
+  eventType     EventType  @default(CORPORATE)
+  preferredDate DateTime?
+  dateFlexible  Boolean    @default(false)
+  headcountMin  Int?
+  headcountMax  Int?
+  budget        String?
+  mustHaves     String[]
+  customerName  String
+  customerEmail String
+  customerPhone String?
+  message       String?
+  status        LeadStatus @default(NEW)
+  source        String?    @default("website")
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
