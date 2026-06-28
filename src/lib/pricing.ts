@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db'
 import { applyPercent, formatCents } from '@/lib/money'
+import { isPeakSlot } from '@/lib/time'
 import type { Quote, QuoteInput, QuoteLine } from '@/lib/types'
 
 /** Number of bays an event of `partySize` needs (each bay holds `bayCapacity`). */
@@ -50,6 +51,27 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
         : 'Flat rate',
     amount: packageTotal,
   })
+
+  // --- Dynamic pricing (peak surcharge / off-peak discount on bay time) ---
+  let peakAdjustment = 0
+  if (input.dateStr && input.startMinutes != null) {
+    const peak = isPeakSlot(input.dateStr, input.startMinutes)
+    if (peak && setting.peakSurchargePct > 0) {
+      peakAdjustment = applyPercent(packageTotal, setting.peakSurchargePct)
+      lines.push({
+        label: `Peak weekend pricing (+${setting.peakSurchargePct}%)`,
+        detail: 'Premium time slot',
+        amount: peakAdjustment,
+      })
+    } else if (!peak && setting.offPeakDiscountPct > 0) {
+      peakAdjustment = -applyPercent(packageTotal, setting.offPeakDiscountPct)
+      lines.push({
+        label: `Off-peak savings (${setting.offPeakDiscountPct}% off)`,
+        detail: 'Thanks for booking a quieter time!',
+        amount: peakAdjustment,
+      })
+    }
+  }
 
   // --- F&B ---
   let fnbTotal = 0
@@ -102,7 +124,7 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
   }
 
   // --- Tax (shown up front) ---
-  const goodsSubtotal = packageTotal + fnbTotal + addOnsTotal
+  const goodsSubtotal = packageTotal + peakAdjustment + fnbTotal + addOnsTotal
   const taxAmount = Math.round((goodsSubtotal * setting.taxPct) / 100)
   lines.push({
     label: `Sales tax (${setting.taxPct}%)`,
@@ -118,6 +140,7 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
     durationMinutes: pkg.durationMinutes,
     lines,
     packageTotal,
+    peakAdjustment,
     fnbTotal,
     addOnsTotal,
     serviceCharge,

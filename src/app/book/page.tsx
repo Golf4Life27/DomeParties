@@ -192,14 +192,21 @@ export default function BookPage() {
     fetch('/api/quote', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ partySize, packageId, fnbPackageId, addOns: addOnSelections }),
+      body: JSON.stringify({
+        partySize,
+        packageId,
+        fnbPackageId,
+        addOns: addOnSelections,
+        dateStr: dateStr || null,
+        startMinutes,
+      }),
       signal: controller.signal,
     })
       .then((r) => r.json())
       .then((d) => d.quote && setQuote(d.quote))
       .catch(() => {})
     return () => controller.abort()
-  }, [packageId, partySize, fnbPackageId, addOnSelections])
+  }, [packageId, partySize, fnbPackageId, addOnSelections, dateStr, startMinutes])
 
   const patchDraft = useCallback(
     async (fields: Record<string, unknown>) => {

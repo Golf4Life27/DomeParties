@@ -26,6 +26,9 @@ model Setting {
   depositPercent      Int      @default(10)
   serviceChargePct    Int      @default(20)  // auto service charge on F&B + staffed portion
   taxPct              Float    @default(7.25) // Oswego, IL placeholder — confirm exact rate
+  // Dynamic pricing (applied to the package/bay-time portion)
+  peakSurchargePct    Int      @default(15)  // weekend/evening premium
+  offPeakDiscountPct  Int      @default(0)   // weekday/midday incentive
   // Cancellation policy (informational copy, enforced operationally)
   cancelHoursLarge    Int      @default(48)  // > cancelLargeThreshold guests
   cancelHoursSmall    Int      @default(24)

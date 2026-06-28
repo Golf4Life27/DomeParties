@@ -10,6 +10,9 @@ export type QuoteInput = {
   packageId: string
   fnbPackageId?: string | null
   addOns: AddOnSelection[]
+  // Optional selected slot — enables peak/off-peak pricing in the quote.
+  dateStr?: string | null
+  startMinutes?: number | null
 }
 
 export type QuoteLine = {
@@ -23,6 +26,7 @@ export type Quote = {
   durationMinutes: number
   lines: QuoteLine[]
   packageTotal: number
+  peakAdjustment: number // +surcharge or -discount on the package portion
   fnbTotal: number
   addOnsTotal: number
   serviceCharge: number

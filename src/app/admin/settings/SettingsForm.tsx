@@ -11,6 +11,8 @@ type Setting = {
   depositPercent: number
   serviceChargePct: number
   taxPct: number
+  peakSurchargePct: number
+  offPeakDiscountPct: number
   cancelHoursLarge: number
   cancelHoursSmall: number
   cancelLargeThreshold: number
@@ -25,6 +27,8 @@ const FIELDS: { key: keyof Setting; label: string; help?: string; step?: number 
   { key: 'depositPercent', label: 'Deposit %' },
   { key: 'serviceChargePct', label: 'Service charge %' },
   { key: 'taxPct', label: 'Sales tax %', step: 0.01 },
+  { key: 'peakSurchargePct', label: 'Peak surcharge %' },
+  { key: 'offPeakDiscountPct', label: 'Off-peak discount %' },
   { key: 'cancelLargeThreshold', label: 'Large-party threshold (guests)' },
   { key: 'cancelHoursLarge', label: 'Cancel notice — large (hrs)' },
   { key: 'cancelHoursSmall', label: 'Cancel notice — small (hrs)' },

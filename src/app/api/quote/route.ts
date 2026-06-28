@@ -9,6 +9,8 @@ const schema = z.object({
   addOns: z
     .array(z.object({ addOnId: z.string(), quantity: z.number().int().min(1).max(50) }))
     .default([]),
+  dateStr: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullish(),
+  startMinutes: z.number().int().min(0).max(1439).nullish(),
 })
 
 // POST /api/quote — live, transparent price breakdown for current selections.

@@ -132,15 +132,17 @@ export async function placeHold(id: string) {
     throw new BookingIncompleteError('Waiver not signed')
   }
 
+  const dateStr = dateStrOf(booking.date)
+  const startMinutes = booking.startMinutes
+
   const quote = await computeQuote({
     partySize: booking.partySize,
     packageId: booking.packageId,
     fnbPackageId: booking.fnbPackageId,
     addOns: booking.addOns.map((a) => ({ addOnId: a.addOnId, quantity: a.quantity })),
+    dateStr,
+    startMinutes,
   })
-
-  const dateStr = dateStrOf(booking.date)
-  const startMinutes = booking.startMinutes
   const endMinutes = startMinutes + quote.durationMinutes
 
   const bays = await availability.assignBays(
@@ -165,7 +167,7 @@ export async function placeHold(id: string) {
         status: 'PENDING',
         endMinutes,
         baysNeeded: quote.baysNeeded,
-        packageTotal: quote.packageTotal,
+        packageTotal: quote.packageTotal + quote.peakAdjustment, // fold peak into package line
         fnbTotal: quote.fnbTotal,
         addOnsTotal: quote.addOnsTotal,
         serviceCharge: quote.serviceCharge,
