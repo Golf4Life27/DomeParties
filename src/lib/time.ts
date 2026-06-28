@@ -36,12 +36,13 @@ export function addDays(dateStr: string, days: number): string {
   return date.toISOString().slice(0, 10)
 }
 
-/** Weekend (Fri eve/Sat/Sun) slots are flagged peak for pricing/urgency copy. */
-export function isPeakSlot(dateStr: string, startMinutes: number): boolean {
+/**
+ * Peak = Friday, Saturday, or Sunday (all day), matching the venue's
+ * "Mon–Thurs vs Fri–Sunday" pricing on the party cards. `startMinutes` is
+ * accepted for future time-of-day tiers but currently unused.
+ */
+export function isPeakSlot(dateStr: string, _startMinutes?: number): boolean {
   const [y, m, d] = dateStr.split('-').map(Number)
   const dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay() // 0=Sun..6=Sat
-  const isWeekend = dow === 0 || dow === 6
-  const isFridayEvening = dow === 5 && startMinutes >= 17 * 60
-  const isWeekendEvening = isWeekend && startMinutes >= 16 * 60
-  return isFridayEvening || isWeekendEvening || (isWeekend && startMinutes >= 11 * 60)
+  return dow === 5 || dow === 6 || dow === 0 // Fri, Sat, Sun
 }
