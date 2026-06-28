@@ -21,8 +21,9 @@ export async function GET() {
       let displayPrice = p.flatPrice
       let displayUnit: 'from' | 'guest' | 'flat' = 'flat'
       if (p.pricingType === 'BAY_RATE') {
-        const { rate } = await getBayRate(p.bays)
-        displayPrice = Math.round(p.bays * (p.durationMinutes / 60) * rate)
+        const hours = p.durationMinutes / 60
+        const { rate } = await getBayRate(p.bays, hours, null, null, p.rateTag)
+        displayPrice = Math.round(p.bays * hours * rate)
         displayUnit = 'from'
       } else if (p.pricingType === 'PER_PERSON') {
         displayPrice = p.pricePerPerson

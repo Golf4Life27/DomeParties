@@ -5,8 +5,10 @@ export const dynamic = 'force-dynamic'
 
 const FIELDS: FieldDef[] = [
   { key: 'label', label: 'Label' },
+  { key: 'tag', label: 'Rate set', type: 'select', options: [{ value: 'birthday', label: 'birthday' }, { value: 'group', label: 'group' }] },
   { key: 'daysOfWeek', label: 'Days of week (0=Sun … 6=Sat)', type: 'intlist' },
   { key: 'minBays', label: 'Applies when bays ≥', type: 'int' },
+  { key: 'minHours', label: 'Applies when hours ≥', type: 'int' },
   { key: 'ratePerHour', label: 'Rate per bay, per hour', type: 'money' },
   { key: 'startMinute', label: 'Start minute (0=midnight, 720=noon)', type: 'int' },
   { key: 'endMinute', label: 'End minute (1440=midnight)', type: 'int' },
@@ -15,7 +17,7 @@ const FIELDS: FieldDef[] = [
 ]
 
 const BLANK = {
-  label: '', daysOfWeek: [1, 2, 3, 4], minBays: 1, ratePerHour: 4500,
+  label: '', tag: 'birthday', daysOfWeek: [1, 2, 3, 4], minBays: 1, minHours: 0, ratePerHour: 4500,
   startMinute: 0, endMinute: 1440, sortOrder: 0, active: true,
 }
 

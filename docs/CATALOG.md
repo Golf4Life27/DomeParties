@@ -34,6 +34,23 @@ Seeded rate table (editable in admin):
 
 Add rows for finer time-of-day tiers (e.g. the large-group morning/evening rates) anytime.
 
+### Large-group rate set (`tag = group`, loaded)
+
+The brochure's per-bay/per-hour rates are loaded as a separate `group` rate set (14 rows:
+day + time-of-day window + duration tier). They power group pricing without colliding with
+the birthday set. Verified against the brochure (per bay): Mon AM 2h $70 / 4h $120; Mon PM
+2h $100; Sat 3h $165; Fri PM 4h $220; Sun AM 4h $190. (One rounding note: the Mon–Thu PM
+**3-hour** total lands ~$0.04 off because $140 ÷ 3 isn't a clean per-hour rate.) A 4-bay
+minimum applies to groups — enforce when a group self-serve package is added; today groups
+flow through inquiry → quote, so staff can also read these straight off the rate table.
+
+## Card convenience fee
+
+`Setting.cardFeePct` (default **0 = off**). When set, it's applied transparently to the
+amount charged online. Recommendation: keep off (Visa caps credit surcharges at 3%, debit
+can't be surcharged, requires registration/signage) or enable a compliant ≤3% credit-only
+fee — otherwise absorb it / bake into prices.
+
 ## Birthday parties — Instant Book (per-bay-hour presets + food bundles)
 
 Packages are thin presets over the rate engine (bays + duration); price is computed.

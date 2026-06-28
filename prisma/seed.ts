@@ -65,10 +65,32 @@ async function main() {
   await prisma.bayRate.deleteMany()
   await prisma.bayRate.createMany({
     data: [
-      { label: 'Mon–Thu', daysOfWeek: [1, 2, 3, 4], minBays: 1, ratePerHour: 4500, sortOrder: 1 },
-      { label: 'Mon–Thu (4+ bays)', daysOfWeek: [1, 2, 3, 4], minBays: 4, ratePerHour: 4125, sortOrder: 2 },
-      { label: 'Fri–Sun', daysOfWeek: [5, 6, 0], minBays: 1, ratePerHour: 5500, sortOrder: 3 },
-      { label: 'Fri–Sun (4+ bays)', daysOfWeek: [5, 6, 0], minBays: 4, ratePerHour: 5000, sortOrder: 4 },
+      // Birthday rate set (used by the Instant Book birthday packages)
+      { label: 'Mon–Thu', tag: 'birthday', daysOfWeek: [1, 2, 3, 4], minBays: 1, ratePerHour: 4500, sortOrder: 1 },
+      { label: 'Mon–Thu (4+ bays)', tag: 'birthday', daysOfWeek: [1, 2, 3, 4], minBays: 4, ratePerHour: 4125, sortOrder: 2 },
+      { label: 'Fri–Sun', tag: 'birthday', daysOfWeek: [5, 6, 0], minBays: 1, ratePerHour: 5500, sortOrder: 3 },
+      { label: 'Fri–Sun (4+ bays)', tag: 'birthday', daysOfWeek: [5, 6, 0], minBays: 4, ratePerHour: 5000, sortOrder: 4 },
+
+      // Large-group rate set (per bay, 4-bay minimum; per-hour rate drops with duration)
+      // Mon–Thu morning (open–12pm)
+      { label: 'Group · Mon–Thu AM (2 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 0, endMinute: 720, minHours: 0, ratePerHour: 3500, sortOrder: 10 },
+      { label: 'Group · Mon–Thu AM (3 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 0, endMinute: 720, minHours: 3, ratePerHour: 3333, sortOrder: 11 },
+      { label: 'Group · Mon–Thu AM (4 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 0, endMinute: 720, minHours: 4, ratePerHour: 3000, sortOrder: 12 },
+      // Mon–Thu afternoon/evening (12pm–close)
+      { label: 'Group · Mon–Thu PM (2 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 720, endMinute: 1440, minHours: 0, ratePerHour: 5000, sortOrder: 13 },
+      { label: 'Group · Mon–Thu PM (3 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 720, endMinute: 1440, minHours: 3, ratePerHour: 4667, sortOrder: 14 },
+      { label: 'Group · Mon–Thu PM (4 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 720, endMinute: 1440, minHours: 4, ratePerHour: 4000, sortOrder: 15 },
+      // Friday morning–afternoon (open–2pm)
+      { label: 'Group · Fri AM (2–3 hr)', tag: 'group', daysOfWeek: [5], startMinute: 0, endMinute: 840, minHours: 0, ratePerHour: 5000, sortOrder: 16 },
+      { label: 'Group · Fri AM (4 hr)', tag: 'group', daysOfWeek: [5], startMinute: 0, endMinute: 840, minHours: 4, ratePerHour: 4750, sortOrder: 17 },
+      // Sunday morning (open–12pm)
+      { label: 'Group · Sun AM (2 hr)', tag: 'group', daysOfWeek: [0], startMinute: 0, endMinute: 720, minHours: 0, ratePerHour: 5500, sortOrder: 18 },
+      { label: 'Group · Sun AM (3 hr)', tag: 'group', daysOfWeek: [0], startMinute: 0, endMinute: 720, minHours: 3, ratePerHour: 5000, sortOrder: 19 },
+      { label: 'Group · Sun AM (4 hr)', tag: 'group', daysOfWeek: [0], startMinute: 0, endMinute: 720, minHours: 4, ratePerHour: 4750, sortOrder: 20 },
+      // Peak weekend (Fri 2pm–close, Sat all day, Sun 12pm–close) — $55/bay/hr flat
+      { label: 'Group · Fri PM', tag: 'group', daysOfWeek: [5], startMinute: 840, endMinute: 1440, minHours: 0, ratePerHour: 5500, sortOrder: 21 },
+      { label: 'Group · Saturday', tag: 'group', daysOfWeek: [6], startMinute: 0, endMinute: 1440, minHours: 0, ratePerHour: 5500, sortOrder: 22 },
+      { label: 'Group · Sun PM', tag: 'group', daysOfWeek: [0], startMinute: 720, endMinute: 1440, minHours: 0, ratePerHour: 5500, sortOrder: 23 },
     ],
   })
 

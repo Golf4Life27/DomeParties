@@ -38,10 +38,9 @@ export function addDays(dateStr: string, days: number): string {
 
 /**
  * Peak = Friday, Saturday, or Sunday (all day), matching the venue's
- * "Mon–Thurs vs Fri–Sunday" pricing on the party cards. `startMinutes` is
- * accepted for future time-of-day tiers but currently unused.
+ * "Mon–Thurs vs Fri–Sunday" pricing on the party cards.
  */
-export function isPeakSlot(dateStr: string, _startMinutes?: number): boolean {
+export function isPeakSlot(dateStr: string): boolean {
   const [y, m, d] = dateStr.split('-').map(Number)
   const dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay() // 0=Sun..6=Sat
   return dow === 5 || dow === 6 || dow === 0 // Fri, Sat, Sun

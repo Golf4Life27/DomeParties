@@ -88,7 +88,7 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
           endMinutes: end,
           label: minutesToLabel(start),
           availableBays,
-          peak: isPeakSlot(dateStr, start),
+          peak: isPeakSlot(dateStr),
         })
       }
     }

@@ -4,10 +4,12 @@ import { prisma } from '@/lib/db'
 
 const schema = z.object({
   label: z.string().min(1).optional(),
+  tag: z.string().min(1).optional(),
   daysOfWeek: z.array(z.number().int().min(0).max(6)).optional(),
   startMinute: z.number().int().min(0).max(1440).optional(),
   endMinute: z.number().int().min(0).max(1440).optional(),
   minBays: z.number().int().min(1).max(30).optional(),
+  minHours: z.number().int().min(0).max(24).optional(),
   ratePerHour: z.number().int().min(0).optional(),
   active: z.boolean().optional(),
   sortOrder: z.number().int().optional(),

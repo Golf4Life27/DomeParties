@@ -272,20 +272,27 @@ export async function createQuoteBookingFromLead(leadId: string, input: QuoteInp
  * Stripe is not configured.
  */
 export async function createDepositIntent(id: string) {
-  const booking = await prisma.booking.findUniqueOrThrow({ where: { id } })
+  const [booking, setting] = await Promise.all([
+    prisma.booking.findUniqueOrThrow({ where: { id } }),
+    prisma.setting.findUniqueOrThrow({ where: { id: 1 } }),
+  ])
   const amountDue = Math.max(0, booking.depositAmount - booking.giftCardApplied)
 
   // A gift card covering the full deposit means nothing to charge now.
   if (amountDue <= 0) {
-    return { mode: 'covered' as const, clientSecret: null, amount: 0 }
+    return { mode: 'covered' as const, clientSecret: null, amount: 0, cardFee: 0 }
   }
+
+  // Optional card convenience fee (off by default; setting.cardFeePct = 0).
+  const cardFee = setting.cardFeePct > 0 ? Math.round((amountDue * setting.cardFeePct) / 100) : 0
+  const charge = amountDue + cardFee
 
   const stripe = getStripe()
   if (!stripe) {
-    return { mode: 'dev' as const, clientSecret: null, amount: amountDue }
+    return { mode: 'dev' as const, clientSecret: null, amount: charge, cardFee }
   }
   const intent = await stripe.paymentIntents.create({
-    amount: amountDue,
+    amount: charge,
     currency: 'usd',
     metadata: { bookingId: booking.id, reference: booking.reference, kind: 'deposit' },
     description: `Deposit — ${booking.reference} — Whitetail Ridge Golf Dome`,
@@ -294,7 +301,7 @@ export async function createDepositIntent(id: string) {
     where: { id },
     data: { stripePaymentIntentId: intent.id },
   })
-  return { mode: 'stripe' as const, clientSecret: intent.client_secret, amount: amountDue }
+  return { mode: 'stripe' as const, clientSecret: intent.client_secret, amount: charge, cardFee }
 }
 
 /** Send one abandoned-cart recovery email and stamp the booking. */

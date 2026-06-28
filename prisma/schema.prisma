@@ -29,6 +29,7 @@ model Setting {
   // Dynamic pricing (applied to the package/bay-time portion)
   peakSurchargePct    Int      @default(15)  // weekend/evening premium
   offPeakDiscountPct  Int      @default(0)   // weekday/midday incentive
+  cardFeePct          Float    @default(0)   // optional card convenience fee on the charge (off by default)
   // Cancellation policy (informational copy, enforced operationally)
   cancelHoursLarge    Int      @default(48)  // > cancelLargeThreshold guests
   cancelHoursSmall    Int      @default(24)
@@ -72,10 +73,12 @@ enum PricingType {
 model BayRate {
   id          String  @id @default(cuid())
   label       String
+  tag         String  @default("birthday") // rate set, e.g. "birthday" | "group"
   daysOfWeek  Int[]   // 0=Sun .. 6=Sat
   startMinute Int     @default(0)    // time window [start, end)
   endMinute   Int     @default(1440)
   minBays     Int     @default(1)    // applies when bays >= minBays
+  minHours    Int     @default(0)    // applies when hours >= minHours (duration tier)
   ratePerHour Int     // cents per bay per hour
   active      Boolean @default(true)
   sortOrder   Int     @default(0)
@@ -99,6 +102,7 @@ model Package {
   includes        String[]    // bullet list of inclusions
   durationMinutes Int         @default(120)
   bays            Int         @default(2) // bays this package reserves (BAY_RATE)
+  rateTag         String      @default("birthday") // which BayRate set to price from
   pricingType     PricingType @default(PER_PERSON)
   pricePerPerson  Int         @default(0) // cents
   flatPrice       Int         @default(0) // cents

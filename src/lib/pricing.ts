@@ -15,12 +15,17 @@ export function baysFor(partySize: number, bayCapacity: number): number {
  */
 export async function getBayRate(
   bays: number,
+  hours: number,
   dateStr?: string | null,
   startMinutes?: number | null,
+  tag = 'birthday',
 ): Promise<{ rate: number; estimated: boolean }> {
-  const rows = await prisma.bayRate.findMany({ where: { active: true } })
-  const applicable = rows.filter((r) => r.minBays <= bays)
+  const rows = await prisma.bayRate.findMany({ where: { active: true, tag } })
+  const applicable = rows.filter((r) => r.minBays <= bays && r.minHours <= hours)
   if (applicable.length === 0) return { rate: 0, estimated: true }
+
+  // specificity: prefer the highest bays tier, then the highest duration tier
+  const score = (r: { minBays: number; minHours: number }) => r.minBays * 1000 + r.minHours
 
   if (dateStr && startMinutes != null) {
     const [y, m, d] = dateStr.split('-').map(Number)
@@ -29,7 +34,7 @@ export async function getBayRate(
       (r) => r.daysOfWeek.includes(dow) && r.startMinute <= startMinutes && startMinutes < r.endMinute,
     )
     if (matches.length) {
-      const best = matches.reduce((a, b) => (b.minBays > a.minBays ? b : a))
+      const best = matches.reduce((a, b) => (score(b) > score(a) ? b : a))
       return { rate: best.ratePerHour, estimated: false }
     }
   }
@@ -79,7 +84,7 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
 
   if (isBayRate) {
     const hours = pkg.durationMinutes / 60
-    const { rate, estimated: est } = await getBayRate(bays, input.dateStr, input.startMinutes)
+    const { rate, estimated: est } = await getBayRate(bays, hours, input.dateStr, input.startMinutes, pkg.rateTag)
     estimated = est
     packageTotal = Math.round(bays * hours * rate)
     packageDetail = `${bays} bays × ${hours} hr × ${formatCents(rate)}/bay·hr${est ? ' (from)' : ''}`
@@ -96,7 +101,7 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
   // BAY_RATE packages already encode day/time in the rate table — skip here.
   let peakAdjustment = 0
   if (!isBayRate && input.dateStr && input.startMinutes != null) {
-    const peak = isPeakSlot(input.dateStr, input.startMinutes)
+    const peak = isPeakSlot(input.dateStr)
     if (peak && setting.peakSurchargePct > 0) {
       peakAdjustment = applyPercent(packageTotal, setting.peakSurchargePct)
       lines.push({

@@ -13,6 +13,7 @@ const schema = z.object({
   taxPct: z.number().min(0).max(30),
   peakSurchargePct: z.number().int().min(0).max(100),
   offPeakDiscountPct: z.number().int().min(0).max(100),
+  cardFeePct: z.number().min(0).max(10),
   cancelHoursLarge: z.number().int().min(0).max(720),
   cancelHoursSmall: z.number().int().min(0).max(720),
   cancelLargeThreshold: z.number().int().min(1).max(500),
