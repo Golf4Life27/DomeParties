@@ -6,6 +6,7 @@ import LogoutButton from './LogoutButton'
 const NAV = [
   { href: '/admin', label: 'Overview' },
   { href: '/admin/bookings', label: 'Bookings' },
+  { href: '/admin/leads', label: 'Leads' },
   { href: '/admin/packages', label: 'Packages' },
   { href: '/admin/fnb', label: 'Food & drink' },
   { href: '/admin/addons', label: 'Add-ons' },

@@ -64,14 +64,14 @@ export default function Home() {
         <div className="mt-14 rounded-2xl bg-brand-light p-8 text-center">
           <h2 className="text-2xl font-bold text-brand-dark">Planning something bigger?</h2>
           <p className="mx-auto mt-2 max-w-lg text-foreground/70">
-            Corporate outings, leagues, and full buyouts get a custom quote. Start a
-            booking and we&apos;ll guide you to the right path.
+            Corporate outings, leagues, and full buyouts get a custom quote and a dedicated
+            planner — we reply fast.
           </p>
           <Link
-            href="/book"
+            href="/inquire"
             className="mt-6 inline-block rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-dark"
           >
-            Get started
+            Request a quote
           </Link>
         </div>
       </section>

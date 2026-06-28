@@ -327,9 +327,11 @@ export default function BookPage() {
 
               {currentEventType && !currentEventType.instant && (
                 <div className="mt-4 rounded-lg bg-brand-light p-4 text-sm text-brand-dark">
-                  Big or custom events are a perfect fit for a tailored quote — that
-                  fast-track inquiry flow is coming soon. For now you can book instantly
-                  below, or call us and we&apos;ll build the perfect package.
+                  Big or custom events get a tailored quote and a dedicated planner.{' '}
+                  <Link href="/inquire" className="font-semibold underline">
+                    Request a quote →
+                  </Link>{' '}
+                  (we reply fast) — or book a standard package instantly below.
                 </div>
               )}
 

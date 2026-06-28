@@ -1,12 +1,14 @@
 import { prisma } from '@/lib/db'
-import { computeQuote, addOnLineTotal } from '@/lib/pricing'
+import { computeQuote, addOnLineTotal, baysFor } from '@/lib/pricing'
 import { availability } from '@/lib/availability'
 import { generateReference } from '@/lib/ref'
 import { getStripe } from '@/lib/stripe'
+import { applyPercent } from '@/lib/money'
 import {
   sendEmail,
   buildConfirmationEmail,
   buildIcs,
+  buildQuoteEmail,
 } from '@/lib/email'
 import type { AddOnSelection } from '@/lib/types'
 import type { EventType } from '@/generated/prisma'
@@ -174,6 +176,91 @@ export async function placeHold(id: string) {
   })
 
   return { booking: await prisma.booking.findUniqueOrThrow({ where: { id } }), quote }
+}
+
+export type QuoteInput = {
+  total: number // cents
+  dateStr: string
+  startMinutes: number
+  durationMinutes: number
+  partySize: number
+  message?: string | null
+}
+
+/**
+ * Staff action: turn a lead into a PENDING quote booking with a custom total,
+ * attempt to hold bays, email the customer a deposit pay link, and advance the
+ * lead to PROPOSAL_SENT. Returns the booking + the pay URL.
+ */
+export async function createQuoteBookingFromLead(leadId: string, input: QuoteInput) {
+  const [lead, setting] = await Promise.all([
+    prisma.lead.findUniqueOrThrow({ where: { id: leadId } }),
+    prisma.setting.findUniqueOrThrow({ where: { id: 1 } }),
+  ])
+
+  const depositAmount = applyPercent(input.total, setting.depositPercent)
+  const balanceDue = input.total - depositAmount
+  const endMinutes = input.startMinutes + input.durationMinutes
+  const baysNeeded = baysFor(input.partySize, setting.bayCapacity)
+
+  let reference = generateReference()
+  for (let i = 0; i < 5; i++) {
+    if (!(await prisma.booking.findUnique({ where: { reference } }))) break
+    reference = generateReference()
+  }
+
+  const booking = await prisma.booking.create({
+    data: {
+      reference,
+      status: 'PENDING',
+      eventType: lead.eventType,
+      date: new Date(`${input.dateStr}T00:00:00.000Z`),
+      startMinutes: input.startMinutes,
+      endMinutes,
+      partySize: input.partySize,
+      baysNeeded,
+      customerName: lead.customerName,
+      customerEmail: lead.customerEmail,
+      customerPhone: lead.customerPhone,
+      notes: input.message ?? null,
+      packageTotal: input.total, // lump custom quote
+      total: input.total,
+      depositAmount,
+      balanceDue,
+    },
+  })
+
+  // Best-effort bay hold (custom events may be coordinated manually if full).
+  const bays = await availability.assignBays(
+    input.dateStr,
+    input.startMinutes,
+    endMinutes,
+    baysNeeded,
+    booking.id,
+  )
+  if (bays) {
+    await prisma.bookingResource.createMany({
+      data: bays.map((resourceId) => ({ bookingId: booking.id, resourceId })),
+    })
+  }
+
+  await prisma.lead.update({ where: { id: leadId }, data: { status: 'PROPOSAL_SENT' } })
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const payUrl = `${appUrl}/pay/${booking.id}`
+  const email = buildQuoteEmail({
+    name: lead.customerName,
+    reference,
+    total: input.total,
+    depositAmount,
+    payUrl,
+    message: input.message,
+  })
+  if (lead.customerEmail) {
+    await sendEmail({ to: lead.customerEmail, subject: email.subject, html: email.html, text: email.text })
+  }
+
+  return { booking, payUrl, baysAssigned: !!bays }
 }
 
 /**
