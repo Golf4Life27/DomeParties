@@ -115,6 +115,7 @@ export default function BookPage() {
   const [waiverName, setWaiverName] = useState('')
   const [waiverGuardian, setWaiverGuardian] = useState(false)
 
+  const [embedded, setEmbedded] = useState(false)
   const [draftId, setDraftId] = useState<string | null>(null)
   const [quote, setQuote] = useState<Quote | null>(null)
   const [busy, setBusy] = useState(false)
@@ -135,6 +136,28 @@ export default function BookPage() {
       .then(setCatalog)
       .catch(() => setError('Could not load packages. Please refresh.'))
   }, [])
+
+  // Embedded mode (in an iframe on the marketing site): hide chrome + auto-resize.
+  // Set after mount (not a lazy initializer) to avoid an SSR hydration mismatch.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('embed') === '1') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setEmbedded(true)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!embedded) return
+    const post = () =>
+      window.parent?.postMessage(
+        { type: 'dome:height', height: document.documentElement.scrollHeight },
+        '*',
+      )
+    post()
+    const ro = new ResizeObserver(post)
+    ro.observe(document.body)
+    return () => ro.disconnect()
+  }, [embedded, step])
 
   // Resume an abandoned cart from a recovery link (?draft=<id>)
   useEffect(() => {
@@ -364,15 +387,17 @@ export default function BookPage() {
 
   return (
     <main className="flex-1">
-      {/* Header */}
-      <header className="bg-brand-dark text-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/" className="font-bold">
-            Whitetail Ridge Golf Dome
-          </Link>
-          <span className="text-sm text-white/70">Need help? Call us 🏌️</span>
-        </div>
-      </header>
+      {/* Header (hidden when embedded in the marketing site) */}
+      {!embedded && (
+        <header className="bg-brand-dark text-white">
+          <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+            <Link href="/" className="font-bold">
+              Whitetail Ridge Golf Dome
+            </Link>
+            <span className="text-sm text-white/70">Need help? Call us 🏌️</span>
+          </div>
+        </header>
+      )}
 
       {/* Progress */}
       <div className="mx-auto max-w-5xl px-6 pt-6">
