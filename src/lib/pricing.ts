@@ -8,6 +8,36 @@ export function baysFor(partySize: number, bayCapacity: number): number {
   return Math.max(1, Math.ceil(partySize / bayCapacity))
 }
 
+/**
+ * Per-bay-per-hour rate for `bays` at a given slot. With a date/time, returns
+ * the most specific matching rate (highest minBays tier wins → volume discount).
+ * Without one, returns the cheapest applicable rate (a "from" estimate).
+ */
+export async function getBayRate(
+  bays: number,
+  dateStr?: string | null,
+  startMinutes?: number | null,
+): Promise<{ rate: number; estimated: boolean }> {
+  const rows = await prisma.bayRate.findMany({ where: { active: true } })
+  const applicable = rows.filter((r) => r.minBays <= bays)
+  if (applicable.length === 0) return { rate: 0, estimated: true }
+
+  if (dateStr && startMinutes != null) {
+    const [y, m, d] = dateStr.split('-').map(Number)
+    const dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay()
+    const matches = applicable.filter(
+      (r) => r.daysOfWeek.includes(dow) && r.startMinute <= startMinutes && startMinutes < r.endMinute,
+    )
+    if (matches.length) {
+      const best = matches.reduce((a, b) => (b.minBays > a.minBays ? b : a))
+      return { rate: best.ratePerHour, estimated: false }
+    }
+  }
+  // "From" price: cheapest applicable rate (off-peak).
+  const cheapest = applicable.reduce((a, b) => (b.ratePerHour < a.ratePerHour ? b : a))
+  return { rate: cheapest.ratePerHour, estimated: true }
+}
+
 /** Line total in cents for one add-on selection, honoring its unit. */
 export function addOnLineTotal(
   unit: 'FLAT' | 'PER_PERSON' | 'PER_30_MIN',
@@ -41,20 +71,31 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
   const lines: QuoteLine[] = []
 
   // --- Package ---
-  const packageTotal =
-    pkg.pricingType === 'PER_PERSON' ? pkg.pricePerPerson * partySize : pkg.flatPrice
-  lines.push({
-    label: `${pkg.name} package`,
-    detail:
-      pkg.pricingType === 'PER_PERSON'
-        ? `${formatCents(pkg.pricePerPerson)} × ${partySize} guests`
-        : 'Flat rate',
-    amount: packageTotal,
-  })
+  const isBayRate = pkg.pricingType === 'BAY_RATE'
+  const bays = isBayRate ? pkg.bays : baysFor(partySize, setting.bayCapacity)
+  let estimated = false
+  let packageTotal: number
+  let packageDetail: string
+
+  if (isBayRate) {
+    const hours = pkg.durationMinutes / 60
+    const { rate, estimated: est } = await getBayRate(bays, input.dateStr, input.startMinutes)
+    estimated = est
+    packageTotal = Math.round(bays * hours * rate)
+    packageDetail = `${bays} bays × ${hours} hr × ${formatCents(rate)}/bay·hr${est ? ' (from)' : ''}`
+  } else if (pkg.pricingType === 'PER_PERSON') {
+    packageTotal = pkg.pricePerPerson * partySize
+    packageDetail = `${formatCents(pkg.pricePerPerson)} × ${partySize} guests`
+  } else {
+    packageTotal = pkg.flatPrice
+    packageDetail = 'Flat rate'
+  }
+  lines.push({ label: `${pkg.name} package`, detail: packageDetail, amount: packageTotal })
 
   // --- Dynamic pricing (peak surcharge / off-peak discount on bay time) ---
+  // BAY_RATE packages already encode day/time in the rate table — skip here.
   let peakAdjustment = 0
-  if (input.dateStr && input.startMinutes != null) {
+  if (!isBayRate && input.dateStr && input.startMinutes != null) {
     const peak = isPeakSlot(input.dateStr, input.startMinutes)
     if (peak && setting.peakSurchargePct > 0) {
       peakAdjustment = applyPercent(packageTotal, setting.peakSurchargePct)
@@ -136,8 +177,9 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
   const balanceDue = total - depositAmount
 
   return {
-    baysNeeded: baysFor(partySize, setting.bayCapacity),
+    baysNeeded: bays,
     durationMinutes: pkg.durationMinutes,
+    estimated,
     lines,
     packageTotal,
     peakAdjustment,

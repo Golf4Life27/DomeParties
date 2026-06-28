@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   ])
   if (!pkg) return NextResponse.json({ error: 'Unknown package' }, { status: 404 })
 
-  const baysNeeded = baysFor(partySize, setting.bayCapacity)
+  const baysNeeded = pkg.pricingType === 'BAY_RATE' ? pkg.bays : baysFor(partySize, setting.bayCapacity)
   const slots = await availability.getSlots(date, baysNeeded, pkg.durationMinutes)
   return NextResponse.json({ slots, baysNeeded, durationMinutes: pkg.durationMinutes })
 }

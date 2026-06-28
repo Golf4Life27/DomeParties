@@ -24,6 +24,7 @@ export type QuoteLine = {
 export type Quote = {
   baysNeeded: number
   durationMinutes: number
+  estimated: boolean // true when bay rate is a "from" estimate (no date/time yet)
   lines: QuoteLine[]
   packageTotal: number
   peakAdjustment: number // +surcharge or -discount on the package portion

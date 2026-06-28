@@ -14,9 +14,12 @@ type Pkg = {
   description: string
   includes: string[]
   durationMinutes: number
-  pricingType: 'PER_PERSON' | 'FLAT'
+  bays: number
+  pricingType: 'PER_PERSON' | 'FLAT' | 'BAY_RATE'
   pricePerPerson: number
   flatPrice: number
+  displayPrice: number
+  displayUnit: 'from' | 'guest' | 'flat'
   minGuests: number
   maxGuests: number
   popular: boolean
@@ -487,11 +490,16 @@ export default function BookPage() {
                     </span>
                     <span className="mt-1 text-xl font-bold text-brand-dark">{p.name}</span>
                     <span className="mt-2 text-2xl font-extrabold">
-                      {formatCents(p.pricePerPerson)}
-                      <span className="text-sm font-normal text-foreground/60"> /guest</span>
+                      {p.displayUnit === 'from' && (
+                        <span className="text-sm font-normal text-foreground/60">from </span>
+                      )}
+                      {formatCents(p.displayPrice)}
+                      {p.displayUnit === 'guest' && (
+                        <span className="text-sm font-normal text-foreground/60"> /guest</span>
+                      )}
                     </span>
                     <span className="mt-1 text-xs text-foreground/60">
-                      {p.durationMinutes / 60} hrs · up to {p.maxGuests} guests
+                      {p.durationMinutes / 60} hrs · {p.bays} bays · up to {p.maxGuests} guests
                     </span>
                     <p className="mt-3 text-sm text-foreground/70">{p.description}</p>
                     <ul className="mt-3 space-y-1 text-sm">

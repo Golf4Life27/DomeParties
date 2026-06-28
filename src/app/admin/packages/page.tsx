@@ -12,7 +12,8 @@ const FIELDS: FieldDef[] = [
     type: 'select',
     options: ['BIRTHDAY', 'GROUP', 'CORPORATE', 'LEAGUE', 'BACHELOR', 'OTHER'].map((v) => ({ value: v, label: v })),
   },
-  { key: 'pricingType', label: 'Pricing', type: 'select', options: [{ value: 'PER_PERSON', label: 'Per person' }, { value: 'FLAT', label: 'Flat' }] },
+  { key: 'pricingType', label: 'Pricing', type: 'select', options: [{ value: 'BAY_RATE', label: 'Per-bay-hour (rate engine)' }, { value: 'PER_PERSON', label: 'Per person' }, { value: 'FLAT', label: 'Flat' }] },
+  { key: 'bays', label: 'Bays (for per-bay-hour)', type: 'int' },
   { key: 'pricePerPerson', label: 'Price per person', type: 'money' },
   { key: 'flatPrice', label: 'Flat price', type: 'money' },
   { key: 'durationMinutes', label: 'Duration (minutes)', type: 'int' },
@@ -26,8 +27,8 @@ const FIELDS: FieldDef[] = [
 ]
 
 const BLANK = {
-  name: '', tier: 'Good', eventType: 'BIRTHDAY', pricingType: 'PER_PERSON',
-  pricePerPerson: 0, flatPrice: 0, durationMinutes: 120, minGuests: 6, maxGuests: 36,
+  name: '', tier: '2 Bays', eventType: 'BIRTHDAY', pricingType: 'BAY_RATE', bays: 2,
+  pricePerPerson: 0, flatPrice: 0, durationMinutes: 120, minGuests: 1, maxGuests: 10,
   sortOrder: 0, popular: false, active: true, description: '', includes: [],
 }
 

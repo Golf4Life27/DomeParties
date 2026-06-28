@@ -59,6 +59,19 @@ async function main() {
   resources.push({ name: 'Bar & Restaurant', type: 'EVENT_SPACE', floor: null, capacity: 80, sortOrder: 33 })
   await prisma.resource.createMany({ data: resources })
 
+  // --- Per-bay-per-hour rate table (day/time + volume tier) -----------------
+  // Reproduces the birthday card exactly: Mon–Thu $45/bay/hr (>=4 bays $41.25),
+  // Fri–Sun $55/bay/hr (>=4 bays $50). Edit/extend in admin for group time tiers.
+  await prisma.bayRate.deleteMany()
+  await prisma.bayRate.createMany({
+    data: [
+      { label: 'Mon–Thu', daysOfWeek: [1, 2, 3, 4], minBays: 1, ratePerHour: 4500, sortOrder: 1 },
+      { label: 'Mon–Thu (4+ bays)', daysOfWeek: [1, 2, 3, 4], minBays: 4, ratePerHour: 4125, sortOrder: 2 },
+      { label: 'Fri–Sun', daysOfWeek: [5, 6, 0], minBays: 1, ratePerHour: 5500, sortOrder: 3 },
+      { label: 'Fri–Sun (4+ bays)', daysOfWeek: [5, 6, 0], minBays: 4, ratePerHour: 5000, sortOrder: 4 },
+    ],
+  })
+
   const BAY_INCLUDES = [
     '2 hours of bay time',
     'Dedicated party host',
@@ -79,8 +92,8 @@ async function main() {
         description: 'Our classic birthday party for up to 10 guests across 2 bays. Add a food package to make it a full celebration.',
         includes: BAY_INCLUDES,
         durationMinutes: 120,
-        pricingType: 'FLAT',
-        flatPrice: 18000,
+        bays: 2,
+        pricingType: 'BAY_RATE',
         minGuests: 1,
         maxGuests: 10,
         popular: false,
@@ -93,8 +106,8 @@ async function main() {
         description: 'The big bash for up to 20 guests across 4 bays — perfect for bigger friend groups and families.',
         includes: BAY_INCLUDES,
         durationMinutes: 120,
-        pricingType: 'FLAT',
-        flatPrice: 33000,
+        bays: 4,
+        pricingType: 'BAY_RATE',
         minGuests: 11,
         maxGuests: 20,
         popular: true,

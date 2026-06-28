@@ -8,6 +8,7 @@ const NAV = [
   { href: '/admin/bookings', label: 'Bookings' },
   { href: '/admin/leads', label: 'Leads' },
   { href: '/admin/packages', label: 'Packages' },
+  { href: '/admin/rates', label: 'Bay rates' },
   { href: '/admin/fnb', label: 'Food & drink' },
   { href: '/admin/addons', label: 'Add-ons' },
   { href: '/admin/gift-cards', label: 'Gift cards' },

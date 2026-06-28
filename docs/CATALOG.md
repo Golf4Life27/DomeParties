@@ -15,23 +15,40 @@ editable in the admin (Packages / Food & drink / Add-ons / Settings) — no code
 - ⚠️ The card mentions a **3.5% credit-card convenience fee** — not yet applied
   in the engine (a payment-surcharge decision). Flagged for Alex.
 
-## Birthday parties — Instant Book (FLAT bay tiers + food bundles)
+## Pricing engine — per bay, per hour (BayRate)
 
-Base = Mon–Thu (exact). Fri–Sun adds the peak surcharge (≈ within a few dollars).
+Bay time is priced as **bays × hours × rate**, where the rate comes from the **BayRate**
+table (admin → Bay rates). The most specific matching row wins (highest "bays ≥" tier),
+so the per-bay-hour rate **steps down for larger groups** and is **higher on weekends** —
+exactly how the cards were built. The customer never picks a tier: they choose size, date,
+and time, and the price is computed automatically.
 
-| Package | Bays | Mon–Thu base |
+Seeded rate table (editable in admin):
+
+| Days | Applies when bays ≥ | $/bay/hour |
 |---|---|---|
-| Up to 10 Guests | 2 | $180 |
-| Up to 20 Guests | 4 | $330 |
+| Mon–Thu | 1 | $45.00 |
+| Mon–Thu | 4 | $41.25 |
+| Fri–Sun | 1 | $55.00 |
+| Fri–Sun | 4 | $50.00 |
+
+Add rows for finer time-of-day tiers (e.g. the large-group morning/evening rates) anytime.
+
+## Birthday parties — Instant Book (per-bay-hour presets + food bundles)
+
+Packages are thin presets over the rate engine (bays + duration); price is computed.
+
+| Package | Bays | Hours |
+|---|---|---|
+| Up to 10 Guests | 2 | 2 |
+| Up to 20 Guests | 4 | 2 |
 
 Food bundles (per person, **no extra service charge** — matches the rack card):
 - Chicken Tenders Meal — **$7/guest** (incl. juice box & chips)
 - Burger Sliders Meal — **$12/guest** (incl. juice box & chips)
 
-Card totals reproduced exactly Mon–Thu: 10p = 180 / 250 (tenders) / 300 (sliders);
-20p = 330 / 470 / 570. Fri–Sun via peak %: ~220 / ~290 / ~340 and ~400 / ~540 / ~640
-(within ~$2–3; the real weekend premium is a flat ~$20/bay — tune `peakSurchargePct`
-or switch to per-bay weekend pricing if exactness is needed).
+**Card totals reproduced exactly** (verified): Mon–Thu 10p = 180 / 250 / 300, 20p = 330 /
+470 / 570; Fri–Sun 10p = 220 / 290 / 340, 20p = 400 / 540 / 640.
 
 ## Themed buffets (per person — 20% service charge applies)
 

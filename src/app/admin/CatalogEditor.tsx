@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-export type FieldType = 'text' | 'textarea' | 'int' | 'money' | 'bool' | 'select' | 'stringlist'
+export type FieldType = 'text' | 'textarea' | 'int' | 'money' | 'bool' | 'select' | 'stringlist' | 'intlist'
 
 export type FieldDef = {
   key: string
@@ -176,6 +176,23 @@ function FieldInput({
           placeholder="One item per line"
           value={Array.isArray(value) ? (value as string[]).join('\n') : ''}
           onChange={(e) => onChange(e.target.value.split('\n').map((s) => s.trim()).filter(Boolean))}
+          className={base}
+        />
+      )
+    case 'intlist':
+      return (
+        <input
+          type="text"
+          placeholder="e.g. 1,2,3,4"
+          value={Array.isArray(value) ? (value as number[]).join(',') : ''}
+          onChange={(e) =>
+            onChange(
+              e.target.value
+                .split(/[,\s]+/)
+                .map((s) => parseInt(s, 10))
+                .filter((n) => !Number.isNaN(n)),
+            )
+          }
           className={base}
         />
       )
