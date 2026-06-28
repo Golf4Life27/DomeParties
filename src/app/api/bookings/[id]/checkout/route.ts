@@ -1,25 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import {
   placeHold,
-  createDepositIntent,
   BookingConflictError,
   BookingIncompleteError,
 } from '@/lib/booking'
 
 // POST /api/bookings/[id]/checkout
-// Places an authoritative hold (assigns bays, locks pricing) and returns
-// deposit payment info (Stripe client secret, or dev-mode marker).
+// Places an authoritative hold (assigns bays, locks pricing). Payment (and any
+// gift-card redemption) happens next via /redeem-gift + /pay.
 export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
   try {
     const { booking, quote } = await placeHold(id)
-    const payment = await createDepositIntent(id)
     return NextResponse.json({
       reference: booking.reference,
       depositAmount: quote.depositAmount,
       total: quote.total,
       balanceDue: quote.balanceDue,
-      payment,
     })
   } catch (e) {
     if (e instanceof BookingConflictError) {

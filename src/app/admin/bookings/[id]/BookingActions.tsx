@@ -7,19 +7,35 @@ export default function BookingActions({ id, status }: { id: string; status: str
   const router = useRouter()
   const [busy, setBusy] = useState(false)
 
-  async function act(action: 'cancel' | 'complete') {
+  const [sentRecovery, setSentRecovery] = useState(false)
+
+  async function act(action: 'cancel' | 'complete' | 'recover') {
     if (action === 'cancel' && !confirm('Cancel this booking and free its bays?')) return
     setBusy(true)
-    await fetch(`/api/admin/bookings/${id}/${action}`, { method: 'POST' })
+    const res = await fetch(`/api/admin/bookings/${id}/${action}`, { method: 'POST' })
     setBusy(false)
+    if (action === 'recover') {
+      if (res.ok) setSentRecovery(true)
+      return
+    }
     router.refresh()
   }
 
   const canCancel = status === 'CONFIRMED' || status === 'PENDING'
   const canComplete = status === 'CONFIRMED'
+  const canRecover = status === 'DRAFT'
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap items-center gap-2">
+      {canRecover && (
+        <button
+          onClick={() => act('recover')}
+          disabled={busy || sentRecovery}
+          className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-brand-dark transition hover:bg-accent-dark hover:text-white disabled:opacity-60"
+        >
+          {sentRecovery ? '✓ Recovery sent' : 'Send recovery email'}
+        </button>
+      )}
       {canComplete && (
         <button
           onClick={() => act('complete')}

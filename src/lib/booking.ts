@@ -4,11 +4,13 @@ import { availability } from '@/lib/availability'
 import { generateReference } from '@/lib/ref'
 import { getStripe } from '@/lib/stripe'
 import { applyPercent } from '@/lib/money'
+import { debitGiftCard } from '@/lib/giftcards'
 import {
   sendEmail,
   buildConfirmationEmail,
   buildIcs,
   buildQuoteEmail,
+  buildRecoveryEmail,
 } from '@/lib/email'
 import type { AddOnSelection } from '@/lib/types'
 import type { EventType } from '@/generated/prisma'
@@ -269,12 +271,19 @@ export async function createQuoteBookingFromLead(leadId: string, input: QuoteInp
  */
 export async function createDepositIntent(id: string) {
   const booking = await prisma.booking.findUniqueOrThrow({ where: { id } })
+  const amountDue = Math.max(0, booking.depositAmount - booking.giftCardApplied)
+
+  // A gift card covering the full deposit means nothing to charge now.
+  if (amountDue <= 0) {
+    return { mode: 'covered' as const, clientSecret: null, amount: 0 }
+  }
+
   const stripe = getStripe()
   if (!stripe) {
-    return { mode: 'dev' as const, clientSecret: null, amount: booking.depositAmount }
+    return { mode: 'dev' as const, clientSecret: null, amount: amountDue }
   }
   const intent = await stripe.paymentIntents.create({
-    amount: booking.depositAmount,
+    amount: amountDue,
     currency: 'usd',
     metadata: { bookingId: booking.id, reference: booking.reference, kind: 'deposit' },
     description: `Deposit — ${booking.reference} — Whitetail Ridge Golf Dome`,
@@ -283,7 +292,46 @@ export async function createDepositIntent(id: string) {
     where: { id },
     data: { stripePaymentIntentId: intent.id },
   })
-  return { mode: 'stripe' as const, clientSecret: intent.client_secret, amount: booking.depositAmount }
+  return { mode: 'stripe' as const, clientSecret: intent.client_secret, amount: amountDue }
+}
+
+/** Send one abandoned-cart recovery email and stamp the booking. */
+export async function sendRecoveryEmail(id: string) {
+  const booking = await prisma.booking.findUniqueOrThrow({ where: { id } })
+  if (booking.status !== 'DRAFT' || !booking.customerEmail) return false
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const resumeUrl = `${appUrl}/book?draft=${booking.id}`
+  const email = buildRecoveryEmail({ name: booking.customerName, resumeUrl })
+  await sendEmail({ to: booking.customerEmail, subject: email.subject, html: email.html, text: email.text })
+  await prisma.booking.update({ where: { id }, data: { recoveryEmailSentAt: new Date() } })
+  return true
+}
+
+/**
+ * Send recovery emails to stale DRAFT carts (older than `minutesOld`, with an
+ * email, not yet emailed). Returns how many were sent. Wire to a scheduler
+ * (e.g. Vercel Cron) hitting /api/cron/recovery.
+ */
+export async function sendRecoveryEmailsToStaleDrafts(minutesOld = 60) {
+  const cutoff = new Date(Date.now() - minutesOld * 60_000)
+  const drafts = await prisma.booking.findMany({
+    where: {
+      status: 'DRAFT',
+      customerEmail: { not: null },
+      recoveryEmailSentAt: null,
+      updatedAt: { lt: cutoff },
+    },
+    take: 200,
+  })
+  let sent = 0
+  for (const d of drafts) {
+    try {
+      if (await sendRecoveryEmail(d.id)) sent++
+    } catch (e) {
+      console.error('recovery email failed for', d.id, e)
+    }
+  }
+  return { eligible: drafts.length, sent }
 }
 
 /** Mark deposit paid -> CONFIRMED and send the confirmation email + invite. */
@@ -304,6 +352,15 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
     },
     include: { package: true },
   })
+
+  // Debit any applied gift card now that the booking is confirmed.
+  if (updated.giftCardCode && updated.giftCardApplied > 0) {
+    try {
+      await debitGiftCard(updated.giftCardCode, updated.giftCardApplied)
+    } catch (e) {
+      console.error('gift debit failed', e)
+    }
+  }
 
   const data = {
     reference: updated.reference,

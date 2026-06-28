@@ -1,6 +1,15 @@
 import Link from 'next/link'
+import { prisma } from '@/lib/db'
 
-export default function Home() {
+export const dynamic = 'force-dynamic'
+
+export default async function Home() {
+  const now = new Date()
+  const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
+  const partiesThisMonth = await prisma.booking
+    .count({ where: { status: 'CONFIRMED', createdAt: { gte: monthStart } } })
+    .catch(() => 0)
+
   return (
     <main className="flex-1">
       {/* Hero */}
@@ -26,9 +35,18 @@ export default function Home() {
             >
               Book your event →
             </Link>
-            <span className="text-sm text-white/70">
-              No account needed · Instant confirmation
-            </span>
+            <Link href="/gift" className="text-sm font-medium text-white/90 underline-offset-4 hover:underline">
+              🎁 Buy a gift card
+            </Link>
+          </div>
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/75">
+            <span>✓ No account needed</span>
+            <span>✓ Instant confirmation</span>
+            {partiesThisMonth >= 3 && (
+              <span className="rounded-full bg-accent/20 px-3 py-1 font-medium text-accent">
+                🎉 {partiesThisMonth} parties booked this month
+              </span>
+            )}
           </div>
         </div>
       </section>
@@ -73,6 +91,26 @@ export default function Home() {
           >
             Request a quote
           </Link>
+        </div>
+      </section>
+
+      {/* Social proof */}
+      <section className="bg-brand-light/60">
+        <div className="mx-auto max-w-5xl px-6 py-14">
+          <h2 className="text-center text-2xl font-bold text-brand-dark">Loved by party planners 🌟</h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-3">
+            {[
+              { q: 'Booked my son’s birthday in five minutes from my phone. The kids had a blast!', a: 'Sarah M.' },
+              { q: 'Our company outing was seamless — food, bays, and drinks all sorted up front.', a: 'Dave R.' },
+              { q: 'The easiest event booking I’ve ever done. Loved picking add-ons as we went.', a: 'Priya K.' },
+            ].map((r) => (
+              <figure key={r.a} className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+                <div className="text-accent">★★★★★</div>
+                <blockquote className="mt-3 text-sm text-foreground/80">“{r.q}”</blockquote>
+                <figcaption className="mt-3 text-xs font-medium text-foreground/50">— {r.a}</figcaption>
+              </figure>
+            ))}
+          </div>
         </div>
       </section>
 

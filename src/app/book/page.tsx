@@ -120,10 +120,13 @@ export default function BookPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [payment, setPayment] = useState<{
-    mode: 'dev' | 'stripe'
+    mode: 'dev' | 'stripe' | 'covered'
     clientSecret: string | null
     depositAmount: number
   } | null>(null)
+  const [giftCode, setGiftCode] = useState('')
+  const [giftApplied, setGiftApplied] = useState(0)
+  const [giftError, setGiftError] = useState<string | null>(null)
 
   // Load catalog
   useEffect(() => {
@@ -132,6 +135,45 @@ export default function BookPage() {
       .then(setCatalog)
       .catch(() => setError('Could not load packages. Please refresh.'))
   }, [])
+
+  // Resume an abandoned cart from a recovery link (?draft=<id>)
+  useEffect(() => {
+    const draft = new URLSearchParams(window.location.search).get('draft')
+    if (!draft) return
+    fetch(`/api/bookings/${draft}`)
+      .then((r) => r.json())
+      .then(({ booking }) => {
+        if (!booking || booking.status !== 'DRAFT') return
+        setDraftId(booking.id)
+        if (booking.customerEmail) setEmail(booking.customerEmail)
+        if (booking.eventType) setEventType(booking.eventType)
+        if (booking.partySize) setPartySize(booking.partySize)
+        if (booking.packageId) setPackageId(booking.packageId)
+        const ds = booking.date?.slice(0, 10)
+        const hasDate = ds && ds !== '1970-01-01'
+        if (hasDate) setDateStr(ds)
+        if (booking.startMinutes) setStartMinutes(booking.startMinutes)
+        setFnbPackageId(booking.fnbPackageId ?? null)
+        if (booking.addOns?.length) {
+          const m: Record<string, number> = {}
+          for (const a of booking.addOns) m[a.addOnId] = a.quantity
+          setAddOns(m)
+        }
+        if (booking.customerName) setName(booking.customerName)
+        if (booking.customerPhone) setPhone(booking.customerPhone)
+        // Resume at the first incomplete step.
+        setStep(!booking.packageId ? 1 : 2)
+      })
+      .catch(() => {})
+  }, [])
+
+  // When resuming onto the date step with a saved date, (re)load its slots.
+  useEffect(() => {
+    if (step === 2 && dateStr && packageId && slots.length === 0 && !slotsLoading) {
+      loadSlots(dateStr)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step])
 
   const selectedPkg = useMemo(
     () => catalog?.packages.find((p) => p.id === packageId) ?? null,
@@ -256,17 +298,51 @@ export default function BookPage() {
         if (data.code === 'CONFLICT') setStep(2)
         return
       }
-      setPayment({
-        mode: data.payment.mode,
-        clientSecret: data.payment.clientSecret,
-        depositAmount: data.depositAmount,
-      })
+      await refreshPayment()
       setStep(6)
     } catch {
       setError('Checkout failed. Please try again.')
     } finally {
       setBusy(false)
     }
+  }
+
+  // Fetch (gift-aware) deposit payment info for the held booking.
+  async function refreshPayment() {
+    const res = await fetch(`/api/bookings/${draftId}/pay`, { method: 'POST' })
+    const data = await res.json()
+    if (res.ok) {
+      setPayment({
+        mode: data.payment.mode,
+        clientSecret: data.payment.clientSecret,
+        depositAmount: data.payment.amount,
+      })
+    }
+  }
+
+  async function applyGift() {
+    setGiftError(null)
+    if (!giftCode.trim()) return
+    const res = await fetch(`/api/bookings/${draftId}/redeem-gift`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: giftCode }),
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      setGiftError(data.error ?? 'Could not apply gift card.')
+      return
+    }
+    setGiftApplied(data.applied)
+    await refreshPayment()
+  }
+
+  async function confirmCovered() {
+    setBusy(true)
+    const res = await fetch(`/api/bookings/${draftId}/confirm-covered`, { method: 'POST' })
+    setBusy(false)
+    if (res.ok) window.location.href = `/book/confirmation/${draftId}`
+    else setError('Could not confirm. Please try again.')
   }
 
   if (!catalog) {
@@ -629,12 +705,47 @@ export default function BookPage() {
           {/* STEP 6 — Pay */}
           {step === 6 && payment && draftId && (
             <Section title="Pay your deposit to lock it in" subtitle={`Just ${quote?.depositPercent ?? 10}% now — the rest is due at your event.`}>
-              <PaymentStep
-                bookingId={draftId}
-                depositAmount={payment.depositAmount}
-                mode={payment.mode}
-                clientSecret={payment.clientSecret}
-              />
+              {/* Gift card redemption */}
+              <div className="mb-4 rounded-xl border border-black/10 bg-white p-4">
+                <Label>Have a gift card?</Label>
+                <div className="flex gap-2">
+                  <input
+                    value={giftCode}
+                    onChange={(e) => setGiftCode(e.target.value.toUpperCase())}
+                    placeholder="GIFT-XXXX-XXXX"
+                    className="flex-1 rounded-lg border border-black/15 px-3 py-2 outline-none focus:border-brand"
+                  />
+                  <button
+                    onClick={applyGift}
+                    className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark"
+                  >
+                    Apply
+                  </button>
+                </div>
+                {giftApplied > 0 && (
+                  <p className="mt-2 text-sm font-medium text-green-700">
+                    ✓ Gift card applied: −{formatCents(giftApplied)} · Due now: {formatCents(payment.depositAmount)}
+                  </p>
+                )}
+                {giftError && <p className="mt-2 text-sm text-red-600">{giftError}</p>}
+              </div>
+
+              {payment.mode === 'covered' ? (
+                <button
+                  onClick={confirmCovered}
+                  disabled={busy}
+                  className="w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-brand-dark shadow transition hover:bg-accent-dark hover:text-white disabled:opacity-60"
+                >
+                  {busy ? 'Confirming…' : '🎉 Confirm booking — your gift card covers the deposit'}
+                </button>
+              ) : (
+                <PaymentStep
+                  bookingId={draftId}
+                  depositAmount={payment.depositAmount}
+                  mode={payment.mode}
+                  clientSecret={payment.clientSecret}
+                />
+              )}
               <p className="mt-4 text-center text-xs text-foreground/50">
                 🔒 Secure payment. Cancellation: {catalog.setting.cancelHoursLarge}h notice for
                 parties over {catalog.setting.cancelLargeThreshold}, {catalog.setting.cancelHoursSmall}h for smaller.

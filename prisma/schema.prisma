@@ -184,6 +184,13 @@ model Booking {
   stripePaymentIntentId String?
   paidAt                DateTime?
 
+  // Gift card redemption (applied to the amount due now)
+  giftCardCode    String?
+  giftCardApplied Int     @default(0)
+
+  // Abandoned-cart recovery
+  recoveryEmailSentAt DateTime?
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -223,6 +230,32 @@ enum LeadStatus {
   PROPOSAL_SENT
   WON
   LOST
+}
+
+// ---------------------------------------------------------------------------
+// Gift cards (cash up front; redeemable toward the deposit at booking)
+// ---------------------------------------------------------------------------
+enum GiftCardStatus {
+  PENDING   // purchased, awaiting payment
+  ACTIVE    // paid, redeemable
+  REDEEMED  // balance exhausted
+  VOID
+}
+
+model GiftCard {
+  id             String         @id @default(cuid())
+  code           String         @unique
+  initialAmount  Int // cents
+  balance        Int // cents
+  status         GiftCardStatus @default(PENDING)
+  purchaserName  String?
+  purchaserEmail String?
+  recipientName  String?
+  recipientEmail String?
+  message        String?
+  stripePaymentIntentId String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
 
 model Lead {

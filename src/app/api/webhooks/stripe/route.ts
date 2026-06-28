@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe } from '@/lib/stripe'
 import { confirmPaid } from '@/lib/booking'
+import { confirmGiftPaid } from '@/lib/giftcards'
 
 // Stripe sends the raw body; we must verify the signature against it.
 export async function POST(req: NextRequest) {
@@ -22,14 +23,16 @@ export async function POST(req: NextRequest) {
 
   if (event.type === 'payment_intent.succeeded') {
     const intent = event.data.object as { id: string; metadata?: Record<string, string> }
-    const bookingId = intent.metadata?.bookingId
-    if (bookingId) {
-      try {
-        await confirmPaid(bookingId, intent.id)
-      } catch (e) {
-        console.error('confirmPaid failed for', bookingId, e)
-        return NextResponse.json({ error: 'Processing failed' }, { status: 500 })
+    const meta = intent.metadata ?? {}
+    try {
+      if (meta.kind === 'gift' && meta.giftCardId) {
+        await confirmGiftPaid(meta.giftCardId, intent.id)
+      } else if (meta.bookingId) {
+        await confirmPaid(meta.bookingId, intent.id)
       }
+    } catch (e) {
+      console.error('webhook processing failed', e)
+      return NextResponse.json({ error: 'Processing failed' }, { status: 500 })
     }
   }
 

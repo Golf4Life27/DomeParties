@@ -159,6 +159,79 @@ Oswego, IL`
   return { subject, html, text }
 }
 
+/** Nudge a customer who started but didn't finish a booking. */
+export function buildRecoveryEmail(data: { name?: string | null; resumeUrl: string }) {
+  const hi = data.name ? `Hi ${data.name},` : 'Hi there,'
+  const subject = `Still thinking it over? Your Dome party is waiting 🎉`
+  const text = `${hi}
+
+You were *this close* to booking your event at Whitetail Ridge Golf Dome!
+Your details are saved — pick up right where you left off:
+
+${data.resumeUrl}
+
+Dates fill up fast, especially weekends. Lock yours in with just a 10% deposit.
+
+See you soon!
+— Whitetail Ridge Golf Dome, Oswego, IL`
+
+  const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  <h1 style="color:#0b6e4f">Your party is waiting 🎉</h1>
+  <p>${hi} you were <em>this close</em> to booking your event at Whitetail Ridge Golf Dome —
+  and your details are saved.</p>
+  <p style="text-align:center;margin:28px 0">
+    <a href="${data.resumeUrl}" style="background:#f4a300;color:#064233;padding:14px 28px;border-radius:999px;text-decoration:none;font-weight:bold">Finish your booking →</a>
+  </p>
+  <p>Dates fill up fast, especially weekends — lock yours in with just a 10% deposit.</p>
+  <p style="color:#666">— Whitetail Ridge Golf Dome, Oswego, IL</p>
+</div>`
+  return { subject, html, text }
+}
+
+/** Deliver a gift card code to its recipient (and a receipt to the purchaser). */
+export function buildGiftCardEmails(data: {
+  code: string
+  amount: number
+  recipientName?: string | null
+  purchaserName?: string | null
+  message?: string | null
+  redeemUrl: string
+}) {
+  const recipient = {
+    subject: `🎁 You've got a Whitetail Ridge Golf Dome gift card!`,
+    text: `${data.recipientName ? `Hi ${data.recipientName},` : 'Hi there,'}
+
+${data.purchaserName ? `${data.purchaserName} sent you` : 'You received'} a ${formatCents(data.amount)} gift card to Whitetail Ridge Golf Dome!
+${data.message ? `\n"${data.message}"\n` : ''}
+Your code: ${data.code}
+
+Redeem it toward any event booking here: ${data.redeemUrl}
+
+See you at the Dome! 🏌️`,
+    html: `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto;text-align:center">
+      <h1 style="color:#0b6e4f">🎁 You've got a gift!</h1>
+      <p>${data.purchaserName ? `<strong>${data.purchaserName}</strong> sent you` : 'You received'} a
+      <strong>${formatCents(data.amount)}</strong> gift card to Whitetail Ridge Golf Dome.</p>
+      ${data.message ? `<p style="font-style:italic">"${data.message}"</p>` : ''}
+      <div style="margin:24px 0;padding:16px;border:2px dashed #0b6e4f;border-radius:12px">
+        <div style="color:#666;font-size:12px">YOUR CODE</div>
+        <div style="font-size:24px;font-weight:bold;letter-spacing:2px">${data.code}</div>
+      </div>
+      <a href="${data.redeemUrl}" style="background:#f4a300;color:#064233;padding:14px 28px;border-radius:999px;text-decoration:none;font-weight:bold">Book your event →</a>
+    </div>`,
+  }
+  const purchaser = {
+    subject: `Your Whitetail Ridge Golf Dome gift card receipt`,
+    text: `Thanks for your purchase! A ${formatCents(data.amount)} gift card (code ${data.code}) has been sent${data.recipientName ? ` to ${data.recipientName}` : ''}. — Whitetail Ridge Golf Dome`,
+    html: `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+      <h2 style="color:#0b6e4f">Thanks for your purchase!</h2>
+      <p>A <strong>${formatCents(data.amount)}</strong> gift card (code <strong>${data.code}</strong>) has been sent${data.recipientName ? ` to ${data.recipientName}` : ''}.</p>
+      <p style="color:#666">— Whitetail Ridge Golf Dome, Oswego, IL</p>
+    </div>`,
+  }
+  return { recipient, purchaser }
+}
+
 /** Email a customer their custom quote + a one-click deposit link. */
 export function buildQuoteEmail(data: {
   name: string
