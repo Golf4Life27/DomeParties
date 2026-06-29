@@ -24,6 +24,7 @@ export default async function ConfirmationPage({
 
   const dateStr = booking.date.toISOString().slice(0, 10)
   const confirmed = booking.status === 'CONFIRMED'
+  const pendingReview = booking.status === 'PENDING' && booking.depositPaid && booking.needsReview
 
   return (
     <main className="flex-1">
@@ -43,6 +44,15 @@ export default async function ConfirmationPage({
             <p className="mt-2 text-foreground/70">
               A confirmation is on its way to {booking.customerEmail}. We can&apos;t wait to
               host you.
+            </p>
+          </div>
+        ) : pendingReview ? (
+          <div className="text-center">
+            <div className="text-5xl">✅</div>
+            <h1 className="mt-4 text-3xl font-extrabold text-brand-dark">Deposit received!</h1>
+            <p className="mt-2 text-foreground/70">
+              Thanks! We&apos;ve got your deposit and are just confirming bay availability. Your
+              final confirmation will arrive at {booking.customerEmail} shortly.
             </p>
           </div>
         ) : (

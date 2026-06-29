@@ -38,8 +38,15 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <h1 className="text-2xl font-bold text-brand-dark">{b.customerName ?? 'Draft booking'}</h1>
           <p className="font-mono text-sm text-foreground/50">{b.reference}</p>
         </div>
-        <BookingActions id={b.id} status={b.status} />
+        <BookingActions id={b.id} status={b.status} needsReview={b.needsReview} depositPaid={b.depositPaid} />
       </div>
+
+      {b.needsReview && b.status === 'PENDING' && b.depositPaid && (
+        <div className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800 ring-1 ring-amber-200">
+          ⚠️ Uses shared bays — deposit captured, awaiting your confirmation. Check Trackman for
+          conflicts, then hit <strong>Confirm</strong> to finalize and email the guest.
+        </div>
+      )}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Card title="Event">

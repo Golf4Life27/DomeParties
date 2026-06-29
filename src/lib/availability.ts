@@ -11,8 +11,9 @@ export interface AvailabilityProvider {
   /** Bookable start slots for a date, given how many bays and how long. */
   getSlots(dateStr: string, baysNeeded: number, durationMinutes: number): Promise<TimeSlot[]>
   /**
-   * Pick concrete bay resource IDs for a window, or null if not enough are free.
-   * Used to place a hold at booking time.
+   * Pick concrete bay resource IDs for a window, preferring Exclusive bays.
+   * Returns the chosen IDs and whether any Shared bay was used (→ staff review),
+   * or null if not enough bays are free.
    */
   assignBays(
     dateStr: string,
@@ -20,7 +21,7 @@ export interface AvailabilityProvider {
     endMinutes: number,
     baysNeeded: number,
     excludeBookingId?: string,
-  ): Promise<string[] | null>
+  ): Promise<{ resourceIds: string[]; usedShared: boolean } | null>
 }
 
 const SLOT_STEP = 30 // minutes between candidate start times
@@ -101,7 +102,7 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
     endMinutes: number,
     baysNeeded: number,
     excludeBookingId?: string,
-  ): Promise<string[] | null> {
+  ): Promise<{ resourceIds: string[]; usedShared: boolean } | null> {
     const { setting, bays, intervals } = await loadDay(dateStr, excludeBookingId)
     const buffer = setting.bufferMinutes
     const busyBayIds = new Set<string>()
@@ -110,9 +111,17 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
         for (const rid of iv.resourceIds) busyBayIds.add(rid)
       }
     }
-    const free = bays.filter((b) => !busyBayIds.has(b.id)).map((b) => b.id)
+    const free = bays.filter((b) => !busyBayIds.has(b.id))
     if (free.length < baysNeeded) return null
-    return free.slice(0, baysNeeded)
+    // Prefer Exclusive bays (instant-confirmable), then Shared (needs review).
+    const ordered = [...free].sort((a, b) =>
+      a.exclusive === b.exclusive ? a.sortOrder - b.sortOrder : a.exclusive ? -1 : 1,
+    )
+    const chosen = ordered.slice(0, baysNeeded)
+    return {
+      resourceIds: chosen.map((b) => b.id),
+      usedShared: chosen.some((b) => !b.exclusive),
+    }
   }
 }
 

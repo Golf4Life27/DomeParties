@@ -3,13 +3,23 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-export default function BookingActions({ id, status }: { id: string; status: string }) {
+export default function BookingActions({
+  id,
+  status,
+  needsReview,
+  depositPaid,
+}: {
+  id: string
+  status: string
+  needsReview?: boolean
+  depositPaid?: boolean
+}) {
   const router = useRouter()
   const [busy, setBusy] = useState(false)
 
   const [sentRecovery, setSentRecovery] = useState(false)
 
-  async function act(action: 'cancel' | 'complete' | 'recover') {
+  async function act(action: 'cancel' | 'complete' | 'recover' | 'approve') {
     if (action === 'cancel' && !confirm('Cancel this booking and free its bays?')) return
     setBusy(true)
     const res = await fetch(`/api/admin/bookings/${id}/${action}`, { method: 'POST' })
@@ -21,12 +31,22 @@ export default function BookingActions({ id, status }: { id: string; status: str
     router.refresh()
   }
 
+  const canApprove = status === 'PENDING' && needsReview && depositPaid
   const canCancel = status === 'CONFIRMED' || status === 'PENDING'
   const canComplete = status === 'CONFIRMED'
   const canRecover = status === 'DRAFT'
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      {canApprove && (
+        <button
+          onClick={() => act('approve')}
+          disabled={busy}
+          className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark disabled:opacity-60"
+        >
+          ✓ Confirm (checked Trackman)
+        </button>
+      )}
       {canRecover && (
         <button
           onClick={() => act('recover')}

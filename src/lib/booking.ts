@@ -11,6 +11,7 @@ import {
   buildIcs,
   buildQuoteEmail,
   buildRecoveryEmail,
+  buildDepositReceivedEmail,
 } from '@/lib/email'
 import type { AddOnSelection } from '@/lib/types'
 import type { EventType } from '@/generated/prisma'
@@ -145,26 +146,27 @@ export async function placeHold(id: string) {
   })
   const endMinutes = startMinutes + quote.durationMinutes
 
-  const bays = await availability.assignBays(
+  const assignment = await availability.assignBays(
     dateStr,
     startMinutes,
     endMinutes,
     quote.baysNeeded,
     booking.id,
   )
-  if (!bays) {
+  if (!assignment) {
     throw new BookingConflictError('That time was just taken — please pick another slot.')
   }
 
   await prisma.$transaction(async (tx) => {
     await tx.bookingResource.deleteMany({ where: { bookingId: id } })
     await tx.bookingResource.createMany({
-      data: bays.map((resourceId) => ({ bookingId: id, resourceId })),
+      data: assignment.resourceIds.map((resourceId) => ({ bookingId: id, resourceId })),
     })
     await tx.booking.update({
       where: { id },
       data: {
         status: 'PENDING',
+        needsReview: assignment.usedShared, // shared bays → staff confirm vs Trackman
         endMinutes,
         baysNeeded: quote.baysNeeded,
         packageTotal: quote.packageTotal + quote.peakAdjustment, // fold peak into package line
@@ -235,16 +237,16 @@ export async function createQuoteBookingFromLead(leadId: string, input: QuoteInp
   })
 
   // Best-effort bay hold (custom events may be coordinated manually if full).
-  const bays = await availability.assignBays(
+  const assignment = await availability.assignBays(
     input.dateStr,
     input.startMinutes,
     endMinutes,
     baysNeeded,
     booking.id,
   )
-  if (bays) {
+  if (assignment) {
     await prisma.bookingResource.createMany({
-      data: bays.map((resourceId) => ({ bookingId: booking.id, resourceId })),
+      data: assignment.resourceIds.map((resourceId) => ({ bookingId: booking.id, resourceId })),
     })
   }
 
@@ -264,7 +266,7 @@ export async function createQuoteBookingFromLead(leadId: string, input: QuoteInp
     await sendEmail({ to: lead.customerEmail, subject: email.subject, html: email.html, text: email.text })
   }
 
-  return { booking, payUrl, baysAssigned: !!bays }
+  return { booking, payUrl, baysAssigned: !!assignment }
 }
 
 /**
@@ -343,26 +345,46 @@ export async function sendRecoveryEmailsToStaleDrafts(minutesOld = 60) {
   return { eligible: drafts.length, sent }
 }
 
-/** Mark deposit paid -> CONFIRMED and send the confirmation email + invite. */
-export async function confirmPaid(id: string, paymentIntentId?: string) {
-  const booking = await prisma.booking.findUniqueOrThrow({
-    where: { id },
-    include: { package: true },
-  })
-  if (booking.status === 'CONFIRMED') return booking // idempotent
+function confirmationData(b: {
+  reference: string
+  customerName: string | null
+  date: Date
+  startMinutes: number
+  endMinutes: number
+  partySize: number
+  package: { name: string } | null
+  total: number
+  depositAmount: number
+  balanceDue: number
+}) {
+  return {
+    reference: b.reference,
+    customerName: b.customerName ?? 'Guest',
+    dateStr: dateStrOf(b.date),
+    startMinutes: b.startMinutes,
+    endMinutes: b.endMinutes,
+    partySize: b.partySize,
+    packageName: b.package?.name ?? 'Event package',
+    total: b.total,
+    depositAmount: b.depositAmount,
+    balanceDue: b.balanceDue,
+  }
+}
 
+/** Move a paid booking to CONFIRMED: debit gift, send confirmation + invite. */
+async function finalizeConfirmed(id: string, paymentIntentId?: string) {
   const updated = await prisma.booking.update({
     where: { id },
     data: {
       status: 'CONFIRMED',
       depositPaid: true,
+      needsReview: false,
       paidAt: new Date(),
       ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}),
     },
     include: { package: true },
   })
 
-  // Debit any applied gift card now that the booking is confirmed.
   if (updated.giftCardCode && updated.giftCardApplied > 0) {
     try {
       await debitGiftCard(updated.giftCardCode, updated.giftCardApplied)
@@ -371,28 +393,58 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
     }
   }
 
-  const data = {
-    reference: updated.reference,
-    customerName: updated.customerName ?? 'Guest',
-    dateStr: dateStrOf(updated.date),
-    startMinutes: updated.startMinutes,
-    endMinutes: updated.endMinutes,
-    partySize: updated.partySize,
-    packageName: updated.package?.name ?? 'Event package',
-    total: updated.total,
-    depositAmount: updated.depositAmount,
-    balanceDue: updated.balanceDue,
-  }
+  const data = confirmationData(updated)
   const email = buildConfirmationEmail(data)
-  const ics = buildIcs(data)
   if (updated.customerEmail) {
     await sendEmail({
       to: updated.customerEmail,
       subject: email.subject,
       html: email.html,
       text: email.text,
-      icsContent: ics,
+      icsContent: buildIcs(data),
     })
   }
   return updated
+}
+
+/**
+ * Deposit succeeded. If the booking uses only Exclusive bays, confirm instantly.
+ * If it touched Shared bays (needsReview), capture the deposit but hold for staff
+ * confirmation against Trackman and send a "deposit received" email.
+ */
+export async function confirmPaid(id: string, paymentIntentId?: string) {
+  const booking = await prisma.booking.findUniqueOrThrow({
+    where: { id },
+    include: { package: true },
+  })
+  if (booking.status === 'CONFIRMED') return booking // idempotent
+
+  if (booking.needsReview) {
+    const updated = await prisma.booking.update({
+      where: { id },
+      data: {
+        depositPaid: true,
+        paidAt: new Date(),
+        ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}),
+      },
+      include: { package: true },
+    })
+    const email = buildDepositReceivedEmail(confirmationData(updated))
+    if (updated.customerEmail) {
+      await sendEmail({ to: updated.customerEmail, subject: email.subject, html: email.html, text: email.text })
+    }
+    return updated // stays PENDING, awaiting staff review
+  }
+
+  return finalizeConfirmed(id, paymentIntentId)
+}
+
+/** Staff action: confirm a deposit-paid booking that was held for review. */
+export async function approveBooking(id: string) {
+  const booking = await prisma.booking.findUniqueOrThrow({ where: { id } })
+  if (booking.status === 'CONFIRMED') return booking
+  if (!booking.depositPaid) {
+    throw new BookingIncompleteError('Deposit not yet paid')
+  }
+  return finalizeConfirmed(id)
 }

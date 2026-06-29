@@ -159,6 +159,28 @@ Oswego, IL`
   return { subject, html, text }
 }
 
+/** Deposit captured, but bays need a quick staff confirmation (shared inventory). */
+export function buildDepositReceivedEmail(data: ConfirmationData) {
+  const subject = `Deposit received — confirming your date (${data.reference})`
+  const text = `Hi ${data.customerName},
+
+We've received your ${formatCents(data.depositAmount)} deposit for ${data.dateStr} — thank you!
+
+We're just double-checking bay availability and will send your final confirmation
+shortly (usually within a couple of hours during business hours).
+
+Reference: ${data.reference}
+— Whitetail Ridge Golf Dome, Oswego, IL`
+  const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  <h1 style="color:#0b6e4f">Deposit received — almost there!</h1>
+  <p>Hi ${data.customerName}, we've received your <strong>${formatCents(data.depositAmount)}</strong>
+  deposit for <strong>${data.dateStr}</strong>. We're confirming bay availability and will send
+  your final confirmation shortly.</p>
+  <p style="color:#666">Reference: <strong>${data.reference}</strong><br/>— Whitetail Ridge Golf Dome</p>
+</div>`
+  return { subject, html, text }
+}
+
 /** Nudge a customer who started but didn't finish a booking. */
 export function buildRecoveryEmail(data: { name?: string | null; resumeUrl: string }) {
   const hi = data.name ? `Hi ${data.name},` : 'Hi there,'

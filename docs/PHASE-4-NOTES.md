@@ -26,11 +26,25 @@ Works on WordPress (the venue's platform), Squarespace, Wix, or any HTML page.
 - `/book?embed=1` renders the wizard with the site header removed (confirmed visually).
 - Admin Embed page renders both snippets with the deployment's origin.
 
+## Conflict-safe inventory (no Trackman integration needed)
+
+Because Trackman Booking & Payments has no public booking API, the engine can't sync in
+real time — so it controls **which physical bays it's allowed to confirm**:
+
+- Each bay is **Exclusive** (engine-owned) or **Shared** (also bookable in Trackman),
+  toggled in **admin → Bays**. Default: all Shared (zero conflict out of the box).
+- `assignBays` prefers Exclusive bays and reports if any Shared bay was used.
+- On deposit: **Exclusive-only → instant CONFIRMED**; **any Shared bay → deposit captured,
+  booking held `needsReview`** with a "deposit received" email. Staff check Trackman and hit
+  **Confirm** (admin → Bookings → Needs review) to finalize + send the confirmation.
+- To enable instant self-serve, dedicate a block of bays as Exclusive (pull them from
+  Trackman open-play). Verified both paths end-to-end.
+
 ## Remaining Phase 4
 
-- **Availability sync** — adapter behind the existing `AvailabilityProvider` interface for
-  Trackman (no public booking API confirmed — likely a Google Calendar mirror or manual
-  staff holds) so events respect open-play bay inventory. Pluggable seam is already in place.
+- **Optional availability sync** — a Google Calendar adapter behind `AvailabilityProvider`
+  as a softer advisory layer if Trackman can export. Not required now that Exclusive/Shared
+  prevents conflicts.
 - **Go-live** — deploy to Vercel + Supabase, wire the Dome's Stripe live keys + Resend, load
   real packages/pricing/brand via admin, and drop the embed snippet on the live site.
 - **Hardening** — set `frame-ancestors` CSP to the venue's domain(s) for the embed.

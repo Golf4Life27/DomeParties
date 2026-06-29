@@ -7,7 +7,7 @@ import type { BookingStatus } from '@/generated/prisma'
 
 export const dynamic = 'force-dynamic'
 
-const FILTERS = ['ALL', 'CONFIRMED', 'PENDING', 'DRAFT', 'CANCELLED'] as const
+const FILTERS = ['ALL', 'NEEDS_REVIEW', 'CONFIRMED', 'PENDING', 'DRAFT', 'CANCELLED'] as const
 
 export default async function BookingsList({
   searchParams,
@@ -16,7 +16,12 @@ export default async function BookingsList({
 }) {
   const { status } = await searchParams
   const active = (status?.toUpperCase() ?? 'ALL') as (typeof FILTERS)[number]
-  const where = active === 'ALL' ? {} : { status: active as BookingStatus }
+  const where =
+    active === 'ALL'
+      ? {}
+      : active === 'NEEDS_REVIEW'
+        ? { status: 'PENDING' as BookingStatus, depositPaid: true, needsReview: true }
+        : { status: active as BookingStatus }
 
   const bookings = await prisma.booking.findMany({
     where,
@@ -38,7 +43,7 @@ export default async function BookingsList({
               active === f ? 'bg-brand text-white ring-brand' : 'bg-white ring-black/10 hover:ring-brand'
             }`}
           >
-            {f === 'ALL' ? 'All' : f.charAt(0) + f.slice(1).toLowerCase()}
+            {f === 'ALL' ? 'All' : f === 'NEEDS_REVIEW' ? 'Needs review' : f.charAt(0) + f.slice(1).toLowerCase()}
           </Link>
         ))}
       </div>

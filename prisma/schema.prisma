@@ -53,6 +53,9 @@ model Resource {
   floor     String?      // "Upstairs" | "Downstairs" | null
   capacity  Int          @default(6)
   active    Boolean      @default(true)
+  // Exclusive = owned only by this engine (safe to instant-confirm). Shared =
+  // also bookable in Trackman, so bookings need staff review to avoid conflicts.
+  exclusive Boolean      @default(false)
   sortOrder Int          @default(0)
 
   bookings  BookingResource[]
@@ -214,6 +217,10 @@ model Booking {
 
   // Abandoned-cart recovery
   recoveryEmailSentAt DateTime?
+
+  // Conflict safety: true when the booking uses Shared bays and needs staff
+  // confirmation against Trackman before it's final.
+  needsReview Boolean @default(false)
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
