@@ -77,7 +77,11 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
 
   // --- Package ---
   const isBayRate = pkg.pricingType === 'BAY_RATE'
-  const bays = isBayRate ? pkg.bays : baysFor(partySize, setting.bayCapacity)
+  const bays = isBayRate
+    ? pkg.dynamicBays
+      ? Math.max(pkg.bays, baysFor(partySize, setting.bayCapacity))
+      : pkg.bays
+    : baysFor(partySize, setting.bayCapacity)
   let estimated = false
   let packageTotal: number
   let packageDetail: string

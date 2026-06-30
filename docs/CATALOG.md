@@ -100,8 +100,15 @@ here so the numbers aren't lost.
 | Saturday (all day) | $110 | $165 | $220 |
 | Sunday (12pm–close) | $110 | $165 | $220 |
 
-*Future option:* add a per-bay-per-hour package type so large groups can self-serve
-too. The catalog/pricing seams support adding new pricing models without rework.
+### Group self-serve (live)
+
+Large groups can now book online too: three **GROUP** packages (`Large Group — 2/3/4 Hours`)
+use the `group` rate set with **dynamic bays** — bays scale with the party (`ceil(guests/6)`,
+4-bay minimum), priced automatically by day/time/duration. The wizard routes "Group hangout"
+here; corporate/league/other still go to inquiry → quote. Verified: Sat PM 3hr/24 guests =
+$660 (4×$165); Mon AM 3hr/30 = ~$500 (5 bays); 12 guests still bills the 4-bay minimum.
+Conflict-safety applies (shared bays → staff review), same as birthdays. Deactivate these
+packages in admin if you'd rather keep groups on the inquiry flow.
 
 ## Other menu notes (from the cards, for future use)
 

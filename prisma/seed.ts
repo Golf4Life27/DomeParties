@@ -135,6 +135,34 @@ async function main() {
         popular: true,
         sortOrder: 2,
       },
+      // Large-group self-serve: duration presets; bays scale with the group
+      // (min 4), priced from the "group" rate set.
+      ...[
+        { hrs: 2, mins: 120 },
+        { hrs: 3, mins: 180 },
+        { hrs: 4, mins: 240 },
+      ].map((d, i) => ({
+        name: `Large Group — ${d.hrs} Hours`,
+        tier: `${d.hrs} hr`,
+        eventType: 'GROUP' as const,
+        description: `Reserve your bays for ${d.hrs} hours. Bays scale with your group (4-bay minimum); price adjusts for day & time automatically.`,
+        includes: [
+          'Private bays (4-bay minimum)',
+          'Complimentary clubs & unlimited balls',
+          'Trackman range tech + virtual courses & games',
+          'Dedicated party host & personal server',
+          'Food & beverage service available',
+        ],
+        durationMinutes: d.mins,
+        bays: 4,
+        dynamicBays: true,
+        rateTag: 'group',
+        pricingType: 'BAY_RATE' as const,
+        minGuests: 13,
+        maxGuests: 180,
+        popular: i === 1,
+        sortOrder: 10 + i,
+      })),
     ],
   })
 

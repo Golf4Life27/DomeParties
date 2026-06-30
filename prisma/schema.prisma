@@ -104,7 +104,8 @@ model Package {
   description     String
   includes        String[]    // bullet list of inclusions
   durationMinutes Int         @default(120)
-  bays            Int         @default(2) // bays this package reserves (BAY_RATE)
+  bays            Int         @default(2) // bays reserved (BAY_RATE); a minimum when dynamicBays
+  dynamicBays     Boolean     @default(false) // scale bays with party size (ceil(guests/cap), min `bays`)
   rateTag         String      @default("birthday") // which BayRate set to price from
   pricingType     PricingType @default(PER_PERSON)
   pricePerPerson  Int         @default(0) // cents

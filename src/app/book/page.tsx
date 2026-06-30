@@ -11,6 +11,7 @@ type Pkg = {
   id: string
   name: string
   tier: string
+  eventType: string
   description: string
   includes: string[]
   durationMinutes: number
@@ -251,6 +252,12 @@ export default function BookPage() {
   // ---- Step actions -------------------------------------------------------
   async function startBooking() {
     setError(null)
+    // Custom/large event types go to the quote flow, not instant book.
+    const et = EVENT_TYPES.find((e) => e.key === eventType)
+    if (et && !et.instant) {
+      window.location.href = '/inquire'
+      return
+    }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       setError('Please enter a valid email so we can send your confirmation.')
       return
@@ -472,7 +479,9 @@ export default function BookPage() {
           {step === 1 && (
             <Section title="Pick your party package" subtitle="Most groups choose the Most Popular tier.">
               <div className="grid gap-4 sm:grid-cols-3">
-                {catalog.packages.map((p) => (
+                {catalog.packages
+                  .filter((p) => p.eventType === eventType)
+                  .map((p) => (
                   <button
                     key={p.id}
                     onClick={() => choosePackage(p)}

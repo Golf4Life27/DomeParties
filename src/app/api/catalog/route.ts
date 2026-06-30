@@ -9,7 +9,7 @@ export async function GET() {
   const [setting, packages, fnb, addOns] = await Promise.all([
     prisma.setting.findUniqueOrThrow({ where: { id: 1 } }),
     prisma.package.findMany({
-      where: { active: true, eventType: 'BIRTHDAY' },
+      where: { active: true },
       orderBy: { sortOrder: 'asc' },
     }),
     prisma.fnbPackage.findMany({ where: { active: true }, orderBy: { sortOrder: 'asc' } }),
