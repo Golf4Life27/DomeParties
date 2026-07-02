@@ -22,6 +22,8 @@ model Setting {
   bayCapacity         Int      @default(6)   // guests per bay
   bufferMinutes       Int      @default(30)  // cleaning/turnover before & after
   leadTimeDaysOnline  Int      @default(7)   // online bookings must be >= 7 days out
+  holdMinutes         Int      @default(30)  // how long an unpaid checkout hold keeps bays
+  staffNotifyEmail    String?               // where staff notifications go (blank = off)
   // Money (percent values are basis-point-free integers, e.g. 10 = 10%)
   depositPercent      Int      @default(10)
   serviceChargePct    Int      @default(20)  // auto service charge on F&B + staffed portion
@@ -222,6 +224,10 @@ model Booking {
   // Conflict safety: true when the booking uses Shared bays and needs staff
   // confirmation against Trackman before it's final.
   needsReview Boolean @default(false)
+
+  // Unpaid checkout holds release bays after this time (null = staff-managed,
+  // e.g. quote bookings). Cleared on confirmation.
+  holdExpiresAt DateTime?
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

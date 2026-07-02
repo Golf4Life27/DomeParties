@@ -38,8 +38,20 @@ async function loadDay(dateStr: string, excludeBookingId?: string) {
     prisma.booking.findMany({
       where: {
         date: new Date(`${dateStr}T00:00:00.000Z`),
-        status: { in: ['PENDING', 'CONFIRMED'] },
         ...(excludeBookingId ? { id: { not: excludeBookingId } } : {}),
+        OR: [
+          { status: 'CONFIRMED' },
+          // PENDING blocks bays only while its hold is alive: deposit paid,
+          // staff-managed (no expiry, e.g. quotes), or not yet expired.
+          {
+            status: 'PENDING',
+            OR: [
+              { depositPaid: true },
+              { holdExpiresAt: null },
+              { holdExpiresAt: { gt: new Date() } },
+            ],
+          },
+        ],
       },
       include: { resources: true },
     }),

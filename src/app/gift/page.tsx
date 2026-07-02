@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
@@ -25,6 +25,16 @@ export default function GiftPage() {
   const [giftId, setGiftId] = useState<string | null>(null)
   const [payment, setPayment] = useState<Payment | null>(null)
   const [code, setCode] = useState<string | null>(null)
+  const [stripeReturn, setStripeReturn] = useState(false)
+
+  // Returning from a live Stripe payment (?paid=1): the webhook activates the
+  // card and emails both parties — show success instead of an empty form.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('paid') === '1') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setStripeReturn(true)
+    }
+  }, [])
 
   const effectiveAmount = customAmount ? Math.round(parseFloat(customAmount) * 100) : amount
 
@@ -46,6 +56,24 @@ export default function GiftPage() {
     if (!res.ok) return setError(data.error ?? 'Something went wrong.')
     setGiftId(data.giftId)
     setPayment(data.payment)
+  }
+
+  if (stripeReturn) {
+    return (
+      <Shell>
+        <div className="rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-black/5">
+          <div className="text-5xl">🎁</div>
+          <h1 className="mt-4 text-2xl font-bold text-brand-dark">Payment received!</h1>
+          <p className="mt-2 text-foreground/70">
+            The gift card is on its way to the recipient&apos;s inbox, and your receipt (with
+            the code) is headed to yours.
+          </p>
+          <div className="mt-6">
+            <Link href="/" className="text-sm font-medium text-brand hover:underline">← Back to home</Link>
+          </div>
+        </div>
+      </Shell>
+    )
   }
 
   if (code) {

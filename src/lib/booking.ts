@@ -3,7 +3,8 @@ import { computeQuote, addOnLineTotal, baysFor } from '@/lib/pricing'
 import { availability } from '@/lib/availability'
 import { generateReference } from '@/lib/ref'
 import { getStripe } from '@/lib/stripe'
-import { applyPercent } from '@/lib/money'
+import { applyPercent, formatCents } from '@/lib/money'
+import { minutesToLabel } from '@/lib/time'
 import { debitGiftCard } from '@/lib/giftcards'
 import {
   sendEmail,
@@ -12,12 +13,31 @@ import {
   buildQuoteEmail,
   buildRecoveryEmail,
   buildDepositReceivedEmail,
+  buildStaffNotification,
 } from '@/lib/email'
 import type { AddOnSelection } from '@/lib/types'
 import type { EventType } from '@/generated/prisma'
 
 function dateOnly(dateStr: string): Date {
   return new Date(`${dateStr}T00:00:00.000Z`)
+}
+
+/** Best-effort staff notification (no-op when staffNotifyEmail is unset). */
+export async function notifyStaff(input: {
+  title: string
+  lines: string[]
+  adminPath: string
+  urgent?: boolean
+}) {
+  try {
+    const setting = await prisma.setting.findUnique({ where: { id: 1 } })
+    const to = setting?.staffNotifyEmail
+    if (!to) return
+    const email = buildStaffNotification(input)
+    await sendEmail({ to, subject: email.subject, html: email.html, text: email.text })
+  } catch (e) {
+    console.error('staff notification failed', e)
+  }
 }
 function dateStrOf(d: Date): string {
   return d.toISOString().slice(0, 10)
@@ -121,7 +141,7 @@ export class BookingIncompleteError extends Error {}
 export async function placeHold(id: string) {
   const booking = await prisma.booking.findUniqueOrThrow({
     where: { id },
-    include: { addOns: true },
+    include: { addOns: { include: { addOn: true } } },
   })
   if (!booking.packageId || !booking.partySize || booking.startMinutes === undefined) {
     throw new BookingIncompleteError('Missing package, party size, or time')
@@ -144,7 +164,19 @@ export async function placeHold(id: string) {
     dateStr,
     startMinutes,
   })
-  const endMinutes = startMinutes + quote.durationMinutes
+
+  // "+30 min" style add-ons extend the actual reserved window, not just the bill.
+  const extraMinutes = booking.addOns
+    .filter((a) => a.addOn.unit === 'PER_30_MIN')
+    .reduce((sum, a) => sum + a.quantity * 30, 0)
+  const endMinutes = startMinutes + quote.durationMinutes + extraMinutes
+
+  const setting = await prisma.setting.findUniqueOrThrow({ where: { id: 1 } })
+  if (endMinutes > setting.closeHour * 60) {
+    throw new BookingConflictError(
+      'With the extra time added, this booking would run past closing — pick an earlier start time or trim the extra time.',
+    )
+  }
 
   const assignment = await availability.assignBays(
     dateStr,
@@ -157,6 +189,8 @@ export async function placeHold(id: string) {
     throw new BookingConflictError('That time was just taken — please pick another slot.')
   }
 
+  const holdExpiresAt = new Date(Date.now() + setting.holdMinutes * 60_000)
+
   await prisma.$transaction(async (tx) => {
     await tx.bookingResource.deleteMany({ where: { bookingId: id } })
     await tx.bookingResource.createMany({
@@ -167,6 +201,7 @@ export async function placeHold(id: string) {
       data: {
         status: 'PENDING',
         needsReview: assignment.usedShared, // shared bays → staff confirm vs Trackman
+        holdExpiresAt,
         endMinutes,
         baysNeeded: quote.baysNeeded,
         packageTotal: quote.packageTotal + quote.peakAdjustment, // fold peak into package line
@@ -306,6 +341,33 @@ export async function createDepositIntent(id: string) {
   return { mode: 'stripe' as const, clientSecret: intent.client_secret, amount: charge, cardFee }
 }
 
+/**
+ * Housekeeping: revert expired, unpaid checkout holds to DRAFT and free their
+ * bays. (Availability already ignores them in real time; this keeps the admin
+ * clean and makes the drafts recovery-email eligible.) Quote bookings have no
+ * expiry and are untouched.
+ */
+export async function releaseExpiredHolds() {
+  const expired = await prisma.booking.findMany({
+    where: {
+      status: 'PENDING',
+      depositPaid: false,
+      holdExpiresAt: { not: null, lt: new Date() },
+    },
+    select: { id: true },
+  })
+  for (const { id } of expired) {
+    await prisma.$transaction([
+      prisma.bookingResource.deleteMany({ where: { bookingId: id } }),
+      prisma.booking.update({
+        where: { id },
+        data: { status: 'DRAFT', needsReview: false, holdExpiresAt: null },
+      }),
+    ])
+  }
+  return { released: expired.length }
+}
+
 /** Send one abandoned-cart recovery email and stamp the booking. */
 export async function sendRecoveryEmail(id: string) {
   const booking = await prisma.booking.findUniqueOrThrow({ where: { id } })
@@ -379,6 +441,7 @@ async function finalizeConfirmed(id: string, paymentIntentId?: string) {
       status: 'CONFIRMED',
       depositPaid: true,
       needsReview: false,
+      holdExpiresAt: null,
       paidAt: new Date(),
       ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}),
     },
@@ -404,6 +467,16 @@ async function finalizeConfirmed(id: string, paymentIntentId?: string) {
       icsContent: buildIcs(data),
     })
   }
+
+  await notifyStaff({
+    title: `New booking confirmed — ${updated.reference}`,
+    lines: [
+      `${updated.customerName ?? 'Guest'} · ${updated.partySize} guests · ${data.packageName}`,
+      `${data.dateStr}, ${minutesToLabel(updated.startMinutes)}–${minutesToLabel(updated.endMinutes)}`,
+      `Total ${formatCents(updated.total)} · deposit paid ${formatCents(updated.depositAmount)}`,
+    ],
+    adminPath: `/admin/bookings/${updated.id}`,
+  })
   return updated
 }
 
@@ -419,7 +492,35 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
   })
   if (booking.status === 'CONFIRMED') return booking // idempotent
 
-  if (booking.needsReview) {
+  // If the payment landed after the hold expired, the bays may have been given
+  // away — re-assign before confirming. If that fails, keep the deposit and
+  // route to staff review rather than double-booking.
+  let needsReview = booking.needsReview
+  if (booking.holdExpiresAt && booking.holdExpiresAt < new Date()) {
+    const assignment = await availability.assignBays(
+      dateStrOf(booking.date),
+      booking.startMinutes,
+      booking.endMinutes,
+      booking.baysNeeded,
+      booking.id,
+    )
+    if (assignment) {
+      await prisma.$transaction([
+        prisma.bookingResource.deleteMany({ where: { bookingId: id } }),
+        prisma.bookingResource.createMany({
+          data: assignment.resourceIds.map((resourceId) => ({ bookingId: id, resourceId })),
+        }),
+      ])
+      needsReview = assignment.usedShared
+    } else {
+      needsReview = true // bays gone — staff will re-slot with the guest
+    }
+    if (needsReview !== booking.needsReview) {
+      await prisma.booking.update({ where: { id }, data: { needsReview } })
+    }
+  }
+
+  if (needsReview) {
     const updated = await prisma.booking.update({
       where: { id },
       data: {
@@ -433,6 +534,16 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
     if (updated.customerEmail) {
       await sendEmail({ to: updated.customerEmail, subject: email.subject, html: email.html, text: email.text })
     }
+    await notifyStaff({
+      title: `Booking needs review — ${updated.reference}`,
+      lines: [
+        `${updated.customerName ?? 'Guest'} paid a ${formatCents(updated.depositAmount)} deposit`,
+        `${dateStrOf(updated.date)}, ${minutesToLabel(updated.startMinutes)}–${minutesToLabel(updated.endMinutes)} · ${updated.partySize} guests`,
+        'Uses shared bays — check Trackman for conflicts, then Confirm to finalize.',
+      ],
+      adminPath: `/admin/bookings/${updated.id}`,
+      urgent: true,
+    })
     return updated // stays PENDING, awaiting staff review
   }
 

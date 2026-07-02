@@ -8,6 +8,8 @@ type Setting = {
   bayCapacity: number
   bufferMinutes: number
   leadTimeDaysOnline: number
+  holdMinutes: number
+  staffNotifyEmail: string | null
   depositPercent: number
   serviceChargePct: number
   taxPct: number
@@ -19,12 +21,14 @@ type Setting = {
   cancelLargeThreshold: number
 }
 
-const FIELDS: { key: keyof Setting; label: string; help?: string; step?: number }[] = [
+const FIELDS: { key: keyof Setting; label: string; help?: string; step?: number; kind?: 'text' }[] = [
   { key: 'openHour', label: 'Open hour (0–23)' },
   { key: 'closeHour', label: 'Close hour (1–24)' },
   { key: 'bayCapacity', label: 'Guests per bay' },
   { key: 'bufferMinutes', label: 'Turnover buffer (min)' },
   { key: 'leadTimeDaysOnline', label: 'Online lead time (days)' },
+  { key: 'holdMinutes', label: 'Unpaid hold expires after (min)' },
+  { key: 'staffNotifyEmail', label: 'Staff notification email (blank = off)', kind: 'text' },
   { key: 'depositPercent', label: 'Deposit %' },
   { key: 'serviceChargePct', label: 'Service charge %' },
   { key: 'taxPct', label: 'Sales tax %', step: 0.01 },
@@ -66,15 +70,24 @@ export default function SettingsForm({ setting }: { setting: Setting }) {
         {FIELDS.map((f) => (
           <label key={f.key} className="block">
             <span className="mb-1 block text-sm font-medium text-foreground/80">{f.label}</span>
-            <input
-              type="number"
-              step={f.step ?? 1}
-              value={values[f.key]}
-              onChange={(e) =>
-                setValues((v) => ({ ...v, [f.key]: f.step ? parseFloat(e.target.value) : parseInt(e.target.value || '0', 10) }))
-              }
-              className="w-full rounded-lg border border-black/15 px-3 py-2 outline-none focus:border-brand"
-            />
+            {f.kind === 'text' ? (
+              <input
+                type="text"
+                value={(values[f.key] as string | null) ?? ''}
+                onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+                className="w-full rounded-lg border border-black/15 px-3 py-2 outline-none focus:border-brand"
+              />
+            ) : (
+              <input
+                type="number"
+                step={f.step ?? 1}
+                value={values[f.key] as number}
+                onChange={(e) =>
+                  setValues((v) => ({ ...v, [f.key]: f.step ? parseFloat(e.target.value) : parseInt(e.target.value || '0', 10) }))
+                }
+                className="w-full rounded-lg border border-black/15 px-3 py-2 outline-none focus:border-brand"
+              />
+            )}
           </label>
         ))}
       </div>

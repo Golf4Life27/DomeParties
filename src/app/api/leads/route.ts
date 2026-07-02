@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { sendEmail, buildLeadAutoResponse } from '@/lib/email'
+import { notifyStaff } from '@/lib/booking'
 
 const schema = z.object({
   eventType: z.enum(['BIRTHDAY', 'GROUP', 'CORPORATE', 'LEAGUE', 'BACHELOR', 'OTHER']).default('CORPORATE'),
@@ -50,6 +51,17 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     console.error('lead auto-response failed', e)
   }
+
+  await notifyStaff({
+    title: `New event lead — ${d.customerName}`,
+    lines: [
+      `${d.eventType} · ${d.headcountMin ?? '?'}–${d.headcountMax ?? '?'} guests · ${d.budget ?? 'no budget given'}`,
+      `${d.customerEmail}${d.customerPhone ? ` · ${d.customerPhone}` : ''}`,
+      'Speed-to-lead wins events — reply fast and send a quote from the lead page.',
+    ],
+    adminPath: `/admin/leads/${lead.id}`,
+    urgent: true,
+  })
 
   return NextResponse.json({ ok: true, id: lead.id }, { status: 201 })
 }

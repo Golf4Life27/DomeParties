@@ -8,6 +8,13 @@ const schema = z.object({
   bayCapacity: z.number().int().min(1).max(50),
   bufferMinutes: z.number().int().min(0).max(240),
   leadTimeDaysOnline: z.number().int().min(0).max(365),
+  holdMinutes: z.number().int().min(5).max(1440),
+  staffNotifyEmail: z
+    .string()
+    .email()
+    .or(z.literal(''))
+    .transform((v) => (v === '' ? null : v))
+    .nullable(),
   depositPercent: z.number().int().min(0).max(100),
   serviceChargePct: z.number().int().min(0).max(100),
   taxPct: z.number().min(0).max(30),

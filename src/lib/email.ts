@@ -159,6 +159,29 @@ Oswego, IL`
   return { subject, html, text }
 }
 
+/** Internal staff notification with a link into the admin. */
+export function buildStaffNotification(data: {
+  title: string
+  lines: string[]
+  adminPath: string
+  urgent?: boolean
+}) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const url = `${appUrl}${data.adminPath}`
+  const subject = `${data.urgent ? '🔴 ACTION NEEDED: ' : ''}${data.title}`
+  const text = `${data.title}
+
+${data.lines.join('\n')}
+
+Open in admin: ${url}`
+  const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  <h2 style="color:${data.urgent ? '#b91c1c' : '#0b6e4f'}">${subject}</h2>
+  <ul>${data.lines.map((l) => `<li>${l}</li>`).join('')}</ul>
+  <p><a href="${url}" style="background:#0b6e4f;color:#fff;padding:10px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open in admin →</a></p>
+</div>`
+  return { subject, html, text }
+}
+
 /** Deposit captured, but bays need a quick staff confirmation (shared inventory). */
 export function buildDepositReceivedEmail(data: ConfirmationData) {
   const subject = `Deposit received — confirming your date (${data.reference})`
