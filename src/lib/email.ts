@@ -91,8 +91,15 @@ export function buildIcs(data: ConfirmationData): string {
   ].join('\r\n')
 }
 
-export function buildConfirmationEmail(data: ConfirmationData) {
+export function buildConfirmationEmail(data: ConfirmationData & { manageUrl?: string; inviteUrl?: string }) {
   const timeRange = `${minutesToLabel(data.startMinutes)} – ${minutesToLabel(data.endMinutes)}`
+  const extras = data.manageUrl
+    ? `
+
+Make it even better:
+• Add food, drinks & extras: ${data.manageUrl}
+• Invite your guests with one link: ${data.inviteUrl}`
+    : ''
   const text = `You're booked! 🎉
 
 Reference: ${data.reference}
@@ -104,7 +111,7 @@ Package: ${data.packageName}
 
 Total: ${formatCents(data.total)}
 Deposit paid: ${formatCents(data.depositAmount)}
-Balance due: ${formatCents(data.balanceDue)}
+Balance due: ${formatCents(data.balanceDue)}${extras}
 
 We can't wait to host you at Whitetail Ridge Golf Dome in Oswego, IL!
 Questions? Just reply to this email.`
@@ -125,6 +132,17 @@ Questions? Just reply to this email.`
     <tr><td style="padding:6px 0;color:#0f5132">Deposit paid</td><td style="text-align:right;color:#0f5132"><strong>${formatCents(data.depositAmount)}</strong></td></tr>
     <tr><td style="padding:6px 0">Balance due (at event)</td><td style="text-align:right">${formatCents(data.balanceDue)}</td></tr>
   </table>
+  ${
+    data.manageUrl
+      ? `<div style="margin-top:20px;padding:16px;background:#e6f4ee;border-radius:12px">
+    <strong style="color:#064233">Make it even better 🎈</strong>
+    <ul style="margin:8px 0 0">
+      <li><a href="${data.manageUrl}">Add food, drinks &amp; extras →</a></li>
+      <li><a href="${data.inviteUrl}">Invite your guests with one link →</a></li>
+    </ul>
+  </div>`
+      : ''
+  }
   <p style="margin-top:24px">We can't wait to host you! 🏌️ Questions? Just reply to this email.</p>
 </div>`
 
@@ -155,6 +173,74 @@ Oswego, IL`
   typically respond within one business day.</p>
   <p>Questions in the meantime? Just reply to this email.</p>
   <p style="color:#666">— The Whitetail Ridge Golf Dome events team · Oswego, IL</p>
+</div>`
+  return { subject, html, text }
+}
+
+/** Pre-event reminder: T-7 sells extras + balance; T-1 is logistics. */
+export function buildReminderEmail(
+  data: ConfirmationData & { manageUrl: string; balanceUrl: string; inviteUrl: string },
+  kind: 'week' | 'day',
+) {
+  const timeRange = `${minutesToLabel(data.startMinutes)} – ${minutesToLabel(data.endMinutes)}`
+  if (kind === 'week') {
+    const subject = `One week to party! 🎉 (${data.reference})`
+    const text = `Hi ${data.customerName},
+
+Your event at Whitetail Ridge Golf Dome is one week out — ${data.dateStr}, ${timeRange}.
+
+Make it even better before you arrive:
+• Add food, drinks & extras: ${data.manageUrl}
+• Invite your guests with one link: ${data.inviteUrl}
+${data.balanceDue > 0 ? `• Skip the line — pay your ${formatCents(data.balanceDue)} balance ahead: ${data.balanceUrl}\n` : ''}
+See you soon! 🏌️
+— Whitetail Ridge Golf Dome, Oswego, IL`
+    const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  <h1 style="color:#0b6e4f">One week to party! 🎉</h1>
+  <p>Hi ${data.customerName}, your event is <strong>${data.dateStr}, ${timeRange}</strong>.</p>
+  <p>Make it even better before you arrive:</p>
+  <ul>
+    <li><a href="${data.manageUrl}">Add food, drinks &amp; extras →</a></li>
+    <li><a href="${data.inviteUrl}">Invite your guests with one link →</a></li>
+    ${data.balanceDue > 0 ? `<li><a href="${data.balanceUrl}">Skip the line — pay your ${formatCents(data.balanceDue)} balance ahead →</a></li>` : ''}
+  </ul>
+  <p style="color:#666">Reference ${data.reference} · Whitetail Ridge Golf Dome, Oswego, IL</p>
+</div>`
+    return { subject, html, text }
+  }
+  const subject = `Tomorrow's the day! 🏌️ (${data.reference})`
+  const text = `Hi ${data.customerName},
+
+Quick reminder — your event at Whitetail Ridge Golf Dome is tomorrow:
+${data.dateStr}, ${timeRange} · ${data.partySize} guests · ${data.packageName}
+
+${data.balanceDue > 0 ? `Balance due: ${formatCents(data.balanceDue)} — pay ahead and skip the line: ${data.balanceUrl}\n\n` : ''}We can't wait to see you!
+— Whitetail Ridge Golf Dome · 3360 Station Dr, Oswego, IL`
+  const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  <h1 style="color:#0b6e4f">Tomorrow's the day! 🏌️</h1>
+  <p>Hi ${data.customerName}, your event is <strong>tomorrow — ${data.dateStr}, ${timeRange}</strong>
+  (${data.partySize} guests, ${data.packageName}).</p>
+  ${data.balanceDue > 0 ? `<p><a href="${data.balanceUrl}" style="background:#f4a300;color:#064233;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold">Pay your ${formatCents(data.balanceDue)} balance ahead →</a></p>` : ''}
+  <p style="color:#666">3360 Station Dr, Oswego, IL · Reference ${data.reference}</p>
+</div>`
+  return { subject, html, text }
+}
+
+/** Receipt for a paid event balance. */
+export function buildBalanceReceiptEmail(data: ConfirmationData) {
+  const subject = `Balance paid — you're all set! (${data.reference})`
+  const text = `Hi ${data.customerName},
+
+We've received your ${formatCents(data.balanceDue)} balance for ${data.dateStr}. You're fully
+paid — just show up and have a great time! 🎉
+
+Reference: ${data.reference}
+— Whitetail Ridge Golf Dome, Oswego, IL`
+  const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  <h1 style="color:#0b6e4f">You're all set! 🎉</h1>
+  <p>Hi ${data.customerName}, we've received your <strong>${formatCents(data.balanceDue)}</strong>
+  balance for <strong>${data.dateStr}</strong>. Fully paid — just show up and have a great time.</p>
+  <p style="color:#666">Reference ${data.reference} · Whitetail Ridge Golf Dome</p>
 </div>`
   return { subject, html, text }
 }

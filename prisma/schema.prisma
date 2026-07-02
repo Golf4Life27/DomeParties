@@ -209,6 +209,8 @@ model Booking {
   depositAmount Int     @default(0)
   depositPaid   Boolean @default(false)
   balanceDue    Int     @default(0)
+  balancePaid   Boolean @default(false)
+  balancePaidAt DateTime?
 
   // Payment
   stripePaymentIntentId String?
@@ -228,6 +230,10 @@ model Booking {
   // Unpaid checkout holds release bays after this time (null = staff-managed,
   // e.g. quote bookings). Cleared on confirmation.
   holdExpiresAt DateTime?
+
+  // Pre-event reminders (sent once each by the cron)
+  reminder7SentAt DateTime?
+  reminder1SentAt DateTime?
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

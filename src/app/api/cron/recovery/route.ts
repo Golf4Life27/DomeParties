@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendRecoveryEmailsToStaleDrafts, releaseExpiredHolds } from '@/lib/booking'
+import { sendRecoveryEmailsToStaleDrafts, releaseExpiredHolds, sendEventReminders } from '@/lib/booking'
 
 // Abandoned-cart recovery for stale drafts. Protected by CRON_SECRET when set.
 // Accepts POST (manual) and GET (Vercel Cron fires GET with an Authorization
@@ -16,7 +16,8 @@ async function run(req: NextRequest) {
   const minutes = parseInt(req.nextUrl.searchParams.get('minutes') || '60', 10)
   const holds = await releaseExpiredHolds() // free bays from abandoned checkouts first
   const result = await sendRecoveryEmailsToStaleDrafts(minutes)
-  return NextResponse.json({ ok: true, ...result, ...holds })
+  const reminders = await sendEventReminders() // T-7 upsell + T-1 logistics
+  return NextResponse.json({ ok: true, ...result, ...holds, ...reminders })
 }
 
 export async function GET(req: NextRequest) {

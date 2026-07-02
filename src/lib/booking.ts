@@ -14,6 +14,8 @@ import {
   buildRecoveryEmail,
   buildDepositReceivedEmail,
   buildStaffNotification,
+  buildReminderEmail,
+  buildBalanceReceiptEmail,
 } from '@/lib/email'
 import type { AddOnSelection } from '@/lib/types'
 import type { EventType } from '@/generated/prisma'
@@ -457,7 +459,8 @@ async function finalizeConfirmed(id: string, paymentIntentId?: string) {
   }
 
   const data = confirmationData(updated)
-  const email = buildConfirmationEmail(data)
+  const links = guestLinks(updated.id)
+  const email = buildConfirmationEmail({ ...data, manageUrl: links.manageUrl, inviteUrl: links.inviteUrl })
   if (updated.customerEmail) {
     await sendEmail({
       to: updated.customerEmail,
@@ -548,6 +551,172 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
   }
 
   return finalizeConfirmed(id, paymentIntentId)
+}
+
+function appUrl(): string {
+  return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+}
+
+export function guestLinks(bookingId: string) {
+  const base = appUrl()
+  return {
+    manageUrl: `${base}/manage/${bookingId}`,
+    inviteUrl: `${base}/invite/${bookingId}`,
+    balanceUrl: `${base}/balance/${bookingId}`,
+  }
+}
+
+/**
+ * Send pre-event reminders (cron): a "week out" upsell reminder and a
+ * "tomorrow" logistics reminder, each once per confirmed booking.
+ */
+export async function sendEventReminders() {
+  const todayMidnight = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00.000Z`)
+  const in1 = new Date(todayMidnight.getTime() + 1 * 86_400_000)
+  const in7 = new Date(todayMidnight.getTime() + 7 * 86_400_000)
+
+  const [weekOut, dayBefore] = await Promise.all([
+    prisma.booking.findMany({
+      where: {
+        status: 'CONFIRMED',
+        customerEmail: { not: null },
+        reminder7SentAt: null,
+        date: { gt: in1, lte: in7 },
+      },
+      include: { package: true },
+      take: 200,
+    }),
+    prisma.booking.findMany({
+      where: {
+        status: 'CONFIRMED',
+        customerEmail: { not: null },
+        reminder1SentAt: null,
+        date: { gte: todayMidnight, lte: in1 },
+      },
+      include: { package: true },
+      take: 200,
+    }),
+  ])
+
+  let sent = 0
+  for (const [list, kind, stamp] of [
+    [weekOut, 'week', 'reminder7SentAt'],
+    [dayBefore, 'day', 'reminder1SentAt'],
+  ] as const) {
+    for (const b of list) {
+      try {
+        const email = buildReminderEmail(
+          { ...confirmationData(b), balanceDue: b.balancePaid ? 0 : b.balanceDue, ...guestLinks(b.id) },
+          kind,
+        )
+        await sendEmail({ to: b.customerEmail!, subject: email.subject, html: email.html, text: email.text })
+        await prisma.booking.update({ where: { id: b.id }, data: { [stamp]: new Date() } })
+        sent++
+      } catch (e) {
+        console.error(`${kind} reminder failed for`, b.id, e)
+      }
+    }
+  }
+  return { reminders: sent }
+}
+
+/** Stripe intent (or dev fallback) for the outstanding event balance. */
+export async function createBalanceIntent(id: string) {
+  const [booking, setting] = await Promise.all([
+    prisma.booking.findUniqueOrThrow({ where: { id } }),
+    prisma.setting.findUniqueOrThrow({ where: { id: 1 } }),
+  ])
+  if (booking.status !== 'CONFIRMED' || booking.balancePaid || booking.balanceDue <= 0) {
+    return null
+  }
+  const cardFee = setting.cardFeePct > 0 ? Math.round((booking.balanceDue * setting.cardFeePct) / 100) : 0
+  const charge = booking.balanceDue + cardFee
+
+  const stripe = getStripe()
+  if (!stripe) return { mode: 'dev' as const, clientSecret: null, amount: charge, cardFee }
+  const intent = await stripe.paymentIntents.create({
+    amount: charge,
+    currency: 'usd',
+    metadata: { bookingId: booking.id, reference: booking.reference, kind: 'balance' },
+    description: `Balance — ${booking.reference} — Whitetail Ridge Golf Dome`,
+  })
+  return { mode: 'stripe' as const, clientSecret: intent.client_secret, amount: charge, cardFee }
+}
+
+/** Mark the event balance paid; receipt to guest, heads-up to staff. */
+export async function confirmBalancePaid(id: string) {
+  const booking = await prisma.booking.findUniqueOrThrow({ where: { id }, include: { package: true } })
+  if (booking.balancePaid) return booking // idempotent
+
+  const receipt = buildBalanceReceiptEmail(confirmationData(booking))
+  const updated = await prisma.booking.update({
+    where: { id },
+    data: { balancePaid: true, balancePaidAt: new Date() },
+  })
+  if (booking.customerEmail) {
+    await sendEmail({ to: booking.customerEmail, subject: receipt.subject, html: receipt.html, text: receipt.text })
+  }
+  await notifyStaff({
+    title: `Balance paid — ${booking.reference}`,
+    lines: [
+      `${booking.customerName ?? 'Guest'} paid the remaining ${formatCents(booking.balanceDue)}`,
+      `Event ${dateStrOf(booking.date)} · fully paid`,
+    ],
+    adminPath: `/admin/bookings/${booking.id}`,
+  })
+  return updated
+}
+
+/**
+ * Post-booking upsell: add a FLAT or PER_PERSON add-on to a CONFIRMED booking.
+ * The line (plus service charge + tax) is added to the balance due at the event.
+ * PER_30_MIN is excluded post-booking (it would change the reserved window).
+ */
+export async function addAddOnToConfirmed(bookingId: string, addOnId: string, quantity = 1) {
+  const [booking, addOn, setting] = await Promise.all([
+    prisma.booking.findUniqueOrThrow({ where: { id: bookingId } }),
+    prisma.addOn.findUniqueOrThrow({ where: { id: addOnId } }),
+    prisma.setting.findUniqueOrThrow({ where: { id: 1 } }),
+  ])
+  if (booking.status !== 'CONFIRMED') throw new BookingIncompleteError('Booking is not confirmed')
+  if (!addOn.active || addOn.unit === 'PER_30_MIN') {
+    throw new BookingIncompleteError('This extra can’t be added online — give us a call!')
+  }
+
+  const qty = Math.max(1, Math.min(50, quantity))
+  const line = addOnLineTotal(addOn.unit, addOn.price, booking.partySize, qty)
+  const sc = addOn.serviceCharge ? applyPercent(line, setting.serviceChargePct) : 0
+  const tax = Math.round((line * setting.taxPct) / 100)
+  const delta = line + sc + tax
+
+  await prisma.$transaction(async (tx) => {
+    const existing = await tx.bookingAddOn.findUnique({
+      where: { bookingId_addOnId: { bookingId, addOnId } },
+    })
+    if (existing) {
+      await tx.bookingAddOn.update({
+        where: { id: existing.id },
+        data: { quantity: existing.quantity + qty, lineTotal: existing.lineTotal + line },
+      })
+    } else {
+      await tx.bookingAddOn.create({
+        data: { bookingId, addOnId, quantity: qty, unitPrice: addOn.price, lineTotal: line },
+      })
+    }
+    await tx.booking.update({
+      where: { id: bookingId },
+      data: {
+        addOnsTotal: { increment: line },
+        serviceCharge: { increment: sc },
+        taxAmount: { increment: tax },
+        total: { increment: delta },
+        balanceDue: { increment: delta },
+        balancePaid: false, // new charges reopen the balance
+      },
+    })
+  })
+
+  return { added: addOn.name, delta }
 }
 
 /** Staff action: confirm a deposit-paid booking that was held for review. */

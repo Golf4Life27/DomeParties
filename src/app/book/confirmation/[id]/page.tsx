@@ -98,13 +98,21 @@ export default async function ConfirmationPage({
           </dl>
         </div>
 
-        <div className="mt-6 rounded-2xl bg-brand-light p-6 text-center">
-          <h2 className="font-bold text-brand-dark">Make it even better 🎈</h2>
-          <p className="mt-1 text-sm text-foreground/70">
-            Want to add food, extend your bay time, or invite more guests? Just reply to your
-            confirmation email and we&apos;ll take care of it.
-          </p>
-        </div>
+        {confirmed && (
+          <div className="mt-6 rounded-2xl bg-brand-light p-6 text-center">
+            <h2 className="font-bold text-brand-dark">Make it even better 🎈</h2>
+            <p className="mt-1 text-sm text-foreground/70">
+              Add food &amp; extras, pay your balance ahead, or grab a shareable invite link
+              for your guests.
+            </p>
+            <Link
+              href={`/manage/${booking.id}`}
+              className="mt-4 inline-block rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-dark"
+            >
+              Manage your event →
+            </Link>
+          </div>
+        )}
 
         <div className="mt-8 text-center">
           <Link href="/" className="text-sm font-medium text-brand hover:underline">

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe } from '@/lib/stripe'
-import { confirmPaid } from '@/lib/booking'
+import { confirmPaid, confirmBalancePaid } from '@/lib/booking'
 import { confirmGiftPaid } from '@/lib/giftcards'
 
 // Stripe sends the raw body; we must verify the signature against it.
@@ -27,6 +27,8 @@ export async function POST(req: NextRequest) {
     try {
       if (meta.kind === 'gift' && meta.giftCardId) {
         await confirmGiftPaid(meta.giftCardId, intent.id)
+      } else if (meta.kind === 'balance' && meta.bookingId) {
+        await confirmBalancePaid(meta.bookingId)
       } else if (meta.bookingId) {
         await confirmPaid(meta.bookingId, intent.id)
       }

@@ -10,23 +10,40 @@ type Props = {
   depositAmount: number
   mode: 'dev' | 'stripe'
   clientSecret: string | null
+  /** What's being paid — used in button copy. Defaults to "deposit". */
+  label?: string
+  /** Dev-mode simulated-success endpoint. Defaults to the deposit confirm. */
+  devConfirmPath?: string
+  /** Where to land after success. Defaults to the booking confirmation page. */
+  returnPath?: string
 }
 
 const pk = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 const stripePromise = pk ? loadStripe(pk) : null
 
-export default function PaymentStep({ bookingId, depositAmount, mode, clientSecret }: Props) {
+export default function PaymentStep({
+  bookingId,
+  depositAmount,
+  mode,
+  clientSecret,
+  label = 'deposit',
+  devConfirmPath,
+  returnPath,
+}: Props) {
+  const confirmPath = devConfirmPath ?? `/api/bookings/${bookingId}/confirm-dev`
+  const successPath = returnPath ?? `/book/confirmation/${bookingId}`
+
   if (mode === 'stripe' && clientSecret && stripePromise) {
     return (
       <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'flat' } }}>
-        <StripeForm bookingId={bookingId} depositAmount={depositAmount} />
+        <StripeForm amount={depositAmount} label={label} successPath={successPath} />
       </Elements>
     )
   }
-  return <DevPay bookingId={bookingId} depositAmount={depositAmount} />
+  return <DevPay amount={depositAmount} label={label} confirmPath={confirmPath} successPath={successPath} />
 }
 
-function StripeForm({ bookingId, depositAmount }: { bookingId: string; depositAmount: number }) {
+function StripeForm({ amount, label, successPath }: { amount: number; label: string; successPath: string }) {
   const stripe = useStripe()
   const elements = useElements()
   const [busy, setBusy] = useState(false)
@@ -39,14 +56,14 @@ function StripeForm({ bookingId, depositAmount }: { bookingId: string; depositAm
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/book/confirmation/${bookingId}`,
+        return_url: `${window.location.origin}${successPath}`,
       },
     })
     if (error) {
       setError(error.message ?? 'Payment failed')
       setBusy(false)
     }
-    // On success Stripe redirects to return_url; the webhook confirms the booking.
+    // On success Stripe redirects to return_url; the webhook finalizes server-side.
   }
 
   return (
@@ -58,34 +75,44 @@ function StripeForm({ bookingId, depositAmount }: { bookingId: string; depositAm
         disabled={busy || !stripe}
         className="mt-5 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-brand-dark shadow transition hover:bg-accent-dark hover:text-white disabled:opacity-60"
       >
-        {busy ? 'Processing…' : `Pay ${formatCents(depositAmount)} deposit`}
+        {busy ? 'Processing…' : `Pay ${formatCents(amount)} ${label}`}
       </button>
     </div>
   )
 }
 
-function DevPay({ bookingId, depositAmount }: { bookingId: string; depositAmount: number }) {
+function DevPay({
+  amount,
+  label,
+  confirmPath,
+  successPath,
+}: {
+  amount: number
+  label: string
+  confirmPath: string
+  successPath: string
+}) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function pay() {
     setBusy(true)
     setError(null)
-    const res = await fetch(`/api/bookings/${bookingId}/confirm-dev`, { method: 'POST' })
+    const res = await fetch(confirmPath, { method: 'POST' })
     if (!res.ok) {
       setError('Could not confirm (dev).')
       setBusy(false)
       return
     }
-    window.location.href = `/book/confirmation/${bookingId}`
+    window.location.href = successPath
   }
 
   return (
     <div>
       <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800 ring-1 ring-amber-200">
-        <strong>Test mode.</strong> Stripe keys aren&apos;t configured yet, so this
-        simulates a successful deposit so the full flow is testable. Add the Dome&apos;s
-        Stripe test keys to enable real card entry.
+        <strong>Test mode.</strong> Stripe keys aren&apos;t configured yet, so this simulates
+        a successful payment so the full flow is testable. Add the Dome&apos;s Stripe test
+        keys to enable real card entry.
       </div>
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
       <button
@@ -93,7 +120,7 @@ function DevPay({ bookingId, depositAmount }: { bookingId: string; depositAmount
         disabled={busy}
         className="mt-5 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-brand-dark shadow transition hover:bg-accent-dark hover:text-white disabled:opacity-60"
       >
-        {busy ? 'Processing…' : `Pay ${formatCents(depositAmount)} deposit (test)`}
+        {busy ? 'Processing…' : `Pay ${formatCents(amount)} ${label} (test)`}
       </button>
     </div>
   )
