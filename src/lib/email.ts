@@ -290,31 +290,73 @@ Reference: ${data.reference}
   return { subject, html, text }
 }
 
-/** Nudge a customer who started but didn't finish a booking. */
-export function buildRecoveryEmail(data: { name?: string | null; resumeUrl: string }) {
+/** Nudge a customer who started but didn't finish a booking (3-touch sequence). */
+export function buildRecoveryEmail(data: {
+  name?: string | null
+  resumeUrl: string
+  stage?: 1 | 2 | 3
+  promo?: { code: string; percentOff: number; amountOff: number } | null
+}) {
+  const stage = data.stage ?? 1
   const hi = data.name ? `Hi ${data.name},` : 'Hi there,'
-  const subject = `Still thinking it over? Your Dome party is waiting 🎉`
+  const promoLine = data.promo
+    ? `Use code ${data.promo.code} for ${
+        data.promo.percentOff > 0 ? `${data.promo.percentOff}% off` : `${formatCents(data.promo.amountOff)} off`
+      } — just enter it at checkout.`
+    : ''
+
+  const subjects: Record<number, string> = {
+    1: 'Still thinking it over? Your Dome party is waiting 🎉',
+    2: 'Your date is still open (for now) ⛳',
+    3: data.promo ? `A little something to seal the deal 🎁` : 'Last call for your party 🎈',
+  }
+  const leads: Record<number, string> = {
+    1: 'You were <em>this close</em> to booking your event at Whitetail Ridge Golf Dome — and your details are saved.',
+    2: 'Your event details are still saved — but weekends fill up fast, and we can only hold the good slots for so long.',
+    3: data.promo
+      ? `We saved your details one last time — and here's a nudge: <strong>${promoLine}</strong>`
+      : 'This is our last reminder — your saved details expire soon.',
+  }
+
+  const subject = subjects[stage]
   const text = `${hi}
 
-You were *this close* to booking your event at Whitetail Ridge Golf Dome!
-Your details are saved — pick up right where you left off:
+${leads[stage].replace(/<[^>]+>/g, '')}
 
+Pick up right where you left off:
 ${data.resumeUrl}
-
-Dates fill up fast, especially weekends. Lock yours in with just a 10% deposit.
-
-See you soon!
+${promoLine && stage === 3 ? `\n${promoLine}\n` : ''}
+Lock your date in with just a 10% deposit.
 — Whitetail Ridge Golf Dome, Oswego, IL`
 
   const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
-  <h1 style="color:#0e1740">Your party is waiting 🎉</h1>
-  <p>${hi} you were <em>this close</em> to booking your event at Whitetail Ridge Golf Dome —
-  and your details are saved.</p>
+  <h1 style="color:#0e1740">${subject.replace(/ [^ ]*$/, '')}</h1>
+  <p>${hi} ${leads[stage]}</p>
   <p style="text-align:center;margin:28px 0">
     <a href="${data.resumeUrl}" style="background:#c8ff2e;color:#0e1740;padding:14px 28px;border-radius:999px;text-decoration:none;font-weight:bold">Finish your booking →</a>
   </p>
-  <p>Dates fill up fast, especially weekends — lock yours in with just a 10% deposit.</p>
+  <p>Lock your date in with just a 10% deposit.</p>
   <p style="color:#666">— Whitetail Ridge Golf Dome, Oswego, IL</p>
+</div>`
+  return { subject, html, text }
+}
+
+/** Gentle 24h follow-up for inquiry leads that haven't been closed yet. */
+export function buildLeadFollowUpEmail(data: { name: string; inquireUrl: string }) {
+  const subject = `Still planning your event? We're ready when you are 🏌️`
+  const text = `Hi ${data.name},
+
+Just checking in on your event inquiry at Whitetail Ridge Golf Dome — we'd love to
+host you. Reply to this email with any questions, or if your plans changed, tell us
+what would make it work (date, budget, group size) and we'll build around it.
+
+— The Whitetail Ridge Golf Dome events team, Oswego, IL`
+  const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  <h1 style="color:#0e1740">Still planning your event?</h1>
+  <p>Hi ${data.name}, just checking in on your inquiry — we'd love to host you.</p>
+  <p>Reply with any questions, or tell us what would make it work (date, budget, group
+  size) and we'll build around it.</p>
+  <p style="color:#666">— The Whitetail Ridge Golf Dome events team · Oswego, IL</p>
 </div>`
   return { subject, html, text }
 }

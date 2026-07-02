@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { formatCents } from '@/lib/money'
 import { minutesToLabel } from '@/lib/time'
+import { track } from '@/lib/track'
 import PaymentStep from './PaymentStep'
 
 // ---- Types (mirror the catalog API) ---------------------------------------
@@ -132,6 +133,9 @@ export default function BookPage() {
   const [giftCode, setGiftCode] = useState('')
   const [giftApplied, setGiftApplied] = useState(0)
   const [giftError, setGiftError] = useState<string | null>(null)
+  const [promoCode, setPromoCode] = useState('')
+  const [promoApplied, setPromoApplied] = useState(0)
+  const [promoError, setPromoError] = useState<string | null>(null)
 
   // Load catalog
   useEffect(() => {
@@ -339,6 +343,7 @@ export default function BookPage() {
         return
       }
       await refreshPayment()
+      track('begin_checkout', { value: (quote?.total ?? 0) / 100, reference: draftId ?? undefined })
       setStep(6)
     } catch {
       setError('Checkout failed. Please try again.')
@@ -358,6 +363,23 @@ export default function BookPage() {
         depositAmount: data.payment.amount,
       })
     }
+  }
+
+  async function applyPromo() {
+    setPromoError(null)
+    if (!promoCode.trim()) return
+    const res = await fetch(`/api/bookings/${draftId}/apply-promo`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: promoCode }),
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      setPromoError(data.error ?? 'Could not apply that code.')
+      return
+    }
+    setPromoApplied(data.discount)
+    await refreshPayment()
   }
 
   async function applyGift() {
@@ -754,6 +776,31 @@ export default function BookPage() {
           {/* STEP 6 — Pay */}
           {step === 6 && payment && draftId && (
             <Section title="Pay your deposit to lock it in" subtitle={`Just ${quote?.depositPercent ?? 10}% now — the rest is due at your event.`}>
+              {/* Promo code */}
+              <div className="mb-4 rounded-xl border border-white/15 bg-surface p-4">
+                <Label>Promo code?</Label>
+                <div className="flex gap-2">
+                  <input
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                    placeholder="e.g. WEEKDAY15"
+                    className="flex-1 rounded-lg border border-white/20 px-3 py-2 outline-none focus:border-brand"
+                  />
+                  <button
+                    onClick={applyPromo}
+                    className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-ink transition hover:bg-accent-dark"
+                  >
+                    Apply
+                  </button>
+                </div>
+                {promoApplied > 0 && (
+                  <p className="mt-2 text-sm font-medium text-lime-300">
+                    ✓ Promo applied: −{formatCents(promoApplied)} off your total
+                  </p>
+                )}
+                {promoError && <p className="mt-2 text-sm text-red-400">{promoError}</p>}
+              </div>
+
               {/* Gift card redemption */}
               <div className="mb-4 rounded-xl border border-white/15 bg-surface p-4">
                 <Label>Have a gift card?</Label>

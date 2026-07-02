@@ -135,6 +135,32 @@ async function main() {
         popular: true,
         sortOrder: 2,
       },
+      // Premium anchor tier — INACTIVE until Alex approves the price. Three
+      // tiers anchor better than two: this makes the 4-bay tier feel mid-range.
+      {
+        name: 'The Ultimate Bash — Up to 20 Guests',
+        tier: 'VIP',
+        eventType: 'BIRTHDAY' as const,
+        description:
+          'The no-decisions, all-in celebration: bays, burger sliders for everyone, unlimited soft drinks, and full décor — just show up and party.',
+        includes: [
+          '2 hours across 4 bays',
+          'Burger sliders meal for every guest',
+          'Unlimited soft drinks',
+          'Celebration décor & reserved setup',
+          'Dedicated party host',
+          'Juice box & chips per guest',
+        ],
+        durationMinutes: 120,
+        bays: 4,
+        pricingType: 'FLAT' as const,
+        flatPrice: 64900, // review before activating (≈ $330 bays + $240 sliders + $80 drinks + $75 décor − bundle discount)
+        minGuests: 11,
+        maxGuests: 20,
+        popular: false,
+        active: false, // flip in admin once the price is approved
+        sortOrder: 3,
+      },
       // Large-group self-serve: duration presets; bays scale with the group
       // (min 4), priced from the "group" rate set.
       ...[

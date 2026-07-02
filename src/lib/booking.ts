@@ -6,6 +6,7 @@ import { getStripe } from '@/lib/stripe'
 import { applyPercent, formatCents } from '@/lib/money'
 import { minutesToLabel } from '@/lib/time'
 import { debitGiftCard } from '@/lib/giftcards'
+import { redeemPromo, featuredRecoveryPromo } from '@/lib/promos'
 import {
   sendEmail,
   buildConfirmationEmail,
@@ -16,6 +17,7 @@ import {
   buildStaffNotification,
   buildReminderEmail,
   buildBalanceReceiptEmail,
+  buildLeadFollowUpEmail,
 } from '@/lib/email'
 import type { AddOnSelection } from '@/lib/types'
 import type { EventType } from '@/generated/prisma'
@@ -370,43 +372,100 @@ export async function releaseExpiredHolds() {
   return { released: expired.length }
 }
 
-/** Send one abandoned-cart recovery email and stamp the booking. */
-export async function sendRecoveryEmail(id: string) {
+/** Send one abandoned-cart recovery email (next stage) and stamp the booking. */
+export async function sendRecoveryEmail(
+  id: string,
+  promo?: { code: string; percentOff: number; amountOff: number } | null,
+) {
   const booking = await prisma.booking.findUniqueOrThrow({ where: { id } })
   if (booking.status !== 'DRAFT' || !booking.customerEmail) return false
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-  const resumeUrl = `${appUrl}/book?draft=${booking.id}`
-  const email = buildRecoveryEmail({ name: booking.customerName, resumeUrl })
+  const stage = Math.min(booking.recoveryStage + 1, 3) as 1 | 2 | 3
+  const resumeUrl = `${appUrl()}/book?draft=${booking.id}`
+  const email = buildRecoveryEmail({
+    name: booking.customerName,
+    resumeUrl,
+    stage,
+    promo: stage >= 2 ? promo : null, // sweeten only the later touches
+  })
   await sendEmail({ to: booking.customerEmail, subject: email.subject, html: email.html, text: email.text })
-  await prisma.booking.update({ where: { id }, data: { recoveryEmailSentAt: new Date() } })
+  await prisma.booking.update({
+    where: { id },
+    data: { recoveryEmailSentAt: new Date(), recoveryStage: stage },
+  })
   return true
 }
 
 /**
- * Send recovery emails to stale DRAFT carts (older than `minutesOld`, with an
- * email, not yet emailed). Returns how many were sent. Wire to a scheduler
- * (e.g. Vercel Cron) hitting /api/cron/recovery.
+ * Staged abandoned-cart recovery (cron): touch 1 after `minutesOld`, touch 2
+ * after 24h, touch 3 after 72h (later touches can feature a promo code).
  */
 export async function sendRecoveryEmailsToStaleDrafts(minutesOld = 60) {
-  const cutoff = new Date(Date.now() - minutesOld * 60_000)
-  const drafts = await prisma.booking.findMany({
-    where: {
-      status: 'DRAFT',
-      customerEmail: { not: null },
-      recoveryEmailSentAt: null,
-      updatedAt: { lt: cutoff },
-    },
-    take: 200,
-  })
+  const now = Date.now()
+  const [first, second, third] = await Promise.all([
+    prisma.booking.findMany({
+      where: {
+        status: 'DRAFT',
+        customerEmail: { not: null },
+        recoveryStage: 0,
+        recoveryEmailSentAt: null,
+        updatedAt: { lt: new Date(now - minutesOld * 60_000) },
+      },
+      select: { id: true },
+      take: 200,
+    }),
+    prisma.booking.findMany({
+      where: {
+        status: 'DRAFT',
+        customerEmail: { not: null },
+        OR: [{ recoveryStage: 1 }, { recoveryStage: 0, recoveryEmailSentAt: { not: null } }],
+        recoveryEmailSentAt: { lt: new Date(now - 24 * 3_600_000) },
+      },
+      select: { id: true },
+      take: 200,
+    }),
+    prisma.booking.findMany({
+      where: {
+        status: 'DRAFT',
+        customerEmail: { not: null },
+        recoveryStage: 2,
+        recoveryEmailSentAt: { lt: new Date(now - 72 * 3_600_000) },
+      },
+      select: { id: true },
+      take: 200,
+    }),
+  ])
+
+  const promo = await featuredRecoveryPromo()
   let sent = 0
-  for (const d of drafts) {
+  for (const { id } of [...first, ...second, ...third]) {
     try {
-      if (await sendRecoveryEmail(d.id)) sent++
+      if (await sendRecoveryEmail(id, promo)) sent++
     } catch (e) {
-      console.error('recovery email failed for', d.id, e)
+      console.error('recovery email failed for', id, e)
     }
   }
-  return { eligible: drafts.length, sent }
+  return { eligible: first.length + second.length + third.length, sent }
+}
+
+/** 24h follow-up for NEW leads no one has closed yet (speed-to-lead insurance). */
+export async function sendLeadFollowUps() {
+  const cutoff = new Date(Date.now() - 24 * 3_600_000)
+  const leads = await prisma.lead.findMany({
+    where: { status: 'NEW', followUpSentAt: null, createdAt: { lt: cutoff } },
+    take: 100,
+  })
+  let sent = 0
+  for (const lead of leads) {
+    try {
+      const email = buildLeadFollowUpEmail({ name: lead.customerName, inquireUrl: `${appUrl()}/inquire` })
+      await sendEmail({ to: lead.customerEmail, subject: email.subject, html: email.html, text: email.text })
+      await prisma.lead.update({ where: { id: lead.id }, data: { followUpSentAt: new Date() } })
+      sent++
+    } catch (e) {
+      console.error('lead follow-up failed for', lead.id, e)
+    }
+  }
+  return { leadFollowUps: sent }
 }
 
 function confirmationData(b: {
@@ -457,6 +516,7 @@ async function finalizeConfirmed(id: string, paymentIntentId?: string) {
       console.error('gift debit failed', e)
     }
   }
+  if (updated.promoCode) await redeemPromo(updated.promoCode)
 
   const data = confirmationData(updated)
   const links = guestLinks(updated.id)

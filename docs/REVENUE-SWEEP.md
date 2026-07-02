@@ -29,12 +29,18 @@ found and **fixed + verified**; the remaining items are prioritized product gaps
    most of each event's revenue currently has no online collection path.
 3. Post-booking upsell + "invite your guests" page — confirmation dead-ends today.
 
-**Tier 2 — conversion & marketing plumbing:**
-4. Promo codes (fill Mon–Thu troughs; gift cards ≠ discounts).
-5. Lead nurture follow-up (24–48h) + staff response SLA tracking.
-6. Recovery sequence: 2nd/3rd touch (benchmark: Xola's 3), optional incentive.
-7. Third birthday tier ("Ultimate") for price anchoring — 2 tiers anchor weakly.
-8. GA4/Meta conversion pixels for paid traffic.
+**Tier 2 — conversion & marketing plumbing: ✅ SHIPPED**
+4. ✅ Promo codes — percent/fixed, min total, **event-day-of-week restriction** (e.g.
+   WEEKDAY15 valid Mon–Thu only), date window, max redemptions, redemption counting at
+   final confirmation; applied at the pay step (recomputes deposit, coexists with gift
+   cards); admin → Promos CRUD.
+5. ✅ Lead nurture — automatic 24h follow-up email for NEW leads (once, via cron).
+6. ✅ Recovery is now a 3-touch sequence (after hold-release / +24h / +72h) with distinct
+   copy; touches 2–3 automatically feature an active promo flagged "featuredInRecovery".
+7. ✅ "Ultimate Bash" anchor tier seeded **inactive** — review the $649 draft price in
+   admin → Packages and flip Active to turn on 3-tier anchoring.
+8. ✅ GA4 + Meta Pixel via `NEXT_PUBLIC_GA4_ID` / `NEXT_PUBLIC_META_PIXEL_ID` (blank = off):
+   begin_checkout, purchase (deduped), generate_lead, gift_purchase.
 
 **Tier 3 — retention (post-launch):**
 9. Headcount flex (add guests until event day — every guest adds F&B).

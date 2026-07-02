@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { track } from '@/lib/track'
 
 const EVENT_TYPES = [
   { key: 'CORPORATE', label: '💼 Corporate / team' },
@@ -59,7 +60,10 @@ export default function InquirePage() {
       }),
     })
     setBusy(false)
-    if (res.ok) setDone(true)
+    if (res.ok) {
+      track('generate_lead')
+      setDone(true)
+    }
     else setError('Something went wrong. Please try again or call us.')
   }
 

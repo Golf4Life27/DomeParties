@@ -13,6 +13,7 @@ const NAV = [
   { href: '/admin/fnb', label: 'Food & drink' },
   { href: '/admin/addons', label: 'Add-ons' },
   { href: '/admin/gift-cards', label: 'Gift cards' },
+  { href: '/admin/promos', label: 'Promos' },
   { href: '/admin/embed', label: 'Embed' },
   { href: '/admin/settings', label: 'Settings' },
 ]

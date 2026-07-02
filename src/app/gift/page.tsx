@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { track } from '@/lib/track'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { formatCents } from '@/lib/money'
@@ -33,6 +34,7 @@ export default function GiftPage() {
     if (new URLSearchParams(window.location.search).get('paid') === '1') {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setStripeReturn(true)
+      track('gift_purchase')
     }
   }, [])
 
@@ -200,7 +202,10 @@ function DevGiftPay({ giftId, amount, onPaid }: { giftId: string; amount: number
     const res = await fetch(`/api/gift/${giftId}/confirm-dev`, { method: 'POST' })
     const data = await res.json()
     setBusy(false)
-    if (res.ok) onPaid(data.code)
+    if (res.ok) {
+      track('gift_purchase', { value: amount / 100 })
+      onPaid(data.code)
+    }
   }
   return (
     <div>
