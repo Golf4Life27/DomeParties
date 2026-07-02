@@ -30,10 +30,10 @@ export default async function PayPage({ params }: { params: Promise<{ id: string
       </header>
 
       <div className="mx-auto max-w-xl px-6 py-12">
-        <h1 className="text-3xl font-bold text-brand-dark">Reserve your event</h1>
+        <h1 className="text-3xl font-bold text-brand">Reserve your event</h1>
         <p className="mt-1 text-foreground/60">Quote {booking.reference}</p>
 
-        <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+        <div className="mt-6 rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-white/10">
           <dl className="space-y-1.5 text-sm">
             <Row k="Guest" v={booking.customerName ?? '—'} />
             <Row k="Date" v={formatDateLong(dateStr)} />
@@ -41,7 +41,7 @@ export default async function PayPage({ params }: { params: Promise<{ id: string
             <Row k="Party size" v={`${booking.partySize} guests`} />
             {booking.notes && <Row k="Note" v={booking.notes} />}
           </dl>
-          <div className="my-4 border-t border-black/10" />
+          <div className="my-4 border-t border-white/15" />
           <div className="flex justify-between text-base font-bold">
             <span>Total</span>
             <span>{formatCents(booking.total)}</span>
@@ -57,7 +57,7 @@ export default async function PayPage({ params }: { params: Promise<{ id: string
 
           <div className="mt-6">
             {paid ? (
-              <div className="rounded-lg bg-green-50 p-4 text-center text-sm text-green-800 ring-1 ring-green-200">
+              <div className="rounded-lg bg-lime-400/10 p-4 text-center text-sm text-lime-300 ring-1 ring-lime-400/30">
                 ✓ Deposit received — your date is locked in! A confirmation is on its way.
               </div>
             ) : (

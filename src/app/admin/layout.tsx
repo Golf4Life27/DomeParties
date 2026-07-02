@@ -22,10 +22,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const authed = isValidAdminCookie(cookie)
 
   // Unauthenticated (e.g. the login page) renders without admin chrome.
-  if (!authed) return <>{children}</>
+  if (!authed) return <div className="admin-light flex min-h-screen flex-col">{children}</div>
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="admin-light flex min-h-screen flex-col">
       <header className="bg-brand-dark text-white">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-3">
           <Link href="/admin" className="font-bold">

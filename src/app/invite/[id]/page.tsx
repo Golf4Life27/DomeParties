@@ -47,7 +47,7 @@ export default async function InvitePage({ params }: { params: Promise<{ id: str
           <p className="text-sm text-white/60">Want to throw your own party here?</p>
           <Link
             href="/book"
-            className="mt-3 inline-block rounded-full bg-accent px-6 py-3 font-bold text-brand-dark transition hover:bg-accent-dark hover:text-white"
+            className="mt-3 inline-block rounded-full bg-accent px-6 py-3 font-bold text-ink transition hover:bg-accent-dark hover:text-ink"
           >
             Book your own event →
           </Link>

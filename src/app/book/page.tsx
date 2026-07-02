@@ -418,7 +418,7 @@ export default function BookPage() {
         {/* Step content */}
         <div key={step} className="animate-fade-up">
           {error && (
-            <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700 ring-1 ring-red-200">
+            <div className="mb-4 rounded-lg bg-red-400/10 p-3 text-sm text-red-300 ring-1 ring-red-400/30">
               {error}
             </div>
           )}
@@ -434,8 +434,8 @@ export default function BookPage() {
                     onClick={() => setEventType(e.key)}
                     className={`rounded-full px-4 py-2 text-sm font-medium ring-1 transition ${
                       eventType === e.key
-                        ? 'bg-brand text-white ring-brand'
-                        : 'bg-white ring-black/10 hover:ring-brand'
+                        ? 'bg-brand text-ink ring-brand'
+                        : 'bg-surface ring-white/15 hover:ring-brand'
                     }`}
                   >
                     {e.label}
@@ -444,7 +444,7 @@ export default function BookPage() {
               </div>
 
               {currentEventType && !currentEventType.instant && (
-                <div className="mt-4 rounded-lg bg-brand-light p-4 text-sm text-brand-dark">
+                <div className="mt-4 rounded-lg bg-brand-light p-4 text-sm text-brand">
                   Big or custom events get a tailored quote and a dedicated planner.{' '}
                   <Link href="/inquire" className="font-semibold underline">
                     Request a quote →
@@ -465,7 +465,7 @@ export default function BookPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@email.com"
-                  className="w-full rounded-lg border border-black/15 px-4 py-3 outline-none focus:border-brand"
+                  className="w-full rounded-lg border border-white/20 px-4 py-3 outline-none focus:border-brand"
                 />
               </div>
 
@@ -486,18 +486,18 @@ export default function BookPage() {
                     key={p.id}
                     onClick={() => choosePackage(p)}
                     className={`relative flex flex-col rounded-2xl border p-5 text-left transition hover:-translate-y-0.5 hover:shadow-lg ${
-                      p.popular ? 'border-accent ring-2 ring-accent' : 'border-black/10'
-                    } bg-white`}
+                      p.popular ? 'border-accent ring-2 ring-accent' : 'border-white/15'
+                    } bg-surface`}
                   >
                     {p.popular && (
-                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-3 py-1 text-xs font-bold text-brand-dark">
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-3 py-1 text-xs font-bold text-ink">
                         ⭐ Most Popular
                       </span>
                     )}
                     <span className="text-xs font-semibold uppercase tracking-wide text-brand">
                       {p.tier}
                     </span>
-                    <span className="mt-1 text-xl font-bold text-brand-dark">{p.name}</span>
+                    <span className="mt-1 text-xl font-bold text-brand">{p.name}</span>
                     <span className="mt-2 text-2xl font-extrabold">
                       {p.displayUnit === 'from' && (
                         <span className="text-sm font-normal text-foreground/60">from </span>
@@ -519,7 +519,7 @@ export default function BookPage() {
                         </li>
                       ))}
                     </ul>
-                    <span className="mt-4 rounded-full bg-brand px-4 py-2 text-center text-sm font-semibold text-white">
+                    <span className="mt-4 rounded-full bg-brand px-4 py-2 text-center text-sm font-semibold text-ink">
                       Choose {p.name}
                     </span>
                   </button>
@@ -541,7 +541,7 @@ export default function BookPage() {
                   setDateStr(e.target.value)
                   if (e.target.value) loadSlots(e.target.value)
                 }}
-                className="w-full rounded-lg border border-black/15 px-4 py-3 outline-none focus:border-brand sm:w-auto"
+                className="w-full rounded-lg border border-white/20 px-4 py-3 outline-none focus:border-brand sm:w-auto"
               />
 
               {dateStr && (
@@ -550,7 +550,7 @@ export default function BookPage() {
                   {slotsLoading ? (
                     <p className="text-sm text-foreground/60">Checking the calendar…</p>
                   ) : slots.length === 0 ? (
-                    <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
+                    <p className="rounded-lg bg-amber-400/10 p-3 text-sm text-amber-300">
                       No openings for {quote?.baysNeeded ?? 1} bay(s) that day. Try another
                       date — weekends fill up fast!
                     </p>
@@ -560,11 +560,11 @@ export default function BookPage() {
                         <button
                           key={s.startMinutes}
                           onClick={() => chooseSlot(s)}
-                          className="rounded-lg border border-black/10 bg-white px-3 py-3 text-sm font-medium transition hover:border-brand hover:bg-brand-light"
+                          className="rounded-lg border border-white/15 bg-surface px-3 py-3 text-sm font-medium transition hover:border-brand hover:bg-brand-light"
                         >
                           {s.label}
                           {s.availableBays <= 3 && (
-                            <span className="mt-0.5 block text-xs font-semibold text-accent-dark">
+                            <span className="mt-0.5 block text-xs font-semibold text-accent">
                               Only {s.availableBays} left
                             </span>
                           )}
@@ -630,18 +630,18 @@ export default function BookPage() {
                     <div
                       key={a.id}
                       className={`flex items-center gap-3 rounded-xl border p-4 transition ${
-                        on ? 'border-brand bg-brand-light' : 'border-black/10 bg-white'
+                        on ? 'border-brand bg-brand-light' : 'border-white/15 bg-surface'
                       }`}
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span className="font-semibold">{a.name}</span>
-                          <span className="rounded-full bg-black/5 px-2 py-0.5 text-xs text-foreground/60">
+                          <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-foreground/60">
                             {a.category}
                           </span>
                         </div>
                         <p className="text-sm text-foreground/70">{a.description}</p>
-                        <p className="mt-1 text-sm font-semibold text-brand-dark">
+                        <p className="mt-1 text-sm font-semibold text-brand">
                           {formatCents(a.price)}
                           {a.unit === 'PER_PERSON' && ' /guest'}
                           {a.unit === 'PER_30_MIN' && ' /30 min'}
@@ -659,7 +659,7 @@ export default function BookPage() {
                         <button
                           onClick={() => setAddOns((s) => ({ ...s, [a.id]: on ? 0 : 1 }))}
                           className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                            on ? 'bg-brand text-white' : 'bg-black/5 hover:bg-brand hover:text-white'
+                            on ? 'bg-brand text-ink' : 'bg-white/10 hover:bg-brand hover:text-ink'
                           }`}
                         >
                           {on ? '✓ Added' : 'Add'}
@@ -684,7 +684,7 @@ export default function BookPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Jordan Smith"
-                className="w-full rounded-lg border border-black/15 px-4 py-3 outline-none focus:border-brand"
+                className="w-full rounded-lg border border-white/20 px-4 py-3 outline-none focus:border-brand"
               />
               <div className="mt-4">
                 <Label>Phone (for day-of updates)</Label>
@@ -692,7 +692,7 @@ export default function BookPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="(555) 555-5555"
-                  className="w-full rounded-lg border border-black/15 px-4 py-3 outline-none focus:border-brand"
+                  className="w-full rounded-lg border border-white/20 px-4 py-3 outline-none focus:border-brand"
                 />
               </div>
               <div className="mt-4">
@@ -702,13 +702,13 @@ export default function BookPage() {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Allergies, the birthday star's name, special requests…"
                   rows={3}
-                  className="w-full rounded-lg border border-black/15 px-4 py-3 outline-none focus:border-brand"
+                  className="w-full rounded-lg border border-white/20 px-4 py-3 outline-none focus:border-brand"
                 />
               </div>
 
-              <div className="mt-6 rounded-xl border border-black/10 bg-white p-4">
-                <h3 className="font-semibold text-brand-dark">Liability waiver</h3>
-                <div className="mt-2 max-h-32 overflow-y-auto rounded bg-black/[0.03] p-3 text-xs text-foreground/70">
+              <div className="mt-6 rounded-xl border border-white/15 bg-surface p-4">
+                <h3 className="font-semibold text-brand">Liability waiver</h3>
+                <div className="mt-2 max-h-32 overflow-y-auto rounded bg-white/5 p-3 text-xs text-foreground/70">
                   By signing, you acknowledge the risks of golf and entertainment
                   activities at Whitetail Ridge Golf Dome and agree to our terms.
                   (Full waiver text to be provided — placeholder for now.)
@@ -737,7 +737,7 @@ export default function BookPage() {
                     value={waiverName}
                     onChange={(e) => setWaiverName(e.target.value)}
                     placeholder="Your signature"
-                    className="w-full rounded-lg border border-black/15 px-4 py-3 italic outline-none focus:border-brand"
+                    className="w-full rounded-lg border border-white/20 px-4 py-3 italic outline-none focus:border-brand"
                   />
                 </div>
               </div>
@@ -755,35 +755,35 @@ export default function BookPage() {
           {step === 6 && payment && draftId && (
             <Section title="Pay your deposit to lock it in" subtitle={`Just ${quote?.depositPercent ?? 10}% now — the rest is due at your event.`}>
               {/* Gift card redemption */}
-              <div className="mb-4 rounded-xl border border-black/10 bg-white p-4">
+              <div className="mb-4 rounded-xl border border-white/15 bg-surface p-4">
                 <Label>Have a gift card?</Label>
                 <div className="flex gap-2">
                   <input
                     value={giftCode}
                     onChange={(e) => setGiftCode(e.target.value.toUpperCase())}
                     placeholder="GIFT-XXXX-XXXX"
-                    className="flex-1 rounded-lg border border-black/15 px-3 py-2 outline-none focus:border-brand"
+                    className="flex-1 rounded-lg border border-white/20 px-3 py-2 outline-none focus:border-brand"
                   />
                   <button
                     onClick={applyGift}
-                    className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark"
+                    className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-ink transition hover:bg-accent-dark"
                   >
                     Apply
                   </button>
                 </div>
                 {giftApplied > 0 && (
-                  <p className="mt-2 text-sm font-medium text-green-700">
+                  <p className="mt-2 text-sm font-medium text-lime-300">
                     ✓ Gift card applied: −{formatCents(giftApplied)} · Due now: {formatCents(payment.depositAmount)}
                   </p>
                 )}
-                {giftError && <p className="mt-2 text-sm text-red-600">{giftError}</p>}
+                {giftError && <p className="mt-2 text-sm text-red-400">{giftError}</p>}
               </div>
 
               {payment.mode === 'covered' ? (
                 <button
                   onClick={confirmCovered}
                   disabled={busy}
-                  className="w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-brand-dark shadow transition hover:bg-accent-dark hover:text-white disabled:opacity-60"
+                  className="w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-ink shadow transition hover:bg-accent-dark hover:text-ink disabled:opacity-60"
                 >
                   {busy ? 'Confirming…' : '🎉 Confirm booking — your gift card covers the deposit'}
                 </button>
@@ -825,7 +825,7 @@ function ProgressBar({ step }: { step: number }) {
       {STEPS.map((label, i) => (
         <div key={label} className="flex-1">
           <div
-            className={`h-1.5 rounded-full transition ${i <= step ? 'bg-brand' : 'bg-black/10'}`}
+            className={`h-1.5 rounded-full transition ${i <= step ? 'bg-brand' : 'bg-white/15'}`}
           />
           <span
             className={`mt-1 hidden text-xs sm:block ${i === step ? 'font-semibold text-brand' : 'text-foreground/40'}`}
@@ -849,7 +849,7 @@ function Section({
 }) {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-brand-dark sm:text-3xl">{title}</h1>
+      <h1 className="text-2xl font-bold text-brand sm:text-3xl">{title}</h1>
       {subtitle && <p className="mt-1 text-foreground/60">{subtitle}</p>}
       <div className="mt-6">{children}</div>
     </div>
@@ -873,7 +873,7 @@ function PrimaryButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="mt-6 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-brand-dark shadow transition hover:bg-accent-dark hover:text-white disabled:opacity-60"
+      className="mt-6 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-ink shadow transition hover:bg-accent-dark hover:text-ink disabled:opacity-60"
     >
       {children}
     </button>
@@ -884,7 +884,7 @@ function BackButton({ onClick, inline }: { onClick: () => void; inline?: boolean
   return (
     <button
       onClick={onClick}
-      className={`${inline ? 'mt-6' : 'mt-6'} rounded-full px-5 py-4 text-sm font-medium text-foreground/60 ring-1 ring-black/10 transition hover:ring-brand`}
+      className={`${inline ? 'mt-6' : 'mt-6'} rounded-full px-5 py-4 text-sm font-medium text-foreground/60 ring-1 ring-white/15 transition hover:ring-brand`}
     >
       ← Back
     </button>
@@ -909,14 +909,14 @@ function Stepper({
     <div className="flex items-center gap-3">
       <button
         onClick={() => onChange(Math.max(min, value - 1))}
-        className={`${sz} rounded-full bg-black/5 text-xl font-bold transition hover:bg-brand hover:text-white`}
+        className={`${sz} rounded-full bg-white/10 text-xl font-bold transition hover:bg-brand hover:text-ink`}
       >
         −
       </button>
       <span className={`${small ? 'w-8' : 'w-12'} text-center text-xl font-bold`}>{value}</span>
       <button
         onClick={() => onChange(Math.min(max, value + 1))}
-        className={`${sz} rounded-full bg-black/5 text-xl font-bold transition hover:bg-brand hover:text-white`}
+        className={`${sz} rounded-full bg-white/10 text-xl font-bold transition hover:bg-brand hover:text-ink`}
       >
         +
       </button>
@@ -943,12 +943,12 @@ function SelectableRow({
     <button
       onClick={onClick}
       className={`flex w-full items-start gap-3 rounded-xl border p-4 text-left transition ${
-        selected ? 'border-brand bg-brand-light' : 'border-black/10 bg-white hover:border-brand'
+        selected ? 'border-brand bg-brand-light' : 'border-white/15 bg-surface hover:border-brand'
       }`}
     >
       <span
         className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-          selected ? 'border-brand bg-brand text-white' : 'border-black/20'
+          selected ? 'border-brand bg-brand text-ink' : 'border-white/30'
         }`}
       >
         {selected && '✓'}
@@ -956,7 +956,7 @@ function SelectableRow({
       <span className="flex-1">
         <span className="flex items-center justify-between">
           <span className="font-semibold">{title}</span>
-          <span className="font-semibold text-brand-dark">{price}</span>
+          <span className="font-semibold text-brand">{price}</span>
         </span>
         <span className="block text-sm text-foreground/70">{body}</span>
         {note && <span className="mt-1 block text-xs text-foreground/50">🌱 {note}</span>}
@@ -979,8 +979,8 @@ function OrderSummary({
   quote: Quote | null
 }) {
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-      <h3 className="font-bold text-brand-dark">Your event</h3>
+    <div className="rounded-2xl bg-surface p-5 shadow-sm ring-1 ring-white/10">
+      <h3 className="font-bold text-brand">Your event</h3>
       {!pkg ? (
         <p className="mt-2 text-sm text-foreground/50">Pick a package to see your quote.</p>
       ) : (
@@ -995,7 +995,7 @@ function OrderSummary({
 
           {quote && (
             <>
-              <div className="my-3 border-t border-black/10" />
+              <div className="my-3 border-t border-white/15" />
               <dl className="space-y-1.5 text-sm">
                 {quote.lines.map((l, i) => (
                   <div key={i} className="flex justify-between gap-2">
@@ -1007,7 +1007,7 @@ function OrderSummary({
                   </div>
                 ))}
               </dl>
-              <div className="my-3 border-t border-black/10" />
+              <div className="my-3 border-t border-white/15" />
               <div className="flex justify-between text-base font-bold">
                 <span>Total</span>
                 <span>{formatCents(quote.total)}</span>
@@ -1020,7 +1020,7 @@ function OrderSummary({
                 <span>Balance at event</span>
                 <span>{formatCents(quote.balanceDue)}</span>
               </div>
-              <p className="mt-3 rounded-lg bg-brand-light p-2 text-center text-xs text-brand-dark">
+              <p className="mt-3 rounded-lg bg-brand-light p-2 text-center text-xs text-brand">
                 That&apos;s about {formatCents(quote.perPersonEffective)} per guest, all-in.
               </p>
             </>

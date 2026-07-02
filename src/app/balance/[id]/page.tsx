@@ -30,12 +30,12 @@ export default async function BalancePage({ params }: { params: Promise<{ id: st
       </header>
 
       <div className="mx-auto max-w-xl px-6 py-12">
-        <h1 className="text-3xl font-bold text-brand-dark">Pay your balance</h1>
+        <h1 className="text-3xl font-bold text-brand">Pay your balance</h1>
         <p className="mt-1 text-foreground/60">
           {booking.reference} · {formatDateLong(dateStr)} · {minutesToLabel(booking.startMinutes)}
         </p>
 
-        <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+        <div className="mt-6 rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-white/10">
           <dl className="space-y-1.5 text-sm">
             <div className="flex justify-between"><dt className="text-foreground/60">Total</dt><dd className="font-medium">{formatCents(booking.total)}</dd></div>
             <div className="flex justify-between text-brand"><dt>Deposit paid</dt><dd className="font-medium">{formatCents(booking.depositAmount)}</dd></div>
@@ -44,7 +44,7 @@ export default async function BalancePage({ params }: { params: Promise<{ id: st
 
           <div className="mt-6">
             {settled ? (
-              <div className="rounded-lg bg-green-50 p-4 text-center text-sm text-green-800 ring-1 ring-green-200">
+              <div className="rounded-lg bg-lime-400/10 p-4 text-center text-sm text-lime-300 ring-1 ring-lime-400/30">
                 ✓ You&apos;re fully paid — just show up and have a great time!
               </div>
             ) : (

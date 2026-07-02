@@ -19,7 +19,7 @@ export default function PayDeposit({ bookingId }: { bookingId: string }) {
       .catch(() => setError('Could not start payment.'))
   }, [bookingId])
 
-  if (error) return <p className="text-sm text-red-600">{error}</p>
+  if (error) return <p className="text-sm text-red-400">{error}</p>
   if (!info) return <p className="text-sm text-foreground/50">Loading secure payment…</p>
 
   return (

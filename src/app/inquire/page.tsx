@@ -74,9 +74,9 @@ export default function InquirePage() {
 
       <div className="mx-auto max-w-2xl px-6 py-10">
         {done ? (
-          <div className="rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-black/5">
+          <div className="rounded-2xl bg-surface p-8 text-center shadow-sm ring-1 ring-white/10">
             <div className="text-5xl">🎉</div>
-            <h1 className="mt-4 text-2xl font-bold text-brand-dark">Request received!</h1>
+            <h1 className="mt-4 text-2xl font-bold text-brand">Request received!</h1>
             <p className="mt-2 text-foreground/70">
               Check your inbox — we just sent a confirmation. Our events team will follow up
               shortly with a custom proposal (usually within one business day).
@@ -87,13 +87,13 @@ export default function InquirePage() {
           </div>
         ) : (
           <form onSubmit={submit} className="animate-fade-up">
-            <h1 className="text-3xl font-bold text-brand-dark">Request a custom quote</h1>
+            <h1 className="text-3xl font-bold text-brand">Request a custom quote</h1>
             <p className="mt-1 text-foreground/60">
               For corporate outings, leagues, big groups, and custom events. Takes a minute —
               we&apos;ll reply fast.
             </p>
 
-            <div className="mt-6 space-y-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+            <div className="mt-6 space-y-6 rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-white/10">
               <div>
                 <Label>Event type</Label>
                 <div className="flex flex-wrap gap-2">
@@ -103,7 +103,7 @@ export default function InquirePage() {
                       key={e.key}
                       onClick={() => setEventType(e.key)}
                       className={`rounded-full px-4 py-2 text-sm font-medium ring-1 transition ${
-                        eventType === e.key ? 'bg-brand text-white ring-brand' : 'bg-white ring-black/10 hover:ring-brand'
+                        eventType === e.key ? 'bg-brand text-ink ring-brand' : 'bg-surface ring-white/15 hover:ring-brand'
                       }`}
                     >
                       {e.label}
@@ -148,7 +148,7 @@ export default function InquirePage() {
                       key={m}
                       onClick={() => toggleMust(m)}
                       className={`rounded-full px-3 py-1.5 text-sm ring-1 transition ${
-                        mustHaves.includes(m) ? 'bg-brand text-white ring-brand' : 'bg-white ring-black/10 hover:ring-brand'
+                        mustHaves.includes(m) ? 'bg-brand text-ink ring-brand' : 'bg-surface ring-white/15 hover:ring-brand'
                       }`}
                     >
                       {mustHaves.includes(m) ? '✓ ' : ''}{m}
@@ -177,11 +177,11 @@ export default function InquirePage() {
                 <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3} className={input} placeholder="Tell us about your event…" />
               </div>
 
-              {error && <p className="text-sm text-red-600">{error}</p>}
+              {error && <p className="text-sm text-red-400">{error}</p>}
 
               <button
                 disabled={busy}
-                className="w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-brand-dark shadow transition hover:bg-accent-dark hover:text-white disabled:opacity-60"
+                className="w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-ink shadow transition hover:bg-accent-dark hover:text-ink disabled:opacity-60"
               >
                 {busy ? 'Sending…' : 'Send my request →'}
               </button>
@@ -196,7 +196,7 @@ export default function InquirePage() {
   )
 }
 
-const input = 'w-full rounded-lg border border-black/15 px-4 py-3 outline-none focus:border-brand'
+const input = 'w-full rounded-lg border border-white/20 px-4 py-3 outline-none focus:border-brand'
 
 function Label({ children }: { children: React.ReactNode }) {
   return <label className="mb-2 block text-sm font-medium text-foreground/80">{children}</label>

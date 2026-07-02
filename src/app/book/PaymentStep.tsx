@@ -69,11 +69,11 @@ function StripeForm({ amount, label, successPath }: { amount: number; label: str
   return (
     <div>
       <PaymentElement />
-      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
       <button
         onClick={pay}
         disabled={busy || !stripe}
-        className="mt-5 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-brand-dark shadow transition hover:bg-accent-dark hover:text-white disabled:opacity-60"
+        className="mt-5 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-ink shadow transition hover:bg-accent-dark hover:text-ink disabled:opacity-60"
       >
         {busy ? 'Processing…' : `Pay ${formatCents(amount)} ${label}`}
       </button>
@@ -109,16 +109,16 @@ function DevPay({
 
   return (
     <div>
-      <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800 ring-1 ring-amber-200">
+      <div className="rounded-lg bg-amber-400/10 p-3 text-sm text-amber-300 ring-1 ring-amber-400/30">
         <strong>Test mode.</strong> Stripe keys aren&apos;t configured yet, so this simulates
         a successful payment so the full flow is testable. Add the Dome&apos;s Stripe test
         keys to enable real card entry.
       </div>
-      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
       <button
         onClick={pay}
         disabled={busy}
-        className="mt-5 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-brand-dark shadow transition hover:bg-accent-dark hover:text-white disabled:opacity-60"
+        className="mt-5 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-ink shadow transition hover:bg-accent-dark hover:text-ink disabled:opacity-60"
       >
         {busy ? 'Processing…' : `Pay ${formatCents(amount)} ${label} (test)`}
       </button>

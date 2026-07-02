@@ -61,9 +61,9 @@ export default function GiftPage() {
   if (stripeReturn) {
     return (
       <Shell>
-        <div className="rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-black/5">
+        <div className="rounded-2xl bg-surface p-8 text-center shadow-sm ring-1 ring-white/10">
           <div className="text-5xl">🎁</div>
-          <h1 className="mt-4 text-2xl font-bold text-brand-dark">Payment received!</h1>
+          <h1 className="mt-4 text-2xl font-bold text-brand">Payment received!</h1>
           <p className="mt-2 text-foreground/70">
             The gift card is on its way to the recipient&apos;s inbox, and your receipt (with
             the code) is headed to yours.
@@ -79,9 +79,9 @@ export default function GiftPage() {
   if (code) {
     return (
       <Shell>
-        <div className="rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-black/5">
+        <div className="rounded-2xl bg-surface p-8 text-center shadow-sm ring-1 ring-white/10">
           <div className="text-5xl">🎁</div>
-          <h1 className="mt-4 text-2xl font-bold text-brand-dark">Gift card sent!</h1>
+          <h1 className="mt-4 text-2xl font-bold text-brand">Gift card sent!</h1>
           <p className="mt-2 text-foreground/70">
             We emailed the {formatCents(effectiveAmount)} gift card to {recipientEmail}.
           </p>
@@ -100,8 +100,8 @@ export default function GiftPage() {
   if (payment && giftId) {
     return (
       <Shell>
-        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-          <h1 className="text-xl font-bold text-brand-dark">Pay {formatCents(effectiveAmount)}</h1>
+        <div className="rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-white/10">
+          <h1 className="text-xl font-bold text-brand">Pay {formatCents(effectiveAmount)}</h1>
           <p className="mt-1 text-sm text-foreground/60">Gift card for {recipientName || recipientEmail}</p>
           <div className="mt-5">
             {payment.mode === 'stripe' && payment.clientSecret && stripePromise ? (
@@ -120,10 +120,10 @@ export default function GiftPage() {
   return (
     <Shell>
       <form onSubmit={start} className="animate-fade-up">
-        <h1 className="text-3xl font-bold text-brand-dark">Give the gift of a great time 🎁</h1>
+        <h1 className="text-3xl font-bold text-brand">Give the gift of a great time 🎁</h1>
         <p className="mt-1 text-foreground/60">A Whitetail Ridge Golf Dome gift card — perfect for any occasion.</p>
 
-        <div className="mt-6 space-y-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+        <div className="mt-6 space-y-6 rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-white/10">
           <div>
             <Label>Amount</Label>
             <div className="flex flex-wrap gap-2">
@@ -133,7 +133,7 @@ export default function GiftPage() {
                   key={a}
                   onClick={() => { setAmount(a); setCustom('') }}
                   className={`rounded-full px-4 py-2 text-sm font-semibold ring-1 transition ${
-                    !customAmount && amount === a ? 'bg-brand text-white ring-brand' : 'bg-white ring-black/10 hover:ring-brand'
+                    !customAmount && amount === a ? 'bg-brand text-ink ring-brand' : 'bg-surface ring-white/15 hover:ring-brand'
                   }`}
                 >
                   {formatCents(a)}
@@ -144,7 +144,7 @@ export default function GiftPage() {
                 <input
                   type="number" min="10" placeholder="Custom"
                   value={customAmount} onChange={(e) => setCustom(e.target.value)}
-                  className="w-28 rounded-lg border border-black/15 px-3 py-2 outline-none focus:border-brand"
+                  className="w-28 rounded-lg border border-white/20 px-3 py-2 outline-none focus:border-brand"
                 />
               </div>
             </div>
@@ -158,8 +158,8 @@ export default function GiftPage() {
           </div>
           <Field label="Message (optional)"><textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={2} className={input} placeholder="Happy birthday! 🎉" /></Field>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          <button disabled={busy} className="w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-brand-dark shadow transition hover:bg-accent-dark hover:text-white disabled:opacity-60">
+          {error && <p className="text-sm text-red-400">{error}</p>}
+          <button disabled={busy} className="w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-ink shadow transition hover:bg-accent-dark hover:text-ink disabled:opacity-60">
             {busy ? 'Preparing…' : `Continue to payment →`}
           </button>
         </div>
@@ -185,8 +185,8 @@ function StripeGiftForm({ amount }: { amount: number }) {
   return (
     <div>
       <PaymentElement />
-      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
-      <button onClick={pay} disabled={busy || !stripe} className="mt-5 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-brand-dark transition hover:bg-accent-dark hover:text-white disabled:opacity-60">
+      {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+      <button onClick={pay} disabled={busy || !stripe} className="mt-5 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-ink transition hover:bg-accent-dark hover:text-ink disabled:opacity-60">
         {busy ? 'Processing…' : `Pay ${formatCents(amount)}`}
       </button>
     </div>
@@ -204,10 +204,10 @@ function DevGiftPay({ giftId, amount, onPaid }: { giftId: string; amount: number
   }
   return (
     <div>
-      <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800 ring-1 ring-amber-200">
+      <div className="rounded-lg bg-amber-400/10 p-3 text-sm text-amber-300 ring-1 ring-amber-400/30">
         <strong>Test mode.</strong> Simulates a successful gift-card purchase.
       </div>
-      <button onClick={pay} disabled={busy} className="mt-5 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-brand-dark transition hover:bg-accent-dark hover:text-white disabled:opacity-60">
+      <button onClick={pay} disabled={busy} className="mt-5 w-full rounded-full bg-accent px-6 py-4 text-lg font-bold text-ink transition hover:bg-accent-dark hover:text-ink disabled:opacity-60">
         {busy ? 'Processing…' : `Pay ${formatCents(amount)} (test)`}
       </button>
     </div>
@@ -228,7 +228,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   )
 }
 
-const input = 'w-full rounded-lg border border-black/15 px-3 py-2 outline-none focus:border-brand'
+const input = 'w-full rounded-lg border border-white/20 px-3 py-2 outline-none focus:border-brand'
 function Label({ children }: { children: React.ReactNode }) {
   return <label className="mb-2 block text-sm font-medium text-foreground/80">{children}</label>
 }

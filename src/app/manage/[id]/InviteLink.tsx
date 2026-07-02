@@ -17,11 +17,11 @@ export default function InviteLink({ bookingId }: { bookingId: string }) {
       <input
         readOnly
         value={url}
-        className="flex-1 rounded-lg border border-black/15 bg-white px-3 py-2 text-sm text-foreground/70"
+        className="flex-1 rounded-lg border border-white/20 bg-surface px-3 py-2 text-sm text-foreground/70"
       />
       <button
         onClick={copy}
-        className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark"
+        className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-ink transition hover:bg-accent-dark"
       >
         {copied ? '✓ Copied' : 'Copy link'}
       </button>

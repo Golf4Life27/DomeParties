@@ -40,14 +40,14 @@ export default async function ManagePage({ params }: { params: Promise<{ id: str
       </header>
 
       <div className="mx-auto max-w-2xl px-6 py-10">
-        <h1 className="text-3xl font-bold text-brand-dark">Your event 🎉</h1>
+        <h1 className="text-3xl font-bold text-brand">Your event 🎉</h1>
         <p className="mt-1 text-foreground/60">
           {booking.reference} · {formatDateLong(dateStr)} · {minutesToLabel(booking.startMinutes)}–{minutesToLabel(booking.endMinutes)} · {booking.partySize} guests
         </p>
 
         {/* Invite your guests */}
         <div className="mt-6 rounded-2xl bg-brand-light p-6">
-          <h2 className="font-bold text-brand-dark">Invite your guests 🎈</h2>
+          <h2 className="font-bold text-brand">Invite your guests 🎈</h2>
           <p className="mt-1 text-sm text-foreground/70">
             Share one link — it has the date, time, and directions.
           </p>
@@ -55,9 +55,9 @@ export default async function ManagePage({ params }: { params: Promise<{ id: str
         </div>
 
         {/* Balance */}
-        <div className="mt-6 flex items-center justify-between rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+        <div className="mt-6 flex items-center justify-between rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-white/10">
           <div>
-            <h2 className="font-bold text-brand-dark">Balance</h2>
+            <h2 className="font-bold text-brand">Balance</h2>
             <p className="text-sm text-foreground/60">
               {booking.balancePaid || booking.balanceDue <= 0
                 ? 'Fully paid — you’re all set!'
@@ -67,7 +67,7 @@ export default async function ManagePage({ params }: { params: Promise<{ id: str
           {!booking.balancePaid && booking.balanceDue > 0 && (
             <Link
               href={`/balance/${booking.id}`}
-              className="rounded-full bg-accent px-5 py-2.5 text-sm font-bold text-brand-dark transition hover:bg-accent-dark hover:text-white"
+              className="rounded-full bg-accent px-5 py-2.5 text-sm font-bold text-ink transition hover:bg-accent-dark hover:text-ink"
             >
               Pay ahead →
             </Link>
@@ -76,7 +76,7 @@ export default async function ManagePage({ params }: { params: Promise<{ id: str
 
         {/* Upsells */}
         <div className="mt-6">
-          <h2 className="text-xl font-bold text-brand-dark">Make it unforgettable</h2>
+          <h2 className="text-xl font-bold text-brand">Make it unforgettable</h2>
           <p className="mt-1 text-sm text-foreground/60">
             Add extras now — they&apos;re added to your balance, nothing to pay today.
           </p>

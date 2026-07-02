@@ -40,7 +40,7 @@ export default async function ConfirmationPage({
         {confirmed ? (
           <div className="text-center">
             <div className="text-5xl">🎉</div>
-            <h1 className="mt-4 text-3xl font-extrabold text-brand-dark">You&apos;re booked!</h1>
+            <h1 className="mt-4 text-3xl font-extrabold text-brand">You&apos;re booked!</h1>
             <p className="mt-2 text-foreground/70">
               A confirmation is on its way to {booking.customerEmail}. We can&apos;t wait to
               host you.
@@ -49,7 +49,7 @@ export default async function ConfirmationPage({
         ) : pendingReview ? (
           <div className="text-center">
             <div className="text-5xl">✅</div>
-            <h1 className="mt-4 text-3xl font-extrabold text-brand-dark">Deposit received!</h1>
+            <h1 className="mt-4 text-3xl font-extrabold text-brand">Deposit received!</h1>
             <p className="mt-2 text-foreground/70">
               Thanks! We&apos;ve got your deposit and are just confirming bay availability. Your
               final confirmation will arrive at {booking.customerEmail} shortly.
@@ -58,7 +58,7 @@ export default async function ConfirmationPage({
         ) : (
           <div className="text-center">
             <div className="text-5xl">⏳</div>
-            <h1 className="mt-4 text-3xl font-extrabold text-brand-dark">Finalizing your booking…</h1>
+            <h1 className="mt-4 text-3xl font-extrabold text-brand">Finalizing your booking…</h1>
             <p className="mt-2 text-foreground/70">
               Your payment is processing. This page will show your confirmation shortly —
               refresh in a moment.
@@ -66,10 +66,10 @@ export default async function ConfirmationPage({
           </div>
         )}
 
-        <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+        <div className="mt-8 rounded-2xl bg-surface p-6 shadow-sm ring-1 ring-white/10">
           <div className="flex items-center justify-between">
             <span className="text-sm text-foreground/60">Confirmation</span>
-            <span className="rounded-full bg-brand-light px-3 py-1 font-mono font-bold text-brand-dark">
+            <span className="rounded-full bg-brand-light px-3 py-1 font-mono font-bold text-brand">
               {booking.reference}
             </span>
           </div>
@@ -87,7 +87,7 @@ export default async function ConfirmationPage({
             )}
           </dl>
 
-          <div className="my-4 border-t border-black/10" />
+          <div className="my-4 border-t border-white/15" />
           <dl className="space-y-1.5 text-sm">
             <Row k="Total" v={formatCents(booking.total)} />
             <div className="flex justify-between font-semibold text-brand">
@@ -100,14 +100,14 @@ export default async function ConfirmationPage({
 
         {confirmed && (
           <div className="mt-6 rounded-2xl bg-brand-light p-6 text-center">
-            <h2 className="font-bold text-brand-dark">Make it even better 🎈</h2>
+            <h2 className="font-bold text-brand">Make it even better 🎈</h2>
             <p className="mt-1 text-sm text-foreground/70">
               Add food &amp; extras, pay your balance ahead, or grab a shareable invite link
               for your guests.
             </p>
             <Link
               href={`/manage/${booking.id}`}
-              className="mt-4 inline-block rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-dark"
+              className="mt-4 inline-block rounded-full bg-brand px-6 py-3 font-semibold text-ink transition hover:bg-accent-dark"
             >
               Manage your event →
             </Link>
