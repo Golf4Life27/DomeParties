@@ -1,0 +1,351 @@
+// Whitetail Ridge Golf Dome — Event Booking Engine
+// Phase 1 schema: Instant Book (birthday parties) on an internal managed calendar.
+// Postgres (Supabase-compatible). Money stored in integer cents.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Configuration (single row) — tunable in admin later
+// ---------------------------------------------------------------------------
+model Setting {
+  id                  Int      @id @default(1)
+  // Operating rules
+  openHour            Int      @default(9)   // 9am
+  closeHour           Int      @default(22)  // 10pm
+  bayCapacity         Int      @default(6)   // guests per bay
+  bufferMinutes       Int      @default(30)  // cleaning/turnover before & after
+  leadTimeDaysOnline  Int      @default(7)   // online bookings must be >= 7 days out
+  holdMinutes         Int      @default(30)  // how long an unpaid checkout hold keeps bays
+  staffNotifyEmail    String?               // where staff notifications go (blank = off)
+  // Money (percent values are basis-point-free integers, e.g. 10 = 10%)
+  depositPercent      Int      @default(10)
+  serviceChargePct    Int      @default(20)  // auto service charge on F&B + staffed portion
+  taxPct              Float    @default(7.25) // Oswego, IL placeholder — confirm exact rate
+  // Dynamic pricing (applied to the package/bay-time portion)
+  peakSurchargePct    Int      @default(15)  // weekend/evening premium
+  offPeakDiscountPct  Int      @default(0)   // weekday/midday incentive
+  cardFeePct          Float    @default(0)   // optional card convenience fee on the charge (off by default)
+  // Cancellation policy (informational copy, enforced operationally)
+  cancelHoursLarge    Int      @default(48)  // > cancelLargeThreshold guests
+  cancelHoursSmall    Int      @default(24)
+  cancelLargeThreshold Int     @default(15)
+  updatedAt           DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Bookable resources: bays, specialty simulators, event/bar space
+// ---------------------------------------------------------------------------
+enum ResourceType {
+  BAY
+  SIMULATOR
+  EVENT_SPACE
+}
+
+model Resource {
+  id        String       @id @default(cuid())
+  name      String
+  type      ResourceType @default(BAY)
+  floor     String?      // "Upstairs" | "Downstairs" | null
+  capacity  Int          @default(6)
+  active    Boolean      @default(true)
+  // Exclusive = owned only by this engine (safe to instant-confirm). Shared =
+  // also bookable in Trackman, so bookings need staff review to avoid conflicts.
+  exclusive Boolean      @default(false)
+  sortOrder Int          @default(0)
+
+  bookings  BookingResource[]
+}
+
+// ---------------------------------------------------------------------------
+// Tiered packages (Good/Better/Best), F&B packages, and add-ons
+// ---------------------------------------------------------------------------
+enum PricingType {
+  PER_PERSON
+  FLAT
+  BAY_RATE // computed from the per-bay-per-hour rate engine (BayRate)
+}
+
+// Per-bay-per-hour rates, keyed by day-of-week window, time-of-day window, and a
+// minimum-bays tier (so the rate steps down for larger groups). The most
+// specific matching row (highest minBays) wins.
+model BayRate {
+  id          String  @id @default(cuid())
+  label       String
+  tag         String  @default("birthday") // rate set, e.g. "birthday" | "group"
+  daysOfWeek  Int[]   // 0=Sun .. 6=Sat
+  startMinute Int     @default(0)    // time window [start, end)
+  endMinute   Int     @default(1440)
+  minBays     Int     @default(1)    // applies when bays >= minBays
+  minHours    Int     @default(0)    // applies when hours >= minHours (duration tier)
+  ratePerHour Int     // cents per bay per hour
+  active      Boolean @default(true)
+  sortOrder   Int     @default(0)
+}
+
+enum EventType {
+  BIRTHDAY
+  GROUP
+  CORPORATE
+  LEAGUE
+  BACHELOR
+  OTHER
+}
+
+model Package {
+  id              String      @id @default(cuid())
+  name            String      // vibe-named, e.g. "The Eagle"
+  tier            String      // "Good" | "Better" | "Best"
+  eventType       EventType   @default(BIRTHDAY)
+  description     String
+  includes        String[]    // bullet list of inclusions
+  durationMinutes Int         @default(120)
+  bays            Int         @default(2) // bays reserved (BAY_RATE); a minimum when dynamicBays
+  dynamicBays     Boolean     @default(false) // scale bays with party size (ceil(guests/cap), min `bays`)
+  rateTag         String      @default("birthday") // which BayRate set to price from
+  pricingType     PricingType @default(PER_PERSON)
+  pricePerPerson  Int         @default(0) // cents
+  flatPrice       Int         @default(0) // cents
+  minGuests       Int         @default(1)
+  maxGuests       Int         @default(180)
+  popular         Boolean     @default(false) // "Most Popular" anchor
+  active          Boolean     @default(true)
+  sortOrder       Int         @default(0)
+
+  bookings        Booking[]
+}
+
+model FnbPackage {
+  id            String      @id @default(cuid())
+  name          String
+  description   String
+  pricingType   PricingType @default(PER_PERSON)
+  price         Int         @default(0) // cents (per person or flat)
+  dietaryNotes  String?
+  serviceCharge Boolean     @default(true) // does the 20% service charge apply
+  active        Boolean     @default(true)
+  sortOrder     Int         @default(0)
+
+  bookings      Booking[]
+}
+
+enum AddOnUnit {
+  FLAT
+  PER_PERSON
+  PER_30_MIN
+}
+
+model AddOn {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  category    String    @default("Extras") // Beverages | Food | Time | Experience | Décor | Extras
+  price       Int       @default(0) // cents
+  unit        AddOnUnit @default(FLAT)
+  serviceCharge Boolean @default(false)
+  active      Boolean   @default(true)
+  sortOrder   Int       @default(0)
+
+  bookings    BookingAddOn[]
+}
+
+// ---------------------------------------------------------------------------
+// Bookings (Instant Book) + draft capture for abandoned-cart recovery
+// ---------------------------------------------------------------------------
+enum BookingStatus {
+  DRAFT        // email captured / in-progress (recovery target)
+  PENDING      // hold placed, awaiting deposit
+  CONFIRMED    // deposit paid
+  CANCELLED
+  COMPLETED
+}
+
+model Booking {
+  id           String        @id @default(cuid())
+  reference    String        @unique // human-friendly code, e.g. WTR-7F3K2
+  status       BookingStatus @default(DRAFT)
+  eventType    EventType     @default(BIRTHDAY)
+
+  // Schedule
+  date         DateTime      // event date (date portion)
+  startMinutes Int           // minutes from midnight, e.g. 600 = 10:00
+  endMinutes   Int
+  partySize    Int           @default(1)
+  baysNeeded   Int           @default(1)
+
+  // Selections
+  packageId    String?
+  package      Package?      @relation(fields: [packageId], references: [id])
+  fnbPackageId String?
+  fnbPackage   FnbPackage?   @relation(fields: [fnbPackageId], references: [id])
+  addOns       BookingAddOn[]
+  resources    BookingResource[]
+
+  // Customer
+  customerName  String?
+  customerEmail String?
+  customerPhone String?
+  notes         String?
+
+  // Waiver
+  waiverSigned     Boolean   @default(false)
+  waiverSignedName String?
+  waiverGuardian   Boolean   @default(false)
+  waiverSignedAt   DateTime?
+
+  // Money (all cents)
+  packageTotal  Int     @default(0)
+  fnbTotal      Int     @default(0)
+  addOnsTotal   Int     @default(0)
+  serviceCharge Int     @default(0)
+  taxAmount     Int     @default(0)
+  total         Int     @default(0)
+  depositAmount Int     @default(0)
+  depositPaid   Boolean @default(false)
+  balanceDue    Int     @default(0)
+  balancePaid   Boolean @default(false)
+  balancePaidAt DateTime?
+
+  // Payment
+  stripePaymentIntentId String?
+  paidAt                DateTime?
+
+  // Gift card redemption (applied to the amount due now)
+  giftCardCode    String?
+  giftCardApplied Int     @default(0)
+
+  // Abandoned-cart recovery
+  recoveryEmailSentAt DateTime?
+
+  // Conflict safety: true when the booking uses Shared bays and needs staff
+  // confirmation against Trackman before it's final.
+  needsReview Boolean @default(false)
+
+  // Unpaid checkout holds release bays after this time (null = staff-managed,
+  // e.g. quote bookings). Cleared on confirmation.
+  holdExpiresAt DateTime?
+
+  // Pre-event reminders (sent once each by the cron)
+  reminder7SentAt DateTime?
+  reminder1SentAt DateTime?
+
+  // Staged abandoned-cart recovery (0 = none sent; up to 3 touches)
+  recoveryStage Int @default(0)
+
+  // Promo code applied at checkout
+  promoCode     String?
+  promoDiscount Int     @default(0)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([date, status])
+  @@index([status, updatedAt])
+}
+
+model BookingAddOn {
+  id        String  @id @default(cuid())
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  addOnId   String
+  addOn     AddOn   @relation(fields: [addOnId], references: [id])
+  quantity  Int     @default(1)
+  unitPrice Int     @default(0) // cents, snapshot at booking time
+  lineTotal Int     @default(0)
+
+  @@unique([bookingId, addOnId])
+}
+
+model BookingResource {
+  id         String   @id @default(cuid())
+  bookingId  String
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  resourceId String
+  resource   Resource @relation(fields: [resourceId], references: [id])
+
+  @@unique([bookingId, resourceId])
+}
+
+// ---------------------------------------------------------------------------
+// Inquiry / lead capture (Phase 2 flow; table seeded now)
+// ---------------------------------------------------------------------------
+enum LeadStatus {
+  NEW
+  CONTACTED
+  PROPOSAL_SENT
+  WON
+  LOST
+}
+
+// ---------------------------------------------------------------------------
+// Gift cards (cash up front; redeemable toward the deposit at booking)
+// ---------------------------------------------------------------------------
+enum GiftCardStatus {
+  PENDING   // purchased, awaiting payment
+  ACTIVE    // paid, redeemable
+  REDEEMED  // balance exhausted
+  VOID
+}
+
+model GiftCard {
+  id             String         @id @default(cuid())
+  code           String         @unique
+  initialAmount  Int // cents
+  balance        Int // cents
+  status         GiftCardStatus @default(PENDING)
+  purchaserName  String?
+  purchaserEmail String?
+  recipientName  String?
+  recipientEmail String?
+  message        String?
+  stripePaymentIntentId String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Lead {
+  id            String     @id @default(cuid())
+  eventType     EventType  @default(CORPORATE)
+  preferredDate DateTime?
+  dateFlexible  Boolean    @default(false)
+  headcountMin  Int?
+  headcountMax  Int?
+  budget        String?
+  mustHaves     String[]
+  customerName  String
+  customerEmail String
+  customerPhone String?
+  message       String?
+  status        LeadStatus @default(NEW)
+  source        String?    @default("website")
+  followUpSentAt DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Promo codes (campaigns; day-of-week restriction fills weekday troughs)
+// ---------------------------------------------------------------------------
+model PromoCode {
+  id                String    @id @default(cuid())
+  code              String    @unique
+  description       String    @default("")
+  percentOff        Int       @default(0) // e.g. 15 = 15% (wins over amountOff)
+  amountOff         Int       @default(0) // cents, used when percentOff = 0
+  minTotal          Int       @default(0) // cents; booking total must reach this
+  appliesDays       Int[]     // event day-of-week (0=Sun..6=Sat); empty = any day
+  startsAt          DateTime?
+  endsAt            DateTime?
+  maxRedemptions    Int       @default(0) // 0 = unlimited
+  timesRedeemed     Int       @default(0)
+  featuredInRecovery Boolean  @default(false) // offered in late recovery emails
+  active            Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
