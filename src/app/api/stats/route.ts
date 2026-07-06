@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
-// Public social-proof stats. Cached briefly to keep it cheap.
-export const revalidate = 300
+// Public social-proof stats. Dynamic so builds never require a database.
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
   const now = new Date()
