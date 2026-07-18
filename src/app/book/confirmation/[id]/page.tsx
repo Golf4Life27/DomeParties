@@ -85,7 +85,12 @@ export default async function ConfirmationPage({
             <Row k="Package" v={booking.package?.name ?? '—'} />
             {booking.fnbPackage && <Row k="Food & drink" v={booking.fnbPackage.name} />}
             {booking.addOns.length > 0 && (
-              <Row k="Add-ons" v={booking.addOns.map((a) => a.addOn.name).join(', ')} />
+              <Row
+                k="Add-ons"
+                v={booking.addOns
+                  .map((a) => `${a.addOn.name}${a.choices.length ? ` (${a.choices.join(', ')})` : ''}`)
+                  .join(', ')}
+              />
             )}
           </dl>
 

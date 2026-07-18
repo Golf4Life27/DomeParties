@@ -14,6 +14,8 @@ const FIELDS: FieldDef[] = [
   { key: 'price', label: 'Price', type: 'money' },
   { key: 'sortOrder', label: 'Sort order', type: 'int' },
   { key: 'serviceCharge', label: 'Service charge applies', type: 'bool' },
+  { key: 'choiceCount', label: 'Customer picks how many (0 = no menu)', type: 'int' },
+  { key: 'choiceList', label: 'Choice menu (one per line)', type: 'stringlist' },
   { key: 'active', label: 'Active', type: 'bool' },
   { key: 'description', label: 'Description', type: 'textarea' },
 ]
@@ -21,6 +23,7 @@ const FIELDS: FieldDef[] = [
 const BLANK = {
   name: '', category: 'Extras', unit: 'FLAT', price: 0,
   sortOrder: 0, serviceCharge: false, active: true, description: '',
+  choiceCount: 0, choiceList: [],
 }
 
 export default async function AddonsAdmin() {

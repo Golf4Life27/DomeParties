@@ -10,7 +10,13 @@ const patchSchema = z.object({
   packageId: z.string().nullish(),
   fnbPackageId: z.string().nullish(),
   addOns: z
-    .array(z.object({ addOnId: z.string(), quantity: z.number().int().min(1).max(50) }))
+    .array(
+      z.object({
+        addOnId: z.string(),
+        quantity: z.number().int().min(1).max(50),
+        choices: z.array(z.string().max(80)).max(24).optional(),
+      }),
+    )
     .optional(),
   customerName: z.string().max(120).optional(),
   customerEmail: z.string().email().optional(),
