@@ -49,6 +49,33 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   if (existing.status !== 'DRAFT' && existing.status !== 'PENDING') {
     return NextResponse.json({ error: 'Booking can no longer be edited' }, { status: 409 })
   }
+  // Once money has moved, self-serve edits are closed (call/email instead) —
+  // otherwise a paid booking could change date or size with no re-pricing.
+  if (existing.depositPaid) {
+    return NextResponse.json(
+      { error: 'This booking is paid — call us to make changes.' },
+      { status: 409 },
+    )
+  }
+  // Editing anything price- or slot-relevant on a PENDING (held, unpaid)
+  // booking invalidates the hold: revert to DRAFT, free the bays, and require
+  // a fresh checkout so pricing and availability are re-validated.
+  const coreEdit =
+    parsed.data.dateStr !== undefined ||
+    parsed.data.startMinutes !== undefined ||
+    parsed.data.partySize !== undefined ||
+    parsed.data.packageId !== undefined ||
+    parsed.data.fnbPackageId !== undefined ||
+    parsed.data.addOns !== undefined
+  if (existing.status === 'PENDING' && coreEdit) {
+    await prisma.$transaction([
+      prisma.bookingResource.deleteMany({ where: { bookingId: id } }),
+      prisma.booking.update({
+        where: { id },
+        data: { status: 'DRAFT', needsReview: false, holdExpiresAt: null },
+      }),
+    ])
+  }
   const booking = await updateDraft(id, parsed.data)
   return NextResponse.json({ booking })
 }

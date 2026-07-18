@@ -13,5 +13,18 @@ export function adminSessionToken(): string {
 }
 
 export function isValidAdminCookie(value: string | undefined): boolean {
+  // Fail closed in production if the secrets were never configured — the
+  // defaults are public in the repo and must never authenticate a live site.
+  if (
+    process.env.NODE_ENV === 'production' &&
+    (!process.env.ADMIN_SESSION_TOKEN || !process.env.ADMIN_PASSWORD)
+  ) {
+    return false
+  }
   return !!value && value === adminSessionToken()
+}
+
+/** True when the request carries a valid admin session cookie. */
+export function isAdminRequest(req: { cookies: { get(name: string): { value: string } | undefined } }): boolean {
+  return isValidAdminCookie(req.cookies.get(ADMIN_COOKIE)?.value)
 }

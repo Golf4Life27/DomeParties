@@ -53,6 +53,10 @@ export async function sendEmail(input: EmailInput): Promise<{ ok: boolean; mode:
       attachments,
     }),
   })
+  if (!res.ok) {
+    const body = await res.text().catch(() => '(no body)')
+    console.error(`[email] Resend send FAILED (${res.status}) to=${input.to} subject="${input.subject}": ${body}`)
+  }
   return { ok: res.ok, mode: 'resend' }
 }
 
@@ -251,6 +255,8 @@ export function buildStaffNotification(data: {
   lines: string[]
   adminPath: string
   urgent?: boolean
+  actionUrl?: string
+  actionLabel?: string
 }) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const url = `${appUrl}${data.adminPath}`
@@ -258,11 +264,12 @@ export function buildStaffNotification(data: {
   const text = `${data.title}
 
 ${data.lines.join('\n')}
-
+${data.actionUrl ? `\n${data.actionLabel ?? 'One-tap action'}: ${data.actionUrl}\n` : ''}
 Open in admin: ${url}`
   const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
   <h2 style="color:${data.urgent ? '#b91c1c' : '#0e1740'}">${subject}</h2>
   <ul>${data.lines.map((l) => `<li>${l}</li>`).join('')}</ul>
+  ${data.actionUrl ? `<p><a href="${data.actionUrl}" style="background:#16a34a;color:#fff;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold">${data.actionLabel ?? 'One-tap action'} ✓</a></p>` : ''}
   <p><a href="${url}" style="background:#0e1740;color:#fff;padding:10px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open in admin →</a></p>
 </div>`
   return { subject, html, text }
@@ -442,6 +449,71 @@ We can't wait to host you!
     <a href="${data.payUrl}" style="background:#c8ff2e;color:#0e1740;padding:14px 28px;border-radius:999px;text-decoration:none;font-weight:bold">Reserve your date →</a>
   </p>
   <p style="color:#666">— Whitetail Ridge Golf Dome, Oswego, IL</p>
+</div>`
+  return { subject, html, text }
+}
+
+
+/** T-3 balance nudge: settle up before the event, skip the line. */
+export function buildBalanceDueEmail(data: {
+  customerName: string
+  reference: string
+  dateStr: string
+  balanceDue: number
+  balanceUrl: string
+}) {
+  const subject = `Skip the line — settle your balance before the big day (${data.reference})`
+  const text = `Hi ${data.customerName},
+
+Your event on ${data.dateStr} is almost here! Your remaining balance is ${formatCents(data.balanceDue)}.
+
+Pay it now and walk straight in on party day — no checkout, no waiting:
+${data.balanceUrl}
+
+(You can also settle up at the venue.)
+
+— Whitetail Ridge Golf Dome, Oswego, IL`
+  const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  <h1 style="color:#0e1740">Almost party time! 🎉</h1>
+  <p>Hi ${data.customerName}, your event on <strong>${data.dateStr}</strong> is almost here.
+  Your remaining balance is <strong>${formatCents(data.balanceDue)}</strong>.</p>
+  <p>Pay now and walk straight in on party day — no checkout, no waiting:</p>
+  <p><a href="${data.balanceUrl}" style="background:#c8ff2e;color:#08102c;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold">Pay my balance →</a></p>
+  <p style="color:#666;font-size:13px">Prefer to settle at the venue? That works too. Ref: ${data.reference}</p>
+</div>`
+  return { subject, html, text }
+}
+
+/** Post-event thank-you + review request + rebook nudge. */
+export function buildThankYouEmail(data: {
+  customerName: string
+  reference: string
+  reviewUrl?: string | null
+  bookUrl: string
+}) {
+  const subject = 'Thanks for partying at the Dome! 🏌️'
+  const review = data.reviewUrl
+    ? `
+
+Had a great time? A quick review means the world to a local business:
+${data.reviewUrl}`
+    : ''
+  const text = `Hi ${data.customerName},
+
+Thank you for celebrating at Whitetail Ridge Golf Dome — we hope your crew had a blast!${review}
+
+Planning the next one? Birthdays come around every year — book your next event anytime:
+${data.bookUrl}
+
+— The Whitetail Ridge team`
+  const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  <h1 style="color:#0e1740">Thanks for partying with us! 🎉</h1>
+  <p>Hi ${data.customerName}, thank you for celebrating at Whitetail Ridge Golf Dome — we hope your crew had a blast.</p>
+  ${data.reviewUrl ? `<p>Had a great time? A quick review means the world to a local business:</p>
+  <p><a href="${data.reviewUrl}" style="background:#0e1740;color:#fff;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold">Leave a review ⭐</a></p>` : ''}
+  <p>Planning the next one? Birthdays come around every year:</p>
+  <p><a href="${data.bookUrl}" style="background:#c8ff2e;color:#08102c;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold">Book your next event →</a></p>
+  <p style="color:#666;font-size:13px">Ref: ${data.reference}</p>
 </div>`
   return { subject, html, text }
 }

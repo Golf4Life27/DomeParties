@@ -15,7 +15,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const booking = await prisma.booking.findUnique({ where: { id } })
   if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  if (booking.status !== 'PENDING') {
+  if (booking.status !== 'PENDING' || booking.depositPaid) {
     return NextResponse.json({ error: 'This booking is not awaiting payment.' }, { status: 409 })
   }
 
@@ -35,9 +35,14 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   })
 }
 
-// DELETE — remove an applied gift card.
+// DELETE — remove an applied gift card (only while payment is still pending).
 export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+  const booking = await prisma.booking.findUnique({ where: { id } })
+  if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  if (booking.status !== 'PENDING' || booking.depositPaid) {
+    return NextResponse.json({ error: 'This booking is not awaiting payment.' }, { status: 409 })
+  }
   await prisma.booking.update({ where: { id }, data: { giftCardCode: null, giftCardApplied: 0 } })
   return NextResponse.json({ ok: true })
 }
