@@ -4,6 +4,7 @@ import { formatCents } from '@/lib/money'
 import { minutesToLabel, formatDateLong } from '@/lib/time'
 import UpsellList from './UpsellList'
 import InviteLink from './InviteLink'
+import { VENUE } from '@/lib/venue'
 
 export const dynamic = 'force-dynamic'
 
@@ -96,7 +97,8 @@ export default async function ManagePage({ params }: { params: Promise<{ id: str
         </div>
 
         <p className="mt-8 text-center text-xs text-foreground/50">
-          Need to change your date or party size? Just reply to your confirmation email or call us.
+          Need to change your date or party size? Reply to your confirmation email or call{' '}
+          <a href={`tel:${VENUE.phoneDigits}`} className="font-medium text-brand hover:underline">{VENUE.phone}</a>.
         </p>
       </div>
     </main>
