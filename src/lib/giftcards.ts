@@ -2,10 +2,13 @@ import { prisma } from '@/lib/db'
 import { getStripe } from '@/lib/stripe'
 import { sendEmail, buildGiftCardEmails } from '@/lib/email'
 
+import { randomInt } from 'node:crypto'
+
 const ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'
+// Gift codes are bearer tokens for stored value — use CSPRNG, not Math.random.
 function giftCode(): string {
   let c = ''
-  for (let i = 0; i < 8; i++) c += ALPHABET[Math.floor(Math.random() * ALPHABET.length)]
+  for (let i = 0; i < 8; i++) c += ALPHABET[randomInt(ALPHABET.length)]
   return `GIFT-${c.slice(0, 4)}-${c.slice(4)}`
 }
 
@@ -93,13 +96,21 @@ export async function validateGiftCard(code: string): Promise<GiftValidation> {
   return { ok: true, balance: gift.balance, code: gift.code }
 }
 
-/** Decrement a gift card balance by `amount` (called at booking confirmation). */
-export async function debitGiftCard(code: string, amount: number) {
-  const gift = await prisma.giftCard.findUnique({ where: { code } })
-  if (!gift) return
-  const newBalance = Math.max(0, gift.balance - amount)
-  await prisma.giftCard.update({
-    where: { code },
-    data: { balance: newBalance, status: newBalance === 0 ? 'REDEEMED' : gift.status },
+/**
+ * Decrement a gift card balance by `amount` (called at booking confirmation).
+ * Atomic + conditional: the same card applied to two bookings can only cover
+ * the value it actually holds — the second debit fails instead of silently
+ * flooring at zero.
+ */
+export async function debitGiftCard(code: string, amount: number): Promise<{ ok: boolean }> {
+  const res = await prisma.giftCard.updateMany({
+    where: { code, status: 'ACTIVE', balance: { gte: amount } },
+    data: { balance: { decrement: amount } },
   })
+  if (res.count === 0) return { ok: false }
+  await prisma.giftCard.updateMany({
+    where: { code, balance: { lte: 0 } },
+    data: { status: 'REDEEMED' },
+  })
+  return { ok: true }
 }

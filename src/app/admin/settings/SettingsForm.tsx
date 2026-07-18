@@ -10,6 +10,7 @@ type Setting = {
   leadTimeDaysOnline: number
   holdMinutes: number
   staffNotifyEmail: string | null
+  reviewUrl: string | null
   depositPercent: number
   serviceChargePct: number
   serviceChargeOnGolf: boolean
@@ -30,6 +31,7 @@ const FIELDS: { key: keyof Setting; label: string; help?: string; step?: number;
   { key: 'leadTimeDaysOnline', label: 'Online lead time (days)' },
   { key: 'holdMinutes', label: 'Unpaid hold expires after (min)' },
   { key: 'staffNotifyEmail', label: 'Staff notification email (blank = off)', kind: 'text' },
+  { key: 'reviewUrl', label: 'Review link for thank-you emails (e.g. Google)', kind: 'text' },
   { key: 'depositPercent', label: 'Deposit %' },
   { key: 'serviceChargePct', label: 'Service charge %' },
   { key: 'serviceChargeOnGolf', label: 'Service charge also on golf/bay charges', kind: 'bool' },

@@ -4,9 +4,10 @@ import { availability } from '@/lib/availability'
 import { generateReference } from '@/lib/ref'
 import { getStripe } from '@/lib/stripe'
 import { applyPercent, formatCents } from '@/lib/money'
-import { minutesToLabel } from '@/lib/time'
+import { minutesToLabel, todayVenueMidnight } from '@/lib/time'
 import { debitGiftCard } from '@/lib/giftcards'
 import { redeemPromo, featuredRecoveryPromo } from '@/lib/promos'
+import { signApproval } from '@/lib/sign'
 import {
   sendEmail,
   buildConfirmationEmail,
@@ -18,6 +19,8 @@ import {
   buildReminderEmail,
   buildBalanceReceiptEmail,
   buildLeadFollowUpEmail,
+  buildBalanceDueEmail,
+  buildThankYouEmail,
 } from '@/lib/email'
 import type { AddOnSelection } from '@/lib/types'
 import type { EventType } from '@/generated/prisma'
@@ -32,6 +35,8 @@ export async function notifyStaff(input: {
   lines: string[]
   adminPath: string
   urgent?: boolean
+  actionUrl?: string
+  actionLabel?: string
 }) {
   try {
     const setting = await prisma.setting.findUnique({ where: { id: 1 } })
@@ -45,6 +50,22 @@ export async function notifyStaff(input: {
 }
 function dateStrOf(d: Date): string {
   return d.toISOString().slice(0, 10)
+}
+
+/**
+ * Serialize bay assignment per event date. Two simultaneous checkouts for the
+ * same day would otherwise read the same availability and pick the same bays
+ * (assignBays is deterministic). Writers take a Postgres advisory lock keyed on
+ * the date; reads inside the callback see all previously committed holds.
+ */
+async function withBayLock<T>(dateStr: string, fn: (tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0]) => Promise<T>): Promise<T> {
+  return prisma.$transaction(
+    async (tx) => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${'bays-' + dateStr}))`
+      return fn(tx)
+    },
+    { timeout: 15_000 },
+  )
 }
 
 /** Step 1: capture email, create a DRAFT (abandoned-cart recovery target). */
@@ -168,6 +189,18 @@ export async function placeHold(id: string) {
   const dateStr = dateStrOf(booking.date)
   const startMinutes = booking.startMinutes
 
+  // Server-side package validation: no booking retired packages by id, and no
+  // oversized parties on fixed-bay packages (undercharge + overcrowding risk).
+  const pkg = await prisma.package.findUniqueOrThrow({ where: { id: booking.packageId } })
+  if (!pkg.active) {
+    throw new BookingIncompleteError('That package is no longer available — please pick a current one.')
+  }
+  if (pkg.maxGuests > 0 && booking.partySize > pkg.maxGuests) {
+    throw new BookingIncompleteError(
+      `This package covers up to ${pkg.maxGuests} guests — for ${booking.partySize} guests, pick a larger package.`,
+    )
+  }
+
   const quote = await computeQuote({
     partySize: booking.partySize,
     packageId: booking.packageId,
@@ -176,6 +209,24 @@ export async function placeHold(id: string) {
     dateStr,
     startMinutes,
   })
+
+  // A checkout always has a concrete date+time; if the rate engine could only
+  // produce a fallback "from" estimate (or $0), the rate table has a gap for
+  // this slot. Refuse to silently book at the wrong price and alert staff.
+  if (pkg.pricingType === 'BAY_RATE' && (quote.estimated || quote.packageTotal <= 0)) {
+    void notifyStaff({
+      title: `Rate table gap blocked a checkout — ${booking.reference}`,
+      lines: [
+        `${dateStr} at ${minutesToLabel(startMinutes)} for ${quote.baysNeeded} bays has no matching ${pkg.rateTag} rate.`,
+        'Add the missing rate row in admin → Bay rates; the customer was asked to call.',
+      ],
+      adminPath: '/admin/rates',
+      urgent: true,
+    })
+    throw new BookingIncompleteError(
+      'We can’t price that time slot online — please call us and we’ll book it for you.',
+    )
+  }
 
   // "+30 min" style add-ons extend the actual reserved window, not just the bill.
   const extraMinutes = booking.addOns
@@ -190,20 +241,22 @@ export async function placeHold(id: string) {
     )
   }
 
-  const assignment = await availability.assignBays(
-    dateStr,
-    startMinutes,
-    endMinutes,
-    quote.baysNeeded,
-    booking.id,
-  )
-  if (!assignment) {
-    throw new BookingConflictError('That time was just taken — please pick another slot.')
-  }
-
   const holdExpiresAt = new Date(Date.now() + setting.holdMinutes * 60_000)
 
-  await prisma.$transaction(async (tx) => {
+  // Assignment + persistence run under a per-date advisory lock so two
+  // simultaneous checkouts can't read the same availability and take the
+  // same bays.
+  await withBayLock(dateStr, async (tx) => {
+    const assignment = await availability.assignBays(
+      dateStr,
+      startMinutes,
+      endMinutes,
+      quote.baysNeeded,
+      booking.id,
+    )
+    if (!assignment) {
+      throw new BookingConflictError('That time was just taken — please pick another slot.')
+    }
     await tx.bookingResource.deleteMany({ where: { bookingId: id } })
     await tx.bookingResource.createMany({
       data: assignment.resourceIds.map((resourceId) => ({ bookingId: id, resourceId })),
@@ -284,18 +337,32 @@ export async function createQuoteBookingFromLead(leadId: string, input: QuoteInp
   })
 
   // Best-effort bay hold (custom events may be coordinated manually if full).
-  const assignment = await availability.assignBays(
-    input.dateStr,
-    input.startMinutes,
-    endMinutes,
-    baysNeeded,
-    booking.id,
-  )
-  if (assignment) {
-    await prisma.bookingResource.createMany({
-      data: assignment.resourceIds.map((resourceId) => ({ bookingId: booking.id, resourceId })),
-    })
-  }
+  // Quotes hold bays for 14 days max — an unpaid quote must not block a prime
+  // date forever (the cron frees the bays but keeps the quote payable).
+  const assignment = await withBayLock(input.dateStr, async (tx) => {
+    const a = await availability.assignBays(
+      input.dateStr,
+      input.startMinutes,
+      endMinutes,
+      baysNeeded,
+      booking.id,
+    )
+    if (a) {
+      await tx.bookingResource.createMany({
+        data: a.resourceIds.map((resourceId) => ({ bookingId: booking.id, resourceId })),
+      })
+    }
+    return a
+  })
+  await prisma.booking.update({
+    where: { id: booking.id },
+    data: {
+      // Quotes on shared bays (or with no bays held) need the same Trackman
+      // check as instant bookings before their deposit auto-confirms them.
+      needsReview: assignment ? assignment.usedShared : true,
+      holdExpiresAt: new Date(Date.now() + 14 * 86_400_000),
+    },
+  })
 
   await prisma.lead.update({ where: { id: leadId }, data: { status: 'PROPOSAL_SENT' } })
 
@@ -360,10 +427,12 @@ export async function createDepositIntent(id: string) {
  * expiry and are untouched.
  */
 export async function releaseExpiredHolds() {
+  // Instant-book checkout holds (have a package): revert to DRAFT, free bays.
   const expired = await prisma.booking.findMany({
     where: {
       status: 'PENDING',
       depositPaid: false,
+      packageId: { not: null },
       holdExpiresAt: { not: null, lt: new Date() },
     },
     select: { id: true },
@@ -377,7 +446,34 @@ export async function releaseExpiredHolds() {
       }),
     ])
   }
-  return { released: expired.length }
+
+  // Staff quotes (no package): free the bays but keep the quote PENDING so the
+  // pay link still works — the deposit just re-checks availability when it lands.
+  const staleQuotes = await prisma.booking.findMany({
+    where: {
+      status: 'PENDING',
+      depositPaid: false,
+      packageId: null,
+      holdExpiresAt: { not: null, lt: new Date() },
+      resources: { some: {} },
+    },
+    select: { id: true, reference: true, customerName: true, date: true },
+  })
+  for (const q of staleQuotes) {
+    await prisma.$transaction([
+      prisma.bookingResource.deleteMany({ where: { bookingId: q.id } }),
+      prisma.booking.update({ where: { id: q.id }, data: { holdExpiresAt: null } }),
+    ])
+    await notifyStaff({
+      title: `Quote hold released — ${q.reference}`,
+      lines: [
+        `${q.customerName ?? 'Guest'}'s quote for ${dateStrOf(q.date)} went unpaid for 14 days; its bays are back on sale.`,
+        'The pay link still works — if they pay later, availability is re-checked automatically.',
+      ],
+      adminPath: `/admin/bookings/${q.id}`,
+    })
+  }
+  return { released: expired.length, quoteHoldsReleased: staleQuotes.length }
 }
 
 /** Send one abandoned-cart recovery email (next stage) and stamp the booking. */
@@ -519,7 +615,29 @@ async function finalizeConfirmed(id: string, paymentIntentId?: string) {
 
   if (updated.giftCardCode && updated.giftCardApplied > 0) {
     try {
-      await debitGiftCard(updated.giftCardCode, updated.giftCardApplied)
+      const debit = await debitGiftCard(updated.giftCardCode, updated.giftCardApplied)
+      if (!debit.ok) {
+        // Card no longer covers what was applied (spent on another booking in
+        // the meantime). The event stays confirmed; the shortfall moves to the
+        // balance and staff are told to collect it.
+        await prisma.booking.update({
+          where: { id },
+          data: {
+            balanceDue: { increment: updated.giftCardApplied },
+            giftCardApplied: 0,
+            balancePaid: false,
+          },
+        })
+        await notifyStaff({
+          title: `Gift card shortfall — ${updated.reference}`,
+          lines: [
+            `Gift card ${updated.giftCardCode} no longer covers the ${formatCents(updated.giftCardApplied)} applied at checkout (used elsewhere first).`,
+            'The amount was added to the balance due — collect it at the event.',
+          ],
+          adminPath: `/admin/bookings/${updated.id}`,
+          urgent: true,
+        })
+      }
     } catch (e) {
       console.error('gift debit failed', e)
     }
@@ -559,36 +677,60 @@ async function finalizeConfirmed(id: string, paymentIntentId?: string) {
 export async function confirmPaid(id: string, paymentIntentId?: string) {
   const booking = await prisma.booking.findUniqueOrThrow({
     where: { id },
-    include: { package: true },
+    include: { package: true, resources: true },
   })
   if (booking.status === 'CONFIRMED') return booking // idempotent
+  if (booking.depositPaid) return booking // webhook retry on the review path — already recorded
 
-  // If the payment landed after the hold expired, the bays may have been given
-  // away — re-assign before confirming. If that fails, keep the deposit and
-  // route to staff review rather than double-booking.
+  // A payment landing on a CANCELLED booking must never resurrect it — record
+  // the payment for staff to refund, and stop.
+  if (booking.status === 'CANCELLED') {
+    await prisma.booking.update({
+      where: { id },
+      data: { ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}) },
+    })
+    await notifyStaff({
+      title: `Payment received on a CANCELLED booking — ${booking.reference}`,
+      lines: [
+        `${booking.customerName ?? 'Guest'} paid ${formatCents(booking.depositAmount)} on a booking that was already cancelled.`,
+        'Refund it in Stripe and contact the guest.',
+      ],
+      adminPath: `/admin/bookings/${booking.id}`,
+      urgent: true,
+    })
+    return booking
+  }
+
+  // If the payment landed after the hold expired — or the hold was already
+  // released (reverted to DRAFT, bays freed) — the bays may have been given
+  // away. Re-assign under the date lock before confirming. If that fails, keep
+  // the deposit and route to staff review rather than double-booking.
   let needsReview = booking.needsReview
-  if (booking.holdExpiresAt && booking.holdExpiresAt < new Date()) {
-    const assignment = await availability.assignBays(
-      dateStrOf(booking.date),
-      booking.startMinutes,
-      booking.endMinutes,
-      booking.baysNeeded,
-      booking.id,
-    )
-    if (assignment) {
-      await prisma.$transaction([
-        prisma.bookingResource.deleteMany({ where: { bookingId: id } }),
-        prisma.bookingResource.createMany({
+  const holdLapsed = booking.holdExpiresAt !== null && booking.holdExpiresAt < new Date()
+  const noBays = booking.resources.length === 0 || booking.status === 'DRAFT'
+  if (holdLapsed || noBays) {
+    const dateStr = dateStrOf(booking.date)
+    needsReview = await withBayLock(dateStr, async (tx) => {
+      const assignment = await availability.assignBays(
+        dateStr,
+        booking.startMinutes,
+        booking.endMinutes,
+        booking.baysNeeded,
+        booking.id,
+      )
+      if (assignment) {
+        await tx.bookingResource.deleteMany({ where: { bookingId: id } })
+        await tx.bookingResource.createMany({
           data: assignment.resourceIds.map((resourceId) => ({ bookingId: id, resourceId })),
-        }),
-      ])
-      needsReview = assignment.usedShared
-    } else {
-      needsReview = true // bays gone — staff will re-slot with the guest
-    }
-    if (needsReview !== booking.needsReview) {
-      await prisma.booking.update({ where: { id }, data: { needsReview } })
-    }
+        })
+        return assignment.usedShared
+      }
+      return true // bays gone — staff will re-slot with the guest
+    })
+    await prisma.booking.update({
+      where: { id },
+      data: { needsReview, status: 'PENDING' }, // late payment on a released DRAFT re-enters the pipeline
+    })
   }
 
   if (needsReview) {
@@ -605,15 +747,26 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
     if (updated.customerEmail) {
       await sendEmail({ to: updated.customerEmail, subject: email.subject, html: email.html, text: email.text })
     }
+    // Give staff the one fact the Trackman check needs (which bays) and a
+    // one-tap approve link so review doesn't require the admin login dance.
+    const held = await prisma.bookingResource.findMany({
+      where: { bookingId: id },
+      include: { resource: true },
+    })
+    const bayNames = held.map((r) => r.resource.name).join(', ') || 'none assigned'
+    const approval = signApproval(updated.id)
     await notifyStaff({
       title: `Booking needs review — ${updated.reference}`,
       lines: [
         `${updated.customerName ?? 'Guest'} paid a ${formatCents(updated.depositAmount)} deposit`,
         `${dateStrOf(updated.date)}, ${minutesToLabel(updated.startMinutes)}–${minutesToLabel(updated.endMinutes)} · ${updated.partySize} guests`,
-        'Uses shared bays — check Trackman for conflicts, then Confirm to finalize.',
+        `Bays held: ${bayNames}`,
+        'Check Trackman for conflicts on those bays, then tap Approve to finalize.',
       ],
       adminPath: `/admin/bookings/${updated.id}`,
       urgent: true,
+      actionUrl: `${appUrl()}/api/staff/approve?bid=${updated.id}&exp=${approval.exp}&sig=${approval.sig}`,
+      actionLabel: 'Approve booking',
     })
     return updated // stays PENDING, awaiting staff review
   }
@@ -639,7 +792,7 @@ export function guestLinks(bookingId: string) {
  * "tomorrow" logistics reminder, each once per confirmed booking.
  */
 export async function sendEventReminders() {
-  const todayMidnight = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00.000Z`)
+  const todayMidnight = todayVenueMidnight()
   const in1 = new Date(todayMidnight.getTime() + 1 * 86_400_000)
   const in7 = new Date(todayMidnight.getTime() + 7 * 86_400_000)
 
@@ -791,8 +944,185 @@ export async function addAddOnToConfirmed(bookingId: string, addOnId: string, qu
 export async function approveBooking(id: string) {
   const booking = await prisma.booking.findUniqueOrThrow({ where: { id } })
   if (booking.status === 'CONFIRMED') return booking
+  if (booking.status === 'CANCELLED') {
+    throw new BookingIncompleteError('This booking was cancelled — it can’t be approved.')
+  }
   if (!booking.depositPaid) {
     throw new BookingIncompleteError('Deposit not yet paid')
   }
+
+  // The queue exists because a conflict was suspected — never approve on stale
+  // bay data. Re-assign under the date lock; if the slot is truly gone, tell
+  // the admin instead of silently double-booking.
+  const dateStr = dateStrOf(booking.date)
+  await withBayLock(dateStr, async (tx) => {
+    const assignment = await availability.assignBays(
+      dateStr,
+      booking.startMinutes,
+      booking.endMinutes,
+      booking.baysNeeded,
+      booking.id,
+    )
+    if (!assignment) {
+      throw new BookingConflictError(
+        'Those bays are no longer available in this system — re-slot the event with the guest before approving.',
+      )
+    }
+    await tx.bookingResource.deleteMany({ where: { bookingId: id } })
+    await tx.bookingResource.createMany({
+      data: assignment.resourceIds.map((resourceId) => ({ bookingId: id, resourceId })),
+    })
+  })
   return finalizeConfirmed(id)
+}
+
+
+// ---------------------------------------------------------------------------
+// Revenue-automation cron jobs (multiplexed from /api/cron/recovery)
+// ---------------------------------------------------------------------------
+
+/**
+ * A paid booking stuck in the review queue is a customer waiting on their
+ * confirmation. Re-alert staff every ~4h (first nudge after 2h), with the
+ * one-tap approve link, escalating as the event approaches.
+ */
+export async function escalateStaleReviews() {
+  const now = Date.now()
+  const stale = await prisma.booking.findMany({
+    where: {
+      status: 'PENDING',
+      depositPaid: true,
+      needsReview: true,
+      OR: [
+        { reviewNotifiedAt: null, paidAt: { lt: new Date(now - 2 * 3_600_000) } },
+        { reviewNotifiedAt: { lt: new Date(now - 4 * 3_600_000) } },
+      ],
+    },
+    include: { resources: { include: { resource: true } } },
+    take: 50,
+  })
+  for (const b of stale) {
+    const hoursWaiting = b.paidAt ? Math.round((now - b.paidAt.getTime()) / 3_600_000) : 0
+    const approval = signApproval(b.id)
+    await notifyStaff({
+      title: `STILL awaiting review (${hoursWaiting}h) — ${b.reference}`,
+      lines: [
+        `${b.customerName ?? 'Guest'} paid ${formatCents(b.depositAmount)} and is waiting on confirmation.`,
+        `${dateStrOf(b.date)}, ${minutesToLabel(b.startMinutes)}–${minutesToLabel(b.endMinutes)} · ${b.partySize} guests`,
+        `Bays held: ${b.resources.map((r) => r.resource.name).join(', ') || 'none'}`,
+      ],
+      adminPath: `/admin/bookings/${b.id}`,
+      urgent: true,
+      actionUrl: `${appUrl()}/api/staff/approve?bid=${b.id}&exp=${approval.exp}&sig=${approval.sig}`,
+      actionLabel: 'Approve booking',
+    })
+    await prisma.booking.update({ where: { id: b.id }, data: { reviewNotifiedAt: new Date() } })
+  }
+  return { reviewEscalations: stale.length }
+}
+
+/** T-3 "settle your balance, skip the line" email — once per booking. */
+export async function sendBalanceReminders() {
+  const today = todayVenueMidnight()
+  const in3 = new Date(today.getTime() + 3 * 86_400_000)
+  const due = await prisma.booking.findMany({
+    where: {
+      status: 'CONFIRMED',
+      balancePaid: false,
+      balanceDue: { gt: 0 },
+      customerEmail: { not: null },
+      balanceReminderSentAt: null,
+      date: { gt: today, lte: in3 },
+    },
+    take: 100,
+  })
+  for (const b of due) {
+    const email = buildBalanceDueEmail({
+      customerName: b.customerName ?? 'there',
+      reference: b.reference,
+      dateStr: dateStrOf(b.date),
+      balanceDue: b.balanceDue,
+      balanceUrl: `${appUrl()}/balance/${b.id}`,
+    })
+    await sendEmail({ to: b.customerEmail!, subject: email.subject, html: email.html, text: email.text })
+    await prisma.booking.update({ where: { id: b.id }, data: { balanceReminderSentAt: new Date() } })
+  }
+  return { balanceReminders: due.length }
+}
+
+/**
+ * Morning staff digest: today's events with times, bays, and who still owes —
+ * the run sheet, delivered. Sent once per venue day (first cron run after 6am).
+ */
+export async function sendMorningDigest() {
+  const todayStrVal = dateStrOf(todayVenueMidnight())
+  const setting = await prisma.setting.findUniqueOrThrow({ where: { id: 1 } })
+  if (setting.dayDigestSentFor === todayStrVal) return { digestSent: 0 }
+  // Only send from ~6am venue time so the digest lands in the morning.
+  const hourChicago = parseInt(
+    new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', hour: 'numeric', hour12: false }).format(new Date()),
+    10,
+  )
+  if (hourChicago < 6) return { digestSent: 0 }
+
+  const events = await prisma.booking.findMany({
+    where: {
+      date: todayVenueMidnight(),
+      OR: [{ status: 'CONFIRMED' }, { status: 'PENDING', depositPaid: true }],
+    },
+    include: { resources: { include: { resource: true } } },
+    orderBy: { startMinutes: 'asc' },
+  })
+  await prisma.setting.update({ where: { id: 1 }, data: { dayDigestSentFor: todayStrVal } })
+  if (events.length === 0) return { digestSent: 0 }
+
+  await notifyStaff({
+    title: `Today at the Dome — ${events.length} event${events.length === 1 ? '' : 's'}`,
+    lines: events.map((b) => {
+      const bays = b.resources.map((r) => r.resource.name).join(', ') || 'no bays'
+      const money = b.balancePaid ? 'paid in full' : `owes ${formatCents(b.balanceDue)}`
+      const review = b.status === 'PENDING' ? ' ⚠ NEEDS REVIEW' : ''
+      return `${minutesToLabel(b.startMinutes)}–${minutesToLabel(b.endMinutes)} · ${b.customerName ?? 'Guest'} (${b.partySize}) · ${bays} · ${money}${review}`
+    }),
+    adminPath: `/admin/day`,
+  })
+  return { digestSent: 1 }
+}
+
+/**
+ * Post-event: auto-complete past confirmed events, thank the host (with a
+ * review ask + rebook CTA), and flag any event that left with money owing.
+ */
+export async function completePastEvents() {
+  const today = todayVenueMidnight()
+  const past = await prisma.booking.findMany({
+    where: { status: 'CONFIRMED', date: { lt: today } },
+    take: 100,
+  })
+  const setting = await prisma.setting.findUniqueOrThrow({ where: { id: 1 } })
+  for (const b of past) {
+    await prisma.booking.update({ where: { id: b.id }, data: { status: 'COMPLETED' } })
+    if (b.balanceDue > 0 && !b.balancePaid) {
+      await notifyStaff({
+        title: `Event ended with balance unpaid — ${b.reference}`,
+        lines: [
+          `${b.customerName ?? 'Guest'}'s event on ${dateStrOf(b.date)} shows ${formatCents(b.balanceDue)} still owing.`,
+          'If it was settled at the venue, mark it paid on the booking; otherwise follow up now.',
+        ],
+        adminPath: `/admin/bookings/${b.id}`,
+        urgent: true,
+      })
+    }
+    if (b.customerEmail && !b.thankYouSentAt && (b.balancePaid || b.balanceDue === 0)) {
+      const email = buildThankYouEmail({
+        customerName: b.customerName ?? 'there',
+        reference: b.reference,
+        reviewUrl: setting.reviewUrl,
+        bookUrl: `${appUrl()}/book`,
+      })
+      await sendEmail({ to: b.customerEmail, subject: email.subject, html: email.html, text: email.text })
+      await prisma.booking.update({ where: { id: b.id }, data: { thankYouSentAt: new Date() } })
+    }
+  }
+  return { completed: past.length }
 }

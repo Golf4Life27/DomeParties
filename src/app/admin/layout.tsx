@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { ADMIN_COOKIE, isValidAdminCookie } from '@/lib/auth'
+import { prisma } from '@/lib/db'
 import LogoutButton from './LogoutButton'
 
 const NAV = [
   { href: '/admin', label: 'Overview' },
+  { href: '/admin/day', label: 'Day view' },
   { href: '/admin/bookings', label: 'Bookings' },
   { href: '/admin/leads', label: 'Leads' },
   { href: '/admin/bays', label: 'Bays' },
@@ -24,6 +26,27 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   // Unauthenticated (e.g. the login page) renders without admin chrome.
   if (!authed) return <div className="admin-light flex min-h-screen flex-col">{children}</div>
+
+  // Surface silent-failure states loudly: email off = no confirmations, no
+  // staff alerts, no reminders — invisible unless someone says so here.
+  const warnings: string[] = []
+  if (!process.env.RESEND_API_KEY) {
+    warnings.push(
+      'Emails are NOT being sent (no RESEND_API_KEY). Customers get no confirmations and you get no alerts — everything logs to the server console only.',
+    )
+  }
+  const setting = await prisma.setting.findUnique({ where: { id: 1 } }).catch(() => null)
+  if (setting && !setting.staffNotifyEmail) {
+    warnings.push('No staff notification email is set (Settings) — you will not be alerted about new bookings.')
+  }
+  if (process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_WEBHOOK_SECRET) {
+    warnings.push(
+      'STRIPE_SECRET_KEY is set but STRIPE_WEBHOOK_SECRET is missing — cards would be charged but bookings would NEVER confirm. Fix before taking payments.',
+    )
+  }
+  if (!process.env.CRON_SECRET) {
+    warnings.push('CRON_SECRET is not set — scheduled jobs (reminders, recovery, balance chasing) are disabled.')
+  }
 
   return (
     <div className="admin-light flex min-h-screen flex-col">
@@ -47,6 +70,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
         </div>
       </header>
+      {warnings.length > 0 && (
+        <div className="bg-red-600 text-white">
+          <div className="mx-auto max-w-6xl space-y-1 px-6 py-2 text-sm font-medium">
+            {warnings.map((w) => (
+              <p key={w}>⚠ {w}</p>
+            ))}
+          </div>
+        </div>
+      )}
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">{children}</main>
     </div>
   )

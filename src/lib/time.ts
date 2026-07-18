@@ -23,9 +23,18 @@ export function formatDateLong(dateStr: string): string {
   })
 }
 
-/** Today's date in YYYY-MM-DD (UTC; fine for a date-only lead-time check). */
+/**
+ * Today's date in YYYY-MM-DD — in the VENUE's timezone (America/Chicago).
+ * Servers run UTC; from ~7pm Chicago the UTC date is already tomorrow, which
+ * would shift lead-time gates, reminder windows, and "today" views a day early.
+ */
 export function todayStr(): string {
-  return new Date().toISOString().slice(0, 10)
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(new Date())
+}
+
+/** UTC-midnight Date for the venue's current calendar date (how event dates are stored). */
+export function todayVenueMidnight(): Date {
+  return new Date(`${todayStr()}T00:00:00.000Z`)
 }
 
 /** Add days to a YYYY-MM-DD string, returning YYYY-MM-DD. */

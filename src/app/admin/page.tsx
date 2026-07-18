@@ -2,32 +2,77 @@ import Link from 'next/link'
 import { prisma } from '@/lib/db'
 import { getFunnelStats } from '@/lib/admin-stats'
 import { formatCents } from '@/lib/money'
-import { minutesToLabel } from '@/lib/time'
+import { minutesToLabel, todayVenueMidnight } from '@/lib/time'
 import { StatusBadge } from './StatusBadge'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AdminOverview() {
-  const [stats, upcoming, recent] = await Promise.all([
-    getFunnelStats(),
-    prisma.booking.findMany({
-      where: { status: 'CONFIRMED', date: { gte: new Date(new Date().toISOString().slice(0, 10)) } },
-      orderBy: [{ date: 'asc' }, { startMinutes: 'asc' }],
-      take: 8,
-      include: { package: true },
-    }),
-    prisma.booking.findMany({
-      where: { status: { in: ['CONFIRMED', 'PENDING'] } },
-      orderBy: { updatedAt: 'desc' },
-      take: 8,
-      include: { package: true },
-    }),
-  ])
+  const [stats, upcoming, recent, needsReviewCount, unpaidBalances, newLeadCount, todayCount] =
+    await Promise.all([
+      getFunnelStats(),
+      prisma.booking.findMany({
+        where: { status: 'CONFIRMED', date: { gte: todayVenueMidnight() } },
+        orderBy: [{ date: 'asc' }, { startMinutes: 'asc' }],
+        take: 8,
+        include: { package: true },
+      }),
+      prisma.booking.findMany({
+        where: { status: { in: ['CONFIRMED', 'PENDING'] } },
+        orderBy: { updatedAt: 'desc' },
+        take: 8,
+        include: { package: true },
+      }),
+      prisma.booking.count({ where: { status: 'PENDING', depositPaid: true, needsReview: true } }),
+      prisma.booking.count({
+        where: { status: 'CONFIRMED', balancePaid: false, balanceDue: { gt: 0 }, date: { gte: todayVenueMidnight() } },
+      }),
+      prisma.lead.count({ where: { status: 'NEW' } }),
+      prisma.booking.count({
+        where: {
+          date: todayVenueMidnight(),
+          OR: [{ status: 'CONFIRMED' }, { status: 'PENDING', depositPaid: true }],
+        },
+      }),
+    ])
+
+  const actions: { label: string; href: string; urgent?: boolean }[] = []
+  if (needsReviewCount > 0)
+    actions.push({
+      label: `${needsReviewCount} paid booking${needsReviewCount === 1 ? '' : 's'} awaiting your review`,
+      href: '/admin/bookings',
+      urgent: true,
+    })
+  if (newLeadCount > 0) actions.push({ label: `${newLeadCount} new lead${newLeadCount === 1 ? '' : 's'} to answer`, href: '/admin/leads' })
+  if (todayCount > 0) actions.push({ label: `${todayCount} event${todayCount === 1 ? '' : 's'} today — see the run sheet`, href: '/admin/day' })
+  if (unpaidBalances > 0) actions.push({ label: `${unpaidBalances} upcoming event${unpaidBalances === 1 ? '' : 's'} with unpaid balances`, href: '/admin/bookings' })
 
   return (
     <div>
       <h1 className="text-2xl font-bold text-brand-dark">Overview</h1>
       <p className="mt-1 text-foreground/60">Your revenue funnel at a glance.</p>
+
+      {/* Needs-your-attention queue — the daily to-do, one glance */}
+      {actions.length > 0 && (
+        <div className="mt-6 space-y-2">
+          {actions.map((a) => (
+            <Link
+              key={a.label}
+              href={a.href}
+              className={`flex items-center justify-between rounded-xl px-5 py-3 font-semibold shadow-sm ring-1 transition ${
+                a.urgent
+                  ? 'bg-red-50 text-red-800 ring-red-200 hover:bg-red-100'
+                  : 'bg-white text-brand-dark ring-black/5 hover:ring-brand'
+              }`}
+            >
+              <span>
+                {a.urgent ? '🔴' : '👉'} {a.label}
+              </span>
+              <span>→</span>
+            </Link>
+          ))}
+        </div>
+      )}
 
       {/* KPI cards */}
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

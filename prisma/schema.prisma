@@ -24,6 +24,8 @@ model Setting {
   leadTimeDaysOnline  Int      @default(7)   // online bookings must be >= 7 days out
   holdMinutes         Int      @default(30)  // how long an unpaid checkout hold keeps bays
   staffNotifyEmail    String?               // where staff notifications go (blank = off)
+  reviewUrl           String?               // public review link (e.g. Google) for post-event emails
+  dayDigestSentFor    String?               // YYYY-MM-DD of the last morning digest sent
   // Money (percent values are basis-point-free integers, e.g. 10 = 10%)
   depositPercent      Int      @default(10)
   serviceChargePct    Int      @default(20)  // auto service charge on F&B + staffed portion
@@ -237,6 +239,9 @@ model Booking {
 
   // Pre-event reminders (sent once each by the cron)
   reminder7SentAt DateTime?
+  reviewNotifiedAt      DateTime? // last staff escalation for a stuck needs-review booking
+  balanceReminderSentAt DateTime? // T-3 "settle your balance" email
+  thankYouSentAt        DateTime? // post-event thank-you / review-request email
   reminder1SentAt DateTime?
 
   // Staged abandoned-cart recovery (0 = none sent; up to 3 touches)

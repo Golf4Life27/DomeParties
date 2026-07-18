@@ -15,6 +15,12 @@ const schema = z.object({
     .or(z.literal(''))
     .transform((v) => (v === '' ? null : v))
     .nullable(),
+  reviewUrl: z
+    .string()
+    .url()
+    .or(z.literal(''))
+    .transform((v) => (v === '' ? null : v))
+    .nullable(),
   depositPercent: z.number().int().min(0).max(100),
   serviceChargePct: z.number().int().min(0).max(100),
   serviceChargeOnGolf: z.boolean(),
