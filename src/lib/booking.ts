@@ -118,14 +118,22 @@ export async function updateDraft(id: string, fields: UpdateBookingFields) {
       for (const sel of fields.addOns) {
         const a = byId.get(sel.addOnId)
         if (!a) continue
+        const qty = Math.max(1, sel.quantity)
         const lineTotal = addOnLineTotal(a.unit, a.price, booking.partySize, sel.quantity)
+        // Keep only picks that are actually on this add-on's choice menu,
+        // capped at what the quantity entitles them to.
+        const choices =
+          a.choiceCount > 0 && sel.choices
+            ? sel.choices.filter((c) => a.choiceList.includes(c)).slice(0, a.choiceCount * qty)
+            : []
         await prisma.bookingAddOn.create({
           data: {
             bookingId: id,
             addOnId: a.id,
-            quantity: Math.max(1, sel.quantity),
+            quantity: qty,
             unitPrice: a.price,
             lineTotal,
+            choices,
           },
         })
       }

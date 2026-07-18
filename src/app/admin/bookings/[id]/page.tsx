@@ -63,7 +63,7 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <Row k="Food & drink" v={b.fnbPackage?.name ?? '—'} />
           <Row
             k="Add-ons"
-            v={b.addOns.length ? b.addOns.map((a) => `${a.addOn.name}${a.quantity > 1 ? ` ×${a.quantity}` : ''}`).join(', ') : '—'}
+            v={b.addOns.length ? b.addOns.map((a) => `${a.addOn.name}${a.quantity > 1 ? ` ×${a.quantity}` : ''}${a.choices.length ? ` (${a.choices.join(', ')})` : ''}`).join(', ') : '—'}
           />
           {b.notes && <Row k="Notes" v={b.notes} />}
         </Card>

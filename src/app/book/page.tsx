@@ -42,6 +42,8 @@ type AddOn = {
   category: string
   price: number
   unit: 'FLAT' | 'PER_PERSON' | 'PER_30_MIN'
+  choiceCount: number
+  choiceList: string[]
 }
 type Setting = {
   bayCapacity: number
@@ -114,6 +116,7 @@ export default function BookPage() {
   const [startMinutes, setStartMinutes] = useState<number | null>(null)
   const [fnbPackageId, setFnbPackageId] = useState<string | null>(null)
   const [addOns, setAddOns] = useState<Record<string, number>>({})
+  const [addOnChoices, setAddOnChoices] = useState<Record<string, string[]>>({})
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [notes, setNotes] = useState('')
@@ -188,8 +191,13 @@ export default function BookPage() {
         setFnbPackageId(booking.fnbPackageId ?? null)
         if (booking.addOns?.length) {
           const m: Record<string, number> = {}
-          for (const a of booking.addOns) m[a.addOnId] = a.quantity
+          const c: Record<string, string[]> = {}
+          for (const a of booking.addOns) {
+            m[a.addOnId] = a.quantity
+            if (a.choices?.length) c[a.addOnId] = a.choices
+          }
           setAddOns(m)
+          setAddOnChoices(c)
         }
         if (booking.customerName) setName(booking.customerName)
         if (booking.customerPhone) setPhone(booking.customerPhone)
@@ -213,8 +221,15 @@ export default function BookPage() {
   )
 
   const addOnSelections = useMemo(
-    () => Object.entries(addOns).filter(([, q]) => q > 0).map(([addOnId, quantity]) => ({ addOnId, quantity })),
-    [addOns],
+    () =>
+      Object.entries(addOns)
+        .filter(([, q]) => q > 0)
+        .map(([addOnId, quantity]) => ({
+          addOnId,
+          quantity,
+          choices: addOnChoices[addOnId]?.length ? addOnChoices[addOnId] : undefined,
+        })),
+    [addOns, addOnChoices],
   )
 
   // Live quote whenever core selections change
@@ -335,6 +350,9 @@ export default function BookPage() {
         waiverSigned: true,
         waiverSignedName: waiverName,
         waiverGuardian,
+        // The authoritative hold prices from the DB — make sure every add-on
+        // (and its menu picks) is saved before checkout.
+        addOns: addOnSelections,
       })
       const res = await fetch(`/api/bookings/${draftId}/checkout`, { method: 'POST' })
       const data = await res.json()
@@ -651,44 +669,97 @@ export default function BookPage() {
                   const qty = addOns[a.id] ?? 0
                   const on = qty > 0
                   const isTime = a.unit === 'PER_30_MIN'
+                  const hasMenu = a.choiceCount > 0 && a.choiceList.length > 0
+                  const picked = addOnChoices[a.id] ?? []
+                  const needed = a.choiceCount * Math.max(1, qty)
+                  const toggleChoice = (c: string) =>
+                    setAddOnChoices((s) => {
+                      const cur = s[a.id] ?? []
+                      if (cur.includes(c)) return { ...s, [a.id]: cur.filter((x) => x !== c) }
+                      if (cur.length >= needed) return s
+                      return { ...s, [a.id]: [...cur, c] }
+                    })
                   return (
                     <div
                       key={a.id}
-                      className={`flex items-center gap-3 rounded-xl border p-4 transition ${
+                      className={`rounded-xl border p-4 transition ${
                         on ? 'border-brand bg-brand-light' : 'border-white/15 bg-surface'
                       }`}
                     >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold">{a.name}</span>
-                          <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-foreground/60">
-                            {a.category}
-                          </span>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold">{a.name}</span>
+                            <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-foreground/60">
+                              {a.category}
+                            </span>
+                          </div>
+                          <p className="text-sm text-foreground/70">{a.description}</p>
+                          <p className="mt-1 text-sm font-semibold text-brand">
+                            {formatCents(a.price)}
+                            {a.unit === 'PER_PERSON' && ' /guest'}
+                            {a.unit === 'PER_30_MIN' && ' /30 min'}
+                          </p>
                         </div>
-                        <p className="text-sm text-foreground/70">{a.description}</p>
-                        <p className="mt-1 text-sm font-semibold text-brand">
-                          {formatCents(a.price)}
-                          {a.unit === 'PER_PERSON' && ' /guest'}
-                          {a.unit === 'PER_30_MIN' && ' /30 min'}
-                        </p>
+                        {isTime ? (
+                          <Stepper
+                            value={qty}
+                            min={0}
+                            max={8}
+                            small
+                            onChange={(v) => setAddOns((s) => ({ ...s, [a.id]: v }))}
+                          />
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setAddOns((s) => ({ ...s, [a.id]: on ? 0 : 1 }))
+                              if (on) setAddOnChoices((s) => ({ ...s, [a.id]: [] }))
+                            }}
+                            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                              on ? 'bg-brand text-ink' : 'bg-white/10 hover:bg-brand hover:text-ink'
+                            }`}
+                          >
+                            {on ? '✓ Added' : 'Add'}
+                          </button>
+                        )}
                       </div>
-                      {isTime ? (
-                        <Stepper
-                          value={qty}
-                          min={0}
-                          max={8}
-                          small
-                          onChange={(v) => setAddOns((s) => ({ ...s, [a.id]: v }))}
-                        />
-                      ) : (
-                        <button
-                          onClick={() => setAddOns((s) => ({ ...s, [a.id]: on ? 0 : 1 }))}
-                          className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                            on ? 'bg-brand text-ink' : 'bg-white/10 hover:bg-brand hover:text-ink'
-                          }`}
-                        >
-                          {on ? '✓ Added' : 'Add'}
-                        </button>
+                      {on && hasMenu && (
+                        <div className="mt-3 border-t border-white/15 pt-3">
+                          <p className="text-sm font-semibold">
+                            Pick {needed}
+                            <span className="ml-2 font-normal text-foreground/60">
+                              {picked.length}/{needed} selected
+                            </span>
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {a.choiceList.map((c) => {
+                              const sel = picked.includes(c)
+                              const full = !sel && picked.length >= needed
+                              return (
+                                <button
+                                  key={c}
+                                  onClick={() => toggleChoice(c)}
+                                  disabled={full}
+                                  className={`rounded-full px-3 py-1.5 text-sm transition ${
+                                    sel
+                                      ? 'bg-brand font-semibold text-ink'
+                                      : full
+                                        ? 'bg-white/5 text-foreground/40'
+                                        : 'bg-white/10 hover:bg-brand hover:text-ink'
+                                  }`}
+                                >
+                                  {sel ? '✓ ' : ''}
+                                  {c}
+                                </button>
+                              )
+                            })}
+                          </div>
+                          {picked.length < needed && (
+                            <p className="mt-2 text-xs text-amber-400">
+                              {`Pick ${needed - picked.length} more — or we'll confirm your choices at the event.`}
+                            </p>
+                          )}
+                        </div>
                       )}
                     </div>
                   )

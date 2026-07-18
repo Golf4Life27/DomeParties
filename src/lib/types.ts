@@ -3,6 +3,7 @@
 export type AddOnSelection = {
   addOnId: string
   quantity: number
+  choices?: string[] // picks for add-ons with a choice menu (e.g. BYO platter apps)
 }
 
 export type QuoteInput = {

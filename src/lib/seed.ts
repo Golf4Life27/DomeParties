@@ -17,6 +17,7 @@ export async function runSeed(prisma: PrismaClient) {
       bayCapacity: 6,
       bufferMinutes: 30,
       leadTimeDaysOnline: 7,
+      staffNotifyEmail: 'Alex@whitetailridgegc.com',
     },
     create: {
       id: 1,
@@ -29,6 +30,7 @@ export async function runSeed(prisma: PrismaClient) {
       serviceChargePct: 20,
       serviceChargeOnGolf: true,
       cardFeePct: 3.5,
+      staffNotifyEmail: 'Alex@whitetailridgegc.com',
       taxPct: 0,
       peakSurchargePct: 22,
       offPeakDiscountPct: 0,
@@ -266,6 +268,21 @@ export async function runSeed(prisma: PrismaClient) {
     ],
   })
 
+  // Appetizer menu for build-your-own platters — drawn from the restaurant
+  // menu items on the trifold. Edit anytime in admin → Add-ons (choiceList).
+  const BYO_APPS = [
+    'Boneless Wings',
+    'Cheese Curds',
+    'Fried Pickles',
+    'Chips, Salsa & Queso',
+    'Loaded Fries',
+    'Signature Nachos',
+    'Giant Pretzel & Queso',
+    'Cheeseburger Sliders',
+    'BBQ Chicken Sliders',
+    'Tots',
+  ]
+
   // --- Add-ons (one-tap upsells) --------------------------------------------
   await prisma.addOn.deleteMany()
   await prisma.addOn.createMany({
@@ -276,7 +293,7 @@ export async function runSeed(prisma: PrismaClient) {
       { name: 'Standard Bar', description: 'Wheatley Vodka, Tanqueray, Captain, Jim Beam & more — 2 hours (21+).', category: 'Beverages', price: 2000, unit: 'PER_PERSON', serviceCharge: true, sortOrder: 3 },
       { name: 'Premium Brand Bar', description: "Tito's, Bombay, Maker's Mark, Jack Daniels & more — 2 hours (21+).", category: 'Beverages', price: 2700, unit: 'PER_PERSON', serviceCharge: true, sortOrder: 4 },
       // Party platters (flat) — 20% service charge applies
-      { name: 'Hand-Breaded Wings (30)', description: '30 wings with choice of sauce or rub (BBQ, Buffalo, Caribbean Jerk, Nashville Hot Rub, House Rub, Lemon Pepper).', category: 'Food', price: 4000, unit: 'FLAT', serviceCharge: true, sortOrder: 10 },
+      { name: 'Hand-Breaded Wings (30)', description: '30 wings with your choice of sauce or rub.', category: 'Food', price: 4000, unit: 'FLAT', serviceCharge: true, sortOrder: 10, choiceCount: 1, choiceList: ['BBQ', 'Buffalo', 'Caribbean Jerk', 'Nashville Hot Rub', 'House Rub', 'Lemon Pepper'] },
       { name: 'Cheese Curds', description: 'Beer-battered white cheddar cheese curds.', category: 'Food', price: 4000, unit: 'FLAT', serviceCharge: true, sortOrder: 11 },
       { name: 'Cheeseburger Sliders (15)', description: '15 cheeseburger sliders on brioche with lettuce, tomato & pickles.', category: 'Food', price: 3800, unit: 'FLAT', serviceCharge: true, sortOrder: 12 },
       { name: 'BBQ Chicken Sliders (15)', description: '15 BBQ chicken sliders on brioche with lettuce, tomato & pickles.', category: 'Food', price: 2800, unit: 'FLAT', serviceCharge: true, sortOrder: 13 },
@@ -288,11 +305,12 @@ export async function runSeed(prisma: PrismaClient) {
       { name: 'Add Ground Beef (Fries/Nachos)', description: 'Top your Loaded Fries or Signature Nachos with seasoned ground beef.', category: 'Food', price: 800, unit: 'FLAT', serviceCharge: true, sortOrder: 19 },
       // Retired from the current trifold — kept inactive so it's one click to restore.
       { name: 'Tater Smash', description: 'Crispy seasoned tater tots, ground beef, parmesan & BBQ crema.', category: 'Food', price: 2800, unit: 'FLAT', serviceCharge: true, active: false, sortOrder: 24 },
-      // Build-your-own platter bundles (flat) — 20% service charge applies
-      { name: 'Build-Your-Own: Pick 2 Apps', description: 'Choose any 2 appetizers from the restaurant menu.', category: 'Food', price: 2500, unit: 'FLAT', serviceCharge: true, sortOrder: 20 },
-      { name: 'Build-Your-Own: Pick 4 Apps', description: 'Choose any 4 appetizers from the restaurant menu.', category: 'Food', price: 5000, unit: 'FLAT', serviceCharge: true, sortOrder: 21 },
-      { name: 'Build-Your-Own: Pick 6 Apps', description: 'Choose any 6 appetizers from the restaurant menu.', category: 'Food', price: 7500, unit: 'FLAT', serviceCharge: true, sortOrder: 22 },
-      { name: 'Build-Your-Own: Pick 8 Apps', description: 'Choose any 8 appetizers from the restaurant menu.', category: 'Food', price: 10000, unit: 'FLAT', serviceCharge: true, sortOrder: 23 },
+      // Build-your-own platter bundles (flat) — 20% service charge applies.
+      // App list is editable in admin → Add-ons (choiceList).
+      { name: 'Build-Your-Own: Pick 2 Apps', description: 'Choose any 2 appetizers from the restaurant menu.', category: 'Food', price: 2500, unit: 'FLAT', serviceCharge: true, sortOrder: 20, choiceCount: 2, choiceList: BYO_APPS },
+      { name: 'Build-Your-Own: Pick 4 Apps', description: 'Choose any 4 appetizers from the restaurant menu.', category: 'Food', price: 5000, unit: 'FLAT', serviceCharge: true, sortOrder: 21, choiceCount: 4, choiceList: BYO_APPS },
+      { name: 'Build-Your-Own: Pick 6 Apps', description: 'Choose any 6 appetizers from the restaurant menu.', category: 'Food', price: 7500, unit: 'FLAT', serviceCharge: true, sortOrder: 22, choiceCount: 6, choiceList: BYO_APPS },
+      { name: 'Build-Your-Own: Pick 8 Apps', description: 'Choose any 8 appetizers from the restaurant menu.', category: 'Food', price: 10000, unit: 'FLAT', serviceCharge: true, sortOrder: 23, choiceCount: 8, choiceList: BYO_APPS },
       // Time & extras
       { name: '+30 Minutes of Bay Time', description: 'Keep the party going with an extra half hour of bay time.', category: 'Time', price: 4000, unit: 'PER_30_MIN', serviceCharge: false, sortOrder: 30 },
       { name: 'Celebration Décor', description: 'Balloons, table settings & a reserved décor setup.', category: 'Décor', price: 7500, unit: 'FLAT', serviceCharge: false, sortOrder: 31 },

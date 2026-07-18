@@ -11,6 +11,8 @@ const schema = z.object({
   serviceCharge: z.boolean().optional(),
   active: z.boolean().optional(),
   sortOrder: z.number().int().optional(),
+  choiceCount: z.number().int().min(0).max(24).optional(),
+  choiceList: z.array(z.string().max(80)).max(40).optional(),
 })
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {

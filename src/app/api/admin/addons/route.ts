@@ -11,6 +11,8 @@ const schema = z.object({
   serviceCharge: z.boolean().default(false),
   active: z.boolean().default(true),
   sortOrder: z.number().int().default(0),
+  choiceCount: z.number().int().min(0).max(24).default(0),
+  choiceList: z.array(z.string().max(80)).max(40).default([]),
 })
 
 export async function POST(req: NextRequest) {

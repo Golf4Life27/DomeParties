@@ -153,6 +153,8 @@ model AddOn {
   serviceCharge Boolean @default(false)
   active      Boolean   @default(true)
   sortOrder   Int       @default(0)
+  choiceCount Int       @default(0)  // how many items the customer picks (0 = no choice menu)
+  choiceList  String[]  @default([]) // the menu they pick from (editable in admin)
 
   bookings    BookingAddOn[]
 }
@@ -260,6 +262,7 @@ model BookingAddOn {
   quantity  Int     @default(1)
   unitPrice Int     @default(0) // cents, snapshot at booking time
   lineTotal Int     @default(0)
+  choices   String[] @default([]) // customer's picks when the add-on has a choice menu
 
   @@unique([bookingId, addOnId])
 }
