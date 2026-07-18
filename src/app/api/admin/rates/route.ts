@@ -11,6 +11,7 @@ const schema = z.object({
   minBays: z.number().int().min(1).max(30).default(1),
   minHours: z.number().int().min(0).max(24).default(0),
   ratePerHour: z.number().int().min(0).default(0),
+  flatPerBay: z.number().int().min(0).default(0),
   active: z.boolean().default(true),
   sortOrder: z.number().int().default(0),
 })

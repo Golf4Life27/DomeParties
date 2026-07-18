@@ -12,6 +12,7 @@ type Setting = {
   staffNotifyEmail: string | null
   depositPercent: number
   serviceChargePct: number
+  serviceChargeOnGolf: boolean
   taxPct: number
   peakSurchargePct: number
   offPeakDiscountPct: number
@@ -21,7 +22,7 @@ type Setting = {
   cancelLargeThreshold: number
 }
 
-const FIELDS: { key: keyof Setting; label: string; help?: string; step?: number; kind?: 'text' }[] = [
+const FIELDS: { key: keyof Setting; label: string; help?: string; step?: number; kind?: 'text' | 'bool' }[] = [
   { key: 'openHour', label: 'Open hour (0–23)' },
   { key: 'closeHour', label: 'Close hour (1–24)' },
   { key: 'bayCapacity', label: 'Guests per bay' },
@@ -31,6 +32,7 @@ const FIELDS: { key: keyof Setting; label: string; help?: string; step?: number;
   { key: 'staffNotifyEmail', label: 'Staff notification email (blank = off)', kind: 'text' },
   { key: 'depositPercent', label: 'Deposit %' },
   { key: 'serviceChargePct', label: 'Service charge %' },
+  { key: 'serviceChargeOnGolf', label: 'Service charge also on golf/bay charges', kind: 'bool' },
   { key: 'taxPct', label: 'Sales tax %', step: 0.01 },
   { key: 'peakSurchargePct', label: 'Peak surcharge % (flat/per-person pkgs)' },
   { key: 'offPeakDiscountPct', label: 'Off-peak discount %' },
@@ -70,7 +72,17 @@ export default function SettingsForm({ setting }: { setting: Setting }) {
         {FIELDS.map((f) => (
           <label key={f.key} className="block">
             <span className="mb-1 block text-sm font-medium text-foreground/80">{f.label}</span>
-            {f.kind === 'text' ? (
+            {f.kind === 'bool' ? (
+              <span className="flex h-[42px] items-center gap-2 rounded-lg border border-black/15 px-3">
+                <input
+                  type="checkbox"
+                  checked={Boolean(values[f.key])}
+                  onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.checked }))}
+                  className="h-4 w-4 accent-brand"
+                />
+                <span className="text-sm text-foreground/70">{values[f.key] ? 'On' : 'Off'}</span>
+              </span>
+            ) : f.kind === 'text' ? (
               <input
                 type="text"
                 value={(values[f.key] as string | null) ?? ''}

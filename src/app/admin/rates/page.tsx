@@ -10,6 +10,7 @@ const FIELDS: FieldDef[] = [
   { key: 'minBays', label: 'Applies when bays ≥', type: 'int' },
   { key: 'minHours', label: 'Applies when hours ≥', type: 'int' },
   { key: 'ratePerHour', label: 'Rate per bay, per hour', type: 'money' },
+  { key: 'flatPerBay', label: 'Flat per-bay block price ($0 = use hourly)', type: 'money' },
   { key: 'startMinute', label: 'Start minute (0=midnight, 720=noon)', type: 'int' },
   { key: 'endMinute', label: 'End minute (1440=midnight)', type: 'int' },
   { key: 'sortOrder', label: 'Sort order', type: 'int' },
@@ -18,7 +19,7 @@ const FIELDS: FieldDef[] = [
 
 const BLANK = {
   label: '', tag: 'birthday', daysOfWeek: [1, 2, 3, 4], minBays: 1, minHours: 0, ratePerHour: 4500,
-  startMinute: 0, endMinute: 1440, sortOrder: 0, active: true,
+  flatPerBay: 0, startMinute: 0, endMinute: 1440, sortOrder: 0, active: true,
 }
 
 export default async function RatesAdmin() {

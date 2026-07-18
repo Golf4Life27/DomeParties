@@ -19,10 +19,15 @@ export async function getBayRate(
   dateStr?: string | null,
   startMinutes?: number | null,
   tag = 'birthday',
-): Promise<{ rate: number; estimated: boolean }> {
+): Promise<{ rate: number; flatPerBay: number; perBayTotal: number; estimated: boolean }> {
   const rows = await prisma.bayRate.findMany({ where: { active: true, tag } })
   const applicable = rows.filter((r) => r.minBays <= bays && r.minHours <= hours)
-  if (applicable.length === 0) return { rate: 0, estimated: true }
+  if (applicable.length === 0) return { rate: 0, flatPerBay: 0, perBayTotal: 0, estimated: true }
+
+  // Per-bay cost of the whole block under a given rate row: flat block price
+  // when set (matches the printed per-bay 2/3/4-hr prices exactly), else hourly.
+  const perBay = (r: { ratePerHour: number; flatPerBay: number }) =>
+    r.flatPerBay > 0 ? r.flatPerBay : Math.round(r.ratePerHour * hours)
 
   // specificity: prefer the highest bays tier, then the highest duration tier
   const score = (r: { minBays: number; minHours: number }) => r.minBays * 1000 + r.minHours
@@ -35,12 +40,22 @@ export async function getBayRate(
     )
     if (matches.length) {
       const best = matches.reduce((a, b) => (score(b) > score(a) ? b : a))
-      return { rate: best.ratePerHour, estimated: false }
+      return { rate: best.ratePerHour, flatPerBay: best.flatPerBay, perBayTotal: perBay(best), estimated: false }
     }
   }
-  // "From" price: cheapest applicable rate (off-peak).
-  const cheapest = applicable.reduce((a, b) => (b.ratePerHour < a.ratePerHour ? b : a))
-  return { rate: cheapest.ratePerHour, estimated: true }
+  // "From" price: cheapest applicable rate (off-peak). Within each day/time
+  // band, only the most specific duration tier counts — a 3-hour booking must
+  // not be estimated from a 2-hour block price.
+  const bandKey = (r: { daysOfWeek: number[]; startMinute: number; endMinute: number; minBays: number }) =>
+    `${r.daysOfWeek.join(',')}|${r.startMinute}|${r.endMinute}|${r.minBays}`
+  const bestPerBand = new Map<string, (typeof applicable)[number]>()
+  for (const r of applicable) {
+    const k = bandKey(r)
+    const cur = bestPerBand.get(k)
+    if (!cur || score(r) > score(cur)) bestPerBand.set(k, r)
+  }
+  const cheapest = [...bestPerBand.values()].reduce((a, b) => (perBay(b) < perBay(a) ? b : a))
+  return { rate: cheapest.ratePerHour, flatPerBay: cheapest.flatPerBay, perBayTotal: perBay(cheapest), estimated: true }
 }
 
 /** Line total in cents for one add-on selection, honoring its unit. */
@@ -88,10 +103,12 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
 
   if (isBayRate) {
     const hours = pkg.durationMinutes / 60
-    const { rate, estimated: est } = await getBayRate(bays, hours, input.dateStr, input.startMinutes, pkg.rateTag)
+    const { flatPerBay, rate, perBayTotal, estimated: est } = await getBayRate(bays, hours, input.dateStr, input.startMinutes, pkg.rateTag)
     estimated = est
-    packageTotal = Math.round(bays * hours * rate)
-    packageDetail = `${bays} bays × ${hours} hr × ${formatCents(rate)}/bay·hr${est ? ' (from)' : ''}`
+    packageTotal = bays * perBayTotal
+    packageDetail = flatPerBay > 0
+      ? `${bays} bays × ${formatCents(flatPerBay)}/bay (${hours} hr)${est ? ' (from)' : ''}`
+      : `${bays} bays × ${hours} hr × ${formatCents(rate)}/bay·hr${est ? ' (from)' : ''}`
   } else if (pkg.pricingType === 'PER_PERSON') {
     packageTotal = pkg.pricePerPerson * partySize
     packageDetail = `${formatCents(pkg.pricePerPerson)} × ${partySize} guests`
@@ -163,12 +180,16 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
     lines.push({ label: a.name, detail, amount: line })
   }
 
-  // --- Service charge (on F&B + staffed portion) ---
+  // --- Service charge (F&B + staffed portion; brochure policy optionally
+  // extends it to golf/bay charges too) ---
+  if (setting.serviceChargeOnGolf) serviceChargeBase += packageTotal + peakAdjustment
   const serviceCharge = applyPercent(serviceChargeBase, setting.serviceChargePct)
   if (serviceCharge > 0) {
     lines.push({
       label: `Service charge (${setting.serviceChargePct}%)`,
-      detail: 'Applied to food, beverage & staffed service',
+      detail: setting.serviceChargeOnGolf
+        ? 'Applied to food, beverage & golf charges'
+        : 'Applied to food, beverage & staffed service',
       amount: serviceCharge,
     })
   }

@@ -17,6 +17,7 @@ const schema = z.object({
     .nullable(),
   depositPercent: z.number().int().min(0).max(100),
   serviceChargePct: z.number().int().min(0).max(100),
+  serviceChargeOnGolf: z.boolean(),
   taxPct: z.number().min(0).max(30),
   peakSurchargePct: z.number().int().min(0).max(100),
   offPeakDiscountPct: z.number().int().min(0).max(100),
