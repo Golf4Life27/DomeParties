@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { formatCents } from '@/lib/money'
 import { minutesToLabel } from '@/lib/time'
 import { track } from '@/lib/track'
+import { VENUE } from '@/lib/venue'
 import PaymentStep from './PaymentStep'
 
 // ---- Types (mirror the catalog API) ---------------------------------------
@@ -426,7 +427,9 @@ export default function BookPage() {
             <Link href="/" className="font-bold">
               Whitetail Ridge Golf Dome
             </Link>
-            <span className="text-sm text-white/70">Need help? Call us 🏌️</span>
+            <a href={`tel:${VENUE.phoneDigits}`} className="text-sm text-white/70 hover:text-accent">
+              Need help? Call {VENUE.phone} 🏌️
+            </a>
           </div>
         </header>
       )}
@@ -553,7 +556,7 @@ export default function BookPage() {
 
           {/* STEP 2 — Date & time */}
           {step === 2 && (
-            <Section title="Choose your date & time" subtitle={`Online bookings start ${catalog.setting.leadTimeDaysOnline} days out. Earlier? Give us a call.`}>
+            <Section title="Choose your date & time" subtitle={`Online bookings start ${catalog.setting.leadTimeDaysOnline} days out. Need a sooner date? Call ${VENUE.phone}.`}>
               <Label>Event date</Label>
               <input
                 type="date"
