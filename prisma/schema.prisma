@@ -27,6 +27,7 @@ model Setting {
   // Money (percent values are basis-point-free integers, e.g. 10 = 10%)
   depositPercent      Int      @default(10)
   serviceChargePct    Int      @default(20)  // auto service charge on F&B + staffed portion
+  serviceChargeOnGolf Boolean  @default(false) // brochure policy: 20% service charge also on golf/bay charges
   taxPct              Float    @default(7.25) // Oswego, IL placeholder — confirm exact rate
   // Dynamic pricing (applied to the package/bay-time portion)
   peakSurchargePct    Int      @default(15)  // weekend/evening premium
@@ -85,6 +86,7 @@ model BayRate {
   minBays     Int     @default(1)    // applies when bays >= minBays
   minHours    Int     @default(0)    // applies when hours >= minHours (duration tier)
   ratePerHour Int     // cents per bay per hour
+  flatPerBay  Int     @default(0)    // cents per bay for the whole block; overrides hourly when > 0
   active      Boolean @default(true)
   sortOrder   Int     @default(0)
 }

@@ -11,7 +11,22 @@ export default function SeedButton({ hasCatalog }: { hasCatalog: boolean }) {
     if (hasCatalog && !confirm('Reload the catalog? This resets packages, rates, F&B, add-ons, and bays to the card defaults.')) return
     setBusy(true)
     setResult(null)
-    const res = await fetch('/api/admin/seed', { method: 'POST' })
+    let res = await fetch('/api/admin/seed', { method: 'POST' })
+    if (res.status === 409) {
+      // Bookings exist — reloading also resets bay assignments & exclusive flags.
+      const msg = (await res.json().catch(() => null))?.error ?? 'Bookings exist.'
+      if (
+        confirm(
+          `${msg}\n\nReloading with bookings on file also clears their bay assignments and any Exclusive-bay flags (bookings themselves are kept). Continue anyway?`,
+        )
+      ) {
+        res = await fetch('/api/admin/seed?force=1', { method: 'POST' })
+      } else {
+        setBusy(false)
+        setResult('Cancelled.')
+        return
+      }
+    }
     const data = await res.json().catch(() => null)
     setBusy(false)
     if (res.ok) {

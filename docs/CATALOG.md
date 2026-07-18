@@ -7,13 +7,15 @@ editable in the admin (Packages / Food & drink / Add-ons / Settings) — no code
 ## Venue policies (Settings)
 
 - **6 guests per bay**, 30-min turnover buffer, 7-day online lead time.
-- **20% service charge on food & beverage only** (not on bay rental).
+- **20% service charge on food & beverage AND golf/bay charges** (July 2026 trifold:
+  "an automatic 20% service charge will be applied to food & beverage and golf
+  charges") → `serviceChargeOnGolf = true` (toggle in Settings).
+- **3.5% credit-card convenience fee** (printed on the trifold) → `cardFeePct = 3.5`,
+  applied to online card charges (deposit & balance). Toggle in Settings.
 - **Taxes are included in listed prices** → `taxPct = 0`.
 - **Fri–Sun = peak**, Mon–Thu = standard. Weekend premium modeled as a
   `peakSurchargePct` (22%) on the bay package.
 - 10% deposit to book.
-- ⚠️ The card mentions a **3.5% credit-card convenience fee** — not yet applied
-  in the engine (a payment-surcharge decision). Flagged for Alex.
 
 ## Pricing engine — per bay, per hour (BayRate)
 
@@ -36,20 +38,20 @@ Add rows for finer time-of-day tiers (e.g. the large-group morning/evening rates
 
 ### Large-group rate set (`tag = group`, loaded)
 
-The brochure's per-bay/per-hour rates are loaded as a separate `group` rate set (14 rows:
-day + time-of-day window + duration tier). They power group pricing without colliding with
-the birthday set. Verified against the brochure (per bay): Mon AM 2h $70 / 4h $120; Mon PM
-2h $100; Sat 3h $165; Fri PM 4h $220; Sun AM 4h $190. (One rounding note: the Mon–Thu PM
-**3-hour** total lands ~$0.04 off because $140 ÷ 3 isn't a clean per-hour rate.) A 4-bay
-minimum applies to groups — enforce when a group self-serve package is added; today groups
-flow through inquiry → quote, so staff can also read these straight off the rate table.
+The trifold's per-bay **block prices** are loaded as a separate `group` rate set (21 rows:
+7 day/time bands × 3 duration tiers). Each row carries `flatPerBay` — the exact printed
+per-bay price for that 2/3/4-hour block — so totals match the brochure to the penny
+(no more $399.96 rounding artifacts; a 3-hour Mon–Thu AM group is exactly 4 × $100 = $400).
+`ratePerHour` remains as the reference/fallback rate. A 4-bay minimum applies (packages
+enforce it via `dynamicBays` min).
 
 ## Card convenience fee
 
-`Setting.cardFeePct` (default **0 = off**). When set, it's applied transparently to the
-amount charged online. Recommendation: keep off (Visa caps credit surcharges at 3%, debit
-can't be surcharged, requires registration/signage) or enable a compliant ≤3% credit-only
-fee — otherwise absorb it / bake into prices.
+`Setting.cardFeePct` = **3.5** (per the printed trifold: "3.5% convenience fee added on
+for all credit card transactions"). Applied transparently to online card charges (deposit
+and balance payments; gift-card purchases are currently exempt). Compliance note kept for
+reference: Visa caps credit surcharges at 3% and debit can't be surcharged — if that ever
+becomes an issue, drop to 3.0 or 0 in Settings with one edit.
 
 ## Birthday parties — Instant Book (per-bay-hour presets + food bundles)
 
@@ -69,7 +71,9 @@ Food bundles (per person, **no extra service charge** — matches the rack card)
 
 ## Themed buffets (per person — 20% service charge applies)
 
-- Early Birdie — $20 · Bunch of Bites — $22 · All American — $24 · Fiesta — $26
+- **Pizza Party — $30** (pizzas, bread sticks, cheese curds, Caesar/pasta salad, cookies & brownies)
+- Bunch of Bites — $24 · All American — $26 · Fiesta — $26
+- Early Birdie ($20) retired from the current trifold — seeded **inactive** (restore in admin).
 
 ## Add-ons / upsells
 
@@ -77,8 +81,10 @@ Food bundles (per person, **no extra service charge** — matches the rack card)
 Beer & Wine Bar $16 · Standard Bar $20 · Premium Brand Bar $27.
 
 **Party platters** (flat, 20% SC): Hand-Breaded Wings (30) $40 · Cheese Curds $40 ·
-Cheeseburger Sliders (15) $38 · Tater Smash $28 · Loaded Fries $26 · The Sandtrap $24 ·
-Signature Nachos $24 · Bottomless Chips/Salsa/Queso $24.
+Cheeseburger Sliders (15) $38 · **BBQ Chicken Sliders (15) $28** · Loaded Fries $26 ·
+The Sandtrap $24 · Signature Nachos $24 · Bottomless Chips/Salsa/Queso $24 ·
+**Add Grilled Chicken $10 / Add Ground Beef $8** (Fries/Nachos top-ups).
+Tater Smash ($28) retired from the current trifold — seeded **inactive**.
 
 **Build-your-own platter** (flat, 20% SC): 2 apps $25 · 4 apps $50 · 6 apps $75 · 8 apps $100.
 
@@ -112,7 +118,7 @@ packages in admin if you'd rather keep groups on the inquiry flow.
 
 ## Other menu notes (from the cards, for future use)
 
-- Wing sauces/rubs: BBQ, Buffalo, Caribbean Jerk, Gochujang, Nashville Hot, House Rub, Lemon Pepper.
-- Loaded Fries / Signature Nachos: +$10 grilled chicken, +$8 ground beef (add as add-on modifiers later).
+- Wing sauces/rubs (July 2026 trifold): BBQ, Buffalo, Caribbean Jerk, Nashville Hot Rub, House Rub, Lemon Pepper.
+- Loaded Fries / Signature Nachos protein top-ups are live add-ons (+$10 chicken, +$8 beef).
 - Group bays include: complimentary clubs, Trackman range tech, TV entertainment, unlimited balls, virtual courses & games, food & drink service.
 - Group party includes: 2–4 hr reservation, party host, game demonstration, personal server, private bays.

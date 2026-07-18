@@ -8,7 +8,9 @@ export async function runSeed(prisma: PrismaClient) {
     where: { id: 1 },
     update: {
       taxPct: 0, // prices are tax-inclusive per venue policy
-      serviceChargePct: 20, // F&B only
+      serviceChargePct: 20,
+      serviceChargeOnGolf: true, // brochure: 20% service charge on F&B AND golf charges
+      cardFeePct: 3.5, // brochure: 3.5% convenience fee on all credit card transactions
       peakSurchargePct: 22, // Fri–Sun premium (~$20/bay flat on the card; tune in admin)
       offPeakDiscountPct: 0,
       depositPercent: 10,
@@ -25,6 +27,8 @@ export async function runSeed(prisma: PrismaClient) {
       leadTimeDaysOnline: 7,
       depositPercent: 10,
       serviceChargePct: 20,
+      serviceChargeOnGolf: true,
+      cardFeePct: 3.5,
       taxPct: 0,
       peakSurchargePct: 22,
       offPeakDiscountPct: 0,
@@ -65,26 +69,34 @@ export async function runSeed(prisma: PrismaClient) {
       { label: 'Fri–Sun', tag: 'birthday', daysOfWeek: [5, 6, 0], minBays: 1, ratePerHour: 5500, sortOrder: 3 },
       { label: 'Fri–Sun (4+ bays)', tag: 'birthday', daysOfWeek: [5, 6, 0], minBays: 4, ratePerHour: 5000, sortOrder: 4 },
 
-      // Large-group rate set (per bay, 4-bay minimum; per-hour rate drops with duration)
-      // Mon–Thu morning (open–12pm)
-      { label: 'Group · Mon–Thu AM (2 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 0, endMinute: 720, minHours: 0, ratePerHour: 3500, sortOrder: 10 },
-      { label: 'Group · Mon–Thu AM (3 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 0, endMinute: 720, minHours: 3, ratePerHour: 3333, sortOrder: 11 },
-      { label: 'Group · Mon–Thu AM (4 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 0, endMinute: 720, minHours: 4, ratePerHour: 3000, sortOrder: 12 },
-      // Mon–Thu afternoon/evening (12pm–close)
-      { label: 'Group · Mon–Thu PM (2 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 720, endMinute: 1440, minHours: 0, ratePerHour: 5000, sortOrder: 13 },
-      { label: 'Group · Mon–Thu PM (3 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 720, endMinute: 1440, minHours: 3, ratePerHour: 4667, sortOrder: 14 },
-      { label: 'Group · Mon–Thu PM (4 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 720, endMinute: 1440, minHours: 4, ratePerHour: 4000, sortOrder: 15 },
-      // Friday morning–afternoon (open–2pm)
-      { label: 'Group · Fri AM (2–3 hr)', tag: 'group', daysOfWeek: [5], startMinute: 0, endMinute: 840, minHours: 0, ratePerHour: 5000, sortOrder: 16 },
-      { label: 'Group · Fri AM (4 hr)', tag: 'group', daysOfWeek: [5], startMinute: 0, endMinute: 840, minHours: 4, ratePerHour: 4750, sortOrder: 17 },
-      // Sunday morning (open–12pm)
-      { label: 'Group · Sun AM (2 hr)', tag: 'group', daysOfWeek: [0], startMinute: 0, endMinute: 720, minHours: 0, ratePerHour: 5500, sortOrder: 18 },
-      { label: 'Group · Sun AM (3 hr)', tag: 'group', daysOfWeek: [0], startMinute: 0, endMinute: 720, minHours: 3, ratePerHour: 5000, sortOrder: 19 },
-      { label: 'Group · Sun AM (4 hr)', tag: 'group', daysOfWeek: [0], startMinute: 0, endMinute: 720, minHours: 4, ratePerHour: 4750, sortOrder: 20 },
-      // Peak weekend (Fri 2pm–close, Sat all day, Sun 12pm–close) — $55/bay/hr flat
-      { label: 'Group · Fri PM', tag: 'group', daysOfWeek: [5], startMinute: 840, endMinute: 1440, minHours: 0, ratePerHour: 5500, sortOrder: 21 },
-      { label: 'Group · Saturday', tag: 'group', daysOfWeek: [6], startMinute: 0, endMinute: 1440, minHours: 0, ratePerHour: 5500, sortOrder: 22 },
-      { label: 'Group · Sun PM', tag: 'group', daysOfWeek: [0], startMinute: 720, endMinute: 1440, minHours: 0, ratePerHour: 5500, sortOrder: 23 },
+      // Large-group rate set (per bay, 4-bay minimum). flatPerBay is the printed
+      // per-bay block price from the trifold; ratePerHour is the reference rate.
+      // Mon–Thu morning (open–12pm): $70 / $100 / $120 per bay
+      { label: 'Group · Mon–Thu AM (2 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 0, endMinute: 720, minHours: 0, ratePerHour: 3500, flatPerBay: 7000, sortOrder: 10 },
+      { label: 'Group · Mon–Thu AM (3 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 0, endMinute: 720, minHours: 3, ratePerHour: 3333, flatPerBay: 10000, sortOrder: 11 },
+      { label: 'Group · Mon–Thu AM (4 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 0, endMinute: 720, minHours: 4, ratePerHour: 3000, flatPerBay: 12000, sortOrder: 12 },
+      // Mon–Thu afternoon/evening (12pm–close): $100 / $140 / $160 per bay
+      { label: 'Group · Mon–Thu PM (2 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 720, endMinute: 1440, minHours: 0, ratePerHour: 5000, flatPerBay: 10000, sortOrder: 13 },
+      { label: 'Group · Mon–Thu PM (3 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 720, endMinute: 1440, minHours: 3, ratePerHour: 4667, flatPerBay: 14000, sortOrder: 14 },
+      { label: 'Group · Mon–Thu PM (4 hr)', tag: 'group', daysOfWeek: [1, 2, 3, 4], startMinute: 720, endMinute: 1440, minHours: 4, ratePerHour: 4000, flatPerBay: 16000, sortOrder: 15 },
+      // Friday morning–afternoon (open–2pm): $100 / $150 / $190 per bay
+      { label: 'Group · Fri AM (2 hr)', tag: 'group', daysOfWeek: [5], startMinute: 0, endMinute: 840, minHours: 0, ratePerHour: 5000, flatPerBay: 10000, sortOrder: 16 },
+      { label: 'Group · Fri AM (3 hr)', tag: 'group', daysOfWeek: [5], startMinute: 0, endMinute: 840, minHours: 3, ratePerHour: 5000, flatPerBay: 15000, sortOrder: 17 },
+      { label: 'Group · Fri AM (4 hr)', tag: 'group', daysOfWeek: [5], startMinute: 0, endMinute: 840, minHours: 4, ratePerHour: 4750, flatPerBay: 19000, sortOrder: 18 },
+      // Sunday morning (open–12pm): $110 / $150 / $190 per bay
+      { label: 'Group · Sun AM (2 hr)', tag: 'group', daysOfWeek: [0], startMinute: 0, endMinute: 720, minHours: 0, ratePerHour: 5500, flatPerBay: 11000, sortOrder: 19 },
+      { label: 'Group · Sun AM (3 hr)', tag: 'group', daysOfWeek: [0], startMinute: 0, endMinute: 720, minHours: 3, ratePerHour: 5000, flatPerBay: 15000, sortOrder: 20 },
+      { label: 'Group · Sun AM (4 hr)', tag: 'group', daysOfWeek: [0], startMinute: 0, endMinute: 720, minHours: 4, ratePerHour: 4750, flatPerBay: 19000, sortOrder: 21 },
+      // Peak weekend (Fri 2pm–close, Sat all day, Sun 12pm–close): $110 / $165 / $220 per bay
+      { label: 'Group · Fri PM (2 hr)', tag: 'group', daysOfWeek: [5], startMinute: 840, endMinute: 1440, minHours: 0, ratePerHour: 5500, flatPerBay: 11000, sortOrder: 22 },
+      { label: 'Group · Fri PM (3 hr)', tag: 'group', daysOfWeek: [5], startMinute: 840, endMinute: 1440, minHours: 3, ratePerHour: 5500, flatPerBay: 16500, sortOrder: 23 },
+      { label: 'Group · Fri PM (4 hr)', tag: 'group', daysOfWeek: [5], startMinute: 840, endMinute: 1440, minHours: 4, ratePerHour: 5500, flatPerBay: 22000, sortOrder: 24 },
+      { label: 'Group · Saturday (2 hr)', tag: 'group', daysOfWeek: [6], startMinute: 0, endMinute: 1440, minHours: 0, ratePerHour: 5500, flatPerBay: 11000, sortOrder: 25 },
+      { label: 'Group · Saturday (3 hr)', tag: 'group', daysOfWeek: [6], startMinute: 0, endMinute: 1440, minHours: 3, ratePerHour: 5500, flatPerBay: 16500, sortOrder: 26 },
+      { label: 'Group · Saturday (4 hr)', tag: 'group', daysOfWeek: [6], startMinute: 0, endMinute: 1440, minHours: 4, ratePerHour: 5500, flatPerBay: 22000, sortOrder: 27 },
+      { label: 'Group · Sun PM (2 hr)', tag: 'group', daysOfWeek: [0], startMinute: 720, endMinute: 1440, minHours: 0, ratePerHour: 5500, flatPerBay: 11000, sortOrder: 28 },
+      { label: 'Group · Sun PM (3 hr)', tag: 'group', daysOfWeek: [0], startMinute: 720, endMinute: 1440, minHours: 3, ratePerHour: 5500, flatPerBay: 16500, sortOrder: 29 },
+      { label: 'Group · Sun PM (4 hr)', tag: 'group', daysOfWeek: [0], startMinute: 720, endMinute: 1440, minHours: 4, ratePerHour: 5500, flatPerBay: 22000, sortOrder: 30 },
     ],
   })
 
@@ -209,26 +221,26 @@ export async function runSeed(prisma: PrismaClient) {
         sortOrder: 2,
       },
       {
-        name: 'Early Birdie Buffet',
-        description: 'Eggs, sausage, bacon, tots, French toast & fresh fruit.',
+        name: 'Pizza Party Buffet',
+        description: 'Cheese, pepperoni or sausage pizzas, bread sticks, cheese curds, choice of Caesar or pasta salad, cookies & brownie bites.',
         pricingType: 'PER_PERSON',
-        price: 2000,
+        price: 3000,
         serviceCharge: true,
         sortOrder: 3,
       },
       {
         name: 'Bunch of Bites Buffet',
-        description: 'Boneless wings (choice of sauce or rub), cheese curds, fried pickles, chips & salsa.',
+        description: 'Boneless wings (choice of sauce or rub), cheese curds, fried pickles, chips & salsa, cookies & brownie bites.',
         pricingType: 'PER_PERSON',
-        price: 2200,
+        price: 2400,
         serviceCharge: true,
         sortOrder: 4,
       },
       {
         name: 'All American Buffet',
-        description: 'Cheeseburger sliders, BBQ beef sliders, tots, and choice of green/pasta/potato salad.',
+        description: 'Cheeseburger sliders, BBQ beef sliders, tots, choice of green/pasta/potato salad, cookies & brownie bites.',
         pricingType: 'PER_PERSON',
-        price: 2400,
+        price: 2600,
         serviceCharge: true,
         sortOrder: 5,
       },
@@ -240,6 +252,16 @@ export async function runSeed(prisma: PrismaClient) {
         dietaryNotes: 'Gluten-free options available',
         serviceCharge: true,
         sortOrder: 6,
+      },
+      // Retired from the current trifold — kept inactive so it's one click to restore.
+      {
+        name: 'Early Birdie Buffet',
+        description: 'Eggs, sausage, bacon, tots, French toast & fresh fruit.',
+        pricingType: 'PER_PERSON',
+        price: 2000,
+        serviceCharge: true,
+        active: false,
+        sortOrder: 7,
       },
     ],
   })
@@ -254,14 +276,18 @@ export async function runSeed(prisma: PrismaClient) {
       { name: 'Standard Bar', description: 'Wheatley Vodka, Tanqueray, Captain, Jim Beam & more — 2 hours (21+).', category: 'Beverages', price: 2000, unit: 'PER_PERSON', serviceCharge: true, sortOrder: 3 },
       { name: 'Premium Brand Bar', description: "Tito's, Bombay, Maker's Mark, Jack Daniels & more — 2 hours (21+).", category: 'Beverages', price: 2700, unit: 'PER_PERSON', serviceCharge: true, sortOrder: 4 },
       // Party platters (flat) — 20% service charge applies
-      { name: 'Hand-Breaded Wings (30)', description: '30 wings with choice of sauce or rub (BBQ, Buffalo, Caribbean Jerk, Gochujang, Nashville Hot, House Rub, Lemon Pepper).', category: 'Food', price: 4000, unit: 'FLAT', serviceCharge: true, sortOrder: 10 },
+      { name: 'Hand-Breaded Wings (30)', description: '30 wings with choice of sauce or rub (BBQ, Buffalo, Caribbean Jerk, Nashville Hot Rub, House Rub, Lemon Pepper).', category: 'Food', price: 4000, unit: 'FLAT', serviceCharge: true, sortOrder: 10 },
       { name: 'Cheese Curds', description: 'Beer-battered white cheddar cheese curds.', category: 'Food', price: 4000, unit: 'FLAT', serviceCharge: true, sortOrder: 11 },
       { name: 'Cheeseburger Sliders (15)', description: '15 cheeseburger sliders on brioche with lettuce, tomato & pickles.', category: 'Food', price: 3800, unit: 'FLAT', serviceCharge: true, sortOrder: 12 },
-      { name: 'Tater Smash', description: 'Crispy seasoned tater tots, ground beef, parmesan & BBQ crema.', category: 'Food', price: 2800, unit: 'FLAT', serviceCharge: true, sortOrder: 13 },
+      { name: 'BBQ Chicken Sliders (15)', description: '15 BBQ chicken sliders on brioche with lettuce, tomato & pickles.', category: 'Food', price: 2800, unit: 'FLAT', serviceCharge: true, sortOrder: 13 },
       { name: 'Loaded Fries', description: 'Fries topped with queso, bacon bits & BBQ crema.', category: 'Food', price: 2600, unit: 'FLAT', serviceCharge: true, sortOrder: 14 },
       { name: 'The Sandtrap (Giant Pretzel)', description: 'Giant pretzel with house-made queso and honey-mustard horseradish.', category: 'Food', price: 2400, unit: 'FLAT', serviceCharge: true, sortOrder: 15 },
       { name: 'Signature Nachos', description: 'Lettuce, tomato, onions, queso & house-made crema.', category: 'Food', price: 2400, unit: 'FLAT', serviceCharge: true, sortOrder: 16 },
       { name: 'Bottomless Chips, Salsa & Queso', description: 'Tortilla chips with salsa and queso.', category: 'Food', price: 2400, unit: 'FLAT', serviceCharge: true, sortOrder: 17 },
+      { name: 'Add Grilled Chicken (Fries/Nachos)', description: 'Top your Loaded Fries or Signature Nachos with grilled chicken.', category: 'Food', price: 1000, unit: 'FLAT', serviceCharge: true, sortOrder: 18 },
+      { name: 'Add Ground Beef (Fries/Nachos)', description: 'Top your Loaded Fries or Signature Nachos with seasoned ground beef.', category: 'Food', price: 800, unit: 'FLAT', serviceCharge: true, sortOrder: 19 },
+      // Retired from the current trifold — kept inactive so it's one click to restore.
+      { name: 'Tater Smash', description: 'Crispy seasoned tater tots, ground beef, parmesan & BBQ crema.', category: 'Food', price: 2800, unit: 'FLAT', serviceCharge: true, active: false, sortOrder: 24 },
       // Build-your-own platter bundles (flat) — 20% service charge applies
       { name: 'Build-Your-Own: Pick 2 Apps', description: 'Choose any 2 appetizers from the restaurant menu.', category: 'Food', price: 2500, unit: 'FLAT', serviceCharge: true, sortOrder: 20 },
       { name: 'Build-Your-Own: Pick 4 Apps', description: 'Choose any 4 appetizers from the restaurant menu.', category: 'Food', price: 5000, unit: 'FLAT', serviceCharge: true, sortOrder: 21 },
