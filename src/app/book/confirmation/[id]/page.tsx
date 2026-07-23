@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db'
 import { formatCents } from '@/lib/money'
 import { minutesToLabel, formatDateLong } from '@/lib/time'
 import TrackPurchase from './TrackPurchase'
+import AutoRefresh from './AutoRefresh'
 
 export default async function ConfirmationPage({
   params,
@@ -59,11 +60,12 @@ export default async function ConfirmationPage({
           </div>
         ) : (
           <div className="text-center">
+            <AutoRefresh bookingId={booking.id} />
             <div className="text-5xl">⏳</div>
             <h1 className="mt-4 text-3xl font-extrabold text-brand">Finalizing your booking…</h1>
             <p className="mt-2 text-foreground/70">
-              Your payment is processing. This page will show your confirmation shortly —
-              refresh in a moment.
+              Your payment is processing — this page will update automatically in a few
+              seconds.
             </p>
           </div>
         )}
