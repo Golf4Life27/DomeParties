@@ -104,10 +104,18 @@ type ConfirmationData = {
   startMinutes: number
   endMinutes: number
   partySize: number
+  fnbGuests?: number
   packageName: string
   total: number
   depositAmount: number
   balanceDue: number
+}
+
+/** "20 golfers + 7 food & drink guests" — or just "20 guests" when none extra. */
+function guestSummary(partySize: number, fnbGuests?: number): string {
+  const fnb = fnbGuests ?? 0
+  if (fnb <= 0) return `${partySize} guests`
+  return `${partySize} golfer${partySize === 1 ? '' : 's'} + ${fnb} food & drink guest${fnb === 1 ? '' : 's'}`
 }
 
 /** Build an RFC5545 calendar invite for the event. */
@@ -147,7 +155,7 @@ Reference: ${data.reference}
 Guest: ${data.customerName}
 Date: ${data.dateStr}
 Time: ${timeRange}
-Party size: ${data.partySize}
+Guests: ${guestSummary(data.partySize, data.fnbGuests)}
 Package: ${data.packageName}
 
 Total: ${formatCents(data.total)}
@@ -164,7 +172,7 @@ Questions? Just reply to this email.`
     <tr><td style="padding:6px 0;color:#666">Reference</td><td style="text-align:right"><strong>${data.reference}</strong></td></tr>
     <tr><td style="padding:6px 0;color:#666">Date</td><td style="text-align:right">${data.dateStr}</td></tr>
     <tr><td style="padding:6px 0;color:#666">Time</td><td style="text-align:right">${timeRange}</td></tr>
-    <tr><td style="padding:6px 0;color:#666">Party size</td><td style="text-align:right">${data.partySize}</td></tr>
+    <tr><td style="padding:6px 0;color:#666">Guests</td><td style="text-align:right">${guestSummary(data.partySize, data.fnbGuests)}</td></tr>
     <tr><td style="padding:6px 0;color:#666">Package</td><td style="text-align:right">${data.packageName}</td></tr>
   </table>
   <hr/>

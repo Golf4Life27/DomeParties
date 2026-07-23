@@ -9,6 +9,7 @@ import {
   sendMorningDigest,
   completePastEvents,
 } from '@/lib/booking'
+import { scanConflictsAndAlert } from '@/lib/trackman'
 
 // Abandoned-cart recovery for stale drafts. Protected by CRON_SECRET when set.
 // Accepts POST (manual) and GET (Vercel Cron fires GET with an Authorization
@@ -38,6 +39,7 @@ async function run(req: NextRequest) {
   const balances = await sendBalanceReminders() // T-3 settle-up email
   const digest = await sendMorningDigest() // today's run sheet for staff
   const completed = await completePastEvents() // auto-complete + thank-you/review ask
+  const conflicts = await scanConflictsAndAlert() // Trackman capacity conflicts
   return NextResponse.json({
     ok: true,
     ...result,
@@ -48,6 +50,7 @@ async function run(req: NextRequest) {
     ...balances,
     ...digest,
     ...completed,
+    ...conflicts,
   })
 }
 
