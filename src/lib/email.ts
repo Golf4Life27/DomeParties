@@ -1,3 +1,4 @@
+import nodemailer from 'nodemailer'
 import { formatCents } from '@/lib/money'
 import { minutesToLabel } from '@/lib/time'
 
@@ -10,12 +11,48 @@ type EmailInput = {
 }
 
 /**
- * Send an email via Resend when RESEND_API_KEY is set; otherwise log to the
- * server console (dev fallback) so the flow is fully testable without keys.
+ * Send an email. Provider precedence:
+ *   1. Gmail SMTP  — when GMAIL_USER + GMAIL_APP_PASSWORD are set (no-DNS bridge
+ *      while a domain is being verified; sends from the Gmail address).
+ *   2. Resend      — when RESEND_API_KEY is set (branded domain sending).
+ *   3. Console     — dev fallback so the flow is testable with no config.
+ * Removing the Gmail vars instantly reverts to Resend — no code change.
  */
 export async function sendEmail(input: EmailInput): Promise<{ ok: boolean; mode: string }> {
   const apiKey = process.env.RESEND_API_KEY
-  const from = process.env.EMAIL_FROM || 'Whitetail Ridge Golf Dome <events@example.com>'
+  const gmailUser = process.env.GMAIL_USER
+  const gmailPass = process.env.GMAIL_APP_PASSWORD
+  const from =
+    process.env.EMAIL_FROM ||
+    (gmailUser ? `Whitetail Ridge Golf Dome <${gmailUser}>` : 'Whitetail Ridge Golf Dome <events@example.com>')
+
+  // --- Gmail SMTP bridge ---
+  if (gmailUser && gmailPass) {
+    // Gmail only sends "from" the authenticated account — honor a display name
+    // but force the address to the Gmail account so it isn't silently rewritten.
+    const nameMatch = /^(.*?)\s*<.*>$/.exec(from)
+    const gmailFrom = nameMatch ? `${nameMatch[1].trim()} <${gmailUser}>` : gmailUser
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: gmailUser, pass: gmailPass.replace(/\s+/g, '') }, // app passwords are shown with spaces
+      })
+      await transporter.sendMail({
+        from: gmailFrom,
+        to: input.to,
+        subject: input.subject,
+        text: input.text,
+        html: input.html,
+        icalEvent: input.icsContent
+          ? { filename: 'whitetail-ridge-event.ics', content: input.icsContent }
+          : undefined,
+      })
+      return { ok: true, mode: 'gmail' }
+    } catch (e) {
+      console.error(`[email] Gmail SMTP send FAILED to=${input.to} subject="${input.subject}":`, e)
+      return { ok: false, mode: 'gmail' }
+    }
+  }
 
   if (!apiKey) {
     console.log('\n========== [DEV EMAIL] ==========')
