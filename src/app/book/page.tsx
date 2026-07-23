@@ -48,6 +48,8 @@ type AddOn = {
 type Setting = {
   bayCapacity: number
   leadTimeDaysOnline: number
+  maxGolfers: number
+  maxFnbGuests: number
   depositPercent: number
   serviceChargePct: number
   taxPct: number
@@ -109,6 +111,7 @@ export default function BookPage() {
   const [eventType, setEventType] = useState<string>('BIRTHDAY')
   const [email, setEmail] = useState('')
   const [partySize, setPartySize] = useState(12)
+  const [fnbGuests, setFnbGuests] = useState(0)
   const [packageId, setPackageId] = useState<string | null>(null)
   const [dateStr, setDateStr] = useState('')
   const [slots, setSlots] = useState<Slot[]>([])
@@ -183,6 +186,7 @@ export default function BookPage() {
         if (booking.customerEmail) setEmail(booking.customerEmail)
         if (booking.eventType) setEventType(booking.eventType)
         if (booking.partySize) setPartySize(booking.partySize)
+        if (booking.fnbGuests) setFnbGuests(booking.fnbGuests)
         if (booking.packageId) setPackageId(booking.packageId)
         const ds = booking.date?.slice(0, 10)
         const hasDate = ds && ds !== '1970-01-01'
@@ -241,6 +245,7 @@ export default function BookPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         partySize,
+        fnbGuests,
         packageId,
         fnbPackageId,
         addOns: addOnSelections,
@@ -253,7 +258,7 @@ export default function BookPage() {
       .then((d) => d.quote && setQuote(d.quote))
       .catch(() => {})
     return () => controller.abort()
-  }, [packageId, partySize, fnbPackageId, addOnSelections, dateStr, startMinutes])
+  }, [packageId, partySize, fnbGuests, fnbPackageId, addOnSelections, dateStr, startMinutes])
 
   const patchDraft = useCallback(
     async (fields: Record<string, unknown>) => {
@@ -303,7 +308,7 @@ export default function BookPage() {
     setPackageId(p.id)
     const size = Math.min(Math.max(partySize, p.minGuests), p.maxGuests)
     setPartySize(size)
-    await patchDraft({ packageId: p.id, partySize: size })
+    await patchDraft({ packageId: p.id, partySize: size, fnbGuests })
     setStep(2)
   }
 
@@ -350,8 +355,10 @@ export default function BookPage() {
         waiverSigned: true,
         waiverSignedName: waiverName,
         waiverGuardian,
-        // The authoritative hold prices from the DB — make sure every add-on
-        // (and its menu picks) is saved before checkout.
+        // The authoritative hold prices from the DB — make sure guest counts
+        // and every add-on (and its menu picks) are saved before checkout.
+        partySize,
+        fnbGuests,
         addOns: addOnSelections,
       })
       const res = await fetch(`/api/bookings/${draftId}/checkout`, { method: 'POST' })
@@ -497,8 +504,35 @@ export default function BookPage() {
               )}
 
               <div className="mt-6">
-                <Label>Roughly how many guests?</Label>
-                <Stepper value={partySize} min={1} max={180} onChange={setPartySize} />
+                <Label>How many golfers?</Label>
+                <p className="mb-2 text-sm text-foreground/60">
+                  Everyone who&apos;ll be hitting — this sets how many bays you need.
+                </p>
+                <GuestField
+                  value={partySize}
+                  min={1}
+                  max={catalog.setting.maxGolfers}
+                  onChange={setPartySize}
+                />
+              </div>
+
+              <div className="mt-6">
+                <Label>Additional food &amp; drink guests (optional)</Label>
+                <p className="mb-2 text-sm text-foreground/60">
+                  Guests who&apos;ll eat &amp; drink but not golf — food and drinks are billed for everyone.
+                </p>
+                <GuestField
+                  value={fnbGuests}
+                  min={0}
+                  max={catalog.setting.maxFnbGuests}
+                  onChange={setFnbGuests}
+                />
+                {partySize + fnbGuests > 0 && (
+                  <p className="mt-2 text-sm text-brand">
+                    {partySize} golfer{partySize === 1 ? '' : 's'}
+                    {fnbGuests > 0 ? ` + ${fnbGuests} F&B guest${fnbGuests === 1 ? '' : 's'} = ${partySize + fnbGuests} total` : ''}
+                  </p>
+                )}
               </div>
 
               <div className="mt-6">
@@ -929,6 +963,7 @@ export default function BookPage() {
           <OrderSummary
             pkg={selectedPkg}
             partySize={partySize}
+            fnbGuests={fnbGuests}
             dateStr={dateStr}
             startMinutes={startMinutes}
             quote={quote}
@@ -1012,6 +1047,68 @@ function BackButton({ onClick, inline }: { onClick: () => void; inline?: boolean
   )
 }
 
+// Typeable count field with −/+ buttons and a hard max. Clamps on blur so a
+// half-typed number isn't fought mid-keystroke.
+function GuestField({
+  value,
+  min,
+  max,
+  onChange,
+}: {
+  value: number
+  min: number
+  max: number
+  onChange: (v: number) => void
+}) {
+  const [text, setText] = useState(String(value))
+  const [focused, setFocused] = useState(false)
+  // Resync the box when value changes from outside (e.g. a package clamp),
+  // but never yank the text out from under someone mid-type.
+  useEffect(() => {
+    if (!focused) setText(String(value))
+  }, [value, focused])
+  const commit = (raw: string) => {
+    const n = parseInt(raw.replace(/\D/g, '') || String(min), 10)
+    const clamped = Math.min(max, Math.max(min, n))
+    onChange(clamped)
+    setText(String(clamped))
+  }
+  return (
+    <div className="flex items-center gap-3">
+      <button
+        type="button"
+        onClick={() => commit(String(value - 1))}
+        className="h-12 w-12 rounded-full bg-white/10 text-xl font-bold transition hover:bg-brand hover:text-ink"
+      >
+        −
+      </button>
+      <input
+        type="text"
+        inputMode="numeric"
+        value={text}
+        onChange={(e) => setText(e.target.value.replace(/\D/g, '').slice(0, 3))}
+        onFocus={(e) => {
+          setFocused(true)
+          e.target.select()
+        }}
+        onBlur={(e) => {
+          setFocused(false)
+          commit(e.target.value)
+        }}
+        className="w-20 rounded-lg border border-white/20 bg-surface px-3 py-2.5 text-center text-xl font-bold outline-none focus:border-brand"
+      />
+      <button
+        type="button"
+        onClick={() => commit(String(value + 1))}
+        className="h-12 w-12 rounded-full bg-white/10 text-xl font-bold transition hover:bg-brand hover:text-ink"
+      >
+        +
+      </button>
+      <span className="text-sm text-foreground/50">max {max}</span>
+    </div>
+  )
+}
+
 function Stepper({
   value,
   min,
@@ -1089,12 +1186,14 @@ function SelectableRow({
 function OrderSummary({
   pkg,
   partySize,
+  fnbGuests,
   dateStr,
   startMinutes,
   quote,
 }: {
   pkg: Pkg | null
   partySize: number
+  fnbGuests: number
   dateStr: string
   startMinutes: number | null
   quote: Quote | null
@@ -1108,7 +1207,8 @@ function OrderSummary({
         <>
           <dl className="mt-3 space-y-1 text-sm">
             <Row k="Package" v={pkg.name} />
-            <Row k="Guests" v={String(partySize)} />
+            <Row k="Golfers" v={String(partySize)} />
+            {fnbGuests > 0 && <Row k="F&B guests" v={String(fnbGuests)} />}
             {dateStr && <Row k="Date" v={dateStr} />}
             {startMinutes !== null && <Row k="Time" v={minutesToLabel(startMinutes)} />}
             {quote && <Row k="Bays" v={String(quote.baysNeeded)} />}

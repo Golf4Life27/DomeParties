@@ -87,7 +87,11 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
       : Promise.resolve([]),
   ])
 
-  const partySize = Math.max(pkg.minGuests, input.partySize)
+  // golfers drive bays & bay rental; headcount (golfers + F&B-only guests)
+  // drives per-person food, drinks, and add-ons.
+  const golfers = Math.max(pkg.minGuests, input.partySize)
+  const headcount = golfers + Math.max(0, input.fnbGuests ?? 0)
+  const partySize = golfers // bay math below reads golfers only
   const lines: QuoteLine[] = []
 
   // --- Package ---
@@ -144,13 +148,13 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
   let fnbTotal = 0
   let serviceChargeBase = 0
   if (fnb) {
-    fnbTotal = fnb.pricingType === 'PER_PERSON' ? fnb.price * partySize : fnb.price
+    fnbTotal = fnb.pricingType === 'PER_PERSON' ? fnb.price * headcount : fnb.price
     if (fnb.serviceCharge) serviceChargeBase += fnbTotal
     lines.push({
       label: `${fnb.name} (food & beverage)`,
       detail:
         fnb.pricingType === 'PER_PERSON'
-          ? `${formatCents(fnb.price)} × ${partySize} guests`
+          ? `${formatCents(fnb.price)} × ${headcount} guests`
           : 'Platter',
       amount: fnbTotal,
     })
@@ -166,8 +170,8 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
     let line = 0
     let detail = ''
     if (a.unit === 'PER_PERSON') {
-      line = a.price * partySize
-      detail = `${formatCents(a.price)} × ${partySize} guests`
+      line = a.price * headcount
+      detail = `${formatCents(a.price)} × ${headcount} guests`
     } else if (a.unit === 'PER_30_MIN') {
       line = a.price * qty
       detail = `${formatCents(a.price)} × ${qty} × 30 min`
@@ -223,6 +227,6 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
     depositAmount,
     depositPercent: setting.depositPercent,
     balanceDue,
-    perPersonEffective: Math.round(total / partySize),
+    perPersonEffective: Math.round(total / headcount),
   }
 }

@@ -95,6 +95,7 @@ export type UpdateBookingFields = {
   dateStr?: string
   startMinutes?: number
   partySize?: number
+  fnbGuests?: number
   packageId?: string | null
   fnbPackageId?: string | null
   addOns?: AddOnSelection[]
@@ -113,6 +114,7 @@ export async function updateDraft(id: string, fields: UpdateBookingFields) {
   if (fields.dateStr) data.date = dateOnly(fields.dateStr)
   if (fields.startMinutes !== undefined) data.startMinutes = fields.startMinutes
   if (fields.partySize !== undefined) data.partySize = fields.partySize
+  if (fields.fnbGuests !== undefined) data.fnbGuests = fields.fnbGuests
   if (fields.packageId !== undefined) data.packageId = fields.packageId
   if (fields.fnbPackageId !== undefined) data.fnbPackageId = fields.fnbPackageId
   if (fields.customerName !== undefined) data.customerName = fields.customerName
@@ -136,11 +138,12 @@ export async function updateDraft(id: string, fields: UpdateBookingFields) {
       })
       const byId = new Map(addOns.map((a) => [a.id, a]))
       const booking = await prisma.booking.findUniqueOrThrow({ where: { id } })
+      const headcount = booking.partySize + booking.fnbGuests
       for (const sel of fields.addOns) {
         const a = byId.get(sel.addOnId)
         if (!a) continue
         const qty = Math.max(1, sel.quantity)
-        const lineTotal = addOnLineTotal(a.unit, a.price, booking.partySize, sel.quantity)
+        const lineTotal = addOnLineTotal(a.unit, a.price, headcount, sel.quantity)
         // Keep only picks that are actually on this add-on's choice menu,
         // capped at what the quantity entitles them to.
         const choices =
@@ -197,12 +200,24 @@ export async function placeHold(id: string) {
   }
   if (pkg.maxGuests > 0 && booking.partySize > pkg.maxGuests) {
     throw new BookingIncompleteError(
-      `This package covers up to ${pkg.maxGuests} guests — for ${booking.partySize} guests, pick a larger package.`,
+      `This package covers up to ${pkg.maxGuests} golfers — for ${booking.partySize}, pick a larger package.`,
+    )
+  }
+  const settingCaps = await prisma.setting.findUniqueOrThrow({ where: { id: 1 } })
+  if (booking.partySize > settingCaps.maxGolfers) {
+    throw new BookingIncompleteError(
+      `We can seat up to ${settingCaps.maxGolfers} golfers online — call us for a larger event.`,
+    )
+  }
+  if (booking.fnbGuests > settingCaps.maxFnbGuests) {
+    throw new BookingIncompleteError(
+      `Up to ${settingCaps.maxFnbGuests} additional food & drink guests can be added online — call us for more.`,
     )
   }
 
   const quote = await computeQuote({
     partySize: booking.partySize,
+    fnbGuests: booking.fnbGuests,
     packageId: booking.packageId,
     fnbPackageId: booking.fnbPackageId,
     addOns: booking.addOns.map((a) => ({ addOnId: a.addOnId, quantity: a.quantity })),

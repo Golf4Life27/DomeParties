@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Booking" ADD COLUMN     "fnbGuests" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "Setting" ADD COLUMN     "maxFnbGuests" INTEGER NOT NULL DEFAULT 80,
+ADD COLUMN     "maxGolfers" INTEGER NOT NULL DEFAULT 120;

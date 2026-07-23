@@ -9,6 +9,8 @@ const schema = z.object({
   bufferMinutes: z.number().int().min(0).max(240),
   leadTimeDaysOnline: z.number().int().min(0).max(365),
   holdMinutes: z.number().int().min(5).max(1440),
+  maxGolfers: z.number().int().min(1).max(500),
+  maxFnbGuests: z.number().int().min(0).max(500),
   staffNotifyEmail: z
     .string()
     .email()
