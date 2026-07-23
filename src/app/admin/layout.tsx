@@ -30,9 +30,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // Surface silent-failure states loudly: email off = no confirmations, no
   // staff alerts, no reminders — invisible unless someone says so here.
   const warnings: string[] = []
-  if (!process.env.RESEND_API_KEY) {
+  const emailConfigured =
+    !!process.env.RESEND_API_KEY || !!(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD)
+  if (!emailConfigured) {
     warnings.push(
-      'Emails are NOT being sent (no RESEND_API_KEY). Customers get no confirmations and you get no alerts — everything logs to the server console only.',
+      'Emails are NOT being sent (no email provider configured). Customers get no confirmations and you get no alerts — everything logs to the server console only.',
     )
   }
   const setting = await prisma.setting.findUnique({ where: { id: 1 } }).catch(() => null)
