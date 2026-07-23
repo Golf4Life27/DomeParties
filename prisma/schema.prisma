@@ -104,6 +104,35 @@ enum EventType {
   OTHER
 }
 
+// ---------------------------------------------------------------------------
+// Trackman coexistence: reservations pulled from the *other* booking system
+// (Trackman Booking & Payments) so we can detect capacity conflicts against
+// our own bookings. Fed by manual paste-import today; a scraper/API later.
+// ---------------------------------------------------------------------------
+model ExternalReservation {
+  id           String   @id @default(cuid())
+  source       String   @default("trackman")
+  date         DateTime // event date (date portion, UTC-midnight of the venue day)
+  startMinutes Int
+  endMinutes   Int
+  bayCount     Int      @default(1) // how many bays this row occupies in that window
+  label        String?  // optional note (bay name/customer) from the source
+  createdAt    DateTime @default(now())
+
+  @@index([date])
+}
+
+// A detected capacity conflict, deduped by signature so the same standing
+// conflict isn't re-alerted every cron run. Resolved when it no longer appears.
+model ConflictAlert {
+  id         String    @id @default(cuid())
+  signature  String    @unique // date + window + demand + our booking refs
+  dateStr    String
+  detail     String
+  notifiedAt DateTime  @default(now())
+  resolvedAt DateTime?
+}
+
 model Package {
   id              String      @id @default(cuid())
   name            String      // vibe-named, e.g. "The Eagle"

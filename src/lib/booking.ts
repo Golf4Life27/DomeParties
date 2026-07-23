@@ -594,6 +594,7 @@ function confirmationData(b: {
   startMinutes: number
   endMinutes: number
   partySize: number
+  fnbGuests?: number
   package: { name: string } | null
   total: number
   depositAmount: number
@@ -606,6 +607,7 @@ function confirmationData(b: {
     startMinutes: b.startMinutes,
     endMinutes: b.endMinutes,
     partySize: b.partySize,
+    fnbGuests: b.fnbGuests ?? 0,
     packageName: b.package?.name ?? 'Event package',
     total: b.total,
     depositAmount: b.depositAmount,
