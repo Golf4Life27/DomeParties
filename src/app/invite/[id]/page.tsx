@@ -24,7 +24,7 @@ export default async function InvitePage({ params }: { params: Promise<{ id: str
   return (
     <main className="flex-1 bg-brand-dark text-white">
       <div className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center px-6 py-16 text-center">
-        <p className="rounded-full bg-white/10 px-4 py-1 text-sm text-brand-light">You&apos;re invited! 🎉</p>
+        <p className="rounded-full bg-white/10 px-4 py-1 text-sm font-medium text-accent">You&apos;re invited! 🎉</p>
         <h1 className="mt-6 text-4xl font-extrabold leading-tight">
           {firstName}&apos;s event at
           <br />
