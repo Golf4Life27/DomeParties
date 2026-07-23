@@ -9,6 +9,8 @@ type Setting = {
   bufferMinutes: number
   leadTimeDaysOnline: number
   holdMinutes: number
+  maxGolfers: number
+  maxFnbGuests: number
   staffNotifyEmail: string | null
   reviewUrl: string | null
   depositPercent: number
@@ -29,6 +31,8 @@ const FIELDS: { key: keyof Setting; label: string; help?: string; step?: number;
   { key: 'bayCapacity', label: 'Guests per bay' },
   { key: 'bufferMinutes', label: 'Turnover buffer (min)' },
   { key: 'leadTimeDaysOnline', label: 'Online lead time (days)' },
+  { key: 'maxGolfers', label: 'Max golfers (online)' },
+  { key: 'maxFnbGuests', label: 'Max extra food & drink guests (online)' },
   { key: 'holdMinutes', label: 'Unpaid hold expires after (min)' },
   { key: 'staffNotifyEmail', label: 'Staff notification email (blank = off)', kind: 'text' },
   { key: 'reviewUrl', label: 'Review link for thank-you emails (e.g. Google)', kind: 'text' },

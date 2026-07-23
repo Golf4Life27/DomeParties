@@ -4,6 +4,7 @@ import { computeQuote } from '@/lib/pricing'
 
 const schema = z.object({
   partySize: z.number().int().min(1).max(300),
+  fnbGuests: z.number().int().min(0).max(300).optional(),
   packageId: z.string().min(1),
   fnbPackageId: z.string().nullish(),
   addOns: z

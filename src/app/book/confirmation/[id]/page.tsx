@@ -80,7 +80,8 @@ export default async function ConfirmationPage({
             <Row k="Guest" v={booking.customerName ?? '—'} />
             <Row k="Date" v={formatDateLong(dateStr)} />
             <Row k="Time" v={`${minutesToLabel(booking.startMinutes)} – ${minutesToLabel(booking.endMinutes)}`} />
-            <Row k="Party size" v={`${booking.partySize} guests`} />
+            <Row k="Golfers" v={`${booking.partySize}`} />
+            {booking.fnbGuests > 0 && <Row k="Food & drink guests" v={`${booking.fnbGuests}`} />}
             <Row k="Bays reserved" v={String(booking.baysNeeded)} />
             <Row k="Package" v={booking.package?.name ?? '—'} />
             {booking.fnbPackage && <Row k="Food & drink" v={booking.fnbPackage.name} />}

@@ -23,6 +23,8 @@ model Setting {
   bufferMinutes       Int      @default(30)  // cleaning/turnover before & after
   leadTimeDaysOnline  Int      @default(7)   // online bookings must be >= 7 days out
   holdMinutes         Int      @default(30)  // how long an unpaid checkout hold keeps bays
+  maxGolfers          Int      @default(120) // most golfers the venue can seat in bays
+  maxFnbGuests        Int      @default(80)  // additional food-&-drink-only guests allowed
   staffNotifyEmail    String?               // where staff notifications go (blank = off)
   reviewUrl           String?               // public review link (e.g. Google) for post-event emails
   dayDigestSentFor    String?               // YYYY-MM-DD of the last morning digest sent
@@ -182,7 +184,8 @@ model Booking {
   date         DateTime      // event date (date portion)
   startMinutes Int           // minutes from midnight, e.g. 600 = 10:00
   endMinutes   Int
-  partySize    Int           @default(1)
+  partySize    Int           @default(1)  // golfers (drives bays & bay rental)
+  fnbGuests    Int           @default(0)  // additional food-&-drink-only guests
   baysNeeded   Int           @default(1)
 
   // Selections

@@ -7,6 +7,7 @@ const patchSchema = z.object({
   dateStr: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   startMinutes: z.number().int().min(0).max(1439).optional(),
   partySize: z.number().int().min(1).max(300).optional(),
+  fnbGuests: z.number().int().min(0).max(300).optional(),
   packageId: z.string().nullish(),
   fnbPackageId: z.string().nullish(),
   addOns: z
@@ -64,6 +65,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     parsed.data.dateStr !== undefined ||
     parsed.data.startMinutes !== undefined ||
     parsed.data.partySize !== undefined ||
+    parsed.data.fnbGuests !== undefined ||
     parsed.data.packageId !== undefined ||
     parsed.data.fnbPackageId !== undefined ||
     parsed.data.addOns !== undefined

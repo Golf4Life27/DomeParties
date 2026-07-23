@@ -53,7 +53,8 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <Row k="Type" v={b.eventType} />
           {scheduled && <Row k="Date" v={formatDateLong(dateStr)} />}
           {scheduled && <Row k="Time" v={`${minutesToLabel(b.startMinutes)} – ${minutesToLabel(b.endMinutes)}`} />}
-          <Row k="Party size" v={`${b.partySize} guests`} />
+          <Row k="Golfers" v={`${b.partySize}`} />
+          {b.fnbGuests > 0 && <Row k="F&B-only guests" v={`${b.fnbGuests}`} />}
           <Row k="Bays needed" v={String(b.baysNeeded)} />
           <Row
             k="Bays assigned"

@@ -7,7 +7,8 @@ export type AddOnSelection = {
 }
 
 export type QuoteInput = {
-  partySize: number
+  partySize: number // golfers — drives bays & bay rental
+  fnbGuests?: number // additional food-&-drink-only guests
   packageId: string
   fnbPackageId?: string | null
   addOns: AddOnSelection[]

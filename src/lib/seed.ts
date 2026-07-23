@@ -17,6 +17,8 @@ export async function runSeed(prisma: PrismaClient) {
       bayCapacity: 6,
       bufferMinutes: 30,
       leadTimeDaysOnline: 7,
+      maxGolfers: 120,
+      maxFnbGuests: 80,
       staffNotifyEmail: 'Alex@whitetailridgegc.com',
     },
     create: {
@@ -26,6 +28,8 @@ export async function runSeed(prisma: PrismaClient) {
       bayCapacity: 6,
       bufferMinutes: 30,
       leadTimeDaysOnline: 7,
+      maxGolfers: 120,
+      maxFnbGuests: 80,
       depositPercent: 10,
       serviceChargePct: 20,
       serviceChargeOnGolf: true,
