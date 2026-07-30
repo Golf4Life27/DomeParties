@@ -2,6 +2,7 @@ import { prisma } from '@/lib/db'
 import CatalogEditor, { type FieldDef } from '../CatalogEditor'
 import { hoursContext, describeWindow, isUncontested } from '@/lib/hours'
 import { todayStr, addDays, formatDateLong } from '@/lib/time'
+import ReseedHoursButton from './ReseedHoursButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -94,7 +95,10 @@ export default async function HoursAdmin() {
         </table>
       </div>
 
-      <h2 className="mt-8 font-semibold text-brand-dark">Rules</h2>
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-semibold text-brand-dark">Rules</h2>
+        <ReseedHoursButton />
+      </div>
       <CatalogEditor endpoint="/api/admin/hours" fields={FIELDS} items={serialized} blank={BLANK} noun="hours rule" />
     </div>
   )
