@@ -8,6 +8,7 @@ import { minutesToLabel, todayVenueMidnight } from '@/lib/time'
 import { debitGiftCard } from '@/lib/giftcards'
 import { redeemPromo, featuredRecoveryPromo } from '@/lib/promos'
 import { signApproval } from '@/lib/sign'
+import { hoursContext, isSellable } from '@/lib/hours'
 import {
   sendEmail,
   buildConfirmationEmail,
@@ -250,9 +251,12 @@ export async function placeHold(id: string) {
   const endMinutes = startMinutes + quote.durationMinutes + extraMinutes
 
   const setting = await prisma.setting.findUniqueOrThrow({ where: { id: 1 } })
-  if (endMinutes > setting.closeHour * 60) {
+  // Respect the day's real party hours (and any closure), not a global window.
+  const ctx = await hoursContext(dateStr)
+  const dayClose = ctx.party ? ctx.party.closeMinute : setting.closeHour * 60
+  if (endMinutes > dayClose || (ctx.party && !isSellable(ctx, startMinutes, endMinutes))) {
     throw new BookingConflictError(
-      'With the extra time added, this booking would run past closing — pick an earlier start time or trim the extra time.',
+      'That window runs outside our hours for this day — pick an earlier start time or trim the extra time.',
     )
   }
 
@@ -280,7 +284,9 @@ export async function placeHold(id: string) {
       where: { id },
       data: {
         status: 'PENDING',
-        needsReview: assignment.usedShared, // shared bays → staff confirm vs Trackman
+        // Shared bays only need a Trackman check when the window actually
+        // overlaps golf hours; outside them there's nothing to collide with.
+        needsReview: assignment.usedShared && !assignment.uncontested,
         holdExpiresAt,
         endMinutes,
         baysNeeded: quote.baysNeeded,
@@ -374,7 +380,7 @@ export async function createQuoteBookingFromLead(leadId: string, input: QuoteInp
     data: {
       // Quotes on shared bays (or with no bays held) need the same Trackman
       // check as instant bookings before their deposit auto-confirms them.
-      needsReview: assignment ? assignment.usedShared : true,
+      needsReview: assignment ? assignment.usedShared && !assignment.uncontested : true,
       holdExpiresAt: new Date(Date.now() + 14 * 86_400_000),
     },
   })
@@ -740,7 +746,7 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
         await tx.bookingResource.createMany({
           data: assignment.resourceIds.map((resourceId) => ({ bookingId: id, resourceId })),
         })
-        return assignment.usedShared
+        return assignment.usedShared && !assignment.uncontested
       }
       return true // bays gone — staff will re-slot with the guest
     })

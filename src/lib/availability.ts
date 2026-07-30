@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db'
 import { minutesToLabel, isPeakSlot, todayStr, addDays } from '@/lib/time'
+import { hoursContext, isSellable, isUncontested } from '@/lib/hours'
 import type { TimeSlot } from '@/lib/types'
 
 /**
@@ -21,7 +22,7 @@ export interface AvailabilityProvider {
     endMinutes: number,
     baysNeeded: number,
     excludeBookingId?: string,
-  ): Promise<{ resourceIds: string[]; usedShared: boolean } | null>
+  ): Promise<{ resourceIds: string[]; usedShared: boolean; uncontested: boolean } | null>
 }
 
 const SLOT_STEP = 30 // minutes between candidate start times
@@ -64,6 +65,11 @@ async function loadDay(dateStr: string, excludeBookingId?: string) {
   return { setting, bays, intervals }
 }
 
+/** Has the owner configured any real hours yet? (Legacy fallback guard.) */
+async function hasAnyHours(): Promise<boolean> {
+  return (await prisma.operatingHours.count({ where: { active: true, kind: 'PARTY' } })) > 0
+}
+
 /** True if two intervals come within `buffer` minutes of each other. */
 function tooClose(aStart: number, aEnd: number, bStart: number, bEnd: number, buffer: number) {
   return aStart < bEnd + buffer && bStart < aEnd + buffer
@@ -79,14 +85,21 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
     const minDate = addDays(todayStr(), setting.leadTimeDaysOnline)
     if (dateStr < minDate) return []
 
-    const open = setting.openHour * 60
-    const close = setting.closeHour * 60
+    // Real per-day hours: sell only inside PARTY hours, never inside a closure.
+    // Falls back to the legacy global window when no hours are configured.
+    const ctx = await hoursContext(dateStr)
+    const open = ctx.party ? ctx.party.openMinute : setting.openHour * 60
+    const close = ctx.party ? ctx.party.closeMinute : setting.closeHour * 60
+    const hoursConfigured = ctx.party !== null || (await hasAnyHours())
+    if (hoursConfigured && !ctx.party) return [] // we don't host events this day
+
     const buffer = setting.bufferMinutes
     const totalBays = bays.length
     const slots: TimeSlot[] = []
 
     for (let start = open; start + durationMinutes <= close; start += SLOT_STEP) {
       const end = start + durationMinutes
+      if (ctx.party && !isSellable(ctx, start, end)) continue // closure or outside party hours
       // Count bays made busy by an existing booking that conflicts with this window.
       const busyBayIds = new Set<string>()
       for (const iv of intervals) {
@@ -102,6 +115,7 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
           label: minutesToLabel(start),
           availableBays,
           peak: isPeakSlot(dateStr),
+          uncontested: isUncontested(ctx, start, end),
         })
       }
     }
@@ -114,7 +128,7 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
     endMinutes: number,
     baysNeeded: number,
     excludeBookingId?: string,
-  ): Promise<{ resourceIds: string[]; usedShared: boolean } | null> {
+  ): Promise<{ resourceIds: string[]; usedShared: boolean; uncontested: boolean } | null> {
     const { setting, bays, intervals } = await loadDay(dateStr, excludeBookingId)
     const buffer = setting.bufferMinutes
     const busyBayIds = new Set<string>()
@@ -130,9 +144,15 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
       a.exclusive === b.exclusive ? a.sortOrder - b.sortOrder : a.exclusive ? -1 : 1,
     )
     const chosen = ordered.slice(0, baysNeeded)
+    // A window that never overlaps golf hours can't collide with Trackman, so
+    // shared bays are safe there — that's what makes off-season Mon–Thu (golf
+    // closed) instantly confirmable across all 30 bays.
+    const ctx = await hoursContext(dateStr)
+    const uncontested = isUncontested(ctx, startMinutes, endMinutes)
     return {
       resourceIds: chosen.map((b) => b.id),
       usedShared: chosen.some((b) => !b.exclusive),
+      uncontested,
     }
   }
 }
