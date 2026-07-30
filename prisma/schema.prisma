@@ -95,6 +95,51 @@ model BayRate {
   sortOrder   Int     @default(0)
 }
 
+// ---------------------------------------------------------------------------
+// Operating hours — the venue's real schedule, which is also the primary
+// conflict-avoidance mechanism against Trackman:
+//   GOLF  hours = when Trackman sells bays → the CONTENTION window
+//   PARTY hours = when we can sell events (often WIDER than golf hours; e.g.
+//                 off-season Mon–Thu golf is closed but "private parties
+//                 available all hours")
+// A party that falls entirely outside golf hours has zero contention and can
+// be confirmed instantly with certainty — no watcher, no review.
+// Seasonal variants use validFrom/validTo; the most specific match wins.
+// ---------------------------------------------------------------------------
+enum HoursKind {
+  GOLF
+  PARTY
+}
+
+model OperatingHours {
+  id          String    @id @default(cuid())
+  label       String    // e.g. "Off-season", "Winter"
+  kind        HoursKind
+  dayOfWeek   Int       // 0=Sun .. 6=Sat
+  closed      Boolean   @default(false)
+  openMinute  Int       @default(540)  // 9:00
+  closeMinute Int       @default(1320) // 22:00
+  validFrom   DateTime? // seasonal window; null = applies year-round
+  validTo     DateTime?
+  active      Boolean   @default(true)
+  sortOrder   Int       @default(0)
+
+  @@index([kind, dayOfWeek])
+}
+
+/// One-off closures / manual blocks (holidays, maintenance, private buyouts).
+/// Also the "block this time" tool: nothing is sellable inside a closure.
+model Closure {
+  id          String   @id @default(cuid())
+  date        DateTime // UTC-midnight of the venue day
+  startMinute Int      @default(0)
+  endMinute   Int      @default(1440)
+  reason      String?
+  createdAt   DateTime @default(now())
+
+  @@index([date])
+}
+
 enum EventType {
   BIRTHDAY
   GROUP

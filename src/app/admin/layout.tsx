@@ -11,6 +11,7 @@ const NAV = [
   { href: '/admin/bookings', label: 'Bookings' },
   { href: '/admin/leads', label: 'Leads' },
   { href: '/admin/bays', label: 'Bays' },
+  { href: '/admin/hours', label: 'Hours' },
   { href: '/admin/packages', label: 'Packages' },
   { href: '/admin/rates', label: 'Bay rates' },
   { href: '/admin/fnb', label: 'Food & drink' },

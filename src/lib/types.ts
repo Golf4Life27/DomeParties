@@ -49,4 +49,6 @@ export type TimeSlot = {
   label: string // e.g. "10:00 AM"
   availableBays: number
   peak: boolean
+  /** True when the slot can't collide with Trackman (golf closed then). */
+  uncontested?: boolean
 }

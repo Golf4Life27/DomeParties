@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-export type FieldType = 'text' | 'textarea' | 'int' | 'money' | 'bool' | 'select' | 'stringlist' | 'intlist'
+export type FieldType = 'text' | 'textarea' | 'int' | 'money' | 'bool' | 'select' | 'stringlist' | 'intlist' | 'date'
 
 export type FieldDef = {
   key: string
@@ -160,6 +160,15 @@ function FieldInput({
 }) {
   const base = 'w-full rounded-lg border border-black/15 px-3 py-2 outline-none focus:border-brand'
   switch (field.type) {
+    case 'date':
+      return (
+        <input
+          type="date"
+          value={(value as string) ?? ''}
+          onChange={(e) => onChange(e.target.value)}
+          className={base}
+        />
+      )
     case 'textarea':
       return (
         <textarea
