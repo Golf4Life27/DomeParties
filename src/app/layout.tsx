@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
+import ChatWidget from './ChatWidget'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -13,10 +14,15 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const ga4 = process.env.NEXT_PUBLIC_GA4_ID
   const metaPixel = process.env.NEXT_PUBLIC_META_PIXEL_ID
+  const chatAccount = process.env.NEXT_PUBLIC_MYCHATBOT_ACCOUNT_ID
+  const chatWidget = process.env.NEXT_PUBLIC_MYCHATBOT_WIDGET_ID
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         {children}
+        {chatAccount && chatWidget && (
+          <ChatWidget accountId={chatAccount} widgetId={chatWidget} />
+        )}
         {ga4 && (
           <>
             <Script src={`https://www.googletagmanager.com/gtag/js?id=${ga4}`} strategy="afterInteractive" />
