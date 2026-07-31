@@ -3,6 +3,7 @@
 import Script from 'next/script'
 import { usePathname } from 'next/navigation'
 import { useCallback, useRef } from 'react'
+import { VENUE } from '@/lib/venue'
 
 // MyChatBot website widget ("Birdie" — the event-sales assistant).
 //
@@ -48,6 +49,12 @@ export default function ChatWidget({
       assistant_name: 'Birdie',
       color,
       lang: 'en',
+      // MUST be set. Left unset, the widget falls back to a Vue prop default
+      // holding the vendor's own demo socials (lighthouse.kyiv.ua), so the
+      // Dome's chat panel would link customers to an unrelated business. It has
+      // no metadata field and no MCP parameter, so here is the only place to
+      // set it. Facebook only — it's the Dome's active channel.
+      sm_pages: [{ name: 'Facebook', url: VENUE.facebook }],
     })
   }, [accountId, widgetId, color])
 
