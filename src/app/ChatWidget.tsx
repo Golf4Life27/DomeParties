@@ -110,10 +110,31 @@ export default function ChatWidget({
       launcherRef.current = launcher
       // Hide the whole collapsed ROW, not just the glyph — the row also holds
       // the vendor's pop-up pill, which would otherwise sit beside our button.
+      // Write only when it would actually change. setAttribute queues a mutation
+      // record even when the value is identical, so an unconditional write here
+      // re-fires this very observer — and because observer callbacks are
+      // microtasks, that starves the event loop and hangs the tab outright.
       const row = launcher?.parentElement
-      if (row) row.setAttribute('data-dome-hidden', 'true')
+      if (row && row.getAttribute('data-dome-hidden') !== 'true') {
+        row.setAttribute('data-dome-hidden', 'true')
+      }
+
+      const isOpen = panelIsOpen(portal)
+
+      // The vendor's portal carries an inline z-index of 2147483647 — the 32-bit
+      // maximum — so our launcher can never sit above it, and its container
+      // swallows the clicks aimed at our golfer. While collapsed nothing in the
+      // portal needs to be clickable (its own row is hidden), so let clicks fall
+      // through to us; restore interactivity the moment the panel opens.
+      // Forwarding still works either way: element.click() ignores pointer-events.
+      const pass = isOpen ? null : 'true'
+      if (portal.getAttribute('data-dome-passthrough') !== pass) {
+        if (pass) portal.setAttribute('data-dome-passthrough', pass)
+        else portal.removeAttribute('data-dome-passthrough')
+      }
+
       setReady(Boolean(launcher))
-      setOpen(panelIsOpen(portal))
+      setOpen(isOpen)
     }
 
     const attach = () => {
@@ -205,8 +226,12 @@ export default function ChatWidget({
             <span className="dome-pulse" aria-hidden="true" />
             <span className="dome-disc">
               {/* Animated for most visitors; the still is swapped in by CSS when
-                  the visitor has asked for reduced motion. */}
+                  the visitor has asked for reduced motion. Plain <img> on
+                  purpose: next/image re-encodes, which flattens the animated
+                  WebP to a single frame and rasterises the SVG. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="dome-anim" src="/birdie-golfer.webp" alt="" width={72} height={72} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="dome-still" src="/birdie-golfer-still.svg" alt="" width={72} height={72} />
             </span>
           </button>
@@ -220,6 +245,7 @@ export default function ChatWidget({
 
 const LAUNCHER_CSS = `
 [data-dome-hidden="true"]{visibility:hidden!important;pointer-events:none!important}
+#${PORTAL_ID}[data-dome-passthrough="true"]{pointer-events:none!important}
 .dome-launcher-wrap{position:fixed;right:20px;bottom:20px;z-index:2147483646;
   display:flex;align-items:flex-end;gap:10px}
 .dome-launcher{position:relative;width:72px;height:72px;padding:0;border:0;
