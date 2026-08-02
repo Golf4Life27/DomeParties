@@ -126,6 +126,19 @@ export async function scanDate(dateStr: string): Promise<ConflictWindow[]> {
     }),
   ])
 
+  return sweepConflicts(ours, external, capacity)
+}
+
+/**
+ * The capacity sweep itself, over already-loaded rows. Split out so a caller
+ * holding a whole date range (the staff calendar) can reuse the exact same
+ * conflict rule without re-querying per day.
+ */
+export function sweepConflicts(
+  ours: { reference: string; startMinutes: number; endMinutes: number; baysNeeded: number }[],
+  external: { startMinutes: number; endMinutes: number; bayCount: number }[],
+  capacity: number,
+): ConflictWindow[] {
   // Boundary points where demand can change.
   const points = new Set<number>()
   for (const b of ours) {

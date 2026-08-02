@@ -28,3 +28,19 @@ export function verifyApproval(bookingId: string, exp: number, sig: string): boo
 export function calendarFeedKey(): string {
   return hmac('calendar-feed').slice(0, 32)
 }
+
+/**
+ * Static signed key for the shared read-only staff calendar page. Separate from
+ * the .ics feed key so one can be rotated without breaking the other.
+ */
+export function staffCalendarKey(): string {
+  return hmac('staff-calendar').slice(0, 32)
+}
+
+/** Constant-time compare for the static share keys. */
+export function keyMatches(provided: string | undefined, expected: string): boolean {
+  if (!provided) return false
+  const a = Buffer.from(provided)
+  const b = Buffer.from(expected)
+  return a.length === b.length && timingSafeEqual(a, b)
+}

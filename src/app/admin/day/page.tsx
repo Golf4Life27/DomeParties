@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { prisma } from '@/lib/db'
 import { minutesToLabel, formatDateLong, todayStr, addDays } from '@/lib/time'
 import { formatCents } from '@/lib/money'
-import { calendarFeedKey } from '@/lib/sign'
+import { calendarFeedKey, staffCalendarKey } from '@/lib/sign'
 import { StatusBadge } from '../StatusBadge'
 
 export const dynamic = 'force-dynamic'
@@ -30,6 +30,7 @@ export default async function DayView({
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const feedUrl = `${appUrl}/api/calendar.ics?key=${calendarFeedKey()}`
+  const staffUrl = `${appUrl}/calendar?key=${staffCalendarKey()}`
 
   return (
     <div>
@@ -106,6 +107,16 @@ export default async function DayView({
           phone automatically — no logging in:
         </p>
         <code className="mt-2 block overflow-x-auto rounded-lg bg-black/5 p-3 text-xs">{feedUrl}</code>
+      </div>
+
+      <div className="mt-4 rounded-2xl bg-white p-5 text-sm shadow-sm ring-1 ring-black/5">
+        <h2 className="font-semibold text-brand-dark">👥 Shared staff calendar</h2>
+        <p className="mt-1 text-foreground/60">
+          A read-only page for the whole team — two weeks of events with bays, guest counts and
+          balances, and a warning on any window where more bays are committed than the dome has.
+          No login, so anyone with the link can read it: share it with staff, not customers.
+        </p>
+        <code className="mt-2 block overflow-x-auto rounded-lg bg-black/5 p-3 text-xs">{staffUrl}</code>
       </div>
     </div>
   )
