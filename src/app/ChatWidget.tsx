@@ -36,13 +36,21 @@ const PORTAL_ID = 'mcb-widget-portal'
 // The collapsed launcher: a sized <svg> inside a clickable wrapper.
 const LAUNCHER_SEL = 'svg[class*="mcb-size-"]'
 
-/** The expanded panel is far bigger than the collapsed launcher row. */
-function panelIsOpen(portal: Element): boolean {
+/**
+ * The expanded panel, or null when collapsed — it's far bigger than the
+ * launcher row, so the largest box in the portal is the panel itself.
+ */
+function findPanel(portal: Element): HTMLElement | null {
+  let best: HTMLElement | null = null
+  let area = 0
   for (const el of Array.from(portal.querySelectorAll('*'))) {
     const r = el.getBoundingClientRect()
-    if (r.height > 220 && r.width > 260) return true
+    if (r.height > 220 && r.width > 260 && r.width * r.height > area) {
+      area = r.width * r.height
+      best = el as HTMLElement
+    }
   }
-  return false
+  return best
 }
 
 function findLauncher(portal: Element): HTMLElement | null {
@@ -70,6 +78,7 @@ export default function ChatWidget({
   const [teaser, setTeaser] = useState<string | null>(null)
   const [teaserShown, setTeaserShown] = useState(false)
   const [dismissed, setDismissed] = useState(false)
+  const [anchor, setAnchor] = useState<{ right: number; top: number } | null>(null)
 
   const suppressed = pathname?.startsWith('/admin') ?? false
 
@@ -112,11 +121,23 @@ export default function ChatWidget({
     let tries = 0
 
     const sync = (portal: Element) => {
+      const panel = findPanel(portal)
+      const isOpen = Boolean(panel)
       const launcher = findLauncher(portal)
-      launcherRef.current = launcher
-      // Hide the whole collapsed ROW, not just the glyph — the row also holds
-      // the vendor's pop-up pill, which would otherwise sit beside our button.
-      const isOpen = panelIsOpen(portal)
+
+      // Only ever remember the COLLAPSED-state launcher. It's a toggle, so the
+      // same node both opens and closes the panel. While open the same selector
+      // resolves to the header's expand icon instead, and clicking that would
+      // blow the panel up rather than shrink it.
+      if (!isOpen && launcher) launcherRef.current = launcher
+
+      // Where to float our own minimise button: just above the panel's top-right
+      // corner, so it never lands on the vendor's own header icons or the
+      // message box.
+      if (panel) {
+        const r = panel.getBoundingClientRect()
+        setAnchor({ right: Math.max(8, window.innerWidth - r.right), top: Math.max(8, r.top - 46) })
+      }
 
       // Hide the vendor's row ONLY while collapsed. Once the panel opens the
       // vendor moves its minimise control into that same row, so leaving it
@@ -151,7 +172,7 @@ export default function ChatWidget({
         else portal.removeAttribute('data-dome-passthrough')
       }
 
-      setReady(Boolean(launcher))
+      setReady(Boolean(launcherRef.current))
       setOpen(isOpen)
     }
 
@@ -202,6 +223,10 @@ export default function ChatWidget({
     return () => window.clearTimeout(t)
   }, [teaser, dismissed])
 
+  const collapseChat = useCallback(() => {
+    launcherRef.current?.click()
+  }, [])
+
   const openChat = useCallback(() => {
     setTeaserShown(false)
     setDismissed(true)
@@ -222,6 +247,27 @@ export default function ChatWidget({
         dangerouslySetInnerHTML={{ __html: LAUNCHER_CSS }}
       />
       <div id={MOUNT_ID} />
+
+      {open && anchor && (
+        <button
+          type="button"
+          className="dome-minimise"
+          style={{ right: anchor.right, top: anchor.top }}
+          onClick={collapseChat}
+          aria-label="Minimise the chat"
+        >
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path
+              d="M5 9l7 7 7-7"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      )}
 
       {showLauncher && (
         <div className="dome-launcher-wrap">
@@ -263,6 +309,11 @@ export default function ChatWidget({
 
 const LAUNCHER_CSS = `
 [data-dome-hidden="true"]{visibility:hidden!important;pointer-events:none!important}
+.dome-minimise{position:fixed;z-index:2147483647;width:38px;height:38px;padding:0;border:0;
+  border-radius:50%;background:#c8ff2e;color:#0b1622;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.dome-minimise:hover{transform:scale(1.06)}
+.dome-minimise:focus-visible{outline:3px solid #fff;outline-offset:2px}
 #${PORTAL_ID}[data-dome-passthrough="true"]{pointer-events:none!important}
 .dome-launcher-wrap{position:fixed;right:20px;bottom:20px;z-index:2147483646;
   display:flex;align-items:flex-end;gap:10px}
