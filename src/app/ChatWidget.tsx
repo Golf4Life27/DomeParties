@@ -87,6 +87,12 @@ export default function ChatWidget({
       assistant_name: 'Birdie',
       color,
       lang: 'en',
+      // Birdie's face on every reply. The vendor default is a stock photo of an
+      // older woman; anything starting with http is used verbatim once it loads
+      // (and silently falls back to that default if it 404s), so point it at our
+      // own golfer. Absolute URL required — a bare path is treated as the name
+      // of one of their built-in avatars.
+      assistant_avatar: `${window.location.origin}/birdie-avatar.png`,
       // MUST be set. Left unset, the widget falls back to a Vue prop default
       // holding the vendor's own demo socials (lighthouse.kyiv.ua), so the
       // Dome's chat panel would link customers to an unrelated business. It has
@@ -110,16 +116,28 @@ export default function ChatWidget({
       launcherRef.current = launcher
       // Hide the whole collapsed ROW, not just the glyph — the row also holds
       // the vendor's pop-up pill, which would otherwise sit beside our button.
-      // Write only when it would actually change. setAttribute queues a mutation
-      // record even when the value is identical, so an unconditional write here
-      // re-fires this very observer — and because observer callbacks are
-      // microtasks, that starves the event loop and hangs the tab outright.
-      const row = launcher?.parentElement
-      if (row && row.getAttribute('data-dome-hidden') !== 'true') {
-        row.setAttribute('data-dome-hidden', 'true')
-      }
-
       const isOpen = panelIsOpen(portal)
+
+      // Hide the vendor's row ONLY while collapsed. Once the panel opens the
+      // vendor moves its minimise control into that same row, so leaving it
+      // hidden takes away the only way to shrink the chat back down. Our own
+      // launcher is hidden while open, so handing the row back can't produce
+      // two buttons. Clear every marked node, not just this one — which element
+      // holds the control differs between the two states.
+      if (isOpen) {
+        document
+          .querySelectorAll('[data-dome-hidden]')
+          .forEach((el) => el.removeAttribute('data-dome-hidden'))
+      } else {
+        // Write only when it would actually change. setAttribute queues a
+        // mutation record even when the value is identical, so an unconditional
+        // write re-fires this very observer — and because observer callbacks
+        // are microtasks, that starves the event loop and hangs the tab.
+        const row = launcher?.parentElement
+        if (row && row.getAttribute('data-dome-hidden') !== 'true') {
+          row.setAttribute('data-dome-hidden', 'true')
+        }
+      }
 
       // The vendor's portal carries an inline z-index of 2147483647 — the 32-bit
       // maximum — so our launcher can never sit above it, and its container
