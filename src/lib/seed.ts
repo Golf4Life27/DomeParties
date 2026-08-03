@@ -342,11 +342,17 @@ export async function runSeed(prisma: PrismaClient) {
 export async function seedHours(prisma: PrismaClient) {
   // --- Operating hours -------------------------------------------------------
   // GOLF hours = when Trackman sells bays (the contention window).
-  // PARTY hours = when we'll host events — deliberately WIDER, because the
-  // venue advertises "private parties available all hours" on days golf is
-  // closed. Any party outside golf hours is uncontested → instant confirm.
-  // Published off-season hours (whitetailridgegolfdome.com): Mon–Thu golf
-  // CLOSED, Fri 4–9pm, Sat 11am–9pm, Sun 11am–6pm.
+  // PARTY hours = when we'll host events. Per Alex: parties MIRROR the dome's
+  // real opening hours — Fri–Sun off-season, 7 days from October — rather than
+  // running wider on days golf is shut.
+  //
+  // Consequence, and it's deliberate: because the two windows are identical,
+  // no slot is ever uncontested, so every booking on a shared bay routes to
+  // staff review instead of confirming itself. That's the accepted trade until
+  // we can read Trackman availability live.
+  //
+  // Published off-season hours (whitetailridgegolfdome.com): Mon–Thu CLOSED,
+  // Fri 4–9pm, Sat 11am–9pm, Sun 11am–6pm.
   await prisma.operatingHours.deleteMany()
   const OFF_SEASON = { validFrom: new Date('2026-04-01T00:00:00.000Z'), validTo: new Date('2026-09-30T00:00:00.000Z') }
   const hoursRows: {
@@ -365,17 +371,13 @@ export async function seedHours(prisma: PrismaClient) {
   hoursRows.push({ label: 'Off-season', kind: 'GOLF', dayOfWeek: 5, openMinute: 16 * 60, closeMinute: 21 * 60, ...OFF_SEASON, sortOrder: 11 })
   hoursRows.push({ label: 'Off-season', kind: 'GOLF', dayOfWeek: 6, openMinute: 11 * 60, closeMinute: 21 * 60, ...OFF_SEASON, sortOrder: 12 })
   hoursRows.push({ label: 'Off-season', kind: 'GOLF', dayOfWeek: 0, openMinute: 11 * 60, closeMinute: 18 * 60, ...OFF_SEASON, sortOrder: 13 })
-  // Off-season PARTY — Mon–Thu fully uncontested (golf closed); a sane
-  // 10am–9pm hosting bracket rather than literally "all hours".
-  for (const d of [1, 2, 3, 4]) hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: d, openMinute: 10 * 60, closeMinute: 21 * 60, ...OFF_SEASON, sortOrder: 20 })
-  hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 5, openMinute: 11 * 60, closeMinute: 21 * 60, ...OFF_SEASON, sortOrder: 21 })
+  // Off-season PARTY — mirrors golf exactly: closed Mon–Thu, open Fri–Sun.
+  // Nothing is bookable Mon–Thu until the in-season window opens on Oct 1.
+  for (const d of [1, 2, 3, 4]) hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: d, closed: true, ...OFF_SEASON, sortOrder: 20 })
+  hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 5, openMinute: 16 * 60, closeMinute: 21 * 60, ...OFF_SEASON, sortOrder: 21 })
   hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 6, openMinute: 11 * 60, closeMinute: 21 * 60, ...OFF_SEASON, sortOrder: 22 })
   hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 0, openMinute: 11 * 60, closeMinute: 18 * 60, ...OFF_SEASON, sortOrder: 23 })
-  // In-season (Oct 1 onward): dome open 7 days, 9am–10pm. NOTE: party hours
-  // then sit entirely INSIDE golf hours, so nothing is uncontested in season —
-  // every booking on a shared bay needs real Trackman availability (watcher)
-  // or it routes to review. Narrow PARTY hours here if you'd rather keep prime
-  // walk-in time for bay rentals.
+  // In-season (Oct 1 onward): dome open 7 days, 9am–10pm, parties the same.
   const IN_SEASON = { validFrom: new Date('2026-10-01T00:00:00.000Z'), validTo: new Date('2027-03-31T00:00:00.000Z') }
   for (let d = 0; d <= 6; d++) {
     hoursRows.push({ label: 'In-season', kind: 'GOLF', dayOfWeek: d, openMinute: 9 * 60, closeMinute: 22 * 60, ...IN_SEASON, sortOrder: 30 + d })
