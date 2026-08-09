@@ -58,9 +58,18 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   })
 }
 
-// DELETE — remove an applied promo.
+// DELETE — remove an applied promo. Same guards as POST: this recomputes the
+// deposit as a percentage of the current total, so on a paid booking it would
+// rewrite what the system believes was collected (and re-bill a discount the
+// guest already earned). It also needs a 404 path — applyDiscount uses
+// findUniqueOrThrow, so an unknown id was surfacing as an unhandled 500.
 export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+  const booking = await prisma.booking.findUnique({ where: { id } })
+  if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  if (booking.status !== 'PENDING' || booking.depositPaid) {
+    return NextResponse.json({ error: 'This booking is not awaiting payment.' }, { status: 409 })
+  }
   const updated = await applyDiscount(id, null, 0)
   return NextResponse.json({ ok: true, total: updated.total, depositAmount: updated.depositAmount })
 }
