@@ -23,6 +23,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
+  // Refuse events from the wrong Stripe mode. Leaving a test-mode endpoint
+  // pointed at production is a common cutover mistake, and test events would
+  // otherwise confirm real bookings and send real confirmation emails.
+  const secretIsLive = process.env.STRIPE_SECRET_KEY?.startsWith('sk_live') ?? false
+  if (event.livemode !== secretIsLive) {
+    console.error(
+      `Webhook mode mismatch: event.livemode=${event.livemode}, secret key is ${secretIsLive ? 'live' : 'test'}`,
+    )
+    return NextResponse.json({ error: 'Wrong Stripe mode for this environment' }, { status: 400 })
+  }
+
   if (event.type === 'payment_intent.succeeded') {
     const intent = event.data.object as { id: string; amount: number; metadata?: Record<string, string> }
     const meta = intent.metadata ?? {}

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { formatCents } from '@/lib/money'
+import { VENUE } from '@/lib/venue'
 
 type Props = {
   bookingId: string
@@ -40,6 +41,27 @@ export default function PaymentStep({
       </Elements>
     )
   }
+
+  // The server said Stripe is configured, but the client can't mount Elements —
+  // almost always a missing or stale NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, which is
+  // inlined at build time and so goes stale until a redeploy. Falling through to
+  // DevPay here would show a real customer a "Test mode… simulates a successful
+  // payment" banner and a fake pay button, and mark their party paid for nothing.
+  if (mode === 'stripe') {
+    return (
+      <div className="rounded-xl bg-red-50 p-5 text-sm text-red-800 ring-1 ring-red-200">
+        <p className="font-semibold">We can&apos;t take payment right now.</p>
+        <p className="mt-1">
+          Your date is still held. Please call us on{' '}
+          <a href={`tel:${VENUE.phoneDigits}`} className="font-semibold underline">
+            {VENUE.phone}
+          </a>{' '}
+          and we&apos;ll take the deposit over the phone.
+        </p>
+      </div>
+    )
+  }
+
   return <DevPay amount={depositAmount} label={label} confirmPath={confirmPath} successPath={successPath} />
 }
 
