@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { use, useState } from 'react'
 import Link from 'next/link'
 import { track } from '@/lib/track'
 
@@ -14,21 +14,47 @@ const EVENT_TYPES = [
 const BUDGETS = ['Under $1,000', '$1,000–$2,500', '$2,500–$5,000', '$5,000–$10,000', '$10,000+', 'Not sure yet']
 const MUST_HAVES = ['Private space', 'Full bar', 'Catered food', 'AV / presentation', 'Décor', 'Photographer']
 
-export default function InquirePage() {
-  const [eventType, setEventType] = useState('CORPORATE')
-  const [preferredDate, setPreferredDate] = useState('')
+type Search = Promise<Record<string, string | string[] | undefined>>
+
+/** First value of a query param, trimmed and length-capped, or '' when absent. */
+function q(sp: Record<string, string | string[] | undefined>, key: string, max = 200): string {
+  const raw = sp[key]
+  const v = Array.isArray(raw) ? raw[0] : raw
+  return typeof v === 'string' ? v.trim().slice(0, max) : ''
+}
+
+export default function InquirePage({ searchParams }: { searchParams: Search }) {
+  // Prefill from the query string so Birdie can hand a guest a one-click link
+  // with everything she already learned in the chat filled in. She used to
+  // promise "I'll pass this to the team" and then have nowhere to put it; this
+  // form already fires the urgent staff alert and the instant auto-response, so
+  // routing her through it is what makes that promise true.
+  //
+  // Read as useState initialisers rather than an effect: it runs once, and this
+  // project's lint forbids setState inside an effect.
+  const sp = use(searchParams)
+  const presetType = EVENT_TYPES.some((t) => t.key === q(sp, 'eventType'))
+    ? q(sp, 'eventType')
+    : 'CORPORATE'
+
+  const [eventType, setEventType] = useState(presetType)
+  const [preferredDate, setPreferredDate] = useState(
+    /^\d{4}-\d{2}-\d{2}$/.test(q(sp, 'date')) ? q(sp, 'date') : '',
+  )
   const [dateFlexible, setDateFlexible] = useState(false)
-  const [headcountMin, setHeadcountMin] = useState('')
+  const [headcountMin, setHeadcountMin] = useState(q(sp, 'guests', 4).replace(/\D/g, ''))
   const [headcountMax, setHeadcountMax] = useState('')
-  const [budget, setBudget] = useState('')
+  const [budget, setBudget] = useState(BUDGETS.includes(q(sp, 'budget')) ? q(sp, 'budget') : '')
   const [mustHaves, setMustHaves] = useState<string[]>([])
-  const [customerName, setName] = useState('')
-  const [customerEmail, setEmail] = useState('')
-  const [customerPhone, setPhone] = useState('')
-  const [message, setMessage] = useState('')
+  const [customerName, setName] = useState(q(sp, 'name', 120))
+  const [customerEmail, setEmail] = useState(q(sp, 'email', 160))
+  const [customerPhone, setPhone] = useState(q(sp, 'phone', 40))
+  const [message, setMessage] = useState(q(sp, 'message', 2000))
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
+  // Birdie appends ?src=birdie, so staff can see which leads the chatbot earned.
+  const source = q(sp, 'src') === 'birdie' ? 'chatbot' : 'website'
 
   function toggleMust(m: string) {
     setMustHaves((s) => (s.includes(m) ? s.filter((x) => x !== m) : [...s, m]))
@@ -57,6 +83,7 @@ export default function InquirePage() {
         customerEmail,
         customerPhone: customerPhone || null,
         message: message || null,
+        source,
       }),
     })
     setBusy(false)
