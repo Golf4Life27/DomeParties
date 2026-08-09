@@ -28,9 +28,63 @@ export interface AvailabilityProvider {
 const SLOT_STEP = 30 // minutes between candidate start times
 
 type BusyInterval = { start: number; end: number; resourceIds: string[] }
+/** Trackman's own demand: a bay COUNT for a window, not named bays. */
+type ExternalInterval = { start: number; end: number; bayCount: number }
+
+/**
+ * Peak concurrent external (Trackman) bay demand inside a window, buffer
+ * included. Peak rather than sum: two back-to-back Trackman rows of 5 bays
+ * overlapping one long party occupy 5 bays at a time, not 10.
+ */
+function peakExternalDemand(
+  external: ExternalInterval[],
+  start: number,
+  end: number,
+  buffer: number,
+): number {
+  const lo = start - buffer
+  const hi = end + buffer
+  const overlapping = external.filter((e) => e.start < hi && lo < e.end)
+  if (overlapping.length === 0) return 0
+
+  const points = new Set<number>([lo, hi])
+  for (const e of overlapping) {
+    points.add(Math.max(e.start, lo))
+    points.add(Math.min(e.end, hi))
+  }
+  const sorted = [...points].sort((a, b) => a - b)
+
+  let peak = 0
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const mid = (sorted[i] + sorted[i + 1]) / 2
+    let demand = 0
+    for (const e of overlapping) {
+      if (e.start <= mid && mid < e.end) demand += e.bayCount
+    }
+    if (demand > peak) peak = demand
+  }
+  return peak
+}
+
+/**
+ * How many bays we may actually hand out in a window.
+ *
+ * Trackman sells the Shared bays alongside us and has no idea we exist, so its
+ * demand has to come off the shared pool before we sell anything. Exclusive bays
+ * are ours alone and are never reduced. Previously nothing here read
+ * ExternalReservation at all — the capacity sweep that does only ran on the
+ * hourly cron, so the double-booking check happened after deposits were already
+ * captured.
+ */
+function usableBays<T extends { exclusive: boolean }>(free: T[], externalDemand: number) {
+  const exclusive = free.filter((b) => b.exclusive)
+  const shared = free.filter((b) => !b.exclusive)
+  const sharedUsable = Math.max(0, shared.length - externalDemand)
+  return { exclusive, shared, sharedUsable, count: exclusive.length + sharedUsable }
+}
 
 async function loadDay(dateStr: string, excludeBookingId?: string) {
-  const [setting, bays, bookings] = await Promise.all([
+  const [setting, bays, bookings, externalRows] = await Promise.all([
     prisma.setting.findUniqueOrThrow({ where: { id: 1 } }),
     prisma.resource.findMany({
       where: { type: 'BAY', active: true },
@@ -56,13 +110,22 @@ async function loadDay(dateStr: string, excludeBookingId?: string) {
       },
       include: { resources: true },
     }),
+    prisma.externalReservation.findMany({
+      where: { date: new Date(`${dateStr}T00:00:00.000Z`) },
+      select: { startMinutes: true, endMinutes: true, bayCount: true },
+    }),
   ])
   const intervals: BusyInterval[] = bookings.map((b) => ({
     start: b.startMinutes,
     end: b.endMinutes,
     resourceIds: b.resources.map((r) => r.resourceId),
   }))
-  return { setting, bays, intervals }
+  const external: ExternalInterval[] = externalRows.map((e) => ({
+    start: e.startMinutes,
+    end: e.endMinutes,
+    bayCount: e.bayCount,
+  }))
+  return { setting, bays, intervals, external }
 }
 
 /** Has the owner configured any real hours yet? (Legacy fallback guard.) */
@@ -81,7 +144,7 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
     const earliest = addDays(todayStr(), 0)
     if (dateStr < earliest) return []
 
-    const { setting, bays, intervals } = await loadDay(dateStr)
+    const { setting, bays, intervals, external } = await loadDay(dateStr)
     const minDate = addDays(todayStr(), setting.leadTimeDaysOnline)
     if (dateStr < minDate) return []
 
@@ -94,7 +157,6 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
     if (hoursConfigured && !ctx.party) return [] // we don't host events this day
 
     const buffer = setting.bufferMinutes
-    const totalBays = bays.length
     const slots: TimeSlot[] = []
 
     for (let start = open; start + durationMinutes <= close; start += SLOT_STEP) {
@@ -107,7 +169,10 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
           for (const rid of iv.resourceIds) busyBayIds.add(rid)
         }
       }
-      const availableBays = totalBays - busyBayIds.size
+      // Trackman's demand for this window comes off the shared pool before we
+      // offer the slot at all.
+      const free = bays.filter((b) => !busyBayIds.has(b.id))
+      const availableBays = usableBays(free, peakExternalDemand(external, start, end, buffer)).count
       if (availableBays >= baysNeeded) {
         slots.push({
           startMinutes: start,
@@ -129,7 +194,7 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
     baysNeeded: number,
     excludeBookingId?: string,
   ): Promise<{ resourceIds: string[]; usedShared: boolean; uncontested: boolean } | null> {
-    const { setting, bays, intervals } = await loadDay(dateStr, excludeBookingId)
+    const { setting, bays, intervals, external } = await loadDay(dateStr, excludeBookingId)
     const buffer = setting.bufferMinutes
     const busyBayIds = new Set<string>()
     for (const iv of intervals) {
@@ -138,12 +203,19 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
       }
     }
     const free = bays.filter((b) => !busyBayIds.has(b.id))
-    if (free.length < baysNeeded) return null
-    // Prefer Exclusive bays (instant-confirmable), then Shared (needs review).
-    const ordered = [...free].sort((a, b) =>
-      a.exclusive === b.exclusive ? a.sortOrder - b.sortOrder : a.exclusive ? -1 : 1,
-    )
-    const chosen = ordered.slice(0, baysNeeded)
+
+    // Leave Trackman's share of the shared bays alone. Without this the engine
+    // treated all 30 as ours and sold bays Trackman had already committed.
+    const externalDemand = peakExternalDemand(external, startMinutes, endMinutes, buffer)
+    const pool = usableBays(free, externalDemand)
+    if (pool.count < baysNeeded) return null
+
+    // Prefer Exclusive bays (instant-confirmable), then Shared (needs review) —
+    // and only as many shared bays as Trackman leaves us.
+    const chosen = [
+      ...pool.exclusive.sort((a, b) => a.sortOrder - b.sortOrder),
+      ...pool.shared.sort((a, b) => a.sortOrder - b.sortOrder).slice(0, pool.sharedUsable),
+    ].slice(0, baysNeeded)
     // A window that never overlaps golf hours can't collide with Trackman, so
     // shared bays are safe there — that's what makes off-season Mon–Thu (golf
     // closed) instantly confirmable across all 30 bays.

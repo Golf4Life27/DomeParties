@@ -22,12 +22,32 @@ export default function BookingActions({
   const [busy, setBusy] = useState(false)
 
   const [sentRecovery, setSentRecovery] = useState(false)
+  const [refundNote, setRefundNote] = useState<string | null>(null)
 
-  async function act(action: 'cancel' | 'complete' | 'recover' | 'approve' | 'mark-balance-paid') {
-    if (action === 'cancel' && !confirm('Cancel this booking and free its bays?')) return
+  const money = (cents: number) => `$${(cents / 100).toFixed(2)}`
+  // Has the guest actually handed over money that would be owed back?
+  const hasCollected = Boolean(depositPaid || balancePaid)
+
+  async function act(
+    action: 'cancel' | 'complete' | 'recover' | 'approve' | 'mark-balance-paid',
+    body?: Record<string, unknown>,
+  ) {
+    if (action === 'cancel' && !body?.refund && !confirm('Cancel this booking and free its bays?')) return
     if (action === 'mark-balance-paid' && !confirm('Record the remaining balance as paid at the venue? The guest gets a receipt email.')) return
     setBusy(true)
-    const res = await fetch(`/api/admin/bookings/${id}/${action}`, { method: 'POST' })
+    const res = await fetch(`/api/admin/bookings/${id}/${action}`, {
+      method: 'POST',
+      ...(body
+        ? { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+        : {}),
+    })
+    if (action === 'cancel' && body?.refund) {
+      const data = await res.json().catch(() => null)
+      // Say plainly whether Stripe actually took it — a silent failure here is
+      // how a guest ends up cancelled and out of pocket.
+      if (data?.refund?.ok) setRefundNote(`Refunded ${money(data.refund.amount)} in Stripe.`)
+      else setRefundNote(`Cancelled, but the refund did NOT go through: ${data?.refund?.reason ?? 'unknown error'}. Refund it manually in Stripe.`)
+    }
     setBusy(false)
     if (action === 'recover') {
       if (res.ok) setSentRecovery(true)
@@ -80,6 +100,18 @@ export default function BookingActions({
           Mark completed
         </button>
       )}
+      {canCancel && hasCollected && (
+        <button
+          onClick={() => {
+            if (!confirm('Cancel this booking, free its bays, AND refund the guest in Stripe?')) return
+            act('cancel', { refund: true })
+          }}
+          disabled={busy}
+          className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+        >
+          Cancel &amp; refund
+        </button>
+      )}
       {canCancel && (
         <button
           onClick={() => act('cancel')}
@@ -88,6 +120,9 @@ export default function BookingActions({
         >
           Cancel booking
         </button>
+      )}
+      {refundNote && (
+        <p className="mt-2 w-full text-sm font-medium text-red-700">{refundNote}</p>
       )}
     </div>
   )
