@@ -761,6 +761,22 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
     return booking
   }
 
+  // Stripe delivers at-least-once, and two concurrent deliveries both cleared the
+  // depositPaid check above before either had written anything — enough to debit
+  // the gift card twice, increment the promo redemption twice, and send the guest
+  // two confirmations. Claim the booking atomically: exactly one caller can flip
+  // depositPaid from false, and the loser stops here.
+  //
+  // The trade: if the work below then throws, the row is left paid-but-
+  // unconfirmed and a Stripe retry will short-circuit on the guard above rather
+  // than finishing the job. That was already true of the existing write ordering,
+  // and it surfaces as a needs-review booking rather than a silent double-charge.
+  const claim = await prisma.booking.updateMany({
+    where: { id, depositPaid: false },
+    data: { depositPaid: true },
+  })
+  if (claim.count === 0) return booking // another delivery is already handling it
+
   // If the payment landed after the hold expired — or the hold was already
   // released (reverted to DRAFT, bays freed) — the bays may have been given
   // away. Re-assign under the date lock before confirming. If that fails, keep
