@@ -945,18 +945,37 @@ export async function confirmBalancePaid(id: string) {
   const booking = await prisma.booking.findUniqueOrThrow({ where: { id }, include: { package: true } })
   if (booking.balancePaid) return booking // idempotent
 
-  const receipt = buildBalanceReceiptEmail(confirmationData(booking))
-  const updated = await prisma.booking.update({
-    where: { id },
-    data: { balancePaid: true, balancePaidAt: new Date() },
-  })
+  // Move the outstanding amount into "collected" in one statement.
+  //
+  // balanceDue means what is STILL owed. Leaving it set once paid meant a later
+  // upsell — which does `balanceDue: { increment: delta }` — incremented a base
+  // that had already been collected, re-billing the whole balance on top of the
+  // new line. Column-to-column in raw SQL so the add and the zeroing can't be
+  // split by a concurrent upsell, and gated on balancePaid = false so Stripe's
+  // at-least-once delivery can't count the same payment twice.
+  const claimed = await prisma.$executeRaw`
+    UPDATE "Booking"
+       SET "balancePaid" = true,
+           "balancePaidAt" = NOW(),
+           "balancePaidAmount" = "balancePaidAmount" + "balanceDue",
+           "balanceDue" = 0
+     WHERE "id" = ${id} AND "balancePaid" = false`
+  if (claimed === 0) return booking
+
+  const updated = await prisma.booking.findUniqueOrThrow({ where: { id } })
+  // Read the amount back off the row rather than trusting the value we read
+  // before the update, so the receipt and the staff note quote what was actually
+  // collected even if an upsell moved the balance in between.
+  const paidNow = updated.balancePaidAmount - booking.balancePaidAmount
+
+  const receipt = buildBalanceReceiptEmail({ ...confirmationData(booking), balanceDue: paidNow })
   if (booking.customerEmail) {
     await sendEmail({ to: booking.customerEmail, subject: receipt.subject, html: receipt.html, text: receipt.text })
   }
   await notifyStaff({
     title: `Balance paid — ${booking.reference}`,
     lines: [
-      `${booking.customerName ?? 'Guest'} paid the remaining ${formatCents(booking.balanceDue)}`,
+      `${booking.customerName ?? 'Guest'} paid the remaining ${formatCents(paidNow)}`,
       `Event ${dateStrOf(booking.date)} · fully paid`,
     ],
     adminPath: `/admin/bookings/${booking.id}`,
