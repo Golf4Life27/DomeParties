@@ -180,6 +180,21 @@ export async function placeHold(id: string) {
     where: { id },
     include: { addOns: { include: { addOn: true } } },
   })
+  // A paid or finished booking must never be re-opened. placeHold rewrites
+  // status to PENDING with a fresh hold and fresh pricing, and every check below
+  // is satisfied by a CONFIRMED booking — so without this guard a public POST to
+  // /checkout on a paid event dropped it back to PENDING with depositPaid still
+  // true. releaseExpiredHolds skips those (it filters depositPaid: false), so it
+  // sat PENDING forever: invisible to the day sheet, the reminder crons and
+  // completePastEvents, all of which filter on CONFIRMED. Booking ids reach every
+  // guest through the invite and manage links.
+  if (booking.depositPaid) {
+    throw new BookingIncompleteError('This booking is already paid — nothing to check out.')
+  }
+  if (booking.status !== 'DRAFT' && booking.status !== 'PENDING') {
+    throw new BookingIncompleteError('This booking can no longer be checked out.')
+  }
+
   if (!booking.packageId || !booking.partySize || booking.startMinutes === undefined) {
     throw new BookingIncompleteError('Missing package, party size, or time')
   }
@@ -702,8 +717,30 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
     where: { id },
     include: { package: true, resources: true },
   })
-  if (booking.status === 'CONFIRMED') return booking // idempotent
-  if (booking.depositPaid) return booking // webhook retry on the review path — already recorded
+  if (booking.status === 'CONFIRMED' || booking.depositPaid) {
+    // A webhook retry of the SAME intent is normal and must stay silent — that's
+    // the idempotency this early return exists for. A DIFFERENT intent means a
+    // second deposit was genuinely captured for this event: money we now owe
+    // back, which used to disappear here with no alert and no refund path.
+    const duplicateCharge =
+      !!paymentIntentId &&
+      !!booking.stripePaymentIntentId &&
+      paymentIntentId !== booking.stripePaymentIntentId
+    if (duplicateCharge) {
+      await prisma.booking.update({ where: { id }, data: { needsReview: true } })
+      await notifyStaff({
+        title: `Second deposit captured — ${booking.reference}`,
+        lines: [
+          `${booking.customerName ?? 'Guest'} has been charged twice for ${booking.reference}.`,
+          `Already recorded: ${booking.stripePaymentIntentId}. New payment: ${paymentIntentId}.`,
+          `Refund ${formatCents(booking.depositAmount)} in Stripe and tell the guest.`,
+        ],
+        adminPath: `/admin/bookings/${booking.id}`,
+        urgent: true,
+      })
+    }
+    return booking
+  }
 
   // A payment landing on a CANCELLED booking must never resurrect it — record
   // the payment for staff to refund, and stop.

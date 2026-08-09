@@ -9,7 +9,10 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
   const { id } = await ctx.params
   const booking = await prisma.booking.findUnique({ where: { id } })
   if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  if (booking.status !== 'PENDING') {
+  // depositPaid as well as status: a booking can sit PENDING with the deposit
+  // already collected (the needs-review path), and minting a second intent there
+  // means capturing a second deposit for the same event.
+  if (booking.status !== 'PENDING' || booking.depositPaid) {
     return NextResponse.json({ error: 'This booking is not awaiting payment.' }, { status: 409 })
   }
   const payment = await createDepositIntent(id)
