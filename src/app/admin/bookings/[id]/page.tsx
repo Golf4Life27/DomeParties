@@ -87,7 +87,17 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <div className="my-2 border-t border-black/10" />
           <Row k="Total" v={formatCents(b.total)} bold />
           <Row k="Deposit" v={`${formatCents(b.depositAmount)} ${b.depositPaid ? '✓ paid' : '(unpaid)'}`} />
-          <Row k="Balance" v={b.balancePaid ? `${formatCents(b.balanceDue)} ✓ paid ahead` : `${formatCents(b.balanceDue)} due at event`} />
+          {b.balancePaidAmount > 0 && <Row k="Balance collected" v={`${formatCents(b.balancePaidAmount)} ✓ paid ahead`} />}
+          <Row
+            k="Balance"
+            v={
+              b.balanceDue > 0
+                ? `${formatCents(b.balanceDue)} due at event`
+                : b.balancePaidAmount > 0
+                  ? 'Nothing outstanding'
+                  : '$0.00'
+            }
+          />
         </Card>
 
         <Card title="Record">

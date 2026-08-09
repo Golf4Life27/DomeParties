@@ -20,9 +20,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   // What the guest has actually paid us, and is therefore owed back.
+  // balancePaidAmount is cumulative and is the only honest source here: balanceDue
+  // is zeroed when the balance is paid, and an upsell after that sets balancePaid
+  // back to false, so the old `balancePaid ? balanceDue : 0` reported nothing
+  // collected on exactly the bookings that had paid the most.
   const collected =
     (booking.depositPaid ? Math.max(0, booking.depositAmount - booking.giftCardApplied) : 0) +
-    (booking.balancePaid ? booking.balanceDue : 0)
+    booking.balancePaidAmount
 
   let refund: { ok: true; id: string; amount: number } | { ok: false; reason: string } | null = null
 

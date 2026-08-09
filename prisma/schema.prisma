@@ -294,6 +294,10 @@ model Booking {
   balanceDue    Int     @default(0)
   balancePaid   Boolean @default(false)
   balancePaidAt DateTime?
+  // Cumulative balance actually collected. balanceDue is what's OUTSTANDING, so
+  // paying it zeroes it; without this the amount already collected was invisible
+  // and an upsell added after payment resurrected it on top of the new charge.
+  balancePaidAmount Int @default(0)
 
   // Payment
   stripePaymentIntentId String?
