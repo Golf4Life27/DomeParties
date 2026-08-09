@@ -7,7 +7,7 @@ import { applyPercent, formatCents } from '@/lib/money'
 import { minutesToLabel, todayVenueMidnight } from '@/lib/time'
 import { debitGiftCard } from '@/lib/giftcards'
 import { redeemPromo, featuredRecoveryPromo } from '@/lib/promos'
-import { signApproval } from '@/lib/sign'
+import { signApproval, bookingToken } from '@/lib/sign'
 import { hoursContext, isSellable } from '@/lib/hours'
 import {
   sendEmail,
@@ -403,7 +403,7 @@ export async function createQuoteBookingFromLead(leadId: string, input: QuoteInp
   await prisma.lead.update({ where: { id: leadId }, data: { status: 'PROPOSAL_SENT' } })
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-  const payUrl = `${appUrl}/pay/${booking.id}`
+  const payUrl = `${appUrl}/pay/${booking.id}?t=${bookingToken(booking.id)}`
   const email = buildQuoteEmail({
     name: lead.customerName,
     reference,
@@ -521,7 +521,7 @@ export async function sendRecoveryEmail(
   const booking = await prisma.booking.findUniqueOrThrow({ where: { id } })
   if (booking.status !== 'DRAFT' || !booking.customerEmail) return false
   const stage = Math.min(booking.recoveryStage + 1, 3) as 1 | 2 | 3
-  const resumeUrl = `${appUrl()}/book?draft=${booking.id}`
+  const resumeUrl = `${appUrl()}/book?draft=${booking.id}&t=${bookingToken(booking.id)}`
   const email = buildRecoveryEmail({
     name: booking.customerName,
     resumeUrl,
@@ -857,10 +857,15 @@ function appUrl(): string {
 
 export function guestLinks(bookingId: string) {
   const base = appUrl()
+  const t = bookingToken(bookingId)
   return {
-    manageUrl: `${base}/manage/${bookingId}`,
+    // Personal links carry the booking token — they open the record.
+    manageUrl: `${base}/manage/${bookingId}?t=${t}`,
+    balanceUrl: `${base}/balance/${bookingId}?t=${t}`,
+    // The invite is meant to be forwarded to every guest, so it gets NO token.
+    // Its page renders only the host's first name, the date, the time and the
+    // address, and now that ids alone unlock nothing, sharing it is safe.
     inviteUrl: `${base}/invite/${bookingId}`,
-    balanceUrl: `${base}/balance/${bookingId}`,
   }
 }
 

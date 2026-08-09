@@ -37,6 +37,36 @@ export function verifyApproval(bookingId: string, exp: number, sig: string): boo
   return a.length === b.length && timingSafeEqual(a, b)
 }
 
+/**
+ * Per-booking access token for guest links (manage, balance, pay, confirmation)
+ * and every /api/bookings/<id> route.
+ *
+ * Derived by HMAC rather than stored, so there's no column, no migration, and no
+ * backfill — and it rotates with ADMIN_SESSION_TOKEN like every other key here.
+ *
+ * The hole this closes: a booking id alone used to be full access. Ids are handed
+ * out deliberately — /invite/<id> is the link the host forwards to their guests —
+ * so every invited parent held the key to the host's phone number, email, waiver
+ * signature and Stripe payment reference, and could add paid extras to the party.
+ */
+export function bookingToken(bookingId: string): string {
+  return hmac(`booking:${bookingId}`).slice(0, 32)
+}
+
+export function verifyBookingToken(bookingId: string, token: string | undefined): boolean {
+  if (!bookingId) return false
+  return keyMatches(token, bookingToken(bookingId))
+}
+
+/**
+ * Cookie that remembers a verified token. Set once — when a booking is created,
+ * or when a guest opens an emailed link carrying ?t= — so the fetches those pages
+ * make afterwards are authorized without every call site having to carry it.
+ */
+export function bookingCookieName(bookingId: string): string {
+  return `bt_${bookingId}`
+}
+
 /** Static signed key for the read-only calendar feed URL. */
 export function calendarFeedKey(): string {
   return hmac('calendar-feed').slice(0, 32)
