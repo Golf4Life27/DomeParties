@@ -16,6 +16,9 @@ const schema = z.object({
   customerEmail: z.string().email(),
   customerPhone: z.string().max(40).optional().nullable(),
   message: z.string().max(2000).optional().nullable(),
+  // Where the lead came from. Constrained rather than free text so a public
+  // endpoint can't write arbitrary strings into the admin lead list.
+  source: z.enum(['website', 'chatbot']).default('website'),
 })
 
 // POST /api/leads — public inquiry capture + instant auto-response.
@@ -39,7 +42,7 @@ export async function POST(req: NextRequest) {
       customerEmail: d.customerEmail,
       customerPhone: d.customerPhone ?? null,
       message: d.message ?? null,
-      source: 'website',
+      source: d.source,
     },
     select: { id: true },
   })
@@ -53,7 +56,7 @@ export async function POST(req: NextRequest) {
   }
 
   await notifyStaff({
-    title: `New event lead — ${d.customerName}`,
+    title: `New event lead — ${d.customerName}${d.source === 'chatbot' ? ' (via Birdie)' : ''}`,
     lines: [
       `${d.eventType} · ${d.headcountMin ?? '?'}–${d.headcountMax ?? '?'} guests · ${d.budget ?? 'no budget given'}`,
       `${d.customerEmail}${d.customerPhone ? ` · ${d.customerPhone}` : ''}`,
