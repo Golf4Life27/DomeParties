@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db'
-import { getStripe } from '@/lib/stripe'
+import { getStripe, PAYMENT_METHOD_TYPES } from '@/lib/stripe'
 import { sendEmail, buildGiftCardEmails } from '@/lib/email'
 
 import { randomInt } from 'node:crypto'
@@ -48,6 +48,7 @@ export async function createGiftPaymentIntent(id: string) {
   const intent = await stripe.paymentIntents.create({
     amount: gift.initialAmount,
     currency: 'usd',
+    payment_method_types: PAYMENT_METHOD_TYPES,
     metadata: { giftCardId: gift.id, code: gift.code, kind: 'gift' },
     description: `Gift card ${gift.code} — Whitetail Ridge Golf Dome`,
   })
