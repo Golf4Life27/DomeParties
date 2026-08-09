@@ -2,7 +2,7 @@ import { prisma } from '@/lib/db'
 import { computeQuote, addOnLineTotal, baysFor } from '@/lib/pricing'
 import { availability } from '@/lib/availability'
 import { generateReference } from '@/lib/ref'
-import { getStripe } from '@/lib/stripe'
+import { getStripe, PAYMENT_METHOD_TYPES } from '@/lib/stripe'
 import { applyPercent, formatCents } from '@/lib/money'
 import { minutesToLabel, todayVenueMidnight } from '@/lib/time'
 import { debitGiftCard } from '@/lib/giftcards'
@@ -446,6 +446,7 @@ export async function createDepositIntent(id: string) {
   const intent = await stripe.paymentIntents.create({
     amount: charge,
     currency: 'usd',
+    payment_method_types: PAYMENT_METHOD_TYPES,
     metadata: { bookingId: booking.id, reference: booking.reference, kind: 'deposit' },
     description: `Deposit — ${booking.reference} — Whitetail Ridge Golf Dome`,
   })
@@ -934,6 +935,7 @@ export async function createBalanceIntent(id: string) {
   const intent = await stripe.paymentIntents.create({
     amount: charge,
     currency: 'usd',
+    payment_method_types: PAYMENT_METHOD_TYPES,
     metadata: { bookingId: booking.id, reference: booking.reference, kind: 'balance' },
     description: `Balance — ${booking.reference} — Whitetail Ridge Golf Dome`,
   })
