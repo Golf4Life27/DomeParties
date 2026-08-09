@@ -3,7 +3,20 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
 
 function key(): string {
-  return process.env.ADMIN_SESSION_TOKEN || 'dev-admin-session-token-change-me'
+  const token = process.env.ADMIN_SESSION_TOKEN
+  // Fail closed, the same way auth.ts and the cron route already do. The
+  // fallback below is published in this repo, so signing with it in production
+  // would let anyone compute the calendar-feed key, the staff-calendar key, and
+  // forge one-tap approval links for any booking — bypassing the whole
+  // double-booking review queue from the open internet. This also catches the
+  // subtler case: the variable set on Production but missing from the Preview
+  // scope that serves preview URLs.
+  if (process.env.NODE_ENV === 'production' && !token) {
+    throw new Error(
+      'ADMIN_SESSION_TOKEN is not set. Refusing to sign links with the public development key.',
+    )
+  }
+  return token || 'dev-admin-session-token-change-me'
 }
 
 function hmac(payload: string): string {
