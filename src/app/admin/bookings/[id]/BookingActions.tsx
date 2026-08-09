@@ -45,8 +45,18 @@ export default function BookingActions({
       const data = await res.json().catch(() => null)
       // Say plainly whether Stripe actually took it — a silent failure here is
       // how a guest ends up cancelled and out of pocket.
-      if (data?.refund?.ok) setRefundNote(`Refunded ${money(data.refund.amount)} in Stripe.`)
-      else setRefundNote(`Cancelled, but the refund did NOT go through: ${data?.refund?.reason ?? 'unknown error'}. Refund it manually in Stripe.`)
+      if (data?.refund?.ok) {
+        // Say what's left as well as what went back — a balance paid ahead was
+        // taken on a payment this booking never recorded, so it can't go back here.
+        setRefundNote(
+          `Refunded ${money(data.refund.amount)} in Stripe.` +
+            (data.refundOwed > 0
+              ? ` ${money(data.refundOwed)} of balance paid ahead still needs refunding by hand.`
+              : ''),
+        )
+      } else {
+        setRefundNote(`Cancelled, but the refund did NOT go through: ${data?.refund?.reason ?? 'unknown error'}. Refund it manually in Stripe.`)
+      }
     }
     setBusy(false)
     if (action === 'recover') {
