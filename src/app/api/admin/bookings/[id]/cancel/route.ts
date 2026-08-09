@@ -24,25 +24,38 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // is zeroed when the balance is paid, and an upsell after that sets balancePaid
   // back to false, so the old `balancePaid ? balanceDue : 0` reported nothing
   // collected on exactly the bookings that had paid the most.
-  const collected =
-    (booking.depositPaid ? Math.max(0, booking.depositAmount - booking.giftCardApplied) : 0) +
-    booking.balancePaidAmount
+  const depositCollected = booking.depositPaid
+    ? Math.max(0, booking.depositAmount - booking.giftCardApplied)
+    : 0
+  const collected = depositCollected + booking.balancePaidAmount
 
   let refund: { ok: true; id: string; amount: number } | { ok: false; reason: string } | null = null
+  // Money the guest paid that this route could not send back on its own.
+  let handRefundOwed = 0
 
   if (wantRefund && collected > 0) {
     const stripe = getStripe()
     if (!stripe) {
       refund = { ok: false, reason: 'Stripe is not configured on this environment.' }
-    } else if (!booking.stripePaymentIntentId) {
+    } else if (!booking.depositPaid || !booking.stripePaymentIntentId) {
       refund = { ok: false, reason: 'No Stripe payment recorded on this booking.' }
     } else {
       try {
+        // Refund the whole deposit charge instead of a figure we recompute here.
+        // The guest pays depositAmount PLUS the card fee (3.5%), so refunding
+        // depositAmount alone silently kept the fee: the first live cancellation
+        // returned $26.40 of $27.32 and Stripe logged it as a partial refund. On a
+        // $500 deposit that is $17.50 of a cancelling guest's money. Omitting
+        // `amount` refunds exactly what was captured, whatever the fee was on the
+        // day, with no arithmetic here to drift out of step with pricing.
         const created = await stripe.refunds.create({
           payment_intent: booking.stripePaymentIntentId,
-          amount: collected,
         })
-        refund = { ok: true, id: created.id, amount: collected }
+        refund = { ok: true, id: created.id, amount: created.amount }
+        // stripePaymentIntentId is the DEPOSIT intent; createBalanceIntent never
+        // records its own. So a paid balance cannot be refunded from here — say so
+        // loudly rather than reporting a clean refund that only covered part of it.
+        handRefundOwed = booking.balancePaidAmount
       } catch (e) {
         // Never let a failed refund block the cancellation — the bays still need
         // releasing, and staff need to be told the money is still sitting there.
@@ -58,15 +71,18 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   // Money left with us after a cancellation is the thing most likely to be
   // forgotten, so say it out loud rather than only returning it to the caller.
-  if (collected > 0 && (!refund || refund.ok === false)) {
+  const stillHeld = refund?.ok ? handRefundOwed : collected
+  if (stillHeld > 0) {
     await notifyStaff({
-      title: `Cancelled with ${formatCents(collected)} still held — ${booking.reference}`,
+      title: `Cancelled with ${formatCents(stillHeld)} still held — ${booking.reference}`,
       lines: [
         `${booking.customerName ?? 'Guest'} · ${booking.date.toISOString().slice(0, 10)}.`,
-        refund?.ok === false
-          ? `Automatic refund failed: ${refund.reason}`
-          : 'No refund was requested with this cancellation.',
-        `Refund ${formatCents(collected)} in Stripe if the guest is due it.`,
+        refund?.ok
+          ? `The ${formatCents(refund.amount)} deposit charge was refunded, but the balance paid ahead was taken on a separate payment this booking never recorded.`
+          : refund?.ok === false
+            ? `Automatic refund failed: ${refund.reason}`
+            : 'No refund was requested with this cancellation.',
+        `Refund ${formatCents(stillHeld)} in Stripe by hand if the guest is due it.`,
       ],
       adminPath: `/admin/bookings/${booking.id}`,
       urgent: true,
@@ -76,7 +92,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   return NextResponse.json({
     ok: true,
     collected,
-    refundOwed: refund?.ok ? 0 : collected,
+    refundOwed: stillHeld,
     refund,
   })
 }
