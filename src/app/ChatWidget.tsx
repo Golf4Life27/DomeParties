@@ -60,6 +60,79 @@ function findLauncher(portal: Element): HTMLElement | null {
   return (clickable as HTMLElement) ?? (svg.parentElement as HTMLElement | null)
 }
 
+/**
+ * Strip the phone number out of the contact details the widget attaches to a
+ * message, because sending it alongside an email breaks the chat outright.
+ *
+ * The vendor resolves a visitor to a client record by BOTH email and phone. When
+ * the email matches one record and the phone matches a different one, its
+ * find-or-create gives up:
+ *
+ *   POST /webhook/sw-widget/<account>/<widget>/<session>
+ *   -> 500 {"error": "failed to get or create chat"}
+ *
+ * Reproduced from scratch with fresh identities: (1) email A + phone S -> 200;
+ * (2) email B + phone B -> 200; (3) email B + phone S -> 500. So any household
+ * or business sharing one number across two email addresses breaks permanently —
+ * and the widget swallows the failure to console.log without ever rendering the
+ * visitor's message, so the chat silently eats input with no error shown.
+ *
+ * Reported upstream. The real fix is theirs, or turning the phone field off in
+ * the widget's contact form — a dashboard setting no API here can reach.
+ *
+ * Why patch the request rather than localStorage: the widget holds contact
+ * details in a reactive in-memory store and only mirrors them to storage, so
+ * scrubbing mcb_user_data would not take effect until the next page load. This
+ * catches every send regardless of what is already in memory.
+ *
+ * Fail-safe by construction: it only touches this one vendor URL, only rewrites
+ * a body that parses as JSON and actually carries a phone, and any error at all
+ * passes the original body through untouched. Losing the phone here costs
+ * nothing — Birdie now hands guests a prefilled quote form, which collects it
+ * properly and actually reaches staff.
+ */
+function stripPhoneFromWidgetSends() {
+  const w = window as unknown as { __domePhoneGuard?: boolean }
+  if (w.__domePhoneGuard) return
+  w.__domePhoneGuard = true
+
+  const send = XMLHttpRequest.prototype.send
+  const open = XMLHttpRequest.prototype.open
+  const URL_MARK = '/webhook/sw-widget/'
+
+  XMLHttpRequest.prototype.open = function (
+    this: XMLHttpRequest & { __domeUrl?: string },
+    method: string,
+    url: string | URL,
+    ...rest: unknown[]
+  ) {
+    this.__domeUrl = String(url)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (open as any).call(this, method, url, ...rest)
+  } as typeof XMLHttpRequest.prototype.open
+
+  XMLHttpRequest.prototype.send = function (
+    this: XMLHttpRequest & { __domeUrl?: string },
+    body?: Document | XMLHttpRequestBodyInit | null,
+  ) {
+    let next = body
+    try {
+      if (this.__domeUrl?.includes(URL_MARK) && typeof body === 'string') {
+        const parsed = JSON.parse(body)
+        const u = parsed?.user_data
+        if (u && (u.phone || u.phone_number)) {
+          delete u.phone
+          delete u.phone_number
+          next = JSON.stringify(parsed)
+        }
+      }
+    } catch {
+      next = body // malformed or unexpected — never block the message
+    }
+    return send.call(this, next)
+  }
+}
+
 export default function ChatWidget({
   accountId,
   widgetId,
@@ -88,6 +161,8 @@ export default function ChatWidget({
     // Never inside the /embed.js iframe — the host page carries its own widget.
     if (typeof window !== 'undefined' && window.self !== window.top) return
     if (!window.MyChatBot) return
+    // Must be in place before the widget can send anything. Idempotent.
+    stripPhoneFromWidgetSends()
     mounted.current = true
     window.MyChatBot.mount(`#${MOUNT_ID}`, {
       account_id: accountId,
