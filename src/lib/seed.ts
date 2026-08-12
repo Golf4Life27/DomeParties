@@ -19,7 +19,7 @@ export async function runSeed(prisma: PrismaClient) {
       leadTimeDaysOnline: 7,
       maxGolfers: 120,
       maxFnbGuests: 80,
-      staffNotifyEmail: 'Alex@whitetailridgegc.com',
+      staffNotifyEmail: 'Alex@whitetailridgegc.com, Billy@whitetailridgegc.com',
     },
     create: {
       id: 1,
@@ -34,7 +34,7 @@ export async function runSeed(prisma: PrismaClient) {
       serviceChargePct: 20,
       serviceChargeOnGolf: true,
       cardFeePct: 3.5,
-      staffNotifyEmail: 'Alex@whitetailridgegc.com',
+      staffNotifyEmail: 'Alex@whitetailridgegc.com, Billy@whitetailridgegc.com',
       taxPct: 0,
       peakSurchargePct: 22,
       offPeakDiscountPct: 0,

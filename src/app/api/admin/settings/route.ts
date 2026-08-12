@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
+import { splitRecipients } from '@/lib/email'
 
 const schema = z.object({
   openHour: z.number().int().min(0).max(23),
@@ -11,12 +12,21 @@ const schema = z.object({
   holdMinutes: z.number().int().min(5).max(1440),
   maxGolfers: z.number().int().min(1).max(500),
   maxFnbGuests: z.number().int().min(0).max(500),
+  // One address or several, comma-separated — the whole events team should be
+  // able to see bookings and cancellations, not just one person. Validated per
+  // address so a typo is named back rather than silently dropping a recipient.
   staffNotifyEmail: z
     .string()
-    .email()
-    .or(z.literal(''))
-    .transform((v) => (v === '' ? null : v))
-    .nullable(),
+    .nullish()
+    .transform((v) => splitRecipients(v))
+    .superRefine((list, ctx) => {
+      for (const address of list) {
+        if (!z.string().email().safeParse(address).success) {
+          ctx.addIssue({ code: 'custom', message: `Not a valid email address: ${address}` })
+        }
+      }
+    })
+    .transform((list) => (list.length > 0 ? list.join(', ') : null)),
   reviewUrl: z
     .string()
     .url()
