@@ -34,7 +34,7 @@ const FIELDS: { key: keyof Setting; label: string; help?: string; step?: number;
   { key: 'maxGolfers', label: 'Max golfers (online)' },
   { key: 'maxFnbGuests', label: 'Max extra food & drink guests (online)' },
   { key: 'holdMinutes', label: 'Unpaid hold expires after (min)' },
-  { key: 'staffNotifyEmail', label: 'Staff notification email (blank = off)', kind: 'text' },
+  { key: 'staffNotifyEmail', label: 'Staff notification emails — comma-separated for several (blank = off)', kind: 'text' },
   { key: 'reviewUrl', label: 'Review link for thank-you emails (e.g. Google)', kind: 'text' },
   { key: 'depositPercent', label: 'Deposit %' },
   { key: 'serviceChargePct', label: 'Service charge %' },

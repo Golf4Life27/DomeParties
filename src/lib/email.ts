@@ -3,11 +3,35 @@ import { formatCents } from '@/lib/money'
 import { minutesToLabel } from '@/lib/time'
 
 type EmailInput = {
-  to: string
+  /** One address, or several — staff alerts go to the whole events team. */
+  to: string | string[]
   subject: string
   html: string
   text: string
   icsContent?: string
+}
+
+/**
+ * Split a stored recipient list ("alex@…, billy@…") into individual addresses.
+ *
+ * staffNotifyEmail is a single text field, so multiple recipients live in it as a
+ * comma- (or semicolon-) separated list. Deliberately does NOT drop entries that
+ * look invalid: the settings validator needs to see them so it can name the bad
+ * one back to whoever typed it, rather than silently sending to fewer people
+ * than they think.
+ */
+export function splitRecipients(value: string | null | undefined): string[] {
+  if (!value) return []
+  const out: string[] = []
+  for (const part of value.split(/[,;]+/)) {
+    const trimmed = part.trim()
+    // Case-insensitive dedupe — addresses are not case-sensitive in practice,
+    // and sending the same alert twice is worse than a cosmetic mismatch.
+    if (trimmed && !out.some((e) => e.toLowerCase() === trimmed.toLowerCase())) {
+      out.push(trimmed)
+    }
+  }
+  return out
 }
 
 /**

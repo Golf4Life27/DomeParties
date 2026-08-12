@@ -17,6 +17,7 @@ import {
   buildRecoveryEmail,
   buildDepositReceivedEmail,
   buildStaffNotification,
+  splitRecipients,
   buildReminderEmail,
   buildBalanceReceiptEmail,
   buildLeadFollowUpEmail,
@@ -41,8 +42,11 @@ export async function notifyStaff(input: {
 }) {
   try {
     const setting = await prisma.setting.findUnique({ where: { id: 1 } })
-    const to = setting?.staffNotifyEmail
-    if (!to) return
+    // staffNotifyEmail holds one address or a comma-separated list, so the whole
+    // events team gets bookings, payments, cancellations and review requests —
+    // not just whoever's address happened to be set first.
+    const to = splitRecipients(setting?.staffNotifyEmail)
+    if (to.length === 0) return
     const email = buildStaffNotification(input)
     await sendEmail({ to, subject: email.subject, html: email.html, text: email.text })
   } catch (e) {
