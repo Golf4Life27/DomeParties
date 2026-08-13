@@ -19,7 +19,10 @@ export async function runSeed(prisma: PrismaClient) {
       leadTimeDaysOnline: 7,
       maxGolfers: 120,
       maxFnbGuests: 80,
-      staffNotifyEmail: 'Alex@whitetailridgegc.com, Billy@whitetailridgegc.com',
+      // staffNotifyEmail is deliberately NOT in this update branch: re-running the
+      // seed after deploy must not stomp a recipient list edited in Settings.
+      // New databases get it from `create`; the live row was backfilled by
+      // migration 20260813120000_seed_staff_notify_recipients.
     },
     create: {
       id: 1,
