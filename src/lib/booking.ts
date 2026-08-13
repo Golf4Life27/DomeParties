@@ -945,16 +945,50 @@ export async function createBalanceIntent(id: string) {
     amount: charge,
     currency: 'usd',
     payment_method_types: PAYMENT_METHOD_TYPES,
-    metadata: { bookingId: booking.id, reference: booking.reference, kind: 'balance' },
+    metadata: {
+      bookingId: booking.id,
+      reference: booking.reference,
+      kind: 'balance',
+      // What this intent was minted to settle. A guest can leave the balance page
+      // open, get upsold, and only then pay — at which point the intent covers a
+      // balance that no longer exists. Stamping it here lets the webhook tell a
+      // current intent from a stale one without guessing from the amount.
+      balanceDueAtCreation: String(booking.balanceDue),
+    },
     description: `Balance — ${booking.reference} — Whitetail Ridge Golf Dome`,
   })
   return { mode: 'stripe' as const, clientSecret: intent.client_secret, amount: charge, cardFee }
 }
 
-/** Mark the event balance paid; receipt to guest, heads-up to staff. */
-export async function confirmBalancePaid(id: string) {
+/**
+ * Mark the event balance paid; receipt to guest, heads-up to staff.
+ *
+ * `paymentIntentId` is the Stripe intent that actually paid, and is recorded so
+ * the balance can be refunded and so a dispute on it can be traced back here.
+ * It is genuinely absent when staff mark a cash payment at the venue, so it is
+ * optional rather than required.
+ */
+export async function confirmBalancePaid(id: string, paymentIntentId?: string) {
   const booking = await prisma.booking.findUniqueOrThrow({ where: { id }, include: { package: true } })
-  if (booking.balancePaid) return booking // idempotent
+  if (booking.balancePaid) {
+    // Already settled. Stripe redelivers, so the SAME intent arriving twice is
+    // routine and silent. A DIFFERENT one means we captured a second balance
+    // payment the guest is owed back — money in limbo, so say so loudly.
+    if (paymentIntentId && booking.stripeBalanceIntentId && booking.stripeBalanceIntentId !== paymentIntentId) {
+      await prisma.booking.update({ where: { id }, data: { needsReview: true } })
+      await notifyStaff({
+        title: `Balance paid twice — ${booking.reference}`,
+        lines: [
+          `The balance was already settled by ${booking.stripeBalanceIntentId}, but ${paymentIntentId} also succeeded.`,
+          `${booking.customerName ?? 'Guest'} · ${dateStrOf(booking.date)}.`,
+          'The second charge was NOT recorded against the booking. Refund it in Stripe.',
+        ],
+        adminPath: `/admin/bookings/${booking.id}`,
+        urgent: true,
+      })
+    }
+    return booking // idempotent
+  }
 
   // Move the outstanding amount into "collected" in one statement.
   //
@@ -964,12 +998,16 @@ export async function confirmBalancePaid(id: string) {
   // new line. Column-to-column in raw SQL so the add and the zeroing can't be
   // split by a concurrent upsell, and gated on balancePaid = false so Stripe's
   // at-least-once delivery can't count the same payment twice.
+  // The intent id is set in the same statement as the claim, so a row can never
+  // read as paid while the charge that paid it is unrecorded. COALESCE keeps any
+  // existing value when there is no intent (a cash payment marked by staff).
   const claimed = await prisma.$executeRaw`
     UPDATE "Booking"
        SET "balancePaid" = true,
            "balancePaidAt" = NOW(),
            "balancePaidAmount" = "balancePaidAmount" + "balanceDue",
-           "balanceDue" = 0
+           "balanceDue" = 0,
+           "stripeBalanceIntentId" = COALESCE(${paymentIntentId ?? null}::text, "stripeBalanceIntentId")
      WHERE "id" = ${id} AND "balancePaid" = false`
   if (claimed === 0) return booking
 

@@ -43,19 +43,31 @@ export default function BookingActions({
     })
     if (action === 'cancel' && body?.refund) {
       const data = await res.json().catch(() => null)
-      // Say plainly whether Stripe actually took it — a silent failure here is
-      // how a guest ends up cancelled and out of pocket.
-      if (data?.refund?.ok) {
-        // Say what's left as well as what went back — a balance paid ahead was
-        // taken on a payment this booking never recorded, so it can't go back here.
+      // A booking can carry two charges — deposit and balance — so this reports
+      // each one. Saying plainly whether Stripe actually took it matters: a silent
+      // failure here is how a guest ends up cancelled and out of pocket.
+      type RefundLine = { kind: string; ok: boolean; amount?: number; reason?: string }
+      const lines: RefundLine[] = Array.isArray(data?.refunds) ? data.refunds : []
+      const failed = lines.filter((r) => !r.ok)
+      if (data?.refunded > 0) {
+        const detail = lines
+          .filter((r) => r.ok)
+          .map((r) => `${r.kind} ${money(r.amount ?? 0)}`)
+          .join(' + ')
         setRefundNote(
-          `Refunded ${money(data.refund.amount)} in Stripe.` +
+          `Refunded ${money(data.refunded)} in Stripe (${detail}).` +
             (data.refundOwed > 0
-              ? ` ${money(data.refundOwed)} of balance paid ahead still needs refunding by hand.`
+              ? ` ${money(data.refundOwed)} still needs refunding by hand — ${
+                  failed.map((r) => `${r.kind}: ${r.reason}`).join('; ') || 'see the booking'
+                }.`
               : ''),
         )
       } else {
-        setRefundNote(`Cancelled, but the refund did NOT go through: ${data?.refund?.reason ?? 'unknown error'}. Refund it manually in Stripe.`)
+        setRefundNote(
+          `Cancelled, but nothing was refunded: ${
+            failed.map((r) => `${r.kind} — ${r.reason}`).join('; ') || 'unknown error'
+          }. Refund it manually in Stripe.`,
+        )
       }
     }
     setBusy(false)

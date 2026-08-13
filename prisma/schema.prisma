@@ -300,7 +300,13 @@ model Booking {
   balancePaidAmount Int @default(0)
 
   // Payment
+  // The DEPOSIT intent. Kept as-is rather than renamed: it is written by the
+  // booking flow, read by the refund path, and matched against incoming webhooks.
   stripePaymentIntentId String?
+  // The intent that actually paid the balance — a separate charge, so a separate
+  // id. Without it a paid balance could not be refunded, and a chargeback on it
+  // matched no booking at all, so nobody was told.
+  stripeBalanceIntentId String?
   paidAt                DateTime?
 
   // Gift card redemption (applied to the amount due now)
@@ -337,6 +343,9 @@ model Booking {
 
   @@index([date, status])
   @@index([status, updatedAt])
+  // Refund and dispute webhooks identify a booking only by payment intent id.
+  @@index([stripePaymentIntentId])
+  @@index([stripeBalanceIntentId])
 }
 
 model BookingAddOn {
