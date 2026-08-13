@@ -9,8 +9,20 @@ import type { TimeSlot } from '@/lib/types'
  * dropped in later behind this same interface without touching callers.
  */
 export interface AvailabilityProvider {
-  /** Bookable start slots for a date, given how many bays and how long. */
-  getSlots(dateStr: string, baysNeeded: number, durationMinutes: number): Promise<TimeSlot[]>
+  /**
+   * Bookable start slots for a date, given how many bays and how long.
+   *
+   * `options` exists for staff tools. A reschedule needs to see slots inside the
+   * online lead time (staff are not bound by it, and "move it to Thursday" is the
+   * common case), and needs the booking being moved excluded so its own bays
+   * don't read as busy when only the time is changing.
+   */
+  getSlots(
+    dateStr: string,
+    baysNeeded: number,
+    durationMinutes: number,
+    options?: { excludeBookingId?: string; ignoreLeadTime?: boolean },
+  ): Promise<TimeSlot[]>
   /**
    * Pick concrete bay resource IDs for a window, preferring Exclusive bays.
    * Returns the chosen IDs and whether any Shared bay was used (→ staff review),
@@ -139,14 +151,23 @@ function tooClose(aStart: number, aEnd: number, bStart: number, bEnd: number, bu
 }
 
 class InternalAvailabilityProvider implements AvailabilityProvider {
-  async getSlots(dateStr: string, baysNeeded: number, durationMinutes: number): Promise<TimeSlot[]> {
-    // Enforce online lead time.
+  async getSlots(
+    dateStr: string,
+    baysNeeded: number,
+    durationMinutes: number,
+    options?: { excludeBookingId?: string; ignoreLeadTime?: boolean },
+  ): Promise<TimeSlot[]> {
+    // The past is never bookable, by staff or anyone else.
     const earliest = addDays(todayStr(), 0)
     if (dateStr < earliest) return []
 
-    const { setting, bays, intervals, external } = await loadDay(dateStr)
-    const minDate = addDays(todayStr(), setting.leadTimeDaysOnline)
-    if (dateStr < minDate) return []
+    const { setting, bays, intervals, external } = await loadDay(dateStr, options?.excludeBookingId)
+    // Online lead time. Staff tools opt out: it is a self-service guard, not a
+    // physical constraint on what the venue can host.
+    if (!options?.ignoreLeadTime) {
+      const minDate = addDays(todayStr(), setting.leadTimeDaysOnline)
+      if (dateStr < minDate) return []
+    }
 
     // Real per-day hours: sell only inside PARTY hours, never inside a closure.
     // Falls back to the legacy global window when no hours are configured.

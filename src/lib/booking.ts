@@ -4,7 +4,7 @@ import { availability } from '@/lib/availability'
 import { generateReference } from '@/lib/ref'
 import { getStripe, PAYMENT_METHOD_TYPES } from '@/lib/stripe'
 import { applyPercent, formatCents } from '@/lib/money'
-import { minutesToLabel, todayVenueMidnight } from '@/lib/time'
+import { minutesToLabel, todayVenueMidnight, todayStr } from '@/lib/time'
 import { debitGiftCard } from '@/lib/giftcards'
 import { redeemPromo, featuredRecoveryPromo } from '@/lib/promos'
 import { signApproval, bookingToken } from '@/lib/sign'
@@ -23,6 +23,7 @@ import {
   buildLeadFollowUpEmail,
   buildBalanceDueEmail,
   buildThankYouEmail,
+  buildRescheduledEmail,
 } from '@/lib/email'
 import type { AddOnSelection } from '@/lib/types'
 import type { EventType } from '@/generated/prisma'
@@ -1030,6 +1031,212 @@ export async function confirmBalancePaid(id: string, paymentIntentId?: string) {
     adminPath: `/admin/bookings/${booking.id}`,
   })
   return updated
+}
+
+export type RescheduleResult =
+  | { ok: false; error: string }
+  | {
+      ok: true
+      previousDateStr: string
+      dateStr: string
+      startMinutes: number
+      endMinutes: number
+      needsReview: boolean
+      /** What these same selections would cost on the new date, and the difference. */
+      priceOnNewDate: number | null
+      priceDelta: number | null
+      warnings: string[]
+      guestNotified: boolean
+    }
+
+/**
+ * Move a booking to a new date/time, keeping the money, the reference and the
+ * guest's paid deposit exactly as they are.
+ *
+ * Before this the only way to move an event was cancel-and-rebook, which refunds
+ * the deposit, issues a new reference, and loses the gift card and promo already
+ * applied — so in practice staff edited nothing and the calendar went stale.
+ *
+ * Deliberately does NOT re-price. Peak/off-peak and the bay rate table both key
+ * off the date, so a Saturday party moved to a Tuesday really is worth less (and
+ * vice versa), but silently re-billing a guest whose party WE moved is hostile,
+ * and silently absorbing a shortfall surprises the venue. The new price is
+ * computed and reported so staff can decide; nothing is charged either way.
+ */
+export async function rescheduleBooking(
+  id: string,
+  input: { dateStr: string; startMinutes: number; notifyGuest?: boolean },
+): Promise<RescheduleResult> {
+  const booking = await prisma.booking.findUnique({
+    where: { id },
+    include: { package: true, addOns: true },
+  })
+  if (!booking) return { ok: false, error: 'Booking not found.' }
+
+  // DRAFT has no slot worth moving, and moving something CANCELLED or COMPLETED
+  // is almost always a misclick on the wrong booking.
+  if (booking.status !== 'CONFIRMED' && booking.status !== 'PENDING') {
+    return { ok: false, error: `A ${booking.status.toLowerCase()} booking can't be rescheduled.` }
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(input.dateStr)) {
+    return { ok: false, error: 'Date must be YYYY-MM-DD.' }
+  }
+  if (!Number.isInteger(input.startMinutes) || input.startMinutes < 0 || input.startMinutes >= 1440) {
+    return { ok: false, error: 'Start time is outside the day.' }
+  }
+  if (input.dateStr < todayStr()) {
+    return { ok: false, error: 'That date is in the past.' }
+  }
+
+  // Duration is preserved: this action moves an event, it does not resize it.
+  // Changing the length would change the bay-rate block and so the price.
+  const duration = booking.endMinutes - booking.startMinutes
+  const endMinutes = input.startMinutes + duration
+  if (endMinutes > 1440) {
+    return { ok: false, error: 'That start time runs the event past midnight.' }
+  }
+
+  const previousDateStr = dateStrOf(booking.date)
+  if (previousDateStr === input.dateStr && booking.startMinutes === input.startMinutes) {
+    return { ok: false, error: 'The booking is already at that date and time.' }
+  }
+
+  // Take bays on the NEW date under the same lock a checkout uses, excluding this
+  // booking so its own hold doesn't block it — which matters when only the time
+  // changes and the old and new windows overlap.
+  const assignment = await withBayLock(input.dateStr, async (tx) => {
+    const a = await availability.assignBays(
+      input.dateStr,
+      input.startMinutes,
+      endMinutes,
+      booking.baysNeeded,
+      booking.id,
+    )
+    if (!a) return null
+    await tx.bookingResource.deleteMany({ where: { bookingId: id } })
+    await tx.bookingResource.createMany({
+      data: a.resourceIds.map((resourceId) => ({ bookingId: id, resourceId })),
+    })
+    return a
+  })
+  if (!assignment) {
+    return {
+      ok: false,
+      error: `No ${booking.baysNeeded} bays are free then. Nothing was moved — the booking still holds ${previousDateStr}.`,
+    }
+  }
+
+  const contested = assignment.usedShared && !assignment.uncontested
+  const warnings: string[] = []
+  if (contested) {
+    warnings.push('The new slot uses shared bays, so it needs checking against Trackman.')
+  }
+  // Staff can place an event outside selling hours on purpose — a private party on
+  // a day we don't sell online is a real thing. Say so rather than refuse.
+  const ctx = await hoursContext(input.dateStr)
+  if (!ctx.party) {
+    warnings.push('We do not normally host events that day — placed anyway.')
+  } else if (!isSellable(ctx, input.startMinutes, endMinutes)) {
+    warnings.push('That window is outside party hours or inside a closure — placed anyway.')
+  }
+
+  const updated = await prisma.booking.update({
+    where: { id },
+    data: {
+      date: dateOnly(input.dateStr),
+      startMinutes: input.startMinutes,
+      endMinutes,
+      // Only ever raised here. Clearing it would silently discard a review flag
+      // set for another reason (a refund, an amount mismatch) that nobody has
+      // acted on; staff clear it with the Confirm button.
+      needsReview: booking.needsReview || contested,
+      rescheduledAt: new Date(),
+      rescheduledFromDate: booking.date,
+      // These are "sent once" stamps tied to the OLD date. Left set, a booking
+      // moved further out would never get its week-out or day-before reminder,
+      // and one moved past an already-sent thank-you would never get another.
+      reminder7SentAt: null,
+      reminder1SentAt: null,
+      balanceReminderSentAt: null,
+      thankYouSentAt: null,
+    },
+    include: { package: true },
+  })
+
+  // What the same selections would cost on the new date. Reported, never applied.
+  let priceOnNewDate: number | null = null
+  let priceDelta: number | null = null
+  if (booking.packageId) {
+    try {
+      const quote = await computeQuote({
+        partySize: booking.partySize,
+        fnbGuests: booking.fnbGuests,
+        packageId: booking.packageId,
+        fnbPackageId: booking.fnbPackageId,
+        addOns: booking.addOns.map((a) => ({ addOnId: a.addOnId, quantity: a.quantity })),
+        dateStr: input.dateStr,
+        startMinutes: input.startMinutes,
+      })
+      priceOnNewDate = quote.total
+      priceDelta = quote.total - booking.total
+    } catch (e) {
+      // The reprice is a nicety; failing it must not undo a move that succeeded.
+      console.error('reschedule reprice failed', e)
+    }
+  }
+
+  const links = guestLinks(id)
+  let guestNotified = false
+  if (input.notifyGuest !== false && updated.customerEmail) {
+    const data = confirmationData(updated)
+    const email = buildRescheduledEmail({
+      ...data,
+      previousDateStr,
+      manageUrl: links.manageUrl,
+      balanceUrl: links.balanceUrl,
+    })
+    const sent = await sendEmail({
+      to: updated.customerEmail,
+      subject: email.subject,
+      html: email.html,
+      text: email.text,
+      // Stamp the revision so this invite supersedes the one they already accepted.
+      icsContent: buildIcs(data, updated.rescheduledAt ?? new Date()),
+    })
+    guestNotified = sent.ok
+  }
+
+  await notifyStaff({
+    title: `Rescheduled — ${updated.reference}`,
+    lines: [
+      `${updated.customerName ?? 'Guest'} · ${updated.partySize} golfers · ${updated.baysNeeded} bays.`,
+      `${previousDateStr} → ${input.dateStr}, ${minutesToLabel(input.startMinutes)}–${minutesToLabel(endMinutes)}.`,
+      priceDelta === null
+        ? 'The price on the new date could not be recalculated — check it by hand.'
+        : priceDelta === 0
+          ? `Prices the same on the new date (${formatCents(updated.total)}). Nothing to adjust.`
+          : `The new date prices at ${formatCents(priceOnNewDate ?? 0)} — ${
+              priceDelta > 0 ? `${formatCents(priceDelta)} MORE` : `${formatCents(-priceDelta)} LESS`
+            } than the ${formatCents(updated.total)} on this booking. Nothing was charged or credited; adjust it if you want to.`,
+      guestNotified ? 'The guest has been emailed a new calendar invite.' : 'The guest was NOT emailed.',
+      ...warnings,
+    ],
+    adminPath: `/admin/bookings/${id}`,
+    urgent: contested,
+  })
+
+  return {
+    ok: true,
+    previousDateStr,
+    dateStr: input.dateStr,
+    startMinutes: input.startMinutes,
+    endMinutes,
+    needsReview: updated.needsReview,
+    priceOnNewDate,
+    priceDelta,
+    warnings,
+    guestNotified,
+  }
 }
 
 /**

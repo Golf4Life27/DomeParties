@@ -38,7 +38,16 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <h1 className="text-2xl font-bold text-brand-dark">{b.customerName ?? 'Draft booking'}</h1>
           <p className="font-mono text-sm text-foreground/50">{b.reference}</p>
         </div>
-        <BookingActions id={b.id} status={b.status} needsReview={b.needsReview} depositPaid={b.depositPaid} balancePaid={b.balancePaid} balanceDue={b.balanceDue} />
+        <BookingActions
+          id={b.id}
+          status={b.status}
+          needsReview={b.needsReview}
+          depositPaid={b.depositPaid}
+          balancePaid={b.balancePaid}
+          balanceDue={b.balanceDue}
+          dateStr={b.date.toISOString().slice(0, 10)}
+          startMinutes={b.startMinutes}
+        />
       </div>
 
       {b.needsReview && b.status === 'PENDING' && b.depositPaid && (

@@ -142,18 +142,38 @@ function guestSummary(partySize: number, fnbGuests?: number): string {
   return `${partySize} golfer${partySize === 1 ? '' : 's'} + ${fnb} food & drink guest${fnb === 1 ? '' : 's'}`
 }
 
-/** Build an RFC5545 calendar invite for the event. */
-export function buildIcs(data: ConfirmationData): string {
+/**
+ * Build an RFC5545 calendar invite for the event.
+ *
+ * The UID is derived from the booking reference on purpose: a later invite for the
+ * same booking (after a reschedule) then REPLACES the entry in the guest's
+ * calendar instead of sitting next to the old one. For a client to accept that
+ * replacement it needs two things this used to omit — DTSTAMP, which the spec
+ * requires and whose absence gets the whole invite rejected by strict clients, and
+ * a SEQUENCE higher than the one it already has. `revisedAt` supplies the latter:
+ * pass the time of the change and the sequence rises monotonically.
+ *
+ * Honest limits: there is no METHOD:REQUEST here (that needs well-formed ORGANIZER
+ * and ATTENDEE lines, and a malformed REQUEST is worse than none), so some clients
+ * treat this as a new file to import rather than an update. The new date is always
+ * stated in the email text, which is the channel that always works.
+ */
+export function buildIcs(data: ConfirmationData, revisedAt?: Date): string {
   const [y, m, d] = data.dateStr.split('-').map(Number)
   const pad = (n: number) => n.toString().padStart(2, '0')
   const toStamp = (mins: number) =>
     `${y}${pad(m)}${pad(d)}T${pad(Math.floor(mins / 60))}${pad(mins % 60)}00`
+  const utcStamp = (at: Date) => `${at.toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`
+  const now = revisedAt ?? new Date()
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//Whitetail Ridge Golf Dome//Booking//EN',
     'BEGIN:VEVENT',
     `UID:${data.reference}@whitetailridgedome.com`,
+    `DTSTAMP:${utcStamp(now)}`,
+    // Seconds since epoch: always increases, so each revision supersedes the last.
+    `SEQUENCE:${revisedAt ? Math.floor(revisedAt.getTime() / 1000) : 0}`,
     `SUMMARY:Your event at Whitetail Ridge Golf Dome (${data.reference})`,
     `DTSTART:${toStamp(data.startMinutes)}`,
     `DTEND:${toStamp(data.endMinutes)}`,
@@ -295,6 +315,68 @@ ${data.balanceDue > 0 ? `Balance due: ${formatCents(data.balanceDue)} — pay ah
   (${data.partySize} guests, ${data.packageName}).</p>
   ${data.balanceDue > 0 ? `<p><a href="${data.balanceUrl}" style="background:#c8ff2e;color:#0e1740;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold">Pay your ${formatCents(data.balanceDue)} balance ahead →</a></p>` : ''}
   <p style="color:#666">3360 Station Dr, Oswego, IL · Reference ${data.reference}</p>
+</div>`
+  return { subject, html, text }
+}
+
+/**
+ * "We've moved your event" — sent when staff reschedule a booking.
+ *
+ * Leads with the new date and states the old one, because a guest who did not
+ * request the move needs to see immediately that we know what we changed. Ships
+ * with a fresh .ics: the invite they already accepted now points at the wrong
+ * day, and a calendar entry nobody corrects is how people miss their own party.
+ */
+export function buildRescheduledEmail(
+  data: ConfirmationData & { previousDateStr: string; manageUrl: string; balanceUrl: string },
+) {
+  const timeRange = `${minutesToLabel(data.startMinutes)} – ${minutesToLabel(data.endMinutes)}`
+  const subject = `Your event has moved to ${data.dateStr} (${data.reference})`
+  const balanceLine =
+    data.balanceDue > 0
+      ? `\nYour remaining balance is unchanged at ${formatCents(data.balanceDue)}: ${data.balanceUrl}\n`
+      : ''
+  const text = `Hi ${data.customerName},
+
+Your event at Whitetail Ridge Golf Dome has been rescheduled.
+
+NEW date: ${data.dateStr}, ${timeRange}
+(was ${data.previousDateStr})
+
+Guests: ${guestSummary(data.partySize, data.fnbGuests)}
+Package: ${data.packageName}
+Reference: ${data.reference}
+
+Everything you've already paid carries over — nothing to re-book and nothing
+extra to pay because of the move.${balanceLine}
+Your updated calendar invite is attached, and you can review the details here:
+${data.manageUrl}
+
+If this new time doesn't work, just reply to this email or call 331-999-3545
+and we'll sort it out.
+
+— Whitetail Ridge Golf Dome, Oswego, IL`
+
+  const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  <h1 style="color:#0e1740">Your event has moved 📅</h1>
+  <p>Hi ${data.customerName}, your event at <strong>Whitetail Ridge Golf Dome</strong> has been rescheduled.</p>
+  <div style="margin:20px 0;padding:16px;background:#f5fbdd;border-radius:12px">
+    <div style="font-size:12px;color:#666">NEW DATE &amp; TIME</div>
+    <div style="font-size:20px;font-weight:bold;color:#0e1740">${data.dateStr}</div>
+    <div style="color:#0e1740">${timeRange}</div>
+    <div style="margin-top:8px;font-size:13px;color:#666">was ${data.previousDateStr}</div>
+  </div>
+  <table style="width:100%;border-collapse:collapse">
+    <tr><td style="padding:6px 0;color:#666">Guests</td><td style="text-align:right">${guestSummary(data.partySize, data.fnbGuests)}</td></tr>
+    <tr><td style="padding:6px 0;color:#666">Package</td><td style="text-align:right">${data.packageName}</td></tr>
+    <tr><td style="padding:6px 0;color:#666">Reference</td><td style="text-align:right"><strong>${data.reference}</strong></td></tr>
+  </table>
+  <p>Everything you've already paid carries over — nothing to re-book, and nothing extra
+  to pay because of the move.</p>
+  ${data.balanceDue > 0 ? `<p>Your remaining balance is unchanged at <strong>${formatCents(data.balanceDue)}</strong>. <a href="${data.balanceUrl}">Pay it ahead →</a></p>` : ''}
+  <p>Your updated calendar invite is attached. <a href="${data.manageUrl}">Review your details →</a></p>
+  <p style="color:#666;font-size:13px">If this new time doesn't work, reply to this email or
+  call 331-999-3545 and we'll sort it out.</p>
 </div>`
   return { subject, html, text }
 }

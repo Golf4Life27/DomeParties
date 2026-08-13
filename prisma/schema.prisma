@@ -313,6 +313,11 @@ model Booking {
   giftCardCode    String?
   giftCardApplied Int     @default(0)
 
+  // Staff reschedule audit. A moved event looks identical to one booked for the
+  // new date, which makes "the guest says you moved them" impossible to check.
+  rescheduledAt       DateTime?
+  rescheduledFromDate DateTime? // the date it was moved off, most recent move
+
   // Abandoned-cart recovery
   recoveryEmailSentAt DateTime?
 
