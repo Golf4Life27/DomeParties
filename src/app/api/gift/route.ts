@@ -1,24 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
-import { createGiftPurchase, createGiftPaymentIntent } from '@/lib/giftcards'
+import { NextResponse } from 'next/server'
 
-const schema = z.object({
-  amount: z.number().int().min(1000).max(500000), // $10–$5,000
-  purchaserName: z.string().max(120).optional(),
-  purchaserEmail: z.string().email(),
-  recipientName: z.string().max(120).optional(),
-  recipientEmail: z.string().email(),
-  message: z.string().max(500).optional(),
-})
-
-// POST /api/gift — create a PENDING gift card and return payment info.
-export async function POST(req: NextRequest) {
-  const body = await req.json().catch(() => null)
-  const parsed = schema.safeParse(body)
-  if (!parsed.success) {
-    return NextResponse.json({ error: 'Invalid', details: parsed.error.issues }, { status: 400 })
-  }
-  const gift = await createGiftPurchase(parsed.data)
-  const payment = await createGiftPaymentIntent(gift.id)
-  return NextResponse.json({ giftId: gift.id, payment })
+/**
+ * POST /api/gift — retired.
+ *
+ * The venue's real gift cards are sold through Trackman. This endpoint used to
+ * mint a PENDING gift card and a payment intent for the in-app /gift page, which
+ * is now redirected away in next.config.ts. Closing the endpoint too means a
+ * stale open tab (or a script that remembers the URL) can't create a card the
+ * front desk has never heard of.
+ *
+ * Deliberately left working elsewhere:
+ *   - lib/giftcards confirmGiftPaid, still reached by the Stripe webhook, so any
+ *     payment that was already in flight settles instead of stranding money.
+ *   - /api/bookings/[id]/redeem-gift, so codes already issued still redeem.
+ *   - /admin/gift-cards, so staff can see and manage what exists.
+ */
+export function POST() {
+  return NextResponse.json(
+    {
+      error: 'Gift cards are no longer sold here.',
+      buyAt: 'https://booking.trackmangolf.com/venues/whitetail/booking',
+    },
+    { status: 410 },
+  )
 }
