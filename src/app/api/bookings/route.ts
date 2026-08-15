@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createDraft } from '@/lib/booking'
 import { bookingCookieName, bookingToken } from '@/lib/sign'
+import { readAttribution } from '@/lib/attribution'
 
 const schema = z.object({
   email: z.string().email(),
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid body', details: parsed.error.issues }, { status: 400 })
   }
-  const draft = await createDraft(parsed.data.email, parsed.data.eventType)
+  const draft = await createDraft(parsed.data.email, parsed.data.eventType, readAttribution(req))
 
   // Hand the browser that created this booking its access cookie. Everything the
   // rest of checkout calls — PATCH, checkout, pay, promo, gift card, confirmation

@@ -9,6 +9,8 @@ import { debitGiftCard } from '@/lib/giftcards'
 import { redeemPromo, featuredRecoveryPromo } from '@/lib/promos'
 import { signApproval, bookingToken } from '@/lib/sign'
 import { hoursContext, isSellable } from '@/lib/hours'
+import { sendMetaEvent } from '@/lib/meta'
+import type { Attribution } from '@/lib/attribution'
 import {
   sendEmail,
   buildConfirmationEmail,
@@ -75,7 +77,11 @@ async function withBayLock<T>(dateStr: string, fn: (tx: Parameters<Parameters<ty
 }
 
 /** Step 1: capture email, create a DRAFT (abandoned-cart recovery target). */
-export async function createDraft(email: string, eventType: EventType) {
+export async function createDraft(
+  email: string,
+  eventType: EventType,
+  attribution?: Partial<Attribution>,
+) {
   let reference = generateReference()
   // extremely unlikely collision guard
   for (let i = 0; i < 5; i++) {
@@ -92,6 +98,10 @@ export async function createDraft(email: string, eventType: EventType) {
       date: dateOnly('1970-01-01'),
       startMinutes: 0,
       endMinutes: 0,
+      // Attribution is stamped at draft creation — the earliest moment a row
+      // exists — so a booking finished days later still credits the ad that
+      // started it, and abandoned-draft recovery emails inherit it too.
+      ...(attribution ?? {}),
     },
     select: { id: true, reference: true },
   })
@@ -655,6 +665,23 @@ async function finalizeConfirmed(id: string, paymentIntentId?: string) {
       ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}),
     },
     include: { package: true },
+  })
+
+  // Server-side Purchase to Meta — this fires from the payment webhook, the one
+  // place a deposit is definitely real, so ad optimization learns from money
+  // rather than page views. event_id = booking.id dedupes against the
+  // confirmation page's pixel event, and the value matches that event: the
+  // booking TOTAL (the contracted event value), not the 10% deposit, so Meta
+  // optimizes toward big bookings rather than small ones. Both transports must
+  // carry the same value or dedup makes the reporting untrustworthy.
+  await sendMetaEvent({
+    eventName: 'Purchase',
+    eventId: updated.id,
+    email: updated.customerEmail,
+    phone: updated.customerPhone,
+    value: updated.total / 100,
+    fbclid: updated.fbclid,
+    sourceUrl: `${appUrl()}/book`,
   })
 
   if (updated.giftCardCode && updated.giftCardApplied > 0) {

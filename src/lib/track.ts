@@ -15,7 +15,7 @@ declare global {
 
 export function track(
   event: 'begin_checkout' | 'purchase' | 'generate_lead' | 'gift_purchase',
-  params: { value?: number; currency?: string; reference?: string } = {},
+  params: { value?: number; currency?: string; reference?: string; eventId?: string } = {},
 ) {
   const value = params.value
   const currency = params.currency ?? 'USD'
@@ -33,7 +33,9 @@ export function track(
           : event === 'generate_lead'
             ? 'Lead'
             : 'InitiateCheckout'
-      window.fbq('track', fbEvent, { value, currency })
+      // eventId = the record's database id, and the server sends the same id via
+      // the Conversions API — Meta dedupes the pair into one conversion.
+      window.fbq('track', fbEvent, { value, currency }, params.eventId ? { eventID: params.eventId } : undefined)
     }
   } catch {
     // never let analytics break the flow

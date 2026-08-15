@@ -318,6 +318,16 @@ model Booking {
   rescheduledAt       DateTime?
   rescheduledFromDate DateTime? // the date it was moved off, most recent move
 
+  // First-touch marketing attribution (see the same fields on Lead). Captured at
+  // draft creation so a booking finished days later still credits the ad that
+  // started it.
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmContent  String?
+  landingPath String?
+  fbclid      String?
+
   // Abandoned-cart recovery
   recoveryEmailSentAt DateTime?
 
@@ -430,6 +440,17 @@ model Lead {
   status        LeadStatus @default(NEW)
   source        String?    @default("website")
   followUpSentAt DateTime?
+
+  // First-touch marketing attribution, copied from the wtr_attr cookie at
+  // submission. Nullable = organic / direct / cookie blocked. This is what turns
+  // "we got a lead" into "the holiday-party ad got a lead".
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmContent  String?
+  landingPath String? // first page of the visit, e.g. /holiday
+  fbclid      String? // Meta click id — raises Conversions API match quality
+
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }

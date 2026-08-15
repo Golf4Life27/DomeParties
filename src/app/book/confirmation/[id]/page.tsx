@@ -39,7 +39,13 @@ export default async function ConfirmationPage({
       </header>
 
       <div className="mx-auto max-w-2xl px-6 py-12">
-        {confirmed && <TrackPurchase value={booking.total / 100} reference={booking.reference} />}
+        {confirmed && (
+          <TrackPurchase
+            value={booking.total / 100}
+            reference={booking.reference}
+            bookingId={booking.id}
+          />
+        )}
         {confirmed ? (
           <div className="text-center">
             <div className="text-5xl">🎉</div>

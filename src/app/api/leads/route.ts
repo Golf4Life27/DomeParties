@@ -3,6 +3,8 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { sendEmail, buildLeadAutoResponse } from '@/lib/email'
 import { notifyStaff } from '@/lib/booking'
+import { readAttribution } from '@/lib/attribution'
+import { sendMetaEvent } from '@/lib/meta'
 
 const schema = z.object({
   eventType: z.enum(['BIRTHDAY', 'GROUP', 'CORPORATE', 'LEAGUE', 'BACHELOR', 'OTHER']).default('CORPORATE'),
@@ -29,6 +31,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid', details: parsed.error.issues }, { status: 400 })
   }
   const d = parsed.data
+  // First-touch attribution from the visitor's cookie — this is what lets the
+  // admin say "the holiday ad earned this lead" instead of just "a lead arrived".
+  const attr = readAttribution(req)
   const lead = await prisma.lead.create({
     data: {
       eventType: d.eventType,
@@ -43,8 +48,23 @@ export async function POST(req: NextRequest) {
       customerPhone: d.customerPhone ?? null,
       message: d.message ?? null,
       source: d.source,
+      ...attr,
     },
     select: { id: true },
+  })
+
+  // Server-side Lead event to Meta (survives ad blockers; deduped against the
+  // browser pixel by event_id = lead.id). Fire-and-forget by contract: it logs
+  // failures and never throws.
+  await sendMetaEvent({
+    eventName: 'Lead',
+    eventId: lead.id,
+    email: d.customerEmail,
+    phone: d.customerPhone,
+    fbclid: attr.fbclid,
+    sourceUrl: attr.landingPath ? `${process.env.NEXT_PUBLIC_APP_URL ?? ''}${attr.landingPath}` : undefined,
+    clientIp: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null,
+    userAgent: req.headers.get('user-agent'),
   })
 
   // Speed-to-lead: fire the instant auto-response (don't block on email failure).
