@@ -54,9 +54,17 @@ export default async function Home() {
             >
               Book your event →
             </Link>
-            <Link href="/gift" className="text-sm font-medium text-white/90 underline-offset-4 hover:underline">
+            {/* The venue's real gift cards are sold through Trackman, not this app.
+                /gift still exists so codes already issued can be redeemed against a
+                booking — it just isn't advertised as the place to buy one. */}
+            <a
+              href={VENUE.trackmanBookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-white/90 underline-offset-4 hover:underline"
+            >
               🎁 Buy a gift card
-            </Link>
+            </a>
           </div>
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/80">
             <span>✓ No account needed</span>

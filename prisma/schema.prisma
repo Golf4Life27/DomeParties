@@ -300,12 +300,33 @@ model Booking {
   balancePaidAmount Int @default(0)
 
   // Payment
+  // The DEPOSIT intent. Kept as-is rather than renamed: it is written by the
+  // booking flow, read by the refund path, and matched against incoming webhooks.
   stripePaymentIntentId String?
+  // The intent that actually paid the balance — a separate charge, so a separate
+  // id. Without it a paid balance could not be refunded, and a chargeback on it
+  // matched no booking at all, so nobody was told.
+  stripeBalanceIntentId String?
   paidAt                DateTime?
 
   // Gift card redemption (applied to the amount due now)
   giftCardCode    String?
   giftCardApplied Int     @default(0)
+
+  // Staff reschedule audit. A moved event looks identical to one booked for the
+  // new date, which makes "the guest says you moved them" impossible to check.
+  rescheduledAt       DateTime?
+  rescheduledFromDate DateTime? // the date it was moved off, most recent move
+
+  // First-touch marketing attribution (see the same fields on Lead). Captured at
+  // draft creation so a booking finished days later still credits the ad that
+  // started it.
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmContent  String?
+  landingPath String?
+  fbclid      String?
 
   // Abandoned-cart recovery
   recoveryEmailSentAt DateTime?
@@ -337,6 +358,9 @@ model Booking {
 
   @@index([date, status])
   @@index([status, updatedAt])
+  // Refund and dispute webhooks identify a booking only by payment intent id.
+  @@index([stripePaymentIntentId])
+  @@index([stripeBalanceIntentId])
 }
 
 model BookingAddOn {
@@ -416,6 +440,17 @@ model Lead {
   status        LeadStatus @default(NEW)
   source        String?    @default("website")
   followUpSentAt DateTime?
+
+  // First-touch marketing attribution, copied from the wtr_attr cookie at
+  // submission. Nullable = organic / direct / cookie blocked. This is what turns
+  // "we got a lead" into "the holiday-party ad got a lead".
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmContent  String?
+  landingPath String? // first page of the visit, e.g. /holiday
+  fbclid      String? // Meta click id — raises Conversions API match quality
+
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }

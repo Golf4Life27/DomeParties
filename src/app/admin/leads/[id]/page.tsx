@@ -32,6 +32,25 @@ export default async function LeadDetail({ params }: { params: Promise<{ id: str
             <Row k="Must-haves" v={lead.mustHaves.length ? lead.mustHaves.join(', ') : '—'} />
             {lead.message && <Row k="Message" v={lead.message} />}
           </dl>
+
+          {/* Which ad (if any) earned this lead. Only rendered when there is
+              attribution — organic leads shouldn't grow an empty section. */}
+          {(lead.utmSource || lead.landingPath || lead.fbclid) && (
+            <div className="mt-4 border-t border-black/5 pt-3">
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground/50">
+                Marketing attribution
+              </h3>
+              <dl className="space-y-1.5 text-sm">
+                <Row
+                  k="Source"
+                  v={[lead.utmSource, lead.utmMedium].filter(Boolean).join(' / ') || (lead.fbclid ? 'Meta ad click' : '—')}
+                />
+                {lead.utmCampaign && <Row k="Campaign" v={lead.utmCampaign} />}
+                {lead.utmContent && <Row k="Ad" v={lead.utmContent} />}
+                {lead.landingPath && <Row k="Landed on" v={lead.landingPath} />}
+              </dl>
+            </div>
+          )}
         </div>
 
         <LeadActions

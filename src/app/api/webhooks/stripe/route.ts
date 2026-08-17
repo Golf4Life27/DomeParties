@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         await confirmGiftPaid(meta.giftCardId, intent.id)
       } else if (meta.kind === 'balance' && meta.bookingId) {
         const ok = await verifyIntentAmount(meta.bookingId, intent, 'balance')
-        if (ok) await confirmBalancePaid(meta.bookingId)
+        if (ok) await confirmBalancePaid(meta.bookingId, intent.id)
       } else if (meta.bookingId) {
         const ok = await verifyIntentAmount(meta.bookingId, intent, 'deposit')
         if (ok) await confirmPaid(meta.bookingId, intent.id)
@@ -151,13 +151,40 @@ async function flagByIntent(
   }) => { title: string; lines: string[] },
 ) {
   if (!paymentIntentId) return
+  // Either charge on the booking. Matching only the deposit intent meant a
+  // chargeback on the balance — usually the larger of the two — found no booking
+  // and was dropped without a word.
   const booking = await prisma.booking.findFirst({
-    where: { stripePaymentIntentId: paymentIntentId },
+    where: {
+      OR: [{ stripePaymentIntentId: paymentIntentId }, { stripeBalanceIntentId: paymentIntentId }],
+    },
   })
   if (!booking) return
   await prisma.booking.update({ where: { id: booking.id }, data: { needsReview: true } })
   const { title, lines } = message(booking)
   await notifyStaff({ title, lines, adminPath: `/admin/bookings/${booking.id}`, urgent: true })
+}
+
+/**
+ * Is this balance intent still settling the balance it was raised for?
+ *
+ * A guest can open the balance page, be upsold before paying, and then pay the
+ * old intent — which covers a balance that no longer exists. The amount check
+ * alone passes that through (the stale intent is usually LARGER), and the booking
+ * would then record only the smaller current balance as collected, under-counting
+ * what Stripe actually captured.
+ *
+ * Intents minted before this field existed have no stamp. Those get the benefit of
+ * the doubt: rejecting a legitimate in-flight payment is worse than the edge case
+ * this guards, and it drains out on its own as old intents expire.
+ */
+function balanceIntentIsCurrent(
+  intent: { metadata?: Record<string, string> },
+  balanceDue: number,
+): boolean {
+  const stamped = intent.metadata?.balanceDueAtCreation
+  if (!stamped) return true
+  return stamped === String(balanceDue)
 }
 
 /**
@@ -169,7 +196,7 @@ async function flagByIntent(
  */
 async function verifyIntentAmount(
   bookingId: string,
-  intent: { id: string; amount: number },
+  intent: { id: string; amount: number; metadata?: Record<string, string> },
   kind: 'deposit' | 'balance',
 ): Promise<boolean> {
   const booking = await prisma.booking.findUnique({ where: { id: bookingId } })
@@ -181,15 +208,26 @@ async function verifyIntentAmount(
       : booking.balanceDue
   const cardFee = setting.cardFeePct > 0 ? Math.round((base * setting.cardFeePct) / 100) : 0
   const expected = base + cardFee
-  const intentMatches = kind === 'balance' || !booking.stripePaymentIntentId || booking.stripePaymentIntentId === intent.id
+  const intentMatches =
+    kind === 'balance'
+      ? balanceIntentIsCurrent(intent, booking.balanceDue)
+      : !booking.stripePaymentIntentId || booking.stripePaymentIntentId === intent.id
   if (intent.amount >= expected && intentMatches) return true
 
   await prisma.booking.update({ where: { id: bookingId }, data: { needsReview: true } })
   await notifyStaff({
     title: `Payment amount mismatch — ${booking.reference}`,
     lines: [
-      `A ${kind} payment of ${(intent.amount / 100).toFixed(2)} arrived but the booking currently owes ${(expected / 100).toFixed(2)}${intentMatches ? '' : ' (and the payment intent does not match the one on file)'}.`,
-      'The booking was NOT confirmed. Check Stripe and the booking, then approve or refund.',
+      `A ${kind} payment of ${(intent.amount / 100).toFixed(2)} arrived but the booking currently owes ${(expected / 100).toFixed(2)}${
+        intentMatches
+          ? ''
+          : kind === 'balance'
+            ? ' (and it was raised against an older balance, so the guest has paid for something other than what is owed now)'
+            : ' (and the payment intent does not match the one on file)'
+      }.`,
+      kind === 'balance'
+        ? 'The money IS in Stripe but was NOT recorded against the booking, so it still reads as owing. Check both, then mark it paid or refund it.'
+        : 'The booking was NOT confirmed. Check Stripe and the booking, then approve or refund.',
     ],
     adminPath: `/admin/bookings/${bookingId}`,
     urgent: true,

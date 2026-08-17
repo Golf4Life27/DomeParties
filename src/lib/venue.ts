@@ -9,4 +9,10 @@ export const VENUE = {
   website: 'https://whitetailridgegolfdome.com',
   facebook: 'https://www.facebook.com/WhitetailRidgeGolfDome',
   mapsUrl: 'https://maps.google.com/?q=3360+Station+Drive,+Oswego,+IL+60543',
+  /**
+   * Trackman handles everything that isn't a party: casual range bays, the iO
+   * simulators, the Indoor Membership, and the venue's real gift cards. This app
+   * only sells party and group events, so anything else links out to here.
+   */
+  trackmanBookingUrl: 'https://booking.trackmangolf.com/venues/whitetail/booking',
 }

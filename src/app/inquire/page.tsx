@@ -88,7 +88,10 @@ export default function InquirePage({ searchParams }: { searchParams: Search }) 
     })
     setBusy(false)
     if (res.ok) {
-      track('generate_lead')
+      // The lead id doubles as the Meta event id so the pixel event and the
+      // server's Conversions API event dedupe into one conversion.
+      const data = await res.json().catch(() => null)
+      track('generate_lead', { eventId: data?.id })
       setDone(true)
     }
     else setError('Something went wrong. Please try again or call us.')

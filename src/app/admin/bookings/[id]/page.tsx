@@ -38,7 +38,16 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <h1 className="text-2xl font-bold text-brand-dark">{b.customerName ?? 'Draft booking'}</h1>
           <p className="font-mono text-sm text-foreground/50">{b.reference}</p>
         </div>
-        <BookingActions id={b.id} status={b.status} needsReview={b.needsReview} depositPaid={b.depositPaid} balancePaid={b.balancePaid} balanceDue={b.balanceDue} />
+        <BookingActions
+          id={b.id}
+          status={b.status}
+          needsReview={b.needsReview}
+          depositPaid={b.depositPaid}
+          balancePaid={b.balancePaid}
+          balanceDue={b.balanceDue}
+          dateStr={b.date.toISOString().slice(0, 10)}
+          startMinutes={b.startMinutes}
+        />
       </div>
 
       {b.needsReview && b.status === 'PENDING' && b.depositPaid && (
@@ -76,6 +85,18 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <Row k="Waiver signed" v={b.waiverSigned ? `Yes — ${b.waiverSignedName ?? ''}` : 'No'} />
           <Row k="Guardian (minors)" v={b.waiverGuardian ? 'Yes' : 'No'} />
           {b.waiverSignedAt && <Row k="Signed at" v={b.waiverSignedAt.toISOString().slice(0, 16).replace('T', ' ')} />}
+          {/* Which ad started this booking — first-touch, stamped at draft creation. */}
+          {(b.utmSource || b.fbclid) && (
+            <Row
+              k="Marketing"
+              v={[
+                [b.utmSource, b.utmMedium].filter(Boolean).join(' / ') || 'Meta ad click',
+                b.utmCampaign,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
+            />
+          )}
         </Card>
 
         <Card title="Money">

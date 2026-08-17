@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import ChatWidget from './ChatWidget'
+import AttributionCapture from './AttributionCapture'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
+        <AttributionCapture />
         {children}
         {chatAccount && chatWidget && (
           <ChatWidget accountId={chatAccount} widgetId={chatWidget} />

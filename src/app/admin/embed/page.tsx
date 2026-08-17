@@ -1,5 +1,6 @@
 import { headers } from 'next/headers'
 import CopyBlock from './CopyBlock'
+import { VENUE } from '@/lib/venue'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,7 +50,16 @@ export default async function EmbedPage() {
         <ul className="mt-2 space-y-1">
           <li>Hosted booking page: <code className="rounded bg-white/60 px-1">{origin}/book</code></li>
           <li>Request-a-quote page: <code className="rounded bg-white/60 px-1">{origin}/inquire</code></li>
-          <li>Gift cards: <code className="rounded bg-white/60 px-1">{origin}/gift</code></li>
+          <li>
+            Gift cards: <code className="rounded bg-white/60 px-1">{VENUE.trackmanBookingUrl}</code>
+            <span className="block text-xs text-foreground/60">
+              Sold through Trackman, not this app — link marketing there.
+            </span>
+          </li>
+          <li>
+            Casual bays, simulators &amp; membership:{' '}
+            <code className="rounded bg-white/60 px-1">{VENUE.trackmanBookingUrl}</code>
+          </li>
         </ul>
         <p className="mt-3 text-xs text-foreground/60">
           Tip: for marketing buttons, link straight to these pages. The embed script is best for
