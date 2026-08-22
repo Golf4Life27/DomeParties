@@ -10,6 +10,7 @@ const NAV = [
   { href: '/admin/trackman', label: 'Trackman check' },
   { href: '/admin/bookings', label: 'Bookings' },
   { href: '/admin/leads', label: 'Leads' },
+  { href: '/admin/accounts', label: 'Annual accounts' },
   { href: '/admin/bays', label: 'Bays' },
   { href: '/admin/hours', label: 'Hours' },
   { href: '/admin/packages', label: 'Packages' },
