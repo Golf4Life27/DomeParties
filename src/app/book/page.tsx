@@ -296,6 +296,9 @@ export default function BookPage() {
       })
       const data = await res.json()
       setDraftId(data.id)
+      // Top-of-funnel conversion signal for ad delivery. The booking id is the
+      // event id, matching the convention used by the lead and purchase events.
+      track('start_booking', { eventId: data.id, reference: data.reference })
       setStep(1)
     } catch {
       setError('Something went wrong. Please try again.')
