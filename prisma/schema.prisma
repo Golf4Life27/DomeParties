@@ -149,6 +149,68 @@ enum EventType {
   OTHER
 }
 
+// What kind of recurring relationship an Account represents. Drives nothing
+// mechanical — it exists so the list can be filtered and so an outreach email
+// can say "their fundraiser" rather than "their event".
+enum AccountKind {
+  FUNDRAISER
+  CORPORATE
+  CHAMBER
+  BOOSTER
+  MILESTONE
+  OTHER
+}
+
+// ---------------------------------------------------------------------------
+// Annual accounts — relationships that come back every year.
+//
+// Deliberately NOT tied to Booking. The events worth the most here (fundraisers
+// at $8–15k, repeat corporate holiday parties) were booked by phone long before
+// this app existed, so a reminder hanging off a Booking row would never fire for
+// the ones that matter. This is a standalone record staff fill in from what they
+// already know.
+//
+// Keyed on the CONTACT, not the organization: one person is routinely a personal
+// customer AND the buyer for an organization's annual event, and treating those
+// as separate records loses the fact that they are one relationship worth
+// calling personally.
+// ---------------------------------------------------------------------------
+model Account {
+  id           String      @id @default(cuid())
+  contactName  String
+  organization String? // null for a purely personal repeat customer
+  contactRole  String? // "Committee chair", "HR Director" — the seat, which rotates
+  email        String?
+  phone        String?
+  kind         AccountKind @default(OTHER)
+
+  // When their event lands, as a month (1–12). A month, not a date: "the second
+  // Thursday in March" moves every year, and the month is what outreach timing
+  // actually needs.
+  typicalMonth Int?
+
+  lastEventOn     DateTime?
+  lastEventValue  Int? // cents, so it matches every other money field
+  lastHeadcount   Int?
+  timesBooked     Int       @default(1)
+  relationshipOwner String? // who at the Dome owns this — you, Billy, someone else
+
+  // Free text, and load-bearing: this is where "also runs a summer outing at the
+  // golf course" lives, since the tracker covers the Dome only.
+  notes String?
+
+  // Outreach state. nextOutreachOn is computed from typicalMonth when it's blank,
+  // but staff can override it — a chair who says "ask me in June" beats arithmetic.
+  nextOutreachOn   DateTime?
+  lastOutreachSent DateTime?
+
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active, nextOutreachOn])
+}
+
 // ---------------------------------------------------------------------------
 // Trackman coexistence: reservations pulled from the *other* booking system
 // (Trackman Booking & Payments) so we can detect capacity conflicts against
