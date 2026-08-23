@@ -52,6 +52,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!process.env.CRON_SECRET) {
     warnings.push('CRON_SECRET is not set — scheduled jobs (reminders, recovery, balance chasing) are disabled.')
   }
+  // A pixel with no Conversions API token still records page views, so Events
+  // Manager looks alive while every conversion the ads optimise toward is
+  // missing. That combination burns ad budget silently, so name it here.
+  if (process.env.NEXT_PUBLIC_META_PIXEL_ID && !process.env.META_CAPI_ACCESS_TOKEN) {
+    warnings.push(
+      'META_CAPI_ACCESS_TOKEN is missing — the Meta pixel is live but server-side conversions (Lead, Purchase) are NOT being sent. Ads optimising toward those events will spend without ever seeing a conversion. Add the token in Vercel and redeploy.',
+    )
+  }
 
   return (
     <div className="admin-light flex min-h-screen flex-col">

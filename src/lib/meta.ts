@@ -50,10 +50,27 @@ export type MetaEvent = {
   userAgent?: string | null
 }
 
+/** True when both env vars needed for server-side events are present. */
+export function metaCapiConfigured(): boolean {
+  return !!process.env.NEXT_PUBLIC_META_PIXEL_ID && !!process.env.META_CAPI_ACCESS_TOKEN
+}
+
 export async function sendMetaEvent(ev: MetaEvent): Promise<void> {
   const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID
   const token = process.env.META_CAPI_ACCESS_TOKEN
-  if (!pixelId || !token) return
+  if (!pixelId || !token) {
+    // Say so. This used to return in silence, which made a missing token look
+    // exactly like a working integration: no errors in the logs, no events in
+    // Events Manager, and nothing anywhere to tell the two apart. A campaign
+    // optimising toward an event that never arrives spends real money, so the
+    // one thing this must never be is quiet.
+    console.error(
+      `[meta-capi] SKIPPED ${ev.eventName} ${ev.eventId} — ${
+        !pixelId ? 'NEXT_PUBLIC_META_PIXEL_ID' : 'META_CAPI_ACCESS_TOKEN'
+      } is not set in this environment. Server-side conversions are NOT reaching Meta.`,
+    )
+    return
+  }
 
   const userData: Record<string, unknown> = {}
   const em = hashEmail(ev.email)
@@ -93,7 +110,11 @@ export async function sendMetaEvent(ev: MetaEvent): Promise<void> {
     if (!res.ok) {
       const detail = await res.text().catch(() => '(no body)')
       console.error(`[meta-capi] ${ev.eventName} ${ev.eventId} rejected (${res.status}): ${detail.slice(0, 300)}`)
+      return
     }
+    // Log successes too. Without this there is no way to tell "sent and accepted"
+    // from "never ran", which is the ambiguity that cost us a week.
+    console.log(`[meta-capi] ${ev.eventName} ${ev.eventId} accepted by Meta`)
   } catch (e) {
     console.error(`[meta-capi] ${ev.eventName} ${ev.eventId} send failed`, e)
   }
