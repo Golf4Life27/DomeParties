@@ -389,6 +389,8 @@ model Booking {
   utmContent  String?
   landingPath String?
   fbclid      String?
+  fbp         String?
+  fbc         String?
 
   // Abandoned-cart recovery
   recoveryEmailSentAt DateTime?
@@ -512,6 +514,8 @@ model Lead {
   utmContent  String?
   landingPath String? // first page of the visit, e.g. /holiday
   fbclid      String? // Meta click id — raises Conversions API match quality
+  fbp         String? // _fbp cookie — Meta's browser id, its main browser↔server match signal
+  fbc         String? // _fbc cookie — Meta's own click-id format, better than rebuilding one
 
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
