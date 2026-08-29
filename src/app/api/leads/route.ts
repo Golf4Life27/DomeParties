@@ -62,6 +62,8 @@ export async function POST(req: NextRequest) {
     email: d.customerEmail,
     phone: d.customerPhone,
     fbclid: attr.fbclid,
+    fbp: attr.fbp,
+    fbc: attr.fbc,
     sourceUrl: attr.landingPath ? `${process.env.NEXT_PUBLIC_APP_URL ?? ''}${attr.landingPath}` : undefined,
     clientIp: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null,
     userAgent: req.headers.get('user-agent'),

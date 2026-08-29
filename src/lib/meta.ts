@@ -45,6 +45,10 @@ export type MetaEvent = {
   /** Dollars. Required by Meta for Purchase. */
   value?: number
   fbclid?: string | null
+  /** _fbp cookie — Meta's browser id, its strongest browser↔server match signal. */
+  fbp?: string | null
+  /** _fbc cookie — Meta's own click-id format; beats one rebuilt from fbclid. */
+  fbc?: string | null
   sourceUrl?: string
   clientIp?: string | null
   userAgent?: string | null
@@ -77,9 +81,15 @@ export async function sendMetaEvent(ev: MetaEvent): Promise<void> {
   const ph = hashPhone(ev.phone)
   if (em) userData.em = [em]
   if (ph) userData.ph = [ph]
-  // fbc reconstructed from the stored click id — this is what ties the
-  // conversion back to the specific ad click for optimization.
-  if (ev.fbclid) userData.fbc = `fb.1.${Date.now()}.${ev.fbclid}`
+  // Browser id. Meta reports low fbp coverage on Conversions API events as a
+  // high-priority data-quality problem, because this is how it recognises that a
+  // browser event and a server event came from the same person.
+  if (ev.fbp) userData.fbp = ev.fbp
+  // Click id. Prefer Meta's own _fbc cookie: it carries the real click
+  // timestamp, whereas rebuilding one from a stored fbclid has to substitute
+  // "now", which can be days after the click actually happened.
+  if (ev.fbc) userData.fbc = ev.fbc
+  else if (ev.fbclid) userData.fbc = `fb.1.${Date.now()}.${ev.fbclid}`
   if (ev.clientIp) userData.client_ip_address = ev.clientIp
   if (ev.userAgent) userData.client_user_agent = ev.userAgent
   // Meta rejects events with no user data at all; without any there is nothing

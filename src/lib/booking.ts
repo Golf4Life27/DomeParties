@@ -681,6 +681,10 @@ async function finalizeConfirmed(id: string, paymentIntentId?: string) {
     phone: updated.customerPhone,
     value: updated.total / 100,
     fbclid: updated.fbclid,
+    // Stamped on the draft at the email step, because this fires from the Stripe
+    // webhook where there is no browser request and therefore no cookies.
+    fbp: updated.fbp,
+    fbc: updated.fbc,
     sourceUrl: `${appUrl()}/book`,
   })
 
