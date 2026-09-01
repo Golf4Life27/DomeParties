@@ -229,6 +229,26 @@ model ExternalReservation {
   @@index([date])
 }
 
+// When a date's external reservations were last pulled, and whether it worked.
+//
+// ExternalReservation rows alone cannot answer this: a date with no rows is
+// ambiguous between "Trackman genuinely has nothing booked" and "we have never
+// managed to ask". Those two need opposite handling at checkout — the first is
+// safe to instant-confirm, the second must go to staff review — so the answer
+// has to be recorded rather than inferred.
+model ExternalSync {
+  id       String   @id @default(cuid())
+  source   String   @default("trackman")
+  date     DateTime // venue day (UTC-midnight, same convention as bookings)
+  syncedAt DateTime @default(now())
+  rowCount Int      @default(0)
+  ok       Boolean  @default(true)
+  error    String? // last failure reason, for the admin surface
+
+  @@unique([source, date])
+  @@index([date])
+}
+
 // A detected capacity conflict, deduped by signature so the same standing
 // conflict isn't re-alerted every cron run. Resolved when it no longer appears.
 model ConflictAlert {

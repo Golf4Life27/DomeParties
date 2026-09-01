@@ -1,4 +1,4 @@
-import { ingestExternalReservations, type ParsedReservation } from '@/lib/trackman'
+import { ingestExternalReservations, type ParsedReservation, type TxClient } from '@/lib/trackman'
 import { prisma } from '@/lib/db'
 import { todayStr, addDays } from '@/lib/time'
 
@@ -197,6 +197,135 @@ export async function fetchVenueDay(dateStr: string): Promise<YgbBooking[]> {
   return body as YgbBooking[]
 }
 
+/** How recent a pull has to be before checkout will reuse it instead of refetching. */
+export const CHECKOUT_MAX_AGE_MS = 15_000
+/** Slot listing tolerates more staleness — it is a browse, not a commitment. */
+export const BROWSE_MAX_AGE_MS = 60_000
+
+export type LiveCheck = {
+  /** False when we could not establish current Trackman occupancy for this date. */
+  ok: boolean
+  /** Rows to write, or null when the cached pull is fresh enough to reuse. */
+  rows: ParsedReservation[] | null
+  /** External bays busy at any point in the requested window, when known. */
+  demandInWindow: number | null
+  reason?: string
+}
+
+/** Peak external bays busy across a window, from already-normalized rows. */
+export function peakDemand(
+  rows: { startMinutes: number; endMinutes: number; bayCount: number }[],
+  startMinutes: number,
+  endMinutes: number,
+): number {
+  const points = [...new Set(rows.flatMap((r) => [r.startMinutes, r.endMinutes]))]
+    .filter((p) => p >= startMinutes && p < endMinutes)
+    .concat(startMinutes)
+    .sort((a, b) => a - b)
+  let peak = 0
+  for (const p of points) {
+    const n = rows
+      .filter((r) => r.startMinutes <= p && p < r.endMinutes)
+      .reduce((s, r) => s + r.bayCount, 0)
+    if (n > peak) peak = n
+  }
+  return peak
+}
+
+/**
+ * The network half of a live check: read current Trackman occupancy for one
+ * date, without touching the database.
+ *
+ * Split from the write deliberately. The write has to happen under the caller's
+ * per-date advisory lock so it cannot interleave with a competing checkout, but
+ * a multi-second HTTP call inside that lock would serialise every checkout for
+ * the date behind network latency and can burn the transaction timeout.
+ */
+export async function readLive(
+  dateStr: string,
+  startMinutes: number,
+  endMinutes: number,
+  maxAgeMs: number,
+): Promise<LiveCheck> {
+  const date = new Date(`${dateStr}T00:00:00.000Z`)
+  const last = await prisma.externalSync
+    .findUnique({ where: { source_date: { source: YGB_SOURCE, date } } })
+    .catch(() => null)
+
+  if (last?.ok && Date.now() - last.syncedAt.getTime() < maxAgeMs) {
+    // Fresh enough to trust, and refetching would only add latency. Demand is
+    // still computed — from the stored rows the availability engine will read —
+    // so callers never have to distinguish a cache hit from a fresh pull.
+    const stored = await prisma.externalReservation.findMany({
+      where: { date, source: YGB_SOURCE },
+      select: { startMinutes: true, endMinutes: true, bayCount: true },
+    })
+    return { ok: true, rows: null, demandInWindow: peakDemand(stored, startMinutes, endMinutes) }
+  }
+
+  try {
+    const { reservations } = normalizeDay(await fetchVenueDay(dateStr), dateStr)
+    return {
+      ok: true,
+      rows: reservations,
+      demandInWindow: peakDemand(reservations, startMinutes, endMinutes),
+    }
+  } catch (e) {
+    const reason = e instanceof Error ? e.message : String(e)
+    console.error(`[ygb] live check failed for ${dateStr}:`, reason)
+    return { ok: false, rows: null, demandInWindow: null, reason }
+  }
+}
+
+/**
+ * The database half: persist what readLive found, inside the caller's
+ * transaction. No-op when readLive reused a fresh pull.
+ */
+export async function commitLive(dateStr: string, check: LiveCheck, client?: TxClient): Promise<void> {
+  const date = new Date(`${dateStr}T00:00:00.000Z`)
+  const db = client ?? prisma
+  if (check.rows) {
+    await ingestExternalReservations(dateStr, check.rows, YGB_SOURCE, client)
+  }
+  // Record the attempt either way. A failure has to be visible: a date whose
+  // rows are hours old looks identical to a current one at the point of sale.
+  await db.externalSync.upsert({
+    where: { source_date: { source: YGB_SOURCE, date } },
+    create: {
+      source: YGB_SOURCE,
+      date,
+      rowCount: check.rows?.length ?? 0,
+      ok: check.ok,
+      error: check.reason ?? null,
+    },
+    update: {
+      // Only advance syncedAt on success — a failed attempt must not make stale
+      // data look freshly confirmed.
+      ...(check.ok ? { syncedAt: new Date() } : {}),
+      ...(check.rows ? { rowCount: check.rows.length } : {}),
+      ok: check.ok,
+      error: check.reason ?? null,
+    },
+  })
+}
+
+/**
+ * Refresh one date end to end, outside any caller transaction. Used by slot
+ * listing, where there is no lock to join and nothing to serialise against.
+ */
+export async function refreshVenueDay(
+  dateStr: string,
+  maxAgeMs: number = BROWSE_MAX_AGE_MS,
+): Promise<LiveCheck> {
+  const check = await readLive(dateStr, 0, 1440, maxAgeMs)
+  try {
+    await commitLive(dateStr, check)
+  } catch (e) {
+    console.error(`[ygb] commit failed for ${dateStr}:`, e)
+  }
+  return check
+}
+
 /**
  * Pull Trackman occupancy for the dates that can actually conflict.
  *
@@ -228,19 +357,14 @@ export async function syncExternalReservations(
 
   for (const { date } of rows) {
     const dateStr = date.toISOString().slice(0, 10)
-    try {
-      const raw = await fetchVenueDay(dateStr)
-      const { reservations } = normalizeDay(raw, dateStr)
-      await ingestExternalReservations(dateStr, reservations, YGB_SOURCE)
-      ygbRows += reservations.length
-    } catch (e) {
-      // One bad day must not stop the sweep, and must never fail the cron —
-      // but it does need to be visible, because a silently empty feed reads as
-      // "Trackman has nothing booked", which is the most dangerous wrong answer
-      // this system can give.
-      ygbFailed += 1
-      console.error(`[ygb] sync failed for ${dateStr}:`, e)
-    }
+    // maxAge 0: the cron always refetches. It is the job that keeps every other
+    // reader's idea of "fresh" honest.
+    const check = await refreshVenueDay(dateStr, 0)
+    if (check.ok) ygbRows += check.rows?.length ?? 0
+    // One bad day must not stop the sweep, and must never fail the cron — but it
+    // does need to be visible, because a silently empty feed reads as "Trackman
+    // has nothing booked", the most dangerous wrong answer this system can give.
+    else ygbFailed += 1
   }
 
   return { ygbDates: rows.length, ygbRows, ygbFailed }
