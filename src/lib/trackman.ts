@@ -229,6 +229,11 @@ export async function scanConflictsAndAlert(days = 120): Promise<{ active: numbe
           detail,
           'This system + Trackman are trying to use more bays than exist in that window.',
           'Check Trackman and re-slot one side before the event.',
+          // Worth saying every time. If staff already blocked bays in Trackman
+          // for this same party, the block reads as outside demand and the two
+          // get counted twice — a real-looking conflict that is really just our
+          // own event showing up in both systems.
+          'If those bays were blocked in Trackman FOR this party, they are being counted twice — no action needed.',
         ],
         adminPath: `/admin/day?date=${dateStr}`,
         urgent: true,
