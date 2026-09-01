@@ -10,6 +10,7 @@ import {
   completePastEvents,
 } from '@/lib/booking'
 import { scanConflictsAndAlert } from '@/lib/trackman'
+import { syncExternalReservations } from '@/lib/ygb'
 import { sendAccountOutreachNudges } from '@/lib/accounts'
 
 // Abandoned-cart recovery for stale drafts. Protected by CRON_SECRET when set.
@@ -40,6 +41,9 @@ async function run(req: NextRequest) {
   const balances = await sendBalanceReminders() // T-3 settle-up email
   const digest = await sendMorningDigest() // today's run sheet for staff
   const completed = await completePastEvents() // auto-complete + thank-you/review ask
+  // Refresh Trackman occupancy BEFORE scanning — scanning stale data is how a
+  // real double booking gets a clean bill of health.
+  const ygb = await syncExternalReservations()
   const conflicts = await scanConflictsAndAlert() // Trackman capacity conflicts
   const outreach = await sendAccountOutreachNudges() // annual accounts due a call
   return NextResponse.json({
@@ -52,6 +56,7 @@ async function run(req: NextRequest) {
     ...balances,
     ...digest,
     ...completed,
+    ...ygb,
     ...conflicts,
     ...outreach,
   })

@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db'
 import { minutesToLabel } from '@/lib/time'
-import { notifyStaff } from '@/lib/booking'
+import { notifyStaff } from '@/lib/notify'
 
 // ---------------------------------------------------------------------------
 // Trackman coexistence — capacity-based conflict detection.
@@ -72,22 +72,41 @@ function dateOnly(dateStr: string): Date {
   return new Date(`${dateStr}T00:00:00.000Z`)
 }
 
-/** Replace all external reservations for a date with a fresh set. */
-export async function ingestExternalReservations(dateStr: string, rows: ParsedReservation[], source = 'trackman') {
+/** A Prisma transaction client, as handed to a `$transaction` callback. */
+export type TxClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0]
+
+/**
+ * Replace all external reservations for a date with a fresh set.
+ *
+ * Pass `client` to run inside a caller's transaction. Checkout does exactly
+ * that: the refresh and the bay assignment that reads it must happen under the
+ * same per-date advisory lock, or two simultaneous checkouts can interleave
+ * their delete/insert pairs and leave the date double-counted.
+ */
+export async function ingestExternalReservations(
+  dateStr: string,
+  rows: ParsedReservation[],
+  source = 'trackman',
+  client?: TxClient,
+) {
   const date = dateOnly(dateStr)
-  await prisma.$transaction([
-    prisma.externalReservation.deleteMany({ where: { date, source } }),
-    prisma.externalReservation.createMany({
-      data: rows.map((r) => ({
-        source,
-        date,
-        startMinutes: r.startMinutes,
-        endMinutes: r.endMinutes,
-        bayCount: r.bayCount,
-        label: r.label ?? null,
-      })),
-    }),
-  ])
+  const data = rows.map((r) => ({
+    source,
+    date,
+    startMinutes: r.startMinutes,
+    endMinutes: r.endMinutes,
+    bayCount: r.bayCount,
+    label: r.label ?? null,
+  }))
+  if (client) {
+    await client.externalReservation.deleteMany({ where: { date, source } })
+    await client.externalReservation.createMany({ data })
+  } else {
+    await prisma.$transaction([
+      prisma.externalReservation.deleteMany({ where: { date, source } }),
+      prisma.externalReservation.createMany({ data }),
+    ])
+  }
   return { imported: rows.length }
 }
 
@@ -229,6 +248,11 @@ export async function scanConflictsAndAlert(days = 120): Promise<{ active: numbe
           detail,
           'This system + Trackman are trying to use more bays than exist in that window.',
           'Check Trackman and re-slot one side before the event.',
+          // Worth saying every time. If staff already blocked bays in Trackman
+          // for this same party, the block reads as outside demand and the two
+          // get counted twice — a real-looking conflict that is really just our
+          // own event showing up in both systems.
+          'If those bays were blocked in Trackman FOR this party, they are being counted twice — no action needed.',
         ],
         adminPath: `/admin/day?date=${dateStr}`,
         urgent: true,

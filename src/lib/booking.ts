@@ -18,8 +18,6 @@ import {
   buildQuoteEmail,
   buildRecoveryEmail,
   buildDepositReceivedEmail,
-  buildStaffNotification,
-  splitRecipients,
   buildReminderEmail,
   buildBalanceReceiptEmail,
   buildLeadFollowUpEmail,
@@ -27,35 +25,20 @@ import {
   buildThankYouEmail,
   buildRescheduledEmail,
 } from '@/lib/email'
+import { notifyStaff } from '@/lib/notify'
+import { readLive, commitLive, CHECKOUT_MAX_AGE_MS } from '@/lib/ygb'
 import type { AddOnSelection } from '@/lib/types'
 import type { EventType } from '@/generated/prisma'
+
+// Re-exported: notifyStaff lived here historically and several routes import it
+// from this module. It moved to @/lib/notify to break the booking → ygb →
+// trackman → booking import cycle the live checkout check would have created.
+export { notifyStaff }
 
 function dateOnly(dateStr: string): Date {
   return new Date(`${dateStr}T00:00:00.000Z`)
 }
 
-/** Best-effort staff notification (no-op when staffNotifyEmail is unset). */
-export async function notifyStaff(input: {
-  title: string
-  lines: string[]
-  adminPath: string
-  urgent?: boolean
-  actionUrl?: string
-  actionLabel?: string
-}) {
-  try {
-    const setting = await prisma.setting.findUnique({ where: { id: 1 } })
-    // staffNotifyEmail holds one address or a comma-separated list, so the whole
-    // events team gets bookings, payments, cancellations and review requests —
-    // not just whoever's address happened to be set first.
-    const to = splitRecipients(setting?.staffNotifyEmail)
-    if (to.length === 0) return
-    const email = buildStaffNotification(input)
-    await sendEmail({ to, subject: email.subject, html: email.html, text: email.text })
-  } catch (e) {
-    console.error('staff notification failed', e)
-  }
-}
 function dateStrOf(d: Date): string {
   return d.toISOString().slice(0, 10)
 }
@@ -292,10 +275,33 @@ export async function placeHold(id: string) {
 
   const holdExpiresAt = new Date(Date.now() + setting.holdMinutes * 60_000)
 
+  // Ask Trackman what it has sold for this date, right now, before committing.
+  //
+  // The network call is deliberately outside the lock below: it takes as long as
+  // it takes, and running it inside would queue every other checkout for this
+  // date behind it and eat into the transaction timeout. The resulting rows are
+  // written inside the lock, so they cannot interleave with a competing
+  // checkout's refresh.
+  //
+  // This runs for every window, including ones configured golf hours call
+  // uncontested. That shortcut is not trustworthy: the hours table has the dome
+  // shut Mon–Thu through the off-season, while the live feed shows those days
+  // reaching all 30 bays. An assumption about the calendar is not a substitute
+  // for asking.
+  // Widened by the same buffer assignBays applies, so "is anything of theirs
+  // near this window" is asked exactly the way the engine asks it.
+  const live = await readLive(
+    dateStr,
+    Math.max(0, startMinutes - setting.bufferMinutes),
+    endMinutes + setting.bufferMinutes,
+    CHECKOUT_MAX_AGE_MS,
+  )
+
   // Assignment + persistence run under a per-date advisory lock so two
   // simultaneous checkouts can't read the same availability and take the
   // same bays.
   await withBayLock(dateStr, async (tx) => {
+    await commitLive(dateStr, live, tx)
     const assignment = await availability.assignBays(
       dateStr,
       startMinutes,
@@ -314,9 +320,12 @@ export async function placeHold(id: string) {
       where: { id },
       data: {
         status: 'PENDING',
-        // Shared bays only need a Trackman check when the window actually
-        // overlaps golf hours; outside them there's nothing to collide with.
-        needsReview: assignment.usedShared && !assignment.uncontested,
+        // Shared bays need a human look unless we have just confirmed with
+        // Trackman that the window is empty. A failed live check always routes
+        // to review: we would rather a staff member spends a minute on a booking
+        // than let an unverified one confirm itself onto a sold-out floor.
+        needsReview:
+          assignment.usedShared && (!live.ok || live.demandInWindow === null || live.demandInWindow > 0),
         holdExpiresAt,
         endMinutes,
         baysNeeded: quote.baysNeeded,
