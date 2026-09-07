@@ -380,11 +380,20 @@ export async function seedHours(prisma: PrismaClient) {
   hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 5, openMinute: 16 * 60, closeMinute: 21 * 60, ...OFF_SEASON, sortOrder: 21 })
   hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 6, openMinute: 11 * 60, closeMinute: 21 * 60, ...OFF_SEASON, sortOrder: 22 })
   hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 0, openMinute: 11 * 60, closeMinute: 18 * 60, ...OFF_SEASON, sortOrder: 23 })
-  // In-season (Oct 1 onward): dome open 7 days, 9am–10pm, parties the same.
+  // In-season (Oct 1 – Mar 31): dome open 7 days a week, per Alex —
+  //   Sun–Thu  8am–9pm
+  //   Fri–Sat  8am–10pm
+  // This previously read 9am–10pm every day, which was wrong in both
+  // directions: it hid the 8am hour seven days a week, and on Sun–Thu it sold
+  // an hour past closing, so a two-hour party starting at 8pm on a Tuesday
+  // would have been booked and paid for to run an hour after the dome shut.
   const IN_SEASON = { validFrom: new Date('2026-10-01T00:00:00.000Z'), validTo: new Date('2027-03-31T00:00:00.000Z') }
+  const OPEN_MINUTE = 8 * 60
+  // dayOfWeek: 0 = Sunday … 5 = Friday, 6 = Saturday.
+  const closeFor = (d: number) => (d === 5 || d === 6 ? 22 * 60 : 21 * 60)
   for (let d = 0; d <= 6; d++) {
-    hoursRows.push({ label: 'In-season', kind: 'GOLF', dayOfWeek: d, openMinute: 9 * 60, closeMinute: 22 * 60, ...IN_SEASON, sortOrder: 30 + d })
-    hoursRows.push({ label: 'In-season', kind: 'PARTY', dayOfWeek: d, openMinute: 9 * 60, closeMinute: 22 * 60, ...IN_SEASON, sortOrder: 40 + d })
+    hoursRows.push({ label: 'In-season', kind: 'GOLF', dayOfWeek: d, openMinute: OPEN_MINUTE, closeMinute: closeFor(d), ...IN_SEASON, sortOrder: 30 + d })
+    hoursRows.push({ label: 'In-season', kind: 'PARTY', dayOfWeek: d, openMinute: OPEN_MINUTE, closeMinute: closeFor(d), ...IN_SEASON, sortOrder: 40 + d })
   }
   await prisma.operatingHours.createMany({ data: hoursRows })
   return { hours: hoursRows.length }
