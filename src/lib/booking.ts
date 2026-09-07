@@ -320,12 +320,23 @@ export async function placeHold(id: string) {
       where: { id },
       data: {
         status: 'PENDING',
-        // Shared bays need a human look unless we have just confirmed with
-        // Trackman that the window is empty. A failed live check always routes
-        // to review: we would rather a staff member spends a minute on a booking
-        // than let an unverified one confirm itself onto a sold-out floor.
+        // Shared bays need a human look unless Trackman has POSITIVELY told us
+        // this window is free — which takes more than a zero.
+        //
+        // Parties are booked weeks or months out, and Trackman's book for those
+        // dates is empty: across the whole forward horizon it currently returns
+        // no bookings at all, on any date. So "zero bays busy" is the answer for
+        // essentially every booking made here, and treating it as safety would
+        // auto-confirm the entire calendar against bays Trackman goes on to sell
+        // underneath it as each date approaches. That is the exact failure this
+        // check exists to prevent, and reading absence as evidence would cause
+        // it rather than catch it.
+        //
+        // Review is therefore skipped only when the feed shows Trackman IS
+        // selling that date and our window is clear within it. No data, an empty
+        // date, or a failed read all keep the human in the loop.
         needsReview:
-          assignment.usedShared && (!live.ok || live.demandInWindow === null || live.demandInWindow > 0),
+          assignment.usedShared && !(live.ok && live.datePopulated && live.demandInWindow === 0),
         holdExpiresAt,
         endMinutes,
         baysNeeded: quote.baysNeeded,
