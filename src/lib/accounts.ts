@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db'
-import { notifyStaff } from '@/lib/booking'
+import { notifyStaff } from '@/lib/notify'
 import { formatCents } from '@/lib/money'
 import { todayStr } from '@/lib/time'
 
