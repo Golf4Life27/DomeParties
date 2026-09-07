@@ -63,6 +63,7 @@ type Slot = {
   label: string
   availableBays: number
   peak: boolean
+  afterHours?: boolean
 }
 type Quote = {
   baysNeeded: number
@@ -665,10 +666,16 @@ export default function BookPage() {
                           className="rounded-lg border border-white/15 bg-surface px-3 py-3 text-sm font-medium transition hover:border-brand hover:bg-brand-light"
                         >
                           {s.label}
-                          {s.availableBays <= 3 && (
+                          {s.afterHours ? (
                             <span className="mt-0.5 block text-xs font-semibold text-accent">
-                              Only {s.availableBays} left
+                              Runs past close — we&apos;ll confirm staffing
                             </span>
+                          ) : (
+                            s.availableBays <= 3 && (
+                              <span className="mt-0.5 block text-xs font-semibold text-accent">
+                                Only {s.availableBays} left
+                              </span>
+                            )
                           )}
                           {s.peak && s.availableBays > 3 && (
                             <span className="mt-0.5 block text-xs text-foreground/50">Prime time</span>

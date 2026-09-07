@@ -377,9 +377,11 @@ export async function seedHours(prisma: PrismaClient) {
   // Off-season PARTY — mirrors golf exactly: closed Mon–Thu, open Fri–Sun.
   // Nothing is bookable Mon–Thu until the in-season window opens on Oct 1.
   for (const d of [1, 2, 3, 4]) hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: d, closed: true, ...OFF_SEASON, sortOrder: 20 })
-  hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 5, openMinute: 16 * 60, closeMinute: 21 * 60, ...OFF_SEASON, sortOrder: 21 })
-  hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 6, openMinute: 11 * 60, closeMinute: 21 * 60, ...OFF_SEASON, sortOrder: 22 })
-  hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 0, openMinute: 11 * 60, closeMinute: 18 * 60, ...OFF_SEASON, sortOrder: 23 })
+  // Party windows run past the dome's public close here too — see the in-season
+  // note below. Fri/Sat to 2am, Sunday to 1am.
+  hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 5, openMinute: 16 * 60, closeMinute: 26 * 60, ...OFF_SEASON, sortOrder: 21 })
+  hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 6, openMinute: 11 * 60, closeMinute: 26 * 60, ...OFF_SEASON, sortOrder: 22 })
+  hoursRows.push({ label: 'Off-season', kind: 'PARTY', dayOfWeek: 0, openMinute: 11 * 60, closeMinute: 25 * 60, ...OFF_SEASON, sortOrder: 23 })
   // In-season (Oct 1 – Mar 31): dome open 7 days a week, per Alex —
   //   Sun–Thu  8am–9pm
   //   Fri–Sat  8am–10pm
@@ -391,9 +393,15 @@ export async function seedHours(prisma: PrismaClient) {
   const OPEN_MINUTE = 8 * 60
   // dayOfWeek: 0 = Sunday … 5 = Friday, 6 = Saturday.
   const closeFor = (d: number) => (d === 5 || d === 6 ? 22 * 60 : 21 * 60)
+  // PARTY hours now run WIDER than golf, which is what the GOLF/PARTY split was
+  // always for. Golf close is when the dome shuts to the public; parties may run
+  // past it — we serve until 1am, 2am Fri/Sat — and a booking that does is not
+  // refused, it goes to an event coordinator because it changes staffing.
+  // Minutes past 1440 are the small hours of the following morning.
+  const partyCloseFor = (d: number) => (d === 5 || d === 6 ? 26 * 60 : 25 * 60)
   for (let d = 0; d <= 6; d++) {
     hoursRows.push({ label: 'In-season', kind: 'GOLF', dayOfWeek: d, openMinute: OPEN_MINUTE, closeMinute: closeFor(d), ...IN_SEASON, sortOrder: 30 + d })
-    hoursRows.push({ label: 'In-season', kind: 'PARTY', dayOfWeek: d, openMinute: OPEN_MINUTE, closeMinute: closeFor(d), ...IN_SEASON, sortOrder: 40 + d })
+    hoursRows.push({ label: 'In-season', kind: 'PARTY', dayOfWeek: d, openMinute: OPEN_MINUTE, closeMinute: partyCloseFor(d), ...IN_SEASON, sortOrder: 40 + d })
   }
   await prisma.operatingHours.createMany({ data: hoursRows })
   return { hours: hoursRows.length }

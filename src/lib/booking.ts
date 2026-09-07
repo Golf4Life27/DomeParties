@@ -267,9 +267,14 @@ export async function placeHold(id: string) {
   // Respect the day's real party hours (and any closure), not a global window.
   const ctx = await hoursContext(dateStr)
   const dayClose = ctx.party ? ctx.party.closeMinute : setting.closeHour * 60
+  // Party hours already run past the dome's public close, so a booking that
+  // spills into the small hours is inside this limit rather than beyond it.
+  // Only a window past the LATEST we will serve is refused; one that merely
+  // runs past closing is good business that needs a coordinator, and is routed
+  // to review below instead of being turned away.
   if (endMinutes > dayClose || (ctx.party && !isSellable(ctx, startMinutes, endMinutes))) {
     throw new BookingConflictError(
-      'That window runs outside our hours for this day — pick an earlier start time or trim the extra time.',
+      'That window runs later than we can serve on this day — pick an earlier start time or trim the extra time.',
     )
   }
 
@@ -335,8 +340,13 @@ export async function placeHold(id: string) {
         // Review is therefore skipped only when the feed shows Trackman IS
         // selling that date and our window is clear within it. No data, an empty
         // date, or a failed read all keep the human in the loop.
+        //
+        // An after-hours event always goes to a coordinator regardless of bays.
+        // Running past close is a staffing decision — bar, kitchen, front desk —
+        // and no amount of free floor answers it.
         needsReview:
-          assignment.usedShared && !(live.ok && live.datePopulated && live.demandInWindow === 0),
+          assignment.afterHours ||
+          (assignment.usedShared && !(live.ok && live.datePopulated && live.demandInWindow === 0)),
         holdExpiresAt,
         endMinutes,
         baysNeeded: quote.baysNeeded,

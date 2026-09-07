@@ -3,11 +3,26 @@
 // and timezone-free for a single-location venue.
 
 export function minutesToLabel(mins: number): string {
-  const h24 = Math.floor(mins / 60)
+  // After-hours events run past midnight, so minutes can exceed 1440 — an
+  // 8pm–2am Saturday party ends at 1560. Without the wrap, 1440 rendered as
+  // "12:00 PM" and 1560 as "2:00 PM", i.e. a customer was shown a party running
+  // "8:00 PM – 2:00 PM". Fold into the day before formatting; the next-day part
+  // is implied by the event's date and is spelled out where it matters.
+  const h24 = Math.floor(mins / 60) % 24
   const m = mins % 60
   const ampm = h24 >= 12 ? 'PM' : 'AM'
   const h12 = h24 % 12 === 0 ? 12 : h24 % 12
   return `${h12}:${m.toString().padStart(2, '0')} ${ampm}`
+}
+
+/** True when a time lands on the calendar day after the event's own date. */
+export function isNextDay(mins: number): boolean {
+  return mins >= 1440
+}
+
+/** Label that says out loud when a time is past midnight: "1:00 AM (next day)". */
+export function minutesToLabelWithDay(mins: number): string {
+  return isNextDay(mins) ? `${minutesToLabel(mins)} (next day)` : minutesToLabel(mins)
 }
 
 /** Format a YYYY-MM-DD date string (no timezone shifting). */

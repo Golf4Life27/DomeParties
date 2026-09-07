@@ -51,4 +51,9 @@ export type TimeSlot = {
   peak: boolean
   /** True when the slot can't collide with Trackman (golf closed then). */
   uncontested?: boolean
+  /**
+   * True when the event runs past the dome's public close. Still sellable —
+   * it just needs an event coordinator to arrange staffing.
+   */
+  afterHours?: boolean
 }
