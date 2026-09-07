@@ -209,6 +209,19 @@ export type LiveCheck = {
   rows: ParsedReservation[] | null
   /** External bays busy at any point in the requested window, when known. */
   demandInWindow: number | null
+  /**
+   * Whether Trackman holds ANY booking on this date.
+   *
+   * This is the difference between "we checked and the window is free" and "we
+   * checked and Trackman has not started selling this date yet", which look
+   * identical in `demandInWindow` and mean opposite things. Parties are booked
+   * weeks or months ahead, when Trackman's book for the date is still empty —
+   * measured across the whole forward horizon, every future date currently
+   * returns zero. Reading that emptiness as safety would auto-confirm every
+   * party in the calendar against bays Trackman then sells underneath it as the
+   * date approaches.
+   */
+  datePopulated: boolean
   reason?: string
 }
 
@@ -260,7 +273,12 @@ export async function readLive(
       where: { date, source: YGB_SOURCE },
       select: { startMinutes: true, endMinutes: true, bayCount: true },
     })
-    return { ok: true, rows: null, demandInWindow: peakDemand(stored, startMinutes, endMinutes) }
+    return {
+      ok: true,
+      rows: null,
+      demandInWindow: peakDemand(stored, startMinutes, endMinutes),
+      datePopulated: stored.length > 0,
+    }
   }
 
   try {
@@ -269,11 +287,12 @@ export async function readLive(
       ok: true,
       rows: reservations,
       demandInWindow: peakDemand(reservations, startMinutes, endMinutes),
+      datePopulated: reservations.length > 0,
     }
   } catch (e) {
     const reason = e instanceof Error ? e.message : String(e)
     console.error(`[ygb] live check failed for ${dateStr}:`, reason)
-    return { ok: false, rows: null, demandInWindow: null, reason }
+    return { ok: false, rows: null, demandInWindow: null, datePopulated: false, reason }
   }
 }
 

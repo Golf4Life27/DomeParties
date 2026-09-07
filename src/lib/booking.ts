@@ -267,9 +267,14 @@ export async function placeHold(id: string) {
   // Respect the day's real party hours (and any closure), not a global window.
   const ctx = await hoursContext(dateStr)
   const dayClose = ctx.party ? ctx.party.closeMinute : setting.closeHour * 60
+  // Party hours already run past the dome's public close, so a booking that
+  // spills into the small hours is inside this limit rather than beyond it.
+  // Only a window past the LATEST we will serve is refused; one that merely
+  // runs past closing is good business that needs a coordinator, and is routed
+  // to review below instead of being turned away.
   if (endMinutes > dayClose || (ctx.party && !isSellable(ctx, startMinutes, endMinutes))) {
     throw new BookingConflictError(
-      'That window runs outside our hours for this day — pick an earlier start time or trim the extra time.',
+      'That window runs later than we can serve on this day — pick an earlier start time or trim the extra time.',
     )
   }
 
@@ -320,12 +325,28 @@ export async function placeHold(id: string) {
       where: { id },
       data: {
         status: 'PENDING',
-        // Shared bays need a human look unless we have just confirmed with
-        // Trackman that the window is empty. A failed live check always routes
-        // to review: we would rather a staff member spends a minute on a booking
-        // than let an unverified one confirm itself onto a sold-out floor.
+        // Shared bays need a human look unless Trackman has POSITIVELY told us
+        // this window is free — which takes more than a zero.
+        //
+        // Parties are booked weeks or months out, and Trackman's book for those
+        // dates is empty: across the whole forward horizon it currently returns
+        // no bookings at all, on any date. So "zero bays busy" is the answer for
+        // essentially every booking made here, and treating it as safety would
+        // auto-confirm the entire calendar against bays Trackman goes on to sell
+        // underneath it as each date approaches. That is the exact failure this
+        // check exists to prevent, and reading absence as evidence would cause
+        // it rather than catch it.
+        //
+        // Review is therefore skipped only when the feed shows Trackman IS
+        // selling that date and our window is clear within it. No data, an empty
+        // date, or a failed read all keep the human in the loop.
+        //
+        // An after-hours event always goes to a coordinator regardless of bays.
+        // Running past close is a staffing decision — bar, kitchen, front desk —
+        // and no amount of free floor answers it.
         needsReview:
-          assignment.usedShared && (!live.ok || live.demandInWindow === null || live.demandInWindow > 0),
+          assignment.afterHours ||
+          (assignment.usedShared && !(live.ok && live.datePopulated && live.demandInWindow === 0)),
         holdExpiresAt,
         endMinutes,
         baysNeeded: quote.baysNeeded,

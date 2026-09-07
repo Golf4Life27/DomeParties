@@ -94,6 +94,21 @@ export function isUncontested(ctx: HoursContext, startMinutes: number, endMinute
   return !overlaps(startMinutes, endMinutes, ctx.golf.openMinute, ctx.golf.closeMinute)
 }
 
+/**
+ * True when a party runs past the dome's public closing time.
+ *
+ * Golf close IS the public close — it is when the building stops selling to
+ * walk-ins. Party hours deliberately run wider (we serve until 1am, 2am on
+ * Fri/Sat), so an 8pm-midnight Saturday is a real, sellable booking. It is not
+ * refused; it needs an event coordinator, because running past close changes
+ * staffing rather than whether the business is wanted.
+ */
+export function isAfterHours(ctx: HoursContext, startMinutes: number, endMinutes: number): boolean {
+  void startMinutes
+  if (!ctx.golf) return false // no public golf window to run past
+  return endMinutes > ctx.golf.closeMinute
+}
+
 /** True when the window sits inside party hours and clear of every closure. */
 export function isSellable(ctx: HoursContext, startMinutes: number, endMinutes: number): boolean {
   if (!ctx.party) return false

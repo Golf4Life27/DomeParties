@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db'
 import { minutesToLabel, isPeakSlot, todayStr, addDays } from '@/lib/time'
-import { hoursContext, isSellable, isUncontested } from '@/lib/hours'
+import { hoursContext, isSellable, isUncontested, isAfterHours } from '@/lib/hours'
 import type { TimeSlot } from '@/lib/types'
 
 /**
@@ -34,7 +34,7 @@ export interface AvailabilityProvider {
     endMinutes: number,
     baysNeeded: number,
     excludeBookingId?: string,
-  ): Promise<{ resourceIds: string[]; usedShared: boolean; uncontested: boolean } | null>
+  ): Promise<{ resourceIds: string[]; usedShared: boolean; uncontested: boolean; afterHours: boolean } | null>
 }
 
 const SLOT_STEP = 30 // minutes between candidate start times
@@ -180,7 +180,12 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
     const buffer = setting.bufferMinutes
     const slots: TimeSlot[] = []
 
-    for (let start = open; start + durationMinutes <= close; start += SLOT_STEP) {
+    // Two different limits. A party may END past the dome's public close (party
+    // hours run to 1am, 2am Fri/Sat), but it may not START after the doors shut
+    // — otherwise the picker fills with 1am start times nobody wants. So the
+    // last start is public close, and the last finish is party close.
+    const lastStart = ctx.golf ? Math.min(ctx.golf.closeMinute, close - durationMinutes) : close - durationMinutes
+    for (let start = open; start <= lastStart; start += SLOT_STEP) {
       const end = start + durationMinutes
       if (ctx.party && !isSellable(ctx, start, end)) continue // closure or outside party hours
       // Count bays made busy by an existing booking that conflicts with this window.
@@ -202,6 +207,7 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
           availableBays,
           peak: isPeakSlot(dateStr),
           uncontested: isUncontested(ctx, start, end),
+          afterHours: isAfterHours(ctx, start, end),
         })
       }
     }
@@ -214,7 +220,7 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
     endMinutes: number,
     baysNeeded: number,
     excludeBookingId?: string,
-  ): Promise<{ resourceIds: string[]; usedShared: boolean; uncontested: boolean } | null> {
+  ): Promise<{ resourceIds: string[]; usedShared: boolean; uncontested: boolean; afterHours: boolean } | null> {
     const { setting, bays, intervals, external } = await loadDay(dateStr, excludeBookingId)
     const buffer = setting.bufferMinutes
     const busyBayIds = new Set<string>()
@@ -246,6 +252,7 @@ class InternalAvailabilityProvider implements AvailabilityProvider {
       resourceIds: chosen.map((b) => b.id),
       usedShared: chosen.some((b) => !b.exclusive),
       uncontested,
+      afterHours: isAfterHours(ctx, startMinutes, endMinutes),
     }
   }
 }

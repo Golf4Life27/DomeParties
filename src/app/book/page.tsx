@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { formatCents } from '@/lib/money'
-import { minutesToLabel } from '@/lib/time'
+import { minutesToLabel, formatDateLong } from '@/lib/time'
 import { track } from '@/lib/track'
 import { VENUE } from '@/lib/venue'
 import PaymentStep from './PaymentStep'
@@ -63,6 +63,7 @@ type Slot = {
   label: string
   availableBays: number
   peak: boolean
+  afterHours?: boolean
 }
 type Quote = {
   baysNeeded: number
@@ -116,6 +117,10 @@ export default function BookPage() {
   const [dateStr, setDateStr] = useState('')
   const [slots, setSlots] = useState<Slot[]>([])
   const [slotsLoading, setSlotsLoading] = useState(false)
+  // Why a date came back empty, and the next one that isn't. Without these the
+  // customer is guess-and-checking a calendar with no visible pattern.
+  const [emptyReason, setEmptyReason] = useState<'closed' | 'too_soon' | 'full' | null>(null)
+  const [nextAvailableDate, setNextAvailableDate] = useState<string | null>(null)
   const [startMinutes, setStartMinutes] = useState<number | null>(null)
   const [fnbPackageId, setFnbPackageId] = useState<string | null>(null)
   const [addOns, setAddOns] = useState<Record<string, number>>({})
@@ -326,6 +331,8 @@ export default function BookPage() {
         )
         const data = await res.json()
         setSlots(data.slots ?? [])
+        setEmptyReason(data.emptyReason ?? null)
+        setNextAvailableDate(data.nextAvailableDate ?? null)
       } finally {
         setSlotsLoading(false)
       }
@@ -630,10 +637,26 @@ export default function BookPage() {
                   {slotsLoading ? (
                     <p className="text-sm text-foreground/60">Checking the calendar…</p>
                   ) : slots.length === 0 ? (
-                    <p className="rounded-lg bg-amber-400/10 p-3 text-sm text-amber-300">
-                      No openings for {quote?.baysNeeded ?? 1} bay(s) that day. Try another
-                      date — weekends fill up fast!
-                    </p>
+                    <div className="rounded-lg bg-amber-400/10 p-3 text-sm text-amber-300">
+                      <p>
+                        {emptyReason === 'closed'
+                          ? "We're not open for parties that day."
+                          : emptyReason === 'too_soon'
+                            ? `That date is sooner than we can take online. Give us ${catalog.setting.leadTimeDaysOnline} days' notice, or call ${VENUE.phone} and we'll see what we can do.`
+                            : `That day is fully booked for ${quote?.baysNeeded ?? 1} bay(s).`}
+                      </p>
+                      {nextAvailableDate && (
+                        <button
+                          onClick={() => {
+                            setDateStr(nextAvailableDate)
+                            loadSlots(nextAvailableDate)
+                          }}
+                          className="mt-2 rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-white transition hover:bg-brand-light"
+                        >
+                          Next opening: {formatDateLong(nextAvailableDate)} — use this date
+                        </button>
+                      )}
+                    </div>
                   ) : (
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                       {slots.map((s) => (
@@ -643,10 +666,16 @@ export default function BookPage() {
                           className="rounded-lg border border-white/15 bg-surface px-3 py-3 text-sm font-medium transition hover:border-brand hover:bg-brand-light"
                         >
                           {s.label}
-                          {s.availableBays <= 3 && (
+                          {s.afterHours ? (
                             <span className="mt-0.5 block text-xs font-semibold text-accent">
-                              Only {s.availableBays} left
+                              Runs past close — we&apos;ll confirm staffing
                             </span>
+                          ) : (
+                            s.availableBays <= 3 && (
+                              <span className="mt-0.5 block text-xs font-semibold text-accent">
+                                Only {s.availableBays} left
+                              </span>
+                            )
                           )}
                           {s.peak && s.availableBays > 3 && (
                             <span className="mt-0.5 block text-xs text-foreground/50">Prime time</span>
