@@ -120,11 +120,18 @@ export function isSellable(ctx: HoursContext, startMinutes: number, endMinutes: 
 export function describeWindow(w: Window | null): string {
   if (!w) return 'Closed'
   const fmt = (m: number) => {
-    const h24 = Math.floor(m / 60)
+    // Party windows now close past midnight (2am Fri/Sat = 1560). Without the
+    // wrap this rendered 1560 as "2pm", so admin read "4pm-2pm" for a window
+    // that actually runs 4pm to 2am. minutesToLabel was fixed for the customer
+    // side; this formatter is separate and was missed.
+    const h24 = Math.floor(m / 60) % 24
     const mm = m % 60
     const ampm = h24 >= 12 ? 'PM' : 'AM'
     const h12 = h24 % 12 === 0 ? 12 : h24 % 12
     return `${h12}${mm ? ':' + String(mm).padStart(2, '0') : ''}${ampm.toLowerCase()}`
   }
-  return `${fmt(w.openMinute)}–${fmt(w.closeMinute)}`
+  // Say "next day" when the window crosses midnight, so "4pm–2am" can't be
+  // misread as a window that ends before it starts.
+  const suffix = w.closeMinute >= 1440 ? ' (next day)' : ''
+  return `${fmt(w.openMinute)}–${fmt(w.closeMinute)}${suffix}`
 }
