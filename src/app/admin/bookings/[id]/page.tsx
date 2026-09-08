@@ -85,18 +85,29 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <Row k="Waiver signed" v={b.waiverSigned ? `Yes — ${b.waiverSignedName ?? ''}` : 'No'} />
           <Row k="Guardian (minors)" v={b.waiverGuardian ? 'Yes' : 'No'} />
           {b.waiverSignedAt && <Row k="Signed at" v={b.waiverSignedAt.toISOString().slice(0, 16).replace('T', ' ')} />}
-          {/* Which ad started this booking — first-touch, stamped at draft creation. */}
-          {(b.utmSource || b.fbclid) && (
+          {/* Which ad started this booking — first-touch, stamped at draft creation.
+              fbp counts. It is Meta's browser id, set by the pixel on anyone who
+              has seen our ads, and it arrives on plenty of visits that carry no
+              utm tag — a saved link, a shared URL, a click Meta stripped. Keying
+              this row on utmSource/fbclid alone rendered those as no attribution
+              at all, which is why half the drafts looked untracked when they
+              were not. */}
+          {(b.utmSource || b.fbclid || b.fbp) && (
             <Row
               k="Marketing"
-              v={[
-                [b.utmSource, b.utmMedium].filter(Boolean).join(' / ') || 'Meta ad click',
-                b.utmCampaign,
-              ]
-                .filter(Boolean)
-                .join(' · ')}
+              v={
+                [
+                  [b.utmSource, b.utmMedium].filter(Boolean).join(' / '),
+                  b.utmCampaign,
+                  b.utmContent,
+                ]
+                  .filter(Boolean)
+                  .join(' · ') ||
+                (b.fbclid ? 'Meta ad click (no campaign tag)' : 'Known to Meta pixel, no campaign tag')
+              }
             />
           )}
+          {b.landingPath && <Row k="Landed on" v={b.landingPath} />}
         </Card>
 
         <Card title="Money">

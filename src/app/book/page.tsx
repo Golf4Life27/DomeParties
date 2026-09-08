@@ -51,6 +51,7 @@ type Setting = {
   maxGolfers: number
   maxFnbGuests: number
   depositPercent: number
+  cardFeePct: number
   serviceChargePct: number
   taxPct: number
   cancelHoursLarge: number
@@ -299,10 +300,28 @@ export default function BookPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, eventType }),
       })
-      const data = await res.json()
+      const data = await res.json().catch(() => null)
+      // Nothing below is safe without a draft id, and there was no check here at
+      // all: a failed POST left data.id undefined, yet the customer was advanced
+      // to step 1 regardless. From there every save targeted
+      // /api/bookings/undefined and silently failed, so they filled in a whole
+      // booking that could never be completed. It also fired the conversion
+      // event with an undefined id, which is why Meta counted 141 registrations
+      // against 102 records that actually exist — 39 people walked into a dead
+      // flow and were billed to the ad account as a success.
+      if (!res.ok || !data?.id) {
+        setError(
+          data?.error === 'Invalid'
+            ? 'That email doesn’t look right — please check it and try again.'
+            : `Something went wrong starting your booking. Please try again, or call ${VENUE.phone}.`,
+        )
+        return
+      }
       setDraftId(data.id)
       // Top-of-funnel conversion signal for ad delivery. The booking id is the
       // event id, matching the convention used by the lead and purchase events.
+      // Fired only once a draft really exists, so the id can dedupe against the
+      // server-side event.
       track('start_booking', { eventId: data.id, reference: data.reference })
       setStep(1)
     } catch {
@@ -999,6 +1018,8 @@ export default function BookPage() {
             dateStr={dateStr}
             startMinutes={startMinutes}
             quote={quote}
+            cardFeePct={catalog.setting.cardFeePct ?? 0}
+            giftApplied={giftApplied}
           />
         </aside>
       </div>
@@ -1222,6 +1243,8 @@ function OrderSummary({
   dateStr,
   startMinutes,
   quote,
+  cardFeePct,
+  giftApplied,
 }: {
   pkg: Pkg | null
   partySize: number
@@ -1229,7 +1252,13 @@ function OrderSummary({
   dateStr: string
   startMinutes: number | null
   quote: Quote | null
+  cardFeePct: number
+  giftApplied: number
 }) {
+  // Mirrors createDepositIntent: a gift card is spent against the deposit
+  // first, and the card fee is charged on whatever is left to pay.
+  const depositBeforeFee = Math.max(0, (quote?.depositAmount ?? 0) - giftApplied)
+  const cardFee = cardFeePct > 0 ? Math.round((depositBeforeFee * cardFeePct) / 100) : 0
   return (
     <div className="rounded-2xl bg-surface p-5 shadow-sm ring-1 ring-white/10">
       <h3 className="font-bold text-brand">Your event</h3>
@@ -1265,9 +1294,27 @@ function OrderSummary({
                 <span>Total</span>
                 <span>{formatCents(quote.total)}</span>
               </div>
-              <div className="mt-1 flex justify-between text-sm text-brand">
-                <span>Deposit due now ({quote.depositPercent}%)</span>
-                <span className="font-bold">{formatCents(quote.depositAmount)}</span>
+              {/* The card fee is charged by createDepositIntent on top of the
+                  deposit. It used to appear for the first time on the Pay
+                  button — the summary promised $96.71 and the button asked for
+                  $100.09 — so the price changed at the final click, which is
+                  the worst possible moment to surprise someone. Same arithmetic
+                  as the server, shown from the first quote onward. */}
+              <div className="mt-1 flex justify-between text-sm">
+                <span className="text-foreground/70">Deposit ({quote.depositPercent}%)</span>
+                <span className="font-medium">{formatCents(depositBeforeFee)}</span>
+              </div>
+              {cardFee > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-foreground/70">
+                    Card processing fee ({cardFeePct}%)
+                  </span>
+                  <span className="font-medium">{formatCents(cardFee)}</span>
+                </div>
+              )}
+              <div className="mt-0.5 flex justify-between text-sm text-brand">
+                <span className="font-semibold">Due now</span>
+                <span className="font-bold">{formatCents(depositBeforeFee + cardFee)}</span>
               </div>
               <div className="flex justify-between text-xs text-foreground/50">
                 <span>Balance at event</span>
