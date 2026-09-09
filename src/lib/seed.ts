@@ -143,12 +143,18 @@ export async function runSeed(prisma: PrismaClient) {
       },
       {
         name: 'Birthday Party — Up to 20 Guests',
-        tier: '4 Bays',
+        tier: '2–4 Bays',
         eventType: 'BIRTHDAY',
-        description: 'The big bash for up to 20 guests across 4 bays — perfect for bigger friend groups and families.',
+        description: 'The big bash for bigger friend groups and families — up to 20 guests, with bays matched to your headcount.',
         includes: BAY_INCLUDES,
         durationMinutes: 120,
-        bays: 4,
+        // A FLOOR, not a fixed count. This was 4 fixed, so every party of 11–20
+        // bought four bays: twelve guests fit in two (bayCapacity is 6) and were
+        // charged $229 more than the room they used, on a Saturday, against a
+        // card advertising "from $330". dynamicBays makes it max(2, ceil(size/6))
+        // — 11–12 take two bays, 13–18 three, 19–20 four.
+        bays: 2,
+        dynamicBays: true,
         pricingType: 'BAY_RATE',
         minGuests: 11,
         maxGuests: 20,
