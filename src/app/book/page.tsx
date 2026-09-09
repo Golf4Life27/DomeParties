@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { formatCents } from '@/lib/money'
 import { minutesToLabel, formatDateLong } from '@/lib/time'
@@ -124,6 +124,12 @@ export default function BookPage() {
   // customer is guess-and-checking a calendar with no visible pattern.
   const [emptyReason, setEmptyReason] = useState<'closed' | 'too_soon' | 'full' | null>(null)
   const [nextAvailableDate, setNextAvailableDate] = useState<string | null>(null)
+  // A lookup that FAILED, as distinct from one that found nothing. Telling
+  // someone the dome is closed when we simply could not ask is the most
+  // expensive wrong answer this page can give.
+  const [slotsError, setSlotsError] = useState(false)
+  // Rapid date clicking can land responses out of order; only the newest wins.
+  const slotReqRef = useRef(0)
   const [startMinutes, setStartMinutes] = useState<number | null>(null)
   const [fnbPackageId, setFnbPackageId] = useState<string | null>(null)
   const [addOns, setAddOns] = useState<Record<string, number>>({})
@@ -344,18 +350,36 @@ export default function BookPage() {
   const loadSlots = useCallback(
     async (date: string) => {
       if (!packageId) return
+      const reqId = ++slotReqRef.current
       setSlotsLoading(true)
       setStartMinutes(null)
+      // Clear the previous date's verdict before asking about this one. There
+      // was no catch here and no reset: when the request failed, none of the
+      // setters ran, `finally` stopped the spinner, and the page kept showing
+      // the LAST date's answer as though it were this one's. Pick an open
+      // Saturday in October after viewing a closed Tuesday and you were told
+      // "We're not open for parties that day", with a next-opening button
+      // pointing weeks into the past. The dates were never closed; the answer
+      // on screen was left over.
+      setSlots([])
+      setEmptyReason(null)
+      setNextAvailableDate(null)
+      setSlotsError(false)
       try {
         const res = await fetch(
           `/api/availability?date=${date}&partySize=${partySize}&packageId=${packageId}`,
         )
+        if (!res.ok) throw new Error(`availability ${res.status}`)
         const data = await res.json()
+        if (slotReqRef.current !== reqId) return // a newer date won the race
         setSlots(data.slots ?? [])
         setEmptyReason(data.emptyReason ?? null)
         setNextAvailableDate(data.nextAvailableDate ?? null)
+      } catch {
+        if (slotReqRef.current !== reqId) return
+        setSlotsError(true)
       } finally {
-        setSlotsLoading(false)
+        if (slotReqRef.current === reqId) setSlotsLoading(false)
       }
     },
     [packageId, partySize],
@@ -657,6 +681,22 @@ export default function BookPage() {
                   <Label>Available start times</Label>
                   {slotsLoading ? (
                     <p className="text-sm text-foreground/60">Checking the calendar…</p>
+                  ) : slotsError ? (
+                    <div className="rounded-lg bg-amber-400/10 p-3 text-sm text-amber-300">
+                      <p>
+                        We couldn&apos;t check the calendar just now — this is us, not your
+                        date.
+                      </p>
+                      <button
+                        onClick={() => loadSlots(dateStr)}
+                        className="mt-2 rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-white transition hover:bg-brand-light"
+                      >
+                        Try again
+                      </button>
+                      <p className="mt-2 text-xs text-amber-300/80">
+                        Still stuck? Call {VENUE.phone} and we&apos;ll book it for you.
+                      </p>
+                    </div>
                   ) : slots.length === 0 ? (
                     <div className="rounded-lg bg-amber-400/10 p-3 text-sm text-amber-300">
                       <p>
@@ -1305,6 +1345,9 @@ function OrderSummary({
                 <span>Total</span>
                 <span>{formatCents(quote.total)}</span>
               </div>
+              {quote.taxPct === 0 && (
+                <p className="text-xs text-foreground/40">Sales tax included in listed prices.</p>
+              )}
               {/* The card fee is charged by createDepositIntent on top of the
                   deposit. It used to appear for the first time on the Pay
                   button — the summary promised $96.71 and the button asked for

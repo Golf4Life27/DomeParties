@@ -199,12 +199,20 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
   }
 
   // --- Tax (shown up front) ---
+  // Venue policy is tax-INCLUSIVE pricing: the listed prices already contain
+  // sales tax, so taxPct is 0 and nothing is added on top. Production ran at
+  // 7.25% against that policy, charging tax twice — $55.10 on a $967 booking.
+  // A zero line still rendered as "Sales tax (0%) $0.00", which reads like a
+  // bug to a customer, so it is omitted entirely and the summary says prices
+  // include tax instead.
   const goodsSubtotal = packageTotal + peakAdjustment + fnbTotal + addOnsTotal
   const taxAmount = Math.round((goodsSubtotal * setting.taxPct) / 100)
-  lines.push({
-    label: `Sales tax (${setting.taxPct}%)`,
-    amount: taxAmount,
-  })
+  if (taxAmount > 0) {
+    lines.push({
+      label: `Sales tax (${setting.taxPct}%)`,
+      amount: taxAmount,
+    })
+  }
 
   const total = goodsSubtotal + serviceCharge + taxAmount
   const depositAmount = applyPercent(total, setting.depositPercent)
