@@ -32,7 +32,7 @@ model Setting {
   depositPercent       Int      @default(10)
   serviceChargePct     Int      @default(20) // auto service charge on F&B + staffed portion
   serviceChargeOnGolf  Boolean  @default(false) // brochure policy: 20% service charge also on golf/bay charges
-  taxPct               Float    @default(7.25) // Oswego, IL placeholder — confirm exact rate
+  taxPct               Float    @default(0) // venue policy: listed prices are tax-INCLUSIVE
   // Dynamic pricing (applied to the package/bay-time portion)
   peakSurchargePct     Int      @default(15) // weekend/evening premium
   offPeakDiscountPct   Int      @default(0) // weekday/midday incentive

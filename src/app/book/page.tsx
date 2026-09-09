@@ -1305,6 +1305,9 @@ function OrderSummary({
                 <span>Total</span>
                 <span>{formatCents(quote.total)}</span>
               </div>
+              {quote.taxPct === 0 && (
+                <p className="text-xs text-foreground/40">Sales tax included in listed prices.</p>
+              )}
               {/* The card fee is charged by createDepositIntent on top of the
                   deposit. It used to appear for the first time on the Pay
                   button — the summary promised $96.71 and the button asked for
