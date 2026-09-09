@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { updateDraft } from '@/lib/booking'
+import { activeWaiver } from '@/lib/waiver'
 
 const patchSchema = z.object({
   dateStr: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
@@ -45,6 +46,12 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid body', details: parsed.error.issues }, { status: 400 })
   }
+  // Signing is the one field the client cannot be trusted to describe. WHICH
+  // terms were agreed to, and the evidence around the act, are read from the
+  // server at the moment it happens — a client-supplied version could claim any
+  // document at all, which is precisely the claim this record has to survive.
+  const signing = parsed.data.waiverSigned === true
+  const waiver = signing ? await activeWaiver() : null
   const existing = await prisma.booking.findUnique({ where: { id } })
   if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (existing.status !== 'DRAFT' && existing.status !== 'PENDING') {
@@ -79,5 +86,15 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     ])
   }
   const booking = await updateDraft(id, parsed.data)
+  if (signing && waiver) {
+    await prisma.booking.update({
+      where: { id },
+      data: {
+        waiverVersionId: waiver.id,
+        waiverIp: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null,
+        waiverUserAgent: req.headers.get('user-agent')?.slice(0, 400) ?? null,
+      },
+    })
+  }
   return NextResponse.json({ booking })
 }

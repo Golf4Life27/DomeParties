@@ -1,6 +1,7 @@
 // Catalog + venue-config seed, importable so the admin can (re)load it after
 // deploy without local tooling. Data sourced from the venue's party cards.
 import type { PrismaClient } from '@/generated/prisma'
+import { seedWaiver } from '@/lib/waiver'
 
 export async function runSeed(prisma: PrismaClient) {
   // --- Settings -------------------------------------------------------------
@@ -48,6 +49,7 @@ export async function runSeed(prisma: PrismaClient) {
   })
 
   await seedHours(prisma)
+  await seedWaiver()
 
 
   // --- Resources: 30 bays (15 up / 15 down), 2 sims, bar/restaurant ---------

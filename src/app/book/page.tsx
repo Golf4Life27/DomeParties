@@ -45,6 +45,7 @@ type AddOn = {
   choiceCount: number
   choiceList: string[]
 }
+type Waiver = { version: string; title: string; body: string }
 type Setting = {
   bayCapacity: number
   leadTimeDaysOnline: number
@@ -107,6 +108,7 @@ export default function BookPage() {
     packages: Pkg[]
     fnb: Fnb[]
     addOns: AddOn[]
+    waiver?: Waiver
   } | null>(null)
 
   // selections
@@ -368,7 +370,7 @@ export default function BookPage() {
   async function goToCheckout() {
     setError(null)
     if (!waiverSigned || !waiverName.trim()) {
-      setError('Please review and sign the waiver to continue.')
+      setError('Please review and accept the reservation terms and safety rules to continue.')
       return
     }
     if (!name.trim()) {
@@ -888,11 +890,16 @@ export default function BookPage() {
               </div>
 
               <div className="mt-6 rounded-xl border border-white/15 bg-surface p-4">
-                <h3 className="font-semibold text-brand">Liability waiver</h3>
-                <div className="mt-2 max-h-32 overflow-y-auto rounded bg-white/5 p-3 text-xs text-foreground/70">
-                  By signing, you acknowledge the risks of golf and entertainment
-                  activities at Whitetail Ridge Golf Dome and agree to our terms.
-                  (Full waiver text to be provided — placeholder for now.)
+                <h3 className="font-semibold text-brand">
+                  {catalog.waiver?.title ?? 'Reservation terms & safety rules'}
+                </h3>
+                {/* The real text, in full and scrollable. It used to be a
+                    one-line summary ending "(placeholder for now)" — a document
+                    that admitted it was not a document, collected one screen
+                    before payment. Taller than the old box because terms nobody
+                    can read are terms nobody agreed to. */}
+                <div className="mt-2 max-h-56 overflow-y-auto whitespace-pre-line rounded bg-white/5 p-3 text-xs leading-relaxed text-foreground/70">
+                  {catalog.waiver?.body ?? 'Loading terms…'}
                 </div>
                 <label className="mt-3 flex items-start gap-2 text-sm">
                   <input
@@ -901,7 +908,7 @@ export default function BookPage() {
                     onChange={(e) => setWaiverSigned(e.target.checked)}
                     className="mt-1"
                   />
-                  <span>I have read and agree to the waiver.</span>
+                  <span>I have read and agree to the reservation terms and safety rules.</span>
                 </label>
                 <label className="mt-2 flex items-start gap-2 text-sm">
                   <input
@@ -910,7 +917,11 @@ export default function BookPage() {
                     onChange={(e) => setWaiverGuardian(e.target.checked)}
                     className="mt-1"
                   />
-                  <span>I am signing as the parent/guardian for guests under 18.</span>
+                  <span>
+                    I am signing as the parent/guardian for guests under 18, and a guest aged
+                    21+ will supervise them (required at all times under 16, and after 9PM
+                    under 18).
+                  </span>
                 </label>
                 <div className="mt-3">
                   <Label>Type your full name to sign</Label>

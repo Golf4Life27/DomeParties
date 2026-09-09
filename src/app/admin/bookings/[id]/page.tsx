@@ -17,6 +17,7 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
       fnbPackage: true,
       addOns: { include: { addOn: true } },
       resources: { include: { resource: true } },
+      waiverVersion: true,
     },
   })
   if (!b) notFound()
@@ -84,6 +85,10 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <Row k="Phone" v={b.customerPhone ?? '—'} />
           <Row k="Waiver signed" v={b.waiverSigned ? `Yes — ${b.waiverSignedName ?? ''}` : 'No'} />
           <Row k="Guardian (minors)" v={b.waiverGuardian ? 'Yes' : 'No'} />
+          {/* Which document, not just that a box was ticked — the version is the
+              only thing tying this signature to specific words. */}
+          {b.waiverVersion && <Row k="Terms version" v={b.waiverVersion.version} />}
+          {b.waiverIp && <Row k="Signed from" v={b.waiverIp} />}
           {b.waiverSignedAt && <Row k="Signed at" v={b.waiverSignedAt.toISOString().slice(0, 16).replace('T', ' ')} />}
           {/* Which ad started this booking — first-touch, stamped at draft creation.
               fbp counts. It is Meta's browser id, set by the pixel on anyone who
