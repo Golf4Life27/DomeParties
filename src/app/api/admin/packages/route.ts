@@ -10,6 +10,9 @@ const schema = z.object({
   includes: z.array(z.string()).default([]),
   durationMinutes: z.number().int().min(30).max(720).default(120),
   bays: z.number().int().min(1).max(30).default(2),
+  // With dynamicBays, `bays` is a floor and the real count scales with the
+  // party: max(bays, ceil(partySize / bayCapacity)).
+  dynamicBays: z.boolean().default(false),
   pricingType: z.enum(['PER_PERSON', 'FLAT', 'BAY_RATE']).default('PER_PERSON'),
   pricePerPerson: z.number().int().min(0).default(0),
   flatPrice: z.number().int().min(0).default(0),

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getBayRate } from '@/lib/pricing'
+import { activeWaiver } from '@/lib/waiver'
 
 // Catalog for the booking wizard: active packages, F&B, add-ons, and settings.
 // Each package gets a display price: BAY_RATE → a "from" estimate; otherwise the
@@ -33,5 +34,6 @@ export async function GET() {
     }),
   )
 
-  return NextResponse.json({ setting, packages: enriched, fnb, addOns })
+  const waiver = await activeWaiver()
+  return NextResponse.json({ setting, packages: enriched, fnb, addOns, waiver })
 }
