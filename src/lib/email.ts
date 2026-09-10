@@ -400,6 +400,24 @@ Reference: ${data.reference}
   return { subject, html, text }
 }
 
+/**
+ * Escape text before it goes into an HTML email body.
+ *
+ * Staff alerts carry customer-authored free text (a lead's message, their name,
+ * the phone number they typed). None of it was escaped, so an ampersand in a
+ * company name rendered as mojibake and a stray `<` swallowed the rest of the
+ * line — and a public endpoint could put arbitrary markup into the inbox of
+ * whoever reads these. Every interpolation below goes through here.
+ */
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 /** Internal staff notification with a link into the admin. */
 export function buildStaffNotification(data: {
   title: string
@@ -408,20 +426,75 @@ export function buildStaffNotification(data: {
   urgent?: boolean
   actionUrl?: string
   actionLabel?: string
+  /**
+   * Free text the customer wrote, in their own words. Kept out of `lines`
+   * deliberately: a bullet list is for scannable facts, and a paragraph
+   * crammed into an <li> is the part people skip. This renders as a quoted
+   * block with newlines preserved.
+   */
+  note?: { label: string; body: string } | null
+  /**
+   * Tap-to-act links. These alerts are read on a phone, and speed-to-lead is
+   * the whole point — replying should not require opening the admin first.
+   */
+  contact?: { email?: string | null; phone?: string | null } | null
 }) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const url = `${appUrl}${data.adminPath}`
   const subject = `${data.urgent ? '🔴 ACTION NEEDED: ' : ''}${data.title}`
+  const note = data.note?.body?.trim() ? data.note : null
+  const email = data.contact?.email?.trim() || null
+  const phoneRaw = data.contact?.phone?.trim() || null
+  // The phone field is free text ("630-870-2136 x4", "(630) 870-2136"), and a
+  // tap-to-call button that dials the WRONG number is worse than no button.
+  // So: stop at the first letter (an extension marker), keep dial characters,
+  // and only link when what's left is a dialable length. Anything we can't be
+  // sure of stays plain text — it is still printed in the Contact line above.
+  const phoneDial = (() => {
+    if (!phoneRaw) return null
+    const dial = phoneRaw.split(/[a-z#]/i)[0].replace(/[^\d+]/g, '')
+    const digits = dial.replace(/\D/g, '')
+    return digits.length >= 10 && digits.length <= 15 ? dial : null
+  })()
+
   const text = `${data.title}
 
 ${data.lines.join('\n')}
-${data.actionUrl ? `\n${data.actionLabel ?? 'One-tap action'}: ${data.actionUrl}\n` : ''}
+${note ? `\n${note.label}:\n${note.body}\n` : ''}${
+    email || phoneRaw ? `\nReply: ${[email, phoneRaw].filter(Boolean).join(' · ')}\n` : ''
+  }${data.actionUrl ? `\n${data.actionLabel ?? 'One-tap action'}: ${data.actionUrl}\n` : ''}
 Open in admin: ${url}`
+
+  const noteHtml = note
+    ? `<p style="margin:16px 0 4px;font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:.04em;color:#6b7280">${escapeHtml(
+        note.label,
+      )}</p>
+  <blockquote style="margin:0;padding:12px 16px;border-left:3px solid #0e1740;background:#f6f7f9;border-radius:0 8px 8px 0;white-space:pre-wrap;color:#111">${escapeHtml(
+    note.body.trim(),
+  )}</blockquote>`
+    : ''
+
+  const contactHtml =
+    email || phoneDial
+      ? `<p style="margin:16px 0 0">${[
+          email
+            ? `<a href="mailto:${escapeHtml(email)}" style="background:#0e1740;color:#fff;padding:10px 20px;border-radius:999px;text-decoration:none;font-weight:bold;display:inline-block;margin:0 8px 8px 0">Reply by email ✉</a>`
+            : '',
+          phoneDial
+            ? `<a href="tel:${escapeHtml(phoneDial)}" style="background:#16a34a;color:#fff;padding:10px 20px;border-radius:999px;text-decoration:none;font-weight:bold;display:inline-block;margin:0 8px 8px 0">Call ${escapeHtml(
+                phoneRaw ?? '',
+              )} ☎</a>`
+            : '',
+        ].join('')}</p>`
+      : ''
+
   const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
-  <h2 style="color:${data.urgent ? '#b91c1c' : '#0e1740'}">${subject}</h2>
-  <ul>${data.lines.map((l) => `<li>${l}</li>`).join('')}</ul>
-  ${data.actionUrl ? `<p><a href="${data.actionUrl}" style="background:#16a34a;color:#fff;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold">${data.actionLabel ?? 'One-tap action'} ✓</a></p>` : ''}
-  <p><a href="${url}" style="background:#0e1740;color:#fff;padding:10px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open in admin →</a></p>
+  <h2 style="color:${data.urgent ? '#b91c1c' : '#0e1740'}">${escapeHtml(subject)}</h2>
+  <ul>${data.lines.map((l) => `<li>${escapeHtml(l)}</li>`).join('')}</ul>
+  ${noteHtml}
+  ${contactHtml}
+  ${data.actionUrl ? `<p><a href="${escapeHtml(data.actionUrl)}" style="background:#16a34a;color:#fff;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold">${escapeHtml(data.actionLabel ?? 'One-tap action')} ✓</a></p>` : ''}
+  <p><a href="${escapeHtml(url)}" style="background:#0e1740;color:#fff;padding:10px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open in admin →</a></p>
 </div>`
   return { subject, html, text }
 }

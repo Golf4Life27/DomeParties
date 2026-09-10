@@ -77,13 +77,38 @@ export async function POST(req: NextRequest) {
     console.error('lead auto-response failed', e)
   }
 
+  // The alert carries the WHOLE inquiry, mirroring the admin lead page. It used
+  // to send event type, headcount, budget and contact only — so the preferred
+  // date, whether that date was flexible, the must-haves and (most valuable of
+  // all) what the customer actually wrote were visible only after opening the
+  // admin. Reading a lead on a phone should not require a second device.
+  const headcount =
+    d.headcountMin || d.headcountMax
+      ? `${d.headcountMin ?? '?'}–${d.headcountMax ?? '?'} guests`
+      : 'headcount not given'
+  const preferredDate = d.preferredDate
+    ? `${d.preferredDate}${d.dateFlexible ? ' (flexible)' : ' (fixed)'}`
+    : d.dateFlexible
+      ? 'none given — flexible'
+      : 'none given'
+  // Which ad earned this lead, when we know. Omitted rather than shown empty:
+  // an organic inquiry shouldn't grow a row that says nothing.
+  const attributionLine =
+    [attr.utmSource, attr.utmMedium, attr.utmCampaign].filter(Boolean).join(' / ') ||
+    (attr.fbclid ? 'Meta ad click' : null)
+
   await notifyStaff({
     title: `New event lead — ${d.customerName}${d.source === 'chatbot' ? ' (via Birdie)' : ''}`,
     lines: [
-      `${d.eventType} · ${d.headcountMin ?? '?'}–${d.headcountMax ?? '?'} guests · ${d.budget ?? 'no budget given'}`,
-      `${d.customerEmail}${d.customerPhone ? ` · ${d.customerPhone}` : ''}`,
+      `${d.eventType} · ${headcount} · ${d.budget ?? 'no budget given'}`,
+      `Preferred date: ${preferredDate}`,
+      `Must-haves: ${d.mustHaves.length ? d.mustHaves.join(', ') : 'none listed'}`,
+      `Contact: ${d.customerEmail}${d.customerPhone ? ` · ${d.customerPhone}` : ''}`,
+      ...(attributionLine ? [`Came from: ${attributionLine}`] : []),
       'Speed-to-lead wins events — reply fast and send a quote from the lead page.',
     ],
+    note: d.message ? { label: 'What they wrote', body: d.message } : null,
+    contact: { email: d.customerEmail, phone: d.customerPhone },
     adminPath: `/admin/leads/${lead.id}`,
     urgent: true,
   })
