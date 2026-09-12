@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { formatCents } from '@/lib/money'
 import { minutesToLabel, formatDateLong } from '@/lib/time'
@@ -792,7 +792,7 @@ export default function BookPage() {
           {step === 4 && (
             <Section title="Make it unforgettable" subtitle="One-tap extras — add now, adjust later.">
               <div className="space-y-3">
-                {catalog.addOns.map((a) => {
+                {catalog.addOns.map((a, i) => {
                   const qty = addOns[a.id] ?? 0
                   const on = qty > 0
                   const isTime = a.unit === 'PER_30_MIN'
@@ -806,9 +806,33 @@ export default function BookPage() {
                       if (cur.length >= needed) return s
                       return { ...s, [a.id]: [...cur, c] }
                     })
+                  // The full bar is a CASH bar: always open, open to the public,
+                  // and it costs the host nothing. Nowhere in this flow said so —
+                  // the only bar-related thing on the page was four packages at
+                  // $16–$27 a head. A budget-conscious planner multiplies that by
+                  // their headcount, decides drinks are unaffordable, and leaves.
+                  // The note sits directly above the first beverage package
+                  // because that is where the arithmetic actually happens, not at
+                  // the top of a list they may already have scrolled past.
+                  const showCashBarNote =
+                    a.category === 'Beverages' &&
+                    catalog.addOns.findIndex((x) => x.category === 'Beverages') === i
                   return (
+                    <Fragment key={a.id}>
+                    {showCashBarNote && (
+                      <div className="rounded-xl border border-brand/40 bg-brand/10 p-4">
+                        <p className="text-sm font-semibold text-brand">Prefer a cash bar?</p>
+                        <p className="mt-1 text-sm text-foreground/80">
+                          Our full bar is open to your guests throughout your event — no package
+                          needed, and nothing added to your total. Plenty of groups put their budget
+                          into golf and food and let guests buy their own drinks.
+                        </p>
+                        <p className="mt-1 text-sm text-foreground/60">
+                          The packages below are for hosting your guests&apos; drinks on your tab.
+                        </p>
+                      </div>
+                    )}
                     <div
-                      key={a.id}
                       className={`rounded-xl border p-4 transition ${
                         on ? 'border-brand bg-brand-light' : 'border-white/15 bg-surface'
                       }`}
@@ -889,6 +913,7 @@ export default function BookPage() {
                         </div>
                       )}
                     </div>
+                    </Fragment>
                   )
                 })}
               </div>

@@ -15,6 +15,8 @@ export async function notifyStaff(input: {
   urgent?: boolean
   actionUrl?: string
   actionLabel?: string
+  note?: { label: string; body: string } | null
+  contact?: { email?: string | null; phone?: string | null } | null
 }) {
   try {
     const setting = await prisma.setting.findUnique({ where: { id: 1 } })
