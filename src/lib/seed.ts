@@ -365,7 +365,7 @@ export async function seedHours(prisma: PrismaClient) {
   // Published off-season hours (whitetailridgegolfdome.com): Mon–Thu CLOSED,
   // Fri 4–9pm, Sat 11am–9pm, Sun 11am–6pm.
   await prisma.operatingHours.deleteMany()
-  const OFF_SEASON = { validFrom: new Date('2026-04-01T00:00:00.000Z'), validTo: new Date('2026-09-30T00:00:00.000Z') }
+  const OFF_SEASON = { validFrom: new Date('2026-04-01T00:00:00.000Z'), validTo: new Date('2026-11-01T00:00:00.000Z') }
   const hoursRows: {
     label: string
     kind: 'GOLF' | 'PARTY'
@@ -397,7 +397,7 @@ export async function seedHours(prisma: PrismaClient) {
   // directions: it hid the 8am hour seven days a week, and on Sun–Thu it sold
   // an hour past closing, so a two-hour party starting at 8pm on a Tuesday
   // would have been booked and paid for to run an hour after the dome shut.
-  const IN_SEASON = { validFrom: new Date('2026-10-01T00:00:00.000Z'), validTo: new Date('2027-03-31T00:00:00.000Z') }
+  const IN_SEASON = { validFrom: new Date('2026-11-02T00:00:00.000Z'), validTo: new Date('2027-03-31T00:00:00.000Z') }
   const OPEN_MINUTE = 8 * 60
   // dayOfWeek: 0 = Sunday … 5 = Friday, 6 = Saturday.
   const closeFor = (d: number) => (d === 5 || d === 6 ? 22 * 60 : 21 * 60)
