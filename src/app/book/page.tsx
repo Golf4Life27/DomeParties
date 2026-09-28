@@ -701,7 +701,7 @@ export default function BookPage() {
                     <div className="rounded-lg bg-amber-400/10 p-3 text-sm text-amber-300">
                       <p>
                         {emptyReason === 'closed'
-                          ? "We're not open for parties that day."
+                          ? "Weekday parties are by arrangement until our full season opens Nov 2 — request a quote at /inquire and our events team will set it up."
                           : emptyReason === 'too_soon'
                             ? `That date is sooner than we can take online. Give us ${catalog.setting.leadTimeDaysOnline} days' notice, or call ${VENUE.phone} and we'll see what we can do.`
                             : `That day is fully booked for ${quote?.baysNeeded ?? 1} bay(s).`}
