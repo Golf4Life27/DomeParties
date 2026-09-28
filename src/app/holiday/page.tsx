@@ -75,7 +75,7 @@ export default function HolidayLanding() {
         </div>
 
         <div className="mt-10 rounded-2xl bg-surface p-8 text-center shadow-sm ring-1 ring-white/10">
-          <h2 className="text-2xl font-bold text-brand">December fills up up fast</h2>
+          <h2 className="text-2xl font-bold text-brand">December fills up fast</h2>
           <p className="mx-auto mt-2 max-w-md text-foreground/70">
             Full season opens Monday, November 2 — seven days a week — but the best
             holiday dates go to the companies that plan early. Send us your rough
