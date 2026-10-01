@@ -763,7 +763,7 @@ async function finalizeConfirmed(id: string, paymentIntentId?: string) {
   }
 
   await notifyStaff({
-    title: `New booking confirmed — ${updated.reference}`,
+    title: `🟢 BOOKED: ${updated.customerName ?? 'Guest'} · ${formatCents(updated.total)} · ${data.dateStr} — ${updated.reference}`,
     lines: [
       `${updated.customerName ?? 'Guest'} · ${updated.partySize} guests · ${data.packageName}`,
       `${data.dateStr}, ${minutesToLabel(updated.startMinutes)}–${minutesToLabel(updated.endMinutes)}`,
@@ -1084,7 +1084,7 @@ export async function confirmBalancePaid(id: string, paymentIntentId?: string) {
     await sendEmail({ to: booking.customerEmail, subject: receipt.subject, html: receipt.html, text: receipt.text })
   }
   await notifyStaff({
-    title: `Balance paid — ${booking.reference}`,
+    title: `🟢 PAID IN FULL: ${booking.customerName ?? 'Guest'} · ${formatCents(paidNow)} — ${booking.reference}`,
     lines: [
       `${booking.customerName ?? 'Guest'} paid the remaining ${formatCents(paidNow)}`,
       `Event ${dateStrOf(booking.date)} · fully paid`,
