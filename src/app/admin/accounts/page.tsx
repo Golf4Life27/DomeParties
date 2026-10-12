@@ -3,7 +3,6 @@ import { formatCents } from '@/lib/money'
 import { monthName } from '@/lib/accounts'
 import AccountForm from './AccountForm'
 import AccountRowActions from './AccountRowActions'
-import { currentAdminRole } from '@/lib/admin-session'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,7 +16,6 @@ const KIND_LABEL: Record<string, string> = {
 }
 
 export default async function AccountsPage() {
-  const role = await currentAdminRole()
   const accounts = await prisma.account.findMany({
     where: { active: true },
     orderBy: [{ nextOutreachOn: 'asc' }, { contactName: 'asc' }],
@@ -37,10 +35,7 @@ export default async function AccountsPage() {
 
       <div className="mt-5 flex flex-wrap gap-3">
         <Stat label="Accounts" value={String(accounts.length)} />
-        {/* The roll-up is a business figure; per-account values stay, as context for outreach. */}
-        {role === 'admin' && (
-          <Stat label="Last year's combined value" value={annualValue > 0 ? formatCents(annualValue) : '—'} />
-        )}
+        <Stat label="Last year's combined value" value={annualValue > 0 ? formatCents(annualValue) : '—'} />
         <Stat label="Due to contact now" value={String(due.length)} tone={due.length > 0 ? 'warn' : undefined} />
       </div>
 
