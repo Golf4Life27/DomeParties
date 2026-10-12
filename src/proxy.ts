@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ADMIN_COOKIE, isValidAdminCookie } from '@/lib/auth'
+import { ADMIN_COOKIE, adminRoleFromCookie, isValidAdminCookie } from '@/lib/auth'
+import { canAccess } from '@/lib/access'
 import { bookingCookieName, verifyBookingToken } from '@/lib/sign'
 import { VENUE } from '@/lib/venue'
 
 // Two gates, both here on purpose.
 //
-// 1. /admin and /api/admin need a staff session.
+// 1. /admin and /api/admin need a staff session, and the session's role must
+//    be allowed the path (@/lib/access). A coordinator who types a settings URL
+//    gets a 403, not the page.
 //
 // 2. Everything addressed by a booking id needs that booking's token. This used
 //    to be wide open: GET /api/bookings/<id> returned the whole record — name,
@@ -38,11 +41,17 @@ function adminGate(req: NextRequest) {
   if (pathname === '/admin/login' || pathname === '/api/admin/login') {
     return NextResponse.next()
   }
-  if (isValidAdminCookie(req.cookies.get(ADMIN_COOKIE)?.value)) return NextResponse.next()
+  const role = adminRoleFromCookie(req.cookies.get(ADMIN_COOKIE)?.value)
+  if (role && canAccess(role, pathname)) return NextResponse.next()
 
   if (pathname.startsWith('/api/')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    // Signed in but not allowed here is a different answer from not signed in,
+    // and the client code deserves to know which it got.
+    return role
+      ? NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      : NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+  if (role) return forbidden()
   const url = req.nextUrl.clone()
   url.pathname = '/admin/login'
   url.searchParams.set('next', pathname)
@@ -105,6 +114,22 @@ function allow(bookingId: string, token: string) {
     maxAge: COOKIE_MAX_AGE,
   })
   return res
+}
+
+/** A staff member whose role does not reach this page. Plain, no redirect loop. */
+function forbidden() {
+  return new NextResponse(
+    `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Not available for your role</title>
+<body style="font-family:system-ui,Arial,sans-serif;background:#f6f7fb;color:#0e1740;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0">
+<div style="max-width:420px;padding:32px;text-align:center">
+<div style="font-size:56px">🔒</div>
+<h1>Not available for your role</h1>
+<p style="line-height:1.6;color:#4b5563">This page is for the owner account. Leads, bookings and the day sheet are all in the menu.</p>
+<p><a href="/admin" style="display:inline-block;background:#0e1740;color:#fff;padding:10px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Back to overview</a></p>
+</div></body>`,
+    { status: 403, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } },
+  )
 }
 
 function deny(isApi: boolean) {

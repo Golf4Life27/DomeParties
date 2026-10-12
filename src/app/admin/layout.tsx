@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { ADMIN_COOKIE, isValidAdminCookie } from '@/lib/auth'
+import { ADMIN_COOKIE, adminRoleFromCookie } from '@/lib/auth'
+import { canAccess } from '@/lib/access'
 import { prisma } from '@/lib/db'
 import LogoutButton from './LogoutButton'
 
@@ -25,10 +26,10 @@ const NAV = [
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const cookie = (await cookies()).get(ADMIN_COOKIE)?.value
-  const authed = isValidAdminCookie(cookie)
+  const role = adminRoleFromCookie(cookie)
 
   // Unauthenticated (e.g. the login page) renders without admin chrome.
-  if (!authed) return <div className="admin-light flex min-h-screen flex-col">{children}</div>
+  if (!role) return <div className="admin-light flex min-h-screen flex-col">{children}</div>
 
   // Surface silent-failure states loudly: email off = no confirmations, no
   // staff alerts, no reminders — invisible unless someone says so here.
@@ -61,6 +62,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     )
   }
 
+  // The warnings name environment secrets and are the owner's to fix. A
+  // coordinator can do nothing about them and should not be reading them.
+  const visibleWarnings = role === 'admin' ? warnings : []
+
   return (
     <div className="admin-light flex min-h-screen flex-col">
       <header className="bg-brand-dark text-white">
@@ -68,8 +73,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/admin" className="font-bold">
             Dome Admin
           </Link>
+          {role === 'coordinator' && (
+            <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs font-medium text-white/90">
+              Coordinator
+            </span>
+          )}
           <nav className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/80">
-            {NAV.map((n) => (
+            {NAV.filter((n) => canAccess(role, n.href)).map((n) => (
               <Link key={n.href} href={n.href} className="hover:text-white">
                 {n.label}
               </Link>
@@ -83,10 +93,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
         </div>
       </header>
-      {warnings.length > 0 && (
+      {visibleWarnings.length > 0 && (
         <div className="bg-red-600 text-white">
           <div className="mx-auto max-w-6xl space-y-1 px-6 py-2 text-sm font-medium">
-            {warnings.map((w) => (
+            {visibleWarnings.map((w) => (
               <p key={w}>⚠ {w}</p>
             ))}
           </div>

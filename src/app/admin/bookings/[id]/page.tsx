@@ -5,6 +5,7 @@ import { formatCents } from '@/lib/money'
 import { minutesToLabel, formatDateLong } from '@/lib/time'
 import { StatusBadge } from '../../StatusBadge'
 import BookingActions from './BookingActions'
+import { currentAdminRole } from '@/lib/admin-session'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,6 +22,7 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
     },
   })
   if (!b) notFound()
+  const role = await currentAdminRole()
 
   const dateStr = b.date.toISOString().slice(0, 10)
   const scheduled = b.status !== 'DRAFT'
@@ -40,6 +42,7 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <p className="font-mono text-sm text-foreground/50">{b.reference}</p>
         </div>
         <BookingActions
+          canRefund={role === 'admin'}
           id={b.id}
           status={b.status}
           needsReview={b.needsReview}
@@ -141,7 +144,8 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <Row k="Created" v={b.createdAt.toISOString().slice(0, 16).replace('T', ' ')} />
           <Row k="Updated" v={b.updatedAt.toISOString().slice(0, 16).replace('T', ' ')} />
           {b.paidAt && <Row k="Paid at" v={b.paidAt.toISOString().slice(0, 16).replace('T', ' ')} />}
-          {b.stripePaymentIntentId && <Row k="Stripe PI" v={b.stripePaymentIntentId} />}
+          {/* The raw Stripe reference is owner-only; a coordinator has no use for it. */}
+          {role === 'admin' && b.stripePaymentIntentId && <Row k="Stripe PI" v={b.stripePaymentIntentId} />}
         </Card>
       </div>
     </div>

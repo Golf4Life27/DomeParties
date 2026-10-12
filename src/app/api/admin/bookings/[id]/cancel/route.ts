@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db'
 import { getStripe } from '@/lib/stripe'
 import { formatCents } from '@/lib/money'
 import { notifyStaff } from '@/lib/booking'
+import { adminRoleOf } from '@/lib/auth'
 
 // Cancel a booking and free its bays (delete resource holds).
 //
@@ -15,6 +16,15 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const { id } = await ctx.params
   const body = await req.json().catch(() => null)
   const wantRefund = body?.refund === true
+
+  // A refund moves money out of Stripe, and that is the owner's decision. A
+  // coordinator can still cancel — the bays are freed and the "still held"
+  // alert below tells the owner there is money to return — but cannot trigger
+  // the refund. Checked here, not only in the button, because the API is the
+  // thing that actually does it.
+  if (wantRefund && adminRoleOf(req) !== 'admin') {
+    return NextResponse.json({ error: 'Only the owner account can issue a refund.' }, { status: 403 })
+  }
 
   const booking = await prisma.booking.findUnique({ where: { id } })
   if (!booking) return NextResponse.json({ error: 'Not found' }, { status: 404 })
