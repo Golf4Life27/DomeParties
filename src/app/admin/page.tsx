@@ -4,10 +4,16 @@ import { getFunnelStats } from '@/lib/admin-stats'
 import { formatCents } from '@/lib/money'
 import { minutesToLabel, todayVenueMidnight } from '@/lib/time'
 import { StatusBadge } from './StatusBadge'
+import { currentAdminRole } from '@/lib/admin-session'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AdminOverview() {
+  // Revenue, deposits, order value and add-on revenue are the owner's numbers.
+  // A coordinator gets the same action queue, funnel and event lists without
+  // the money tiles — what needs doing today, not what the business is worth.
+  const role = await currentAdminRole()
+  const showMoney = role === 'admin'
   const [stats, upcoming, recent, needsReviewCount, unpaidBalances, newLeadCount, todayCount] =
     await Promise.all([
       getFunnelStats(),
@@ -50,7 +56,9 @@ export default async function AdminOverview() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-brand-dark">Overview</h1>
-      <p className="mt-1 text-foreground/60">Your revenue funnel at a glance.</p>
+      <p className="mt-1 text-foreground/60">
+        {showMoney ? 'Your revenue funnel at a glance.' : 'Today\u2019s events and leads at a glance.'}
+      </p>
 
       {/* Needs-your-attention queue — the daily to-do, one glance */}
       {actions.length > 0 && (
@@ -76,11 +84,11 @@ export default async function AdminOverview() {
 
       {/* KPI cards */}
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi label="Revenue booked" value={formatCents(stats.revenueBooked)} sub={`${stats.confirmed} confirmed events`} accent />
-        <Kpi label="Deposits collected" value={formatCents(stats.depositsCollected)} sub="Cash in the door" />
-        <Kpi label="Avg order value" value={formatCents(stats.aov)} sub="Per confirmed event" />
+        {showMoney && <Kpi label="Revenue booked" value={formatCents(stats.revenueBooked)} sub={`${stats.confirmed} confirmed events`} accent />}
+        {showMoney && <Kpi label="Deposits collected" value={formatCents(stats.depositsCollected)} sub="Cash in the door" />}
+        {showMoney && <Kpi label="Avg order value" value={formatCents(stats.aov)} sub="Per confirmed event" />}
         <Kpi label="Conversion" value={`${stats.conversionPct}%`} sub={`${stats.confirmed}/${stats.started} started → booked`} />
-        <Kpi label="Upsell take-rate" value={`${stats.upsellTakePct}%`} sub={`${formatCents(stats.addOnRevenue)} add-on revenue`} />
+        {showMoney && <Kpi label="Upsell take-rate" value={`${stats.upsellTakePct}%`} sub={`${formatCents(stats.addOnRevenue)} add-on revenue`} />}
         <Kpi label="In progress" value={String(stats.pending)} sub="Awaiting deposit" />
         <Kpi label="Abandoned carts" value={String(stats.drafts)} sub="Recovery targets" />
         <Kpi label="New leads" value={String(stats.leadsNew)} sub={<Link href="/admin/bookings" className="text-brand hover:underline">View bookings →</Link>} />

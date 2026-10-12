@@ -25,6 +25,7 @@ export default function BookingActions({
   balanceDue,
   dateStr,
   startMinutes,
+  canRefund = false,
 }: {
   id: string
   status: string
@@ -34,6 +35,10 @@ export default function BookingActions({
   balanceDue?: number
   dateStr: string
   startMinutes: number
+  /** Refunds move money in Stripe and are the owner's call. The plain cancel
+   *  stays available to every role; it frees the bays and alerts the owner to
+   *  any money still held. Defaults off so a caller has to opt in. */
+  canRefund?: boolean
 }) {
   const router = useRouter()
   const [busy, setBusy] = useState(false)
@@ -213,7 +218,7 @@ export default function BookingActions({
           📅 Reschedule
         </button>
       )}
-      {canCancel && hasCollected && (
+      {canCancel && hasCollected && canRefund && (
         <button
           onClick={() => {
             if (!confirm('Cancel this booking, free its bays, AND refund the guest in Stripe?')) return
