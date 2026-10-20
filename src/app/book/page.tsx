@@ -753,7 +753,14 @@ export default function BookPage() {
 
           {/* STEP 3 — F&B */}
           {step === 3 && (
-            <Section title="Add food & drink" subtitle="Keep everyone fueled — or decide when you arrive.">
+            <Section
+              title="Add food & drink"
+              subtitle={
+                dateStr && dateStr < weekOut()
+                  ? 'Booking this week? No need to pre-order — order off our menu when you arrive.'
+                  : 'Keep everyone fueled — or decide when you arrive.'
+              }
+            >
               <div className="space-y-3">
                 {catalog.fnb.map((f) => (
                   <SelectableRow
@@ -1408,6 +1415,13 @@ function OrderSummary({
       )}
     </div>
   )
+}
+
+/** Today + 7 days as YYYY-MM-DD (local), for the short-notice food hint. */
+function weekOut(): string {
+  const d = new Date()
+  d.setDate(d.getDate() + 7)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 function Row({ k, v }: { k: string; v: string }) {
