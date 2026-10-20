@@ -538,12 +538,14 @@ export function buildRecoveryEmail(data: {
 
   const subjects: Record<number, string> = {
     1: 'Still thinking it over? Your Dome party is waiting 🎉',
-    2: 'Your date is still open (for now) ⛳',
+    2: data.promo ? 'Your date is still open — plus a little something ⛳' : 'Your date is still open (for now) ⛳',
     3: data.promo ? `A little something to seal the deal 🎁` : 'Last call for your party 🎈',
   }
   const leads: Record<number, string> = {
     1: 'You were <em>this close</em> to booking your event at Whitetail Ridge Golf Dome — and your details are saved.',
-    2: 'Your event details are still saved — but weekends fill up fast, and we can only hold the good slots for so long.',
+    2: data.promo
+      ? `Your event details are still saved — and weekends fill up fast. To make it easy: <strong>${promoLine}</strong>`
+      : 'Your event details are still saved — but weekends fill up fast, and we can only hold the good slots for so long.',
     3: data.promo
       ? `We saved your details one last time — and here's a nudge: <strong>${promoLine}</strong>`
       : 'This is our last reminder — your saved details expire soon.',
