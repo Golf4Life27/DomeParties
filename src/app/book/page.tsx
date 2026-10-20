@@ -144,6 +144,9 @@ export default function BookPage() {
   const [embedded, setEmbedded] = useState(false)
   const [draftId, setDraftId] = useState<string | null>(null)
   const [quote, setQuote] = useState<Quote | null>(null)
+  // Fri–Sun total for the same selections, shown before a date is picked so
+  // the price doesn't jump the moment a guest chooses a weekend.
+  const [weekendTotal, setWeekendTotal] = useState<number | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [payment, setPayment] = useState<{
@@ -273,6 +276,33 @@ export default function BookPage() {
       .catch(() => {})
     return () => controller.abort()
   }, [packageId, partySize, fnbGuests, fnbPackageId, addOnSelections, dateStr, startMinutes])
+
+  // Before a date is chosen the live quote uses the Mon–Thu ("from") rate.
+  // Weekends cost more (Fri–Sun bay rate), so fetch that number too and show
+  // both — a guest who sees $324 and then $396 on the next screen feels misled.
+  useEffect(() => {
+    // Once a date is picked the summary ignores this number (see showWeekend).
+    if (!packageId || dateStr) return
+    const controller = new AbortController()
+    fetch('/api/quote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        partySize,
+        fnbGuests,
+        packageId,
+        fnbPackageId,
+        addOns: addOnSelections,
+        dateStr: nextSaturday(),
+        startMinutes: 13 * 60,
+      }),
+      signal: controller.signal,
+    })
+      .then((r) => r.json())
+      .then((d) => setWeekendTotal(d.quote?.total ?? null))
+      .catch(() => {})
+    return () => controller.abort()
+  }, [packageId, partySize, fnbGuests, fnbPackageId, addOnSelections, dateStr])
 
   const patchDraft = useCallback(
     async (fields: Record<string, unknown>) => {
@@ -1094,6 +1124,7 @@ export default function BookPage() {
             dateStr={dateStr}
             startMinutes={startMinutes}
             quote={quote}
+            weekendTotal={weekendTotal}
             cardFeePct={catalog.setting.cardFeePct ?? 0}
             giftApplied={giftApplied}
           />
@@ -1319,6 +1350,7 @@ function OrderSummary({
   dateStr,
   startMinutes,
   quote,
+  weekendTotal,
   cardFeePct,
   giftApplied,
 }: {
@@ -1328,6 +1360,7 @@ function OrderSummary({
   dateStr: string
   startMinutes: number | null
   quote: Quote | null
+  weekendTotal: number | null
   cardFeePct: number
   giftApplied: number
 }) {
@@ -1335,6 +1368,7 @@ function OrderSummary({
   // first, and the card fee is charged on whatever is left to pay.
   const depositBeforeFee = Math.max(0, (quote?.depositAmount ?? 0) - giftApplied)
   const cardFee = cardFeePct > 0 ? Math.round((depositBeforeFee * cardFeePct) / 100) : 0
+  const showWeekend = !dateStr && weekendTotal != null && quote != null && weekendTotal > quote.total
   return (
     <div className="rounded-2xl bg-surface p-5 shadow-sm ring-1 ring-white/10">
       <h3 className="font-bold text-brand">Your event</h3>
@@ -1367,9 +1401,15 @@ function OrderSummary({
               </dl>
               <div className="my-3 border-t border-white/15" />
               <div className="flex justify-between text-base font-bold">
-                <span>Total</span>
+                <span>{showWeekend ? 'Total (Mon–Thu)' : 'Total'}</span>
                 <span>{formatCents(quote.total)}</span>
               </div>
+              {showWeekend && (
+                <div className="flex justify-between text-sm font-semibold text-brand">
+                  <span>Fri–Sun total</span>
+                  <span>{formatCents(weekendTotal!)}</span>
+                </div>
+              )}
               {quote.taxPct === 0 && (
                 <p className="text-xs text-foreground/40">Sales tax included in listed prices.</p>
               )}
@@ -1408,6 +1448,14 @@ function OrderSummary({
       )}
     </div>
   )
+}
+
+/** A Saturday at least a week out — only its day of week matters to the price. */
+function nextSaturday(): string {
+  const d = new Date()
+  d.setDate(d.getDate() + 7)
+  d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7))
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 function Row({ k, v }: { k: string; v: string }) {
