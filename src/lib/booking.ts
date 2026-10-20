@@ -4,7 +4,7 @@ import { availability } from '@/lib/availability'
 import { generateReference } from '@/lib/ref'
 import { getStripe, PAYMENT_METHOD_TYPES } from '@/lib/stripe'
 import { applyPercent, formatCents } from '@/lib/money'
-import { minutesToLabel, todayVenueMidnight, todayStr } from '@/lib/time'
+import { minutesToLabel, todayVenueMidnight, todayStr, addDays } from '@/lib/time'
 import { debitGiftCard } from '@/lib/giftcards'
 import { redeemPromo, featuredRecoveryPromo } from '@/lib/promos'
 import { signApproval, bookingToken } from '@/lib/sign'
@@ -37,6 +37,22 @@ export { notifyStaff }
 
 function dateOnly(dateStr: string): Date {
   return new Date(`${dateStr}T00:00:00.000Z`)
+}
+
+/**
+ * Parties booked less than a week out always go to a coordinator, even when
+ * every bay looks free: staff, food orders and keeping a group's bays side by
+ * side on a busy day all need a human yes before the booking is final.
+ */
+const SHORT_NOTICE_DAYS = 7
+function isShortNotice(dateStr: string): boolean {
+  return dateStr < addDays(todayStr(), SHORT_NOTICE_DAYS)
+}
+
+function daysOut(dateStr: string): number {
+  const a = Date.parse(`${todayStr()}T00:00:00Z`)
+  const b = Date.parse(`${dateStr}T00:00:00Z`)
+  return Math.round((b - a) / 86_400_000)
 }
 
 function dateStrOf(d: Date): string {
@@ -345,6 +361,7 @@ export async function placeHold(id: string) {
         // Running past close is a staffing decision — bar, kitchen, front desk —
         // and no amount of free floor answers it.
         needsReview:
+          isShortNotice(dateStr) ||
           assignment.afterHours ||
           (assignment.usedShared && !(live.ok && live.datePopulated && live.demandInWindow === 0)),
         holdExpiresAt,
@@ -848,12 +865,13 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
   // released (reverted to DRAFT, bays freed) — the bays may have been given
   // away. Re-assign under the date lock before confirming. If that fails, keep
   // the deposit and route to staff review rather than double-booking.
-  let needsReview = booking.needsReview
+  const shortNotice = isShortNotice(dateStrOf(booking.date))
+  let needsReview = booking.needsReview || shortNotice
   const holdLapsed = booking.holdExpiresAt !== null && booking.holdExpiresAt < new Date()
   const noBays = booking.resources.length === 0 || booking.status === 'DRAFT'
   if (holdLapsed || noBays) {
     const dateStr = dateStrOf(booking.date)
-    needsReview = await withBayLock(dateStr, async (tx) => {
+    const rebookedNeedsReview = await withBayLock(dateStr, async (tx) => {
       const assignment = await availability.assignBays(
         dateStr,
         booking.startMinutes,
@@ -870,6 +888,7 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
       }
       return true // bays gone — staff will re-slot with the guest
     })
+    needsReview = rebookedNeedsReview || shortNotice
     await prisma.booking.update({
       where: { id },
       data: { needsReview, status: 'PENDING' }, // late payment on a released DRAFT re-enters the pipeline
@@ -904,6 +923,12 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
         `${updated.customerName ?? 'Guest'} paid a ${formatCents(updated.depositAmount)} deposit`,
         `${dateStrOf(updated.date)}, ${minutesToLabel(updated.startMinutes)}–${minutesToLabel(updated.endMinutes)} · ${updated.partySize} guests`,
         `Bays held: ${bayNames}`,
+        ...(updated.baysNeeded > 1
+          ? [`Needs ${updated.baysNeeded} bays side by side — make sure they can sit together.`]
+          : []),
+        ...(shortNotice
+          ? [`Short notice: event is ${daysOut(dateStrOf(updated.date))} day(s) out — confirm staffing and food before approving.`]
+          : []),
         'Check Trackman for conflicts on those bays, then tap Approve to finalize.',
       ],
       adminPath: `/admin/bookings/${updated.id}`,
