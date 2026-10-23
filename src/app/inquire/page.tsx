@@ -49,6 +49,7 @@ export default function InquirePage({ searchParams }: { searchParams: Search }) 
   const [customerName, setName] = useState(q(sp, 'name', 120))
   const [customerEmail, setEmail] = useState(q(sp, 'email', 160))
   const [customerPhone, setPhone] = useState(q(sp, 'phone', 40))
+  const [textConsent, setTextConsent] = useState(false)
   const [message, setMessage] = useState(q(sp, 'message', 2000))
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -82,6 +83,7 @@ export default function InquirePage({ searchParams }: { searchParams: Search }) 
         customerName,
         customerEmail,
         customerPhone: customerPhone || null,
+        textConsent: Boolean(customerPhone) && textConsent,
         message: message || null,
         source,
       }),
@@ -203,6 +205,14 @@ export default function InquirePage({ searchParams }: { searchParams: Search }) 
                 <div>
                   <Label>Phone (optional)</Label>
                   <input value={customerPhone} onChange={(e) => setPhone(e.target.value)} className={input} placeholder="(555) 555-5555" />
+                  {customerPhone && (
+                    <label className="mt-2 flex items-start gap-2 text-xs opacity-80">
+                      <input type="checkbox" checked={textConsent} onChange={(e) => setTextConsent(e.target.checked)} className="mt-0.5" />
+                      <span>
+                        OK to text me about this inquiry. Up to 3 texts; msg &amp; data rates may apply. Reply STOP to opt out.
+                      </span>
+                    </label>
+                  )}
                 </div>
               </div>
 

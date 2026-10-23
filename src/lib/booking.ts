@@ -26,6 +26,7 @@ import {
   buildRescheduledEmail,
 } from '@/lib/email'
 import { notifyStaff } from '@/lib/notify'
+import { closerEnabled, runLeadCloser } from '@/lib/closer'
 import { readLive, commitLive, CHECKOUT_MAX_AGE_MS } from '@/lib/ygb'
 import type { AddOnSelection } from '@/lib/types'
 import type { EventType } from '@/generated/prisma'
@@ -633,8 +634,12 @@ export async function sendRecoveryEmailsToStaleDrafts(minutesOld = 60) {
   return { eligible: first.length + second.length + third.length, sent }
 }
 
-/** 24h follow-up for NEW leads no one has closed yet (speed-to-lead insurance). */
+/**
+ * 24h follow-up for NEW leads no one has closed yet (speed-to-lead insurance).
+ * With LEAD_CLOSER=on the three-touch closer in closer.ts takes its place.
+ */
 export async function sendLeadFollowUps() {
+  if (closerEnabled()) return { leadFollowUps: 0, ...(await runLeadCloser()) }
   const cutoff = new Date(Date.now() - 24 * 3_600_000)
   const leads = await prisma.lead.findMany({
     where: { status: 'NEW', followUpSentAt: null, createdAt: { lt: cutoff } },
