@@ -505,7 +505,8 @@ model BookingResource {
 // ---------------------------------------------------------------------------
 enum LeadStatus {
   NEW
-  CONTACTED
+  CONTACTED // contacted and the customer replied
+  NO_RESPONSE // contacted, no reply yet: the list to work again
   PROPOSAL_SENT
   WON
   LOST

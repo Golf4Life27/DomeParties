@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { LEAD_STATUSES, leadStatusLabel } from '@/lib/lead-status'
 
-const STATUSES = ['NEW', 'CONTACTED', 'PROPOSAL_SENT', 'WON', 'LOST'] as const
 
 export default function LeadActions({
   leadId,
@@ -80,7 +80,7 @@ export default function LeadActions({
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
         <h2 className="mb-3 font-semibold text-brand-dark">Status</h2>
         <div className="flex flex-wrap gap-2">
-          {STATUSES.map((s) => (
+          {LEAD_STATUSES.map((s) => (
             <button
               key={s}
               onClick={() => setStatus(s)}
@@ -89,7 +89,7 @@ export default function LeadActions({
                 status === s ? 'bg-brand text-white ring-brand' : 'bg-white ring-black/10 hover:ring-brand'
               }`}
             >
-              {s.replace('_', ' ').toLowerCase()}
+              {leadStatusLabel(s)}
             </button>
           ))}
         </div>
