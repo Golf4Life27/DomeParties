@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { LEAD_STATUSES } from '@/lib/lead-status'
 import { prisma } from '@/lib/db'
 
 const schema = z.object({
-  status: z.enum(['NEW', 'CONTACTED', 'PROPOSAL_SENT', 'WON', 'LOST']),
+  status: z.enum(LEAD_STATUSES),
 })
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {

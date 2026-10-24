@@ -592,6 +592,90 @@ what would make it work (date, budget, group size) and we'll build around it.
   return { subject, html, text }
 }
 
+/**
+ * The follow-up closer's three emails (src/lib/closer.ts). Stage 1 asks one easy
+ * question, with a button for "someone already reached out" so a guest Billy has
+ * already called never gets chased. Stages 2 and 3 carry the price and the link.
+ */
+export function buildCloserEmail(
+  stage: 1 | 2 | 3,
+  data: {
+    name: string
+    party: string // "birthday party", "group outing"…
+    dateLabel: string | null // "Saturday, Nov 23", or null when no date was given
+    bookUrl: string
+    yesUrl: string
+    allSetUrl: string
+    price: { total: number; from: boolean; guests: number; packageName: string; depositPercent: number } | null
+  },
+) {
+  const first = data.name.trim().split(/\s+/)[0] || 'there'
+  const forDate = data.dateLabel ? ` for ${data.dateLabel}` : ''
+  const sign = 'Whitetail Ridge Golf Dome, Oswego, IL'
+  const p = data.price
+  const priceLine = p
+    ? `A ${data.party} for ${p.guests} guests${data.dateLabel ? ` on ${data.dateLabel}` : ''} ${p.from ? 'starts at' : 'comes to'} ${formatCents(p.total)} with our ${p.packageName} package.`
+    : `You can see the exact price for your group on our booking page.`
+  const deposit = p ? `a ${p.depositPercent}% deposit` : 'a small deposit'
+  const button = (href: string, label: string, primary = true) =>
+    `<a href="${href}" style="display:inline-block;margin:6px;background:${primary ? '#c8ff2e' : '#e9edfb'};color:#0e1740;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold">${label}</a>`
+  const stopLine = `Already talked with someone from our team, or plans changed? <a href="${data.allSetUrl}">Let us know</a> and we'll stop following up.`
+  const stopText = `Already talked with someone from our team, or plans changed? Tap here and we'll stop following up: ${data.allSetUrl}`
+
+  let subject: string
+  let text: string
+  let body: string
+  if (stage === 1) {
+    subject = `Still planning your ${data.party}?`
+    text = `Hi ${first},
+
+It's Whitetail Ridge Golf Dome about your ${data.party} inquiry${forDate}. Are you still planning it?
+
+Yes, still planning: ${data.yesUrl}
+Someone from the dome already reached out: ${data.allSetUrl}
+
+Or just reply to this email.
+
+${sign}`
+    body = `<p>Hi ${escapeHtml(first)},</p>
+  <p>It's Whitetail Ridge Golf Dome about your ${escapeHtml(data.party)} inquiry${escapeHtml(forDate)}. Are you still planning it?</p>
+  <p style="text-align:center;margin:24px 0">${button(data.yesUrl, 'Yes, still planning')}${button(data.allSetUrl, 'Someone already reached out', false)}</p>
+  <p>Or just reply to this email.</p>`
+  } else if (stage === 2) {
+    subject = `Your ${data.party} price at Whitetail Ridge Golf Dome`
+    text = `Hi ${first},
+
+${priceLine} ${p ? 'You can lock it in' : 'Pick your time and lock it in'} with ${deposit} here: ${data.bookUrl}
+
+${stopText}
+
+${sign}`
+    body = `<p>Hi ${escapeHtml(first)},</p>
+  <p>${escapeHtml(priceLine)} ${p ? 'You can lock it in' : 'Pick your time and lock it in'} with ${deposit}.</p>
+  <p style="text-align:center;margin:24px 0">${button(data.bookUrl, 'Book your party')}</p>
+  <p style="color:#666">${stopLine}</p>`
+  } else {
+    // No availability check behind this one, so it never claims the date is free.
+    subject = `There's still time to book your ${data.party}`
+    text = `Hi ${first},
+
+There's still time to book your ${data.party}${forDate} at the dome. If you'd like it, here's the link: ${data.bookUrl}
+
+This is our last check-in, so no worries if plans changed.
+
+${sign}`
+    body = `<p>Hi ${escapeHtml(first)},</p>
+  <p>There's still time to book your ${escapeHtml(data.party)}${escapeHtml(forDate)} at the dome. If you'd like it, here's the link.</p>
+  <p style="text-align:center;margin:24px 0">${button(data.bookUrl, 'Book your party')}</p>
+  <p style="color:#666">This is our last check-in, so no worries if plans changed.</p>`
+  }
+  const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  ${body}
+  <p style="color:#666">${sign}</p>
+</div>`
+  return { subject, html, text }
+}
+
 /** Deliver a gift card code to its recipient (and a receipt to the purchaser). */
 export function buildGiftCardEmails(data: {
   code: string

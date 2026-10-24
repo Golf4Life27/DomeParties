@@ -505,7 +505,8 @@ model BookingResource {
 // ---------------------------------------------------------------------------
 enum LeadStatus {
   NEW
-  CONTACTED
+  CONTACTED // contacted and the customer replied
+  NO_RESPONSE // contacted, no reply yet: the list to work again
   PROPOSAL_SENT
   WON
   LOST
@@ -553,6 +554,15 @@ model Lead {
   status         LeadStatus @default(NEW)
   source         String?    @default("website")
   followUpSentAt DateTime?
+
+  // Follow-up closer (src/lib/closer.ts). closerStep counts the touches sent
+  // (0-3); closerStoppedAt is set when the guest says someone already reached
+  // out, or their date has passed. textConsent is the form's "OK to text me" box,
+  // kept so leads from now on can be texted once the dome has a texting number.
+  textConsent     Boolean   @default(false)
+  closerStep      Int       @default(0)
+  closerLastAt    DateTime?
+  closerStoppedAt DateTime?
 
   // First-touch marketing attribution, copied from the wtr_attr cookie at
   // submission. Nullable = organic / direct / cookie blocked. This is what turns
