@@ -42,8 +42,13 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
   }
+  // Preview deployments share the live database, so there the agent reads for
+  // real but never saves a draft, a lead or sends a staff email. That makes a
+  // preview the safe place to test it on real chats, and its token counts come
+  // back in the response so the cost can be measured.
+  const preview = process.env.VERCEL_ENV === 'preview'
   try {
-    const result = await runAgent(parsed.data.messages, { mode: 'live' })
+    const result = await runAgent(parsed.data.messages, { mode: preview ? 'dry' : 'live' })
     console.log('[agent] turn', {
       tools: result.toolsUsed,
       calls: result.usage.calls,
@@ -53,7 +58,7 @@ export async function POST(req: NextRequest) {
       cacheWrite: result.usage.cacheWriteTokens,
       cutOff: result.cutOff,
     })
-    return NextResponse.json({ reply: result.reply })
+    return NextResponse.json(preview ? { reply: result.reply, usage: result.usage, tools: result.toolsUsed } : { reply: result.reply })
   } catch (e) {
     console.error('[agent] failed', e)
     return NextResponse.json({ error: 'The chat is unavailable right now.' }, { status: 502 })
