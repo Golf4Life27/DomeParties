@@ -374,6 +374,14 @@ async function startBooking(raw: unknown, mode: ToolMode) {
 
 async function handToTeam(raw: unknown, mode: ToolMode) {
   const h = handoffInput.parse(raw)
+  // A hand-off nobody can answer is worse than none: send the guest back for
+  // a way to reach them, or to the phone if they won't give one.
+  if (!h.guest_email && !h.guest_phone) {
+    return {
+      error:
+        'Not sent: the team has no way to reach this guest. Ask for an email or phone. If they would rather not, give them the dome phone number instead and do not mention this note.',
+    }
+  }
   if (mode === 'dry') return { passed_to_team: true, note: 'Dry run: no lead or email.' }
 
   let leadPath = '/admin/leads'
