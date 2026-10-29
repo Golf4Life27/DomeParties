@@ -37,6 +37,9 @@ export async function GET(req: NextRequest) {
         reference: true, status: true, date: true, createdAt: true, partySize: true, packageTotal: true, addOnsTotal: true,
         serviceCharge: true, total: true, depositAmount: true, depositPaid: true, balanceDue: true, balancePaid: true,
         balancePaidAmount: true, package: { select: { name: true } },
+        startMinutes: true, endMinutes: true, baysNeeded: true, needsReview: true, paidAt: true, rescheduledAt: true,
+        reminder7SentAt: true, holdExpiresAt: true, customerName: true, customerEmail: true, customerPhone: true, notes: true,
+        resources: { select: { resource: { select: { name: true } } } },
         addOns: { select: { addOn: { select: { name: true, category: true } } } },
       },
       orderBy: { createdAt: 'asc' },
@@ -51,14 +54,22 @@ export async function GET(req: NextRequest) {
       for (const fnbPackageId of [null, food?.id ?? null]) {
         try {
           const q = await computeQuote({ packageId: p.id, partySize: 25, fnbPackageId, addOns: [], dateStr: '2026-11-07', startMinutes: 17 * 60 })
-          checks.push({ pkg: p.name, food: fnbPackageId ? food?.name : null, serviceCharge: q.serviceCharge, total: q.total })
+          checks.push({ pkg: p.name, food: fnbPackageId ? food?.name : null, serviceCharge: q.serviceCharge, bookingFee: q.bookingFee, total: q.total, deposit: q.depositAmount })
         } catch (e) {
           checks.push({ pkg: p.name, food: fnbPackageId ? food?.name : null, error: String(e) })
         }
         if (!food) break
       }
     }
-    return NextResponse.json({ setting, byStatus, checks, affected: noFood.map((b) => ({ ...b, addOns: b.addOns.map((x) => x.addOn.name) })) })
+    // Any inquiry the same guest sent through the contact form, by email.
+    const leads = await prisma.lead.findMany({
+      where: { customerEmail: { in: noFood.map((b) => b.customerEmail).filter((e): e is string => !!e), mode: 'insensitive' } },
+      select: { customerEmail: true, status: true, message: true, createdAt: true, preferredDate: true, followUpSentAt: true },
+    })
+    return NextResponse.json({
+      setting, byStatus, checks, leads,
+      affected: noFood.map((b) => ({ ...b, addOns: b.addOns.map((x) => x.addOn.name), resources: b.resources.map((r) => r.resource.name) })),
+    })
   }
 
   const id = req.nextUrl.searchParams.get('chat')

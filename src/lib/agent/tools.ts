@@ -329,7 +329,8 @@ async function price(raw: unknown) {
     return {
       estimate_only: q.estimated,
       lines: q.lines.map((l) => ({ item: l.label, detail: l.detail ?? null, amount: dollars(l.amount) })),
-      service_charge: dollars(q.serviceCharge),
+      service_charge: dollars(q.serviceCharge - q.bookingFee),
+      booking_fee: dollars(q.bookingFee),
       tax: dollars(q.taxAmount),
       total: dollars(q.total),
       deposit_today: dollars(q.depositAmount),

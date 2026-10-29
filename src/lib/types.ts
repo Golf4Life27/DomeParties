@@ -32,8 +32,9 @@ export type Quote = {
   peakAdjustment: number // +surcharge or -discount on the package portion
   fnbTotal: number
   addOnsTotal: number
-  serviceCharge: number
+  serviceCharge: number // percent service charge plus any golf-only booking fee
   serviceChargePct: number
+  bookingFee: number // flat fee on a golf-only party, included in serviceCharge
   taxAmount: number
   taxPct: number
   total: number
