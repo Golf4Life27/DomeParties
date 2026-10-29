@@ -122,7 +122,7 @@ export default async function BookingDetail({ params }: { params: Promise<{ id: 
           <Row k="Package" v={formatCents(b.packageTotal)} />
           <Row k="Food & drink" v={formatCents(b.fnbTotal)} />
           <Row k="Add-ons" v={formatCents(b.addOnsTotal)} />
-          <Row k="Service charge / booking fee" v={formatCents(b.serviceCharge)} />
+          <Row k="Service charge" v={formatCents(b.serviceCharge)} />
           <Row k="Tax" v={formatCents(b.taxAmount)} />
           <div className="my-2 border-t border-black/10" />
           <Row k="Total" v={formatCents(b.total)} bold />
