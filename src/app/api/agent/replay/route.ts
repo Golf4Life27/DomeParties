@@ -36,6 +36,9 @@ export async function GET(req: NextRequest) {
     hist.push({ role: 'guest', text })
     const r = await runAgent(hist, { mode: 'dry' })
     hist.push({ role: 'agent', text: r.reply })
+    // Long chats can outlast the caller; each turn is logged so the run can be
+    // read back from the deployment's logs either way.
+    console.log('[replay] turn', JSON.stringify({ id, turn: hist.length / 2, reply: r.reply, tools: r.toolsUsed, usage: r.usage }))
     tools.push(...r.toolsUsed)
     for (const k of Object.keys(usage) as (keyof AgentUsage)[]) usage[k] += r.usage[k]
   }
