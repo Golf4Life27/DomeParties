@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { runAgent, type AgentUsage, type ChatTurn } from '@/lib/agent/run'
 import { prisma } from '@/lib/db'
+import { computeQuote } from '@/lib/pricing'
 
 // GET /api/agent/replay?chat=c05 — preview-only test harness. Plays one saved
 // guest chat through the agent turn by turn, in dry mode, and returns every
@@ -41,7 +42,23 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: 'asc' },
     })
     const noFood = rows.filter((b) => !b.addOns.some((x) => ['Food', 'Beverages'].includes(x.addOn.category)))
-    return NextResponse.json({ setting, byStatus, affected: noFood.map((b) => ({ ...b, addOns: b.addOns.map((x) => x.addOn.name) })) })
+    // Spot checks: every active package for 25 golfers on Sat Nov 7 at 5pm,
+    // bays only and with the first active food package.
+    const pkgs = await prisma.package.findMany({ where: { active: true }, select: { id: true, name: true } })
+    const food = await prisma.fnbPackage.findFirst({ where: { active: true, serviceCharge: true }, orderBy: { sortOrder: 'asc' } })
+    const checks = []
+    for (const p of pkgs) {
+      for (const fnbPackageId of [null, food?.id ?? null]) {
+        try {
+          const q = await computeQuote({ packageId: p.id, partySize: 25, fnbPackageId, addOns: [], dateStr: '2026-11-07', startMinutes: 17 * 60 })
+          checks.push({ pkg: p.name, food: fnbPackageId ? food?.name : null, serviceCharge: q.serviceCharge, total: q.total })
+        } catch (e) {
+          checks.push({ pkg: p.name, food: fnbPackageId ? food?.name : null, error: String(e) })
+        }
+        if (!food) break
+      }
+    }
+    return NextResponse.json({ setting, byStatus, checks, affected: noFood.map((b) => ({ ...b, addOns: b.addOns.map((x) => x.addOn.name) })) })
   }
 
   const id = req.nextUrl.searchParams.get('chat')
