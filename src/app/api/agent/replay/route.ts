@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { runAgent, type AgentUsage, type ChatTurn } from '@/lib/agent/run'
+import { prisma } from '@/lib/db'
 
 // GET /api/agent/replay?chat=c05 — preview-only test harness. Plays one saved
 // guest chat through the agent turn by turn, in dry mode, and returns every
@@ -23,6 +24,25 @@ export async function GET(req: NextRequest) {
   }
   const chats = chatsSchema.safeParse(JSON.parse(process.env.AGENT_REPLAY_CHATS))
   if (!chats.success) return NextResponse.json({ error: 'Bad chat list' }, { status: 500 })
+
+  // ?report=service-charge — read-only count of bookings that carried a
+  // service charge with no food or drinks on the order. No guest details.
+  if (req.nextUrl.searchParams.get('report') === 'service-charge') {
+    const setting = await prisma.setting.findUnique({ where: { id: 1 }, select: { serviceChargePct: true, serviceChargeOnGolf: true } })
+    const byStatus = await prisma.booking.groupBy({ by: ['status'], _count: true })
+    const rows = await prisma.booking.findMany({
+      where: { serviceCharge: { gt: 0 }, fnbTotal: 0, status: { not: 'DRAFT' } },
+      select: {
+        reference: true, status: true, date: true, createdAt: true, partySize: true, packageTotal: true, addOnsTotal: true,
+        serviceCharge: true, total: true, depositAmount: true, depositPaid: true, balanceDue: true, balancePaid: true,
+        balancePaidAmount: true, package: { select: { name: true } },
+        addOns: { select: { addOn: { select: { name: true, category: true } } } },
+      },
+      orderBy: { createdAt: 'asc' },
+    })
+    const noFood = rows.filter((b) => !b.addOns.some((x) => ['Food', 'Beverages'].includes(x.addOn.category)))
+    return NextResponse.json({ setting, byStatus, affected: noFood.map((b) => ({ ...b, addOns: b.addOns.map((x) => x.addOn.name) })) })
+  }
 
   const id = req.nextUrl.searchParams.get('chat')
   if (!id) return NextResponse.json({ chats: chats.data.map((c) => c.id) })
