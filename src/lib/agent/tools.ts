@@ -141,7 +141,7 @@ export const AGENT_TOOLS: Anthropic.Tool[] = [
         guest_name: { type: ['string', 'null'] },
         guest_email: { type: ['string', 'null'] },
         guest_phone: { type: ['string', 'null'] },
-        event_type: { type: ['string', 'null'], enum: [...EVENT_TYPES, null] },
+        event_type: { type: 'string', enum: [...EVENT_TYPES], description: 'OTHER when the guest has not said' },
         preferred_date: { type: ['string', 'null'], description: 'YYYY-MM-DD or null' },
         headcount: { type: ['integer', 'null'] },
       },
@@ -183,7 +183,7 @@ const handoffInput = z.object({
   guest_name: z.string().trim().max(120).nullable(),
   guest_email: z.string().trim().email().max(200).nullable(),
   guest_phone: z.string().trim().max(40).nullable(),
-  event_type: z.enum(EVENT_TYPES).nullable(),
+  event_type: z.enum(EVENT_TYPES),
   preferred_date: DATE.nullable(),
   headcount: z.number().int().min(1).max(1000).nullable(),
 })
@@ -380,7 +380,7 @@ async function handToTeam(raw: unknown, mode: ToolMode) {
   if (h.guest_email && h.guest_name) {
     const lead = await prisma.lead.create({
       data: {
-        eventType: h.event_type ?? 'OTHER',
+        eventType: h.event_type,
         preferredDate: h.preferred_date ? new Date(`${h.preferred_date}T00:00:00.000Z`) : null,
         headcountMin: h.headcount,
         headcountMax: h.headcount,
