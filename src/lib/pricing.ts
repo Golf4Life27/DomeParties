@@ -3,6 +3,9 @@ import { applyPercent, formatCents } from '@/lib/money'
 import { isPeakSlot } from '@/lib/time'
 import type { Quote, QuoteInput, QuoteLine } from '@/lib/types'
 
+/** Add-on categories that count as food or drinks for the service-charge rule. */
+const FOOD_OR_DRINK = new Set(['Food', 'Beverages'])
+
 /** Number of bays an event of `partySize` needs (each bay holds `bayCapacity`). */
 export function baysFor(partySize: number, bayCapacity: number): number {
   return Math.max(1, Math.ceil(partySize / bayCapacity))
@@ -73,7 +76,8 @@ export function addOnLineTotal(
 /**
  * Compute a full, transparent quote for an Instant Book selection.
  * All amounts in integer cents. Tax shown up front (anti-pattern to hide it);
- * service charge applies to the F&B + staffed portion per venue policy.
+ * service charge applies to the F&B + staffed portion per venue policy, and
+ * never to an order without food or drinks.
  */
 export async function computeQuote(input: QuoteInput): Promise<Quote> {
   const [setting, pkg, fnb, addOns] = await Promise.all([
@@ -186,12 +190,22 @@ export async function computeQuote(input: QuoteInput): Promise<Quote> {
 
   // --- Service charge (F&B + staffed portion; brochure policy optionally
   // extends it to golf/bay charges too) ---
-  if (setting.serviceChargeOnGolf) serviceChargeBase += packageTotal + peakAdjustment
+  // Venue rule: no service charge on an order without food or drinks. The
+  // golf/bay portion only joins the base when the party is ordering F&B, so a
+  // bays-only party pays none.
+  const hasFoodOrDrink =
+    fnbTotal > 0 ||
+    input.addOns.some((sel) => {
+      const a = addOnById.get(sel.addOnId)
+      return a != null && FOOD_OR_DRINK.has(a.category)
+    })
+  const golfCharged = setting.serviceChargeOnGolf && hasFoodOrDrink
+  if (golfCharged) serviceChargeBase += packageTotal + peakAdjustment
   const serviceCharge = applyPercent(serviceChargeBase, setting.serviceChargePct)
   if (serviceCharge > 0) {
     lines.push({
       label: `Service charge (${setting.serviceChargePct}%)`,
-      detail: setting.serviceChargeOnGolf
+      detail: golfCharged
         ? 'Applied to food, beverage & golf charges'
         : 'Applied to food, beverage & staffed service',
       amount: serviceCharge,
