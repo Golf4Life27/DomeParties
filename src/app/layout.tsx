@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import ChatWidget from './ChatWidget'
+import AgentChat from './AgentChat'
 import AttributionCapture from './AttributionCapture'
 import './globals.css'
 
@@ -17,13 +18,19 @@ export default function RootLayout({
   const metaPixel = process.env.NEXT_PUBLIC_META_PIXEL_ID
   const chatAccount = process.env.NEXT_PUBLIC_MYCHATBOT_ACCOUNT_ID
   const chatWidget = process.env.NEXT_PUBLIC_MYCHATBOT_WIDGET_ID
+  // The dome agent takes over the chat bubble only when its own switch is on
+  // and the agent itself can answer; otherwise the MyChatBot widget stays.
+  const agentChat =
+    process.env.DOME_AGENT_WIDGET === 'on' && process.env.DOME_AGENT === 'on' && Boolean(process.env.ANTHROPIC_API_KEY)
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         <AttributionCapture />
         {children}
-        {chatAccount && chatWidget && (
-          <ChatWidget accountId={chatAccount} widgetId={chatWidget} />
+        {agentChat ? (
+          <AgentChat />
+        ) : (
+          chatAccount && chatWidget && <ChatWidget accountId={chatAccount} widgetId={chatWidget} />
         )}
         {ga4 && (
           <>
