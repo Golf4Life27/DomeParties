@@ -87,3 +87,18 @@ export function keyMatches(provided: string | undefined, expected: string): bool
   const b = Buffer.from(expected)
   return a.length === b.length && timingSafeEqual(a, b)
 }
+
+/**
+ * Signed guest links for the follow-up closer emails ("still planning" and
+ * "someone already reached out"). The action is part of the signature, so a
+ * "yes" link can't be edited into an "all set" one.
+ */
+export function signLeadAction(leadId: string, action: string, days = 30): { exp: number; sig: string } {
+  const exp = Math.floor(Date.now() / 1000) + days * 86_400
+  return { exp, sig: hmac(`lead:${action}:${leadId}:${exp}`) }
+}
+
+export function verifyLeadAction(leadId: string, action: string, exp: number, sig: string): boolean {
+  if (!Number.isFinite(exp) || exp * 1000 < Date.now()) return false
+  return keyMatches(sig, hmac(`lead:${action}:${leadId}:${exp}`))
+}

@@ -35,6 +35,12 @@ found and **fixed + verified**; the remaining items are prioritized product gaps
    final confirmation; applied at the pay step (recomputes deposit, coexists with gift
    cards); admin → Promos CRUD.
 5. ✅ Lead nurture — automatic 24h follow-up email for NEW leads (once, via cron).
+   Follow-up closer (built, switched off): set `LEAD_CLOSER=on` to replace that one
+   email with three: a "still planning it?" check-in with a "someone already reached
+   out" button, then the group's price and booking link, then a last "your date is
+   still open". Only NEW leads get them, so staff stop it by marking a lead Contacted.
+   Email only until the dome has a texting number; the inquiry form now records
+   "OK to text me" consent so those leads can be texted later.
 6. ✅ Recovery is now a 3-touch sequence (after hold-release / +24h / +72h) with distinct
    copy; touches 2–3 automatically feature an active promo flagged "featuredInRecovery".
 7. ✅ "Ultimate Bash" anchor tier seeded **inactive** — review the $649 draft price in

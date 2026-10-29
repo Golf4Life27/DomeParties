@@ -17,6 +17,8 @@ const schema = z.object({
   customerName: z.string().min(1).max(120),
   customerEmail: z.string().email(),
   customerPhone: z.string().max(40).optional().nullable(),
+  // The form's "OK to text me" box. Unchecked by default; only counts with a phone.
+  textConsent: z.boolean().default(false),
   message: z.string().max(2000).optional().nullable(),
   // Where the lead came from. Constrained rather than free text so a public
   // endpoint can't write arbitrary strings into the admin lead list.
@@ -46,6 +48,7 @@ export async function POST(req: NextRequest) {
       customerName: d.customerName,
       customerEmail: d.customerEmail,
       customerPhone: d.customerPhone ?? null,
+      textConsent: d.textConsent && Boolean(d.customerPhone),
       message: d.message ?? null,
       source: d.source,
       ...attr,
