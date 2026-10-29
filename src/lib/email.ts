@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { prisma } from '@/lib/db'
 import { formatCents } from '@/lib/money'
 import { minutesToLabel } from '@/lib/time'
 
@@ -9,6 +10,35 @@ type EmailInput = {
   html: string
   text: string
   icsContent?: string
+}
+
+/**
+ * Where a guest's reply should land.
+ *
+ * Guest emails go out from the dome's Gmail account, and several of them invite
+ * a reply ("Reply to this email with any questions"). Nobody watches that inbox,
+ * so replies to the follow-ups sat unread. Every guest-facing email now carries a
+ * Reply-To of the events team list (staffNotifyEmail, the same people who get the
+ * staff alerts), so hitting Reply reaches a person.
+ *
+ * Staff alerts themselves keep no Reply-To: they are addressed to the team, and
+ * a reply there should go wherever the sender's mail client sends it.
+ * Returns undefined when no team list is set, which leaves sending unchanged.
+ */
+async function guestReplyTo(to: string | string[]): Promise<string[] | undefined> {
+  try {
+    const setting = await prisma.setting.findUnique({ where: { id: 1 } })
+    const team = splitRecipients(setting?.staffNotifyEmail)
+    if (team.length === 0) return undefined
+    const recipients = Array.isArray(to) ? to : splitRecipients(to)
+    const teamLower = team.map((e) => e.toLowerCase())
+    const toGuest = recipients.some((r) => !teamLower.includes(r.toLowerCase()))
+    return toGuest ? team : undefined
+  } catch (e) {
+    // A settings lookup must never stop a guest email from going out.
+    console.error('[email] could not read the team list for Reply-To', e)
+    return undefined
+  }
 }
 
 /**
@@ -49,6 +79,7 @@ export async function sendEmail(input: EmailInput): Promise<{ ok: boolean; mode:
   const from =
     process.env.EMAIL_FROM ||
     (gmailUser ? `Whitetail Ridge Golf Dome <${gmailUser}>` : 'Whitetail Ridge Golf Dome <events@example.com>')
+  const replyTo = await guestReplyTo(input.to)
 
   // --- Gmail SMTP bridge ---
   if (gmailUser && gmailPass) {
@@ -64,6 +95,7 @@ export async function sendEmail(input: EmailInput): Promise<{ ok: boolean; mode:
       await transporter.sendMail({
         from: gmailFrom,
         to: input.to,
+        replyTo,
         subject: input.subject,
         text: input.text,
         html: input.html,
@@ -82,6 +114,7 @@ export async function sendEmail(input: EmailInput): Promise<{ ok: boolean; mode:
     console.log('\n========== [DEV EMAIL] ==========')
     console.log('From:', from)
     console.log('To:', input.to)
+    if (replyTo) console.log('Reply-To:', replyTo.join(', '))
     console.log('Subject:', input.subject)
     console.log('---- text ----')
     console.log(input.text)
@@ -108,6 +141,7 @@ export async function sendEmail(input: EmailInput): Promise<{ ok: boolean; mode:
     body: JSON.stringify({
       from,
       to: input.to,
+      reply_to: replyTo,
       subject: input.subject,
       html: input.html,
       text: input.text,
