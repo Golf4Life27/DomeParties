@@ -62,7 +62,7 @@ function Linkified({ text }: { text: string }) {
   )
 }
 
-export default function AgentChat() {
+export default function AgentChat({ embedded = false }: { embedded?: boolean }) {
   const pathname = usePathname()
   // Closed is the first render on server and client alike, and the closed
   // bubble shows none of this, so reading storage up front can't mismatch.
@@ -76,13 +76,34 @@ export default function AgentChat() {
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   // Staff screens don't need a sales bot, and the /embed.js iframe sits on a
-  // host page that carries its own.
+  // host page that carries its own. The /chat.js iframe (embedded) is the
+  // host page's bubble, so it always shows.
   const inFrame = useSyncExternalStore(
     () => () => {},
     () => window.self !== window.top,
     () => false,
   )
-  const suppressed = (pathname?.startsWith('/admin') ?? false) || inFrame
+  const suppressed = !embedded && ((pathname?.startsWith('/admin') ?? false) || inFrame)
+  const state = open ? 'open' : teaserShown ? 'teaser' : 'closed'
+
+  // In the /chat.js iframe: tell the host page what's showing so it sizes the
+  // frame to fit, and take the phone layout from the host's width, not the
+  // frame's (a closed frame is narrower than any phone).
+  useEffect(() => {
+    if (!embedded) return
+    const root = document.documentElement
+    root.classList.add('dac-embed')
+    const onHost = (e: MessageEvent) => {
+      if (e.source !== window.parent || e.data?.type !== 'dome:chat-host') return
+      root.classList.toggle('dac-m', Boolean(e.data.mobile))
+    }
+    window.addEventListener('message', onHost)
+    return () => window.removeEventListener('message', onHost)
+  }, [embedded])
+
+  useEffect(() => {
+    if (embedded) window.parent.postMessage({ type: 'dome:chat', state }, '*')
+  }, [embedded, state])
 
   useEffect(() => {
     if (suppressed || dismissed) return
@@ -224,6 +245,14 @@ export default function AgentChat() {
   )
 }
 
+// Phone layout: by screen width on our own pages; in the /chat.js iframe, by
+// the host page's width, which the host sends (dac-m).
+const PHONE = (scope: string) => `
+${scope} .dac-launcher{width:62px;height:62px}
+${scope} .dac-teaser{display:none}
+${scope} .dac-panel{right:8px;bottom:8px;width:calc(100vw - 16px);height:calc(100dvh - 16px)}
+`
+
 const CSS = `
 .dac-launcher-wrap{position:fixed;right:20px;bottom:20px;z-index:2147483646;display:flex;align-items:flex-end;gap:10px}
 .dac-launcher{position:relative;width:72px;height:72px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -264,11 +293,8 @@ const CSS = `
 .dac-form button{width:40px;border:0;border-radius:12px;background:#c8ff2e;color:#0b1622;cursor:pointer;
   display:flex;align-items:center;justify-content:center}
 .dac-form button:disabled{opacity:.45;cursor:default}
-@media (max-width:480px){
-  .dac-launcher{width:62px;height:62px}
-  .dac-teaser{display:none}
-  .dac-panel{right:8px;bottom:8px;width:calc(100vw - 16px);height:calc(100dvh - 16px)}
-}
+@media (max-width:480px){${PHONE('html:not(.dac-embed)')}}
+${PHONE('html.dac-m')}
 @media (prefers-reduced-motion:reduce){
   .dac-pulse{animation:none;opacity:0}
   .dac-anim{display:none}
