@@ -86,9 +86,29 @@ const decode = (s: string) =>
     .replace(/&#39;|&apos;/g, "'")
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
 
+// Many venue sites sit behind Cloudflare, which hides email addresses on the
+// page as a hex string ("[email protected]" in plain text). The encoding is a
+// one-byte XOR, so the address can be read back the way the browser does.
+export function cfDecode(hex: string): string | null {
+  if (!/^[0-9a-f]{4,}$/i.test(hex) || hex.length % 2) return null
+  const key = parseInt(hex.slice(0, 2), 16)
+  let out = ''
+  for (let i = 2; i < hex.length; i += 2) out += String.fromCharCode(parseInt(hex.slice(i, i + 2), 16) ^ key)
+  return /^[^\s@<>]+@[^\s@<>]+\.[a-z]{2,}$/i.test(out) ? out : null
+}
+
+function unhideEmails(html: string): string {
+  return html
+    .replace(/<(a|span)\b[^>]*data-cfemail=["']([0-9a-f]+)["'][^>]*>[\s\S]*?<\/\1>/gi, (m, _t, hex) => cfDecode(hex) ?? m)
+    .replace(/href=["'][^"']*\/cdn-cgi\/l\/email-protection#([0-9a-f]+)["']/gi, (m, hex) => {
+      const e = cfDecode(hex)
+      return e ? `href="mailto:${e}"` : m
+    })
+}
+
 export function htmlToText(html: string): string {
   return decode(
-    html
+    unhideEmails(html)
       .replace(/<(script|style|noscript|svg|iframe)[\s\S]*?<\/\1>/gi, ' ')
       .replace(/<!--[\s\S]*?-->/g, ' ')
       .replace(/<(br|\/p|\/div|\/li|\/h\d|\/tr)\b[^>]*>/gi, '\n')

@@ -123,6 +123,17 @@ export default function SetupFlow({ origin }: { origin: string }) {
           <input value={p.name} onChange={(e) => set({ name: e.target.value })} />
         </label>
         <label>
+          How many {p.unit.plural} do you have?
+          <input
+            className="sf-num"
+            type="number"
+            min={1}
+            step={1}
+            value={p.unit.count}
+            onChange={(e) => set({ unit: { ...p.unit, count: Math.max(1, Math.round(Number(e.target.value) || 1)) } })}
+          />
+        </label>
+        <label>
           Where guests book a party
           <input value={p.booking.partyUrl ?? ''} onChange={(e) => set({ booking: { ...p.booking, partyUrl: e.target.value || null } })} placeholder="No booking page found: we'll send leads to your email" />
         </label>

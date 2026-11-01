@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { htmlToText, linksIn, normaliseUrl, SiteError } from './read-site'
+import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError } from './read-site'
 
 test('website addresses: plain names work, anything not a public site is refused', () => {
   assert.equal(normaliseUrl('example.com').toString(), 'https://example.com/')
@@ -24,4 +24,14 @@ test('links are kept with their text, resolved against the page', () => {
       ['https://book.example.net/x', 'Book'],
     ],
   )
+})
+
+test('reads email addresses that Cloudflare hides on the page', () => {
+  const email = 'events@example.com'
+  const key = 0x5a
+  const hex = key.toString(16) + [...email].map((c) => (c.charCodeAt(0) ^ key).toString(16).padStart(2, '0')).join('')
+  assert.equal(cfDecode(hex), email)
+  const html = `<p>Email <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="${hex}">[email&#160;protected]</a> today</p>`
+  assert.match(htmlToText(html), /Email events@example\.com today/)
+  assert.equal(cfDecode('zz'), null)
 })
