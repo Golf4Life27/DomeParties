@@ -12,7 +12,7 @@ export type Draft = { profile: VenueProfile; unsure: string[]; sources: string[]
 
 const SYSTEM = `You set up a website chat agent for an entertainment venue (golf dome, indoor golf simulators, driving range, bowling center or family entertainment center) by reading the venue's own website.
 
-Fill in the save_setup tool from what the pages say. Rules:
+Always answer by calling the save_setup tool once, with no text reply. Fill it in from what the pages say. Rules:
 - Use only facts the pages state. Never invent a price, an hour, a package or a policy. When something isn't on the pages, use the safest empty value (an empty list, null, 0) and add a short plain line about it to "unsure", for example "No party prices on the website" or "Hours for Sunday not listed".
 - Prices are plain numbers in the venue's currency, without symbols. Hours are 24-hour HH:MM in the venue's local time.
 - booking.partyUrl is the page where a guest books a party or event online, if the site has one, copied exactly from the page links. otherLinks are other booking pages (casual bays, open bowling, gift cards), copied exactly.
@@ -55,21 +55,26 @@ export async function draftFromSite(website: string, contactEmail: string | null
   const messages: Anthropic.MessageParam[] = [
     { role: 'user', content: `${pagesText(site)}\n\nDraft the setup for this venue.${contactEmail ? ` The owner's contact email is ${contactEmail}; use it for handoff.email if the site shows no events email.` : ''}` },
   ]
-  // One retry: if the draft doesn't pass the setup checks, the model gets the
-  // exact problems back and fixes them.
-  for (let attempt = 0; attempt < 2; attempt++) {
+  // The current model doesn't accept a forced tool choice, so the tool is
+  // offered on auto and a turn without it gets one nudge. If a draft fails the
+  // setup checks, the model gets the exact problems back and fixes them.
+  for (let attempt = 0; attempt < 3; attempt++) {
     const res = await client.messages.create({
       model: venueAgentModel(),
       max_tokens: 16000,
       system: SYSTEM,
       tools: [tool()],
-      tool_choice: { type: 'tool', name: 'save_setup' },
+      tool_choice: { type: 'auto' },
       messages,
     })
     usage.inputTokens += res.usage.input_tokens
     usage.outputTokens += res.usage.output_tokens
     const call = res.content.find((b): b is Anthropic.ToolUseBlock => b.type === 'tool_use')
-    if (!call) break
+    if (!call) {
+      messages.push({ role: 'assistant', content: res.content })
+      messages.push({ role: 'user', content: 'Call save_setup now with the full setup. Do not reply in text.' })
+      continue
+    }
     const out = wrapper.safeParse(call.input)
     try {
       if (!out.success) throw new Error('The tool input was not shaped as { setup, unsure }')
