@@ -10,6 +10,7 @@ import { runVenueTool } from './tools'
 import { venueSystemPrompt } from './prompt'
 import { leadEmailText } from './handoff'
 import { draftFromPasted, flagUnpricedCharges, MAX_PASTED_CHARS, PastedError } from './draft'
+import { sameSite } from './read-site'
 
 const venue = (slug: string): VenueProfile => {
   const v = getVenue(slug)
@@ -238,4 +239,11 @@ test('setup from pasted text turns away empty or oversized input before any mode
   await assert.rejects(draftFromPasted({ text: '   ' }, null), PastedError)
   await assert.rejects(draftFromPasted({ text: 'x'.repeat(MAX_PASTED_CHARS + 1) }, null), PastedError)
   await assert.rejects(draftFromPasted({ pdfBase64: Buffer.alloc(3 * 1024 * 1024 + 10).toString('base64') }, null), PastedError)
+})
+
+test('the setup reader treats www and subdomains as the same site, and a different domain as a move', () => {
+  assert.equal(sameSite('www.thecastlefuncenter.com', 'thecastlefuncenter.com'), true)
+  assert.equal(sameSite('book.venue.com', 'venue.com'), true)
+  assert.equal(sameSite('www.partycentralinfo.com', 'shreveportssecrets.com'), false)
+  assert.equal(sameSite('thehatchetbury.com', 'expireddomains.com'), false)
 })

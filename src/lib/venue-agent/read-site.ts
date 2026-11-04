@@ -46,7 +46,23 @@ async function assertPublic(url: URL) {
   if (addrs.some((a) => privateAddress(a.address))) throw new SiteError('That address is not a public website.')
 }
 
-async function fetchPage(start: URL): Promise<{ url: URL; html: string } | null> {
+const bare = (h: string) => h.toLowerCase().replace(/^www\./, '')
+/** Same website: example.com, www.example.com and book.example.com all count. */
+export function sameSite(a: string, b: string): boolean {
+  const x = bare(a)
+  const y = bare(b)
+  return x === y || x.endsWith(`.${y}`) || y.endsWith(`.${x}`)
+}
+
+/** The first page a guest-facing address leads to. Strict about where it ends
+ *  up: a venue address that now redirects to a different website (an expired
+ *  domain, a closed venue) is refused rather than drafted from someone else's
+ *  site, and a security wall is named as one so the owner can paste instead. */
+async function fetchFirstPage(start: URL): Promise<{ url: URL; html: string } | null> {
+  return fetchPage(start, true)
+}
+
+async function fetchPage(start: URL, strict = false): Promise<{ url: URL; html: string } | null> {
   let url = start
   for (let hop = 0; hop < 4; hop++) {
     await assertPublic(url)
@@ -58,8 +74,17 @@ async function fetchPage(start: URL): Promise<{ url: URL; html: string } | null>
     if (res.status >= 300 && res.status < 400) {
       const loc = res.headers.get('location')
       if (!loc) return null
-      url = normaliseUrl(new URL(loc, url).toString())
+      const next = normaliseUrl(new URL(loc, url).toString())
+      if (strict && !sameSite(next.hostname, start.hostname)) {
+        throw new SiteError(
+          `${start.hostname} now leads to a different website (${next.hostname}). If your venue has a new address, use that, or paste your party page instead.`,
+        )
+      }
+      url = next
       continue
+    }
+    if (strict && [401, 403, 429, 503].includes(res.status)) {
+      throw new SiteError(`${start.hostname}'s security settings won't let us read it. Paste your party page or upload a PDF of it instead.`)
     }
     if (!res.ok || !(res.headers.get('content-type') ?? '').includes('html')) return null
     const reader = res.body?.getReader()
@@ -141,13 +166,21 @@ export type SitePages = { home: URL; pages: { url: string; text: string }[]; lin
 /** The home page plus the few pages most likely to hold hours, parties and prices. */
 export async function readVenueSite(input: string): Promise<SitePages> {
   const home = normaliseUrl(input)
-  const first = await fetchPage(home)
-  if (!first) throw new SiteError(`Couldn't open ${home.hostname}. Check the address, or try the page that lists your parties.`)
+  const tryPage = (u: URL) =>
+    fetchFirstPage(u).catch((e: unknown) => {
+      if (e instanceof SiteError) throw e
+      return null // timed out or the connection dropped
+    })
+  // An old or mistyped page on a working site (a 404, a timeout) falls back to
+  // the site's home page rather than failing the whole setup.
+  let first = await tryPage(home)
+  if (!first && home.pathname !== '/') first = await tryPage(new URL('/', home))
+  if (!first) throw new SiteError(`Couldn't open ${home.hostname}. Check the address, or paste your party page instead.`)
   const pages = [{ url: first.url.toString(), text: htmlToText(first.html).slice(0, 20000) }]
   const allLinks = linksIn(first.html, first.url)
   const seen = new Set([first.url.toString()])
   const candidates = allLinks
-    .filter((l) => l.url.hostname.replace(/^www\./, '') === first.url.hostname.replace(/^www\./, ''))
+    .filter((l) => bare(l.url.hostname) === bare(first.url.hostname))
     .filter((l) => KEYWORDS.test(l.text) || KEYWORDS.test(l.url.pathname))
     .filter((l) => !/\.(pdf|jpe?g|png|gif|zip)$/i.test(l.url.pathname))
   for (const c of candidates) {
