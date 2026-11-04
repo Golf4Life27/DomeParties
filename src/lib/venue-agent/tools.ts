@@ -166,15 +166,17 @@ function partyOptions(p: VenueProfile) {
       p.peak.days.length || p.peak.allDay.length
         ? { days: p.peak.days, from: p.peak.from ? formatTime(p, p.peak.from) : 'all day', all_day_on: p.peak.allDay }
         : 'none',
-    deposit: p.deposit.flat != null ? m(p.deposit.flat) : p.deposit.percent != null ? `${p.deposit.percent}% of the total` : 'none',
-    service_charge: p.serviceCharge.percent
+    deposit: p.deposit.flat != null ? m(p.deposit.flat) : p.deposit.percent != null ? `${p.deposit.percent}% of the total` : p.notStated.includes('deposit') ? 'not listed online: the team confirms it, never say there is none' : 'none',
+    service_charge: !p.serviceCharge.percent && p.notStated.includes('service_charge')
+      ? 'not listed online: the team confirms it, never say there is none'
+      : p.serviceCharge.percent
       ? {
           percent: p.serviceCharge.percent,
           applies: { all: 'on every party', with_food: 'only on parties that include food', food_only: 'on the food only' }[p.serviceCharge.appliesTo],
           what_it_covers: p.serviceCharge.note || null,
         }
       : 'none',
-    tax_percent: p.taxPercent,
+    tax_percent: !p.taxPercent && p.notStated.includes('tax') ? 'not listed online: the team confirms it, never say there is none' : p.taxPercent,
     book_at_least_days_ahead: p.booking.leadTimeDays,
     how_booking_works: p.booking.howItWorks || null,
     booked_elsewhere: p.otherLinks,

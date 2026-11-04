@@ -196,3 +196,9 @@ test('a site with no hours listed is never called closed', async () => {
   const out = JSON.parse(await runVenueTool(p, 'venue_hours', { start_date: '2026-11-14', days: 1 }, 'dry', '2026-11-04')) as { days: { open: string }[] }
   assert.match(out.days[0].open, /not listed online/)
 })
+
+test('party options never call an unlisted tax, deposit or service charge none', async () => {
+  const p = parseProfile({ ...lanes, taxPercent: 0, deposit: { percent: null, flat: null }, serviceCharge: { percent: 0 }, notStated: ['tax', 'deposit', 'service_charge'] })
+  const o = JSON.parse(await runVenueTool(p, 'party_options', {}, 'dry', '2026-11-04'))
+  for (const k of ['deposit', 'service_charge', 'tax_percent']) assert.match(String(o[k]), /not listed online/)
+})
