@@ -125,7 +125,9 @@ function venueHours(p: VenueProfile, raw: unknown) {
       day: formatDate(p, d.date),
       open: d.closed
         ? `closed${d.note ? ` (${d.note})` : ''}`
-        : d.windows.map((w) => `${formatTime(p, w.open)} to ${formatTime(p, w.close)}${w.closesNextDay ? ' (after midnight)' : ''}`).join(', '),
+        : !p.hoursListed
+          ? 'not listed online: say the team will confirm times, never that the venue is closed'
+          : d.windows.map((w) => `${formatTime(p, w.open)} to ${formatTime(p, w.close)}${w.closesNextDay ? ' (after midnight)' : ''}`).join(', '),
     })
   }
   return { days: out }
@@ -135,11 +137,13 @@ function partyOptions(p: VenueProfile) {
   const m = (amount: number) => money(p, amount)
   return {
     venue: p.name,
-    booked_unit: `${p.unit.singular} (${p.unit.count} in all, up to ${p.unit.guestsPerUnit} guests each)`,
+    booked_unit: `${p.unit.singular} (${p.unit.count != null ? `${p.unit.count} in all` : 'number not listed'}, up to ${p.unit.guestsPerUnit} guests each)`,
     packages: p.packages.map((pkg) => {
       const pr = pkg.pricing
       const per = pr.type === 'flat' ? 'flat' : pr.type === 'per_person' ? 'per guest' : `per ${p.unit.singular} per hour`
-      const price = `${m(pr.amount)} ${per}${pr.peakAmount != null ? `, ${m(pr.peakAmount)} at peak times` : ''}`
+      const price = pkg.priceListed
+        ? `${m(pr.amount)} ${per}${pr.peakAmount != null ? `, ${m(pr.peakAmount)} at peak times` : ''}`
+        : 'not listed online: the team quotes it'
       const example =
         pr.type === 'per_unit_hour'
           ? `${pkg.minGuests} guests need ${unitsFor(p, pkg.minGuests, pr.minUnits)} ${p.unit.plural}`

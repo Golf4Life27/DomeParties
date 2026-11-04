@@ -172,3 +172,27 @@ test('charges the venue never mentions are flagged, not quoted as zero', () => {
   assert.match(String(q.not_included), /doesn't list its tax, deposit/)
   assert.equal(describeQuote(lanes, quote(lanes, { packageId: lanes.packages[0].id, guests: lanes.packages[0].minGuests, date: null, start: null, foodId: null, foodGuests: null, addOns: [] })).not_included, undefined)
 })
+
+test('a package with no price online is never quoted at zero', async () => {
+  const pkgs = lanes.packages.map((x, i) => (i === 0 ? { ...x, priceListed: false, pricing: { ...x.pricing, amount: 0 } } : x))
+  const p = parseProfile({ ...lanes, packages: pkgs })
+  assert.throws(() => quote(p, { ...base, packageId: pkgs[0].id, guests: pkgs[0].minGuests, date: null }), (e: unknown) => e instanceof QuoteError && /doesn't list a price/.test(e.message))
+  const opts = JSON.parse(await runVenueTool(p, 'party_options', {}, 'dry', '2026-11-04')) as { packages: { price: string }[] }
+  assert.match(opts.packages[0].price, /not listed online/)
+})
+
+test('an unknown bay or lane count skips the capacity check instead of assuming one', async () => {
+  const p = parseProfile({ ...lanes, unit: { ...lanes.unit, count: null } })
+  const pkg = p.packages.find((x) => x.pricing.type === 'per_unit_hour') ?? p.packages[0]
+  assert.doesNotThrow(() => quote(p, { ...base, packageId: pkg.id, guests: pkg.maxGuests, date: null }))
+  assert.match(JSON.parse(await runVenueTool(p, 'party_options', {}, 'dry', '2026-11-04')).booked_unit, /number not listed/)
+})
+
+test('a site with no hours listed is never called closed', async () => {
+  const p = parseProfile({ ...lanes, hours: { sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] }, hoursListed: false })
+  const d = hoursOn(p, '2026-11-14')
+  assert.equal(d.closed, false)
+  assert.equal(fitsHours(p, '2026-11-14', '19:00', 120), true)
+  const out = JSON.parse(await runVenueTool(p, 'venue_hours', { start_date: '2026-11-14', days: 1 }, 'dry', '2026-11-04')) as { days: { open: string }[] }
+  assert.match(out.days[0].open, /not listed online/)
+})

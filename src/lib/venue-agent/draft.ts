@@ -19,9 +19,11 @@ Always answer by calling the save_setup tool once, with no text reply. Fill it i
 - slug is short, lowercase, letters, numbers and hyphens, from the venue's name. ids are the same style.
 - faq holds short answers the pages give to things guests ask (outside food, age limits, what to wear, parking, cancellations), in the venue's words.
 - handoff.email is the venue's events or contact email if the site shows one, otherwise null. handoff.webhookUrl is always null.
-- unit.count is the number of bays, simulators or lanes the pages state. If they don't say, use 1 and add a line to "unsure" saying the count wasn't listed.
+- unit.count is the number of bays, simulators or lanes the pages state. If they don't say, use null and add a line to "unsure" saying the count wasn't listed. Never guess 1.
 - unit.guestsPerUnit is the most guests one bay, simulator or lane takes, as the pages state. If they don't say, use 4 for golf bays, simulators and stalls, 6 for bowling lanes, and add a line to "unsure" saying so. Never use 1 unless the pages say one guest per unit.
-- For packages priced per unit per hour, maxGuests is unit.count times unit.guestsPerUnit unless the pages state a lower limit.
+- For packages priced per unit per hour, maxGuests is unit.count times unit.guestsPerUnit unless the pages state a lower limit (use 40 when the count is null).
+- A package the pages describe without a price ("call for pricing", "contact us") gets priceListed false and amount 0. Never save 0 as a real price, and never use priceListed false when the pages give a number.
+- hoursListed is false when the pages give no opening hours at all; leave hours empty then. Days the pages say are closed stay empty with hoursListed true.
 - peak: when prices are higher on some days from a time onwards, put those days in peak.days and the time in peak.from. Days that are peak all day (often weekends) go in peak.allDay. A package's peakAmount is its price at peak times.
 - notStated lists each of tax, deposit and service_charge that the pages don't mention at all. Leave the matching value at 0 or null. A charge the pages say doesn't apply is not "not stated".
 - sample and prospect are false.

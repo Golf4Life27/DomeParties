@@ -25,6 +25,7 @@ function money(p: VenueProfile, n: number) {
 
 function priceLine(p: VenueProfile, pkg: VenueProfile['packages'][number]) {
   const pr = pkg.pricing
+  if (!pkg.priceListed) return 'no price on your site yet: type one in, or we’ll offer guests a quote from you'
   const per = pr.type === 'flat' ? 'flat' : pr.type === 'per_person' ? 'per guest' : `per ${p.unit.singular} per hour`
   return `${money(p, pr.amount)} ${per}${pr.peakAmount != null ? ` (${money(p, pr.peakAmount)} peak)` : ''}`
 }
@@ -129,8 +130,9 @@ export default function SetupFlow({ origin }: { origin: string }) {
             type="number"
             min={1}
             step={1}
-            value={p.unit.count}
-            onChange={(e) => set({ unit: { ...p.unit, count: Math.max(1, Math.round(Number(e.target.value) || 1)) } })}
+            value={p.unit.count ?? ''}
+            placeholder="Not on your site"
+            onChange={(e) => set({ unit: { ...p.unit, count: e.target.value ? Math.max(1, Math.round(Number(e.target.value) || 1)) : null } })}
           />
         </label>
         <label>
@@ -156,7 +158,7 @@ export default function SetupFlow({ origin }: { origin: string }) {
         <ul className="sf-list">
           {DAYS.map(([d, label]) => (
             <li key={d}>
-              <span>{label}</span> {(p.hours[d] ?? []).length ? (p.hours[d] ?? []).map((w) => `${w.open}–${w.close}`).join(', ') : 'closed'}
+              <span>{label}</span> {!p.hoursListed ? 'not on your site' : (p.hours[d] ?? []).length ? (p.hours[d] ?? []).map((w) => `${w.open}–${w.close}`).join(', ') : 'closed'}
             </li>
           ))}
         </ul>
@@ -170,11 +172,11 @@ export default function SetupFlow({ origin }: { origin: string }) {
                 type="number"
                 min={0}
                 step="0.01"
-                value={pkg.pricing.amount}
+                value={pkg.priceListed ? pkg.pricing.amount : ''}
                 aria-label={`${pkg.name} price`}
                 onChange={(e) => {
                   const packages = [...p.packages]
-                  packages[i] = { ...pkg, pricing: { ...pkg.pricing, amount: Number(e.target.value) } }
+                  packages[i] = { ...pkg, priceListed: e.target.value !== '', pricing: { ...pkg.pricing, amount: Number(e.target.value) || 0 } }
                   set({ packages })
                 }}
               />{' '}

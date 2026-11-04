@@ -42,6 +42,11 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
   const c = p.currency
   const pkg = p.packages.find((x) => x.id === r.packageId)
   if (!pkg) throw new QuoteError(`Unknown package "${r.packageId}"`)
+  if (!pkg.priceListed) {
+    throw new QuoteError(
+      `The venue doesn't list a price for ${pkg.name} online. Don't give or guess a number: offer to pass the guest's details to the team for a quote.`,
+    )
+  }
   if (r.guests < pkg.minGuests || r.guests > pkg.maxGuests) {
     throw new QuoteError(`${pkg.name} is for ${pkg.minGuests} to ${pkg.maxGuests} guests`)
   }
@@ -68,7 +73,7 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
     lines.push({ item: pkg.name, detail: `${r.guests} guests`, amount: toMinor(rate, c) * r.guests })
   } else {
     units = unitsFor(p, r.guests, pkg.pricing.minUnits)
-    if (units > p.unit.count) throw new QuoteError(`That needs ${units} ${p.unit.plural}; the venue has ${p.unit.count}`)
+    if (p.unit.count != null && units > p.unit.count) throw new QuoteError(`That needs ${units} ${p.unit.plural}; the venue has ${p.unit.count}`)
     lines.push({
       item: pkg.name,
       detail: `${units} ${units === 1 ? p.unit.singular : p.unit.plural} for ${hours} h`,

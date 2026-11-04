@@ -61,12 +61,16 @@ export const venueProfileSchema = z.object({
   unit: z.object({
     singular: z.string().min(1).max(30),
     plural: z.string().min(1).max(30),
-    count: z.number().int().min(1).max(1000),
+    /** Null when the venue's website doesn't say how many it has. */
+    count: z.number().int().min(1).max(1000).nullable(),
     guestsPerUnit: z.number().int().min(1).max(50),
   }),
 
   /** Regular hours by weekday. A missing or empty day means closed. */
   hours: z.record(WEEKDAY, z.array(window).max(3)),
+  /** False when the website doesn't list opening hours at all. The agent then
+   * says the team will confirm times instead of calling every day closed. */
+  hoursListed: z.boolean().default(true),
   closures: z.array(z.object({ date: DATE, note: z.string().max(120).default('') })).max(366).default([]),
 
   /** When peak prices apply: on `days` from `from` onwards (all day if
@@ -126,6 +130,9 @@ export const venueProfileSchema = z.object({
         /** Weekdays it's sold. Empty means every open day. */
         days: z.array(WEEKDAY).max(7).default([]),
         pricing,
+        /** False when the website gives no price for it ("call for pricing").
+         * The agent then offers a quote from the team instead of a number. */
+        priceListed: z.boolean().default(true),
       }),
     )
     .min(1)
