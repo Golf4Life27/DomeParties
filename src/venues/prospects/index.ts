@@ -1,3 +1,4 @@
+import broheimsGolf from './broheims-golf.json'
 import garageGolfCincy from './garage-golf-cincy.json'
 import golf616 from './golf-616.json'
 import officeGolf from './office-golf.json'
@@ -11,6 +12,7 @@ import wisconsinIndoorGolfCenter from './wisconsin-indoor-golf-center.json'
 // Real venues' chats set up from their public websites, for the owner to try.
 // They always run as demos and never show on the public sample list.
 export const PROSPECTS: unknown[] = [
+  broheimsGolf,
   garageGolfCincy,
   golf616,
   officeGolf,
