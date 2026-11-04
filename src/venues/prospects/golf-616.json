@@ -166,7 +166,8 @@
         "type": "per_unit_hour",
         "amount": 80,
         "peakAmount": null,
-        "minUnits": 1
+        "minUnits": 1,
+        "guestsPerUnit": 6
       }
     }
   ],

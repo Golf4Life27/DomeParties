@@ -30,6 +30,9 @@ const pricing = z.discriminatedUnion('type', [
     amount: money,
     peakAmount: money.nullable().default(null),
     minUnits: z.number().int().min(1).max(500).default(1),
+    /** Set when this package books its own space rather than the venue's usual
+     * unit, like a private room for up to 6: guests per booking of it. */
+    guestsPerUnit: z.number().int().min(1).max(500).nullable().default(null),
   }),
 ])
 

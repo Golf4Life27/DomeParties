@@ -49,6 +49,7 @@ export const VENUE_TOOLS: Anthropic.Tool[] = [
         guests: { type: 'integer' },
         date: { type: ['string', 'null'], description: 'YYYY-MM-DD or null' },
         start_time: { type: ['string', 'null'], description: 'HH:MM 24-hour, or null' },
+        hours: { type: ['number', 'null'], description: 'For packages priced per hour: how many hours the guest wants, e.g. 3. null for the package length.' },
         food_id: { type: ['string', 'null'] },
         food_guests: { type: ['integer', 'null'], description: 'Guests eating, if not everyone; null for everyone' },
         add_ons: {
@@ -61,7 +62,7 @@ export const VENUE_TOOLS: Anthropic.Tool[] = [
           },
         },
       },
-      required: ['package_id', 'guests', 'date', 'start_time', 'food_id', 'food_guests', 'add_ons'],
+      required: ['package_id', 'guests', 'date', 'start_time', 'hours', 'food_id', 'food_guests', 'add_ons'],
       additionalProperties: false,
     },
   },
@@ -100,6 +101,7 @@ const priceInput = z.object({
   guests: z.number().int().min(1).max(5000),
   date: DATE.nullable(),
   start_time: TIME.nullable(),
+  hours: z.number().min(0.5).max(12).nullable().default(null),
   food_id: z.string().min(1).nullable(),
   food_guests: z.number().int().min(0).max(5000).nullable(),
   add_ons: z.array(z.object({ id: z.string().min(1), quantity: z.number().int().min(1).max(100) })).max(20),
@@ -146,7 +148,9 @@ function partyOptions(p: VenueProfile) {
         : 'not listed online: the team quotes it'
       const example =
         pr.type === 'per_unit_hour'
-          ? `${pkg.minGuests} guests need ${unitsFor(p, pkg.minGuests, pr.minUnits)} ${p.unit.plural}`
+          ? pr.guestsPerUnit != null
+            ? `up to ${pr.guestsPerUnit} guests per booking; priced per hour, so pass hours to price_party`
+            : `${pkg.minGuests} guests need ${unitsFor(p, pkg.minGuests, pr.minUnits)} ${p.unit.plural}; priced per hour, so pass hours to price_party`
           : null
       return {
         id: pkg.id,
@@ -198,6 +202,7 @@ function price(p: VenueProfile, raw: unknown, today: string) {
       guests: r.guests,
       date: r.date,
       start: r.start_time,
+      hours: r.hours,
       foodId: r.food_id,
       foodGuests: r.food_guests,
       addOns: r.add_ons,

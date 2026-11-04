@@ -202,3 +202,14 @@ test('party options never call an unlisted tax, deposit or service charge none',
   const o = JSON.parse(await runVenueTool(p, 'party_options', {}, 'dry', '2026-11-04'))
   for (const k of ['deposit', 'service_charge', 'tax_percent']) assert.match(String(o[k]), /not listed online/)
 })
+
+test('hourly packages price the hours asked for, and a private room counts as one booking', () => {
+  const room = { id: 'vip', name: 'VIP Room', durationMinutes: 60, minGuests: 1, maxGuests: 6, pricing: { type: 'per_unit_hour', amount: 80, guestsPerUnit: 6 } }
+  const hourly = { id: 'bay', name: 'Bay', durationMinutes: 60, minGuests: 1, maxGuests: 40, pricing: { type: 'per_unit_hour', amount: 40 } }
+  const p = parseProfile({ ...lanes, unit: { ...lanes.unit, guestsPerUnit: 4 }, packages: [room, hourly], taxPercent: 0, serviceCharge: { percent: 0 }, deposit: { percent: null, flat: null } })
+  assert.equal(quote(p, { ...base, packageId: 'vip', guests: 6, date: null, hours: 2 }).total, 16000)
+  assert.equal(quote(p, { ...base, packageId: 'bay', guests: 8, date: null, hours: 3 }).total, 24000)
+  assert.equal(quote(p, { ...base, packageId: 'bay', guests: 8, date: null }).total, 8000)
+  const flat = lanes.packages.find((x) => x.pricing.type !== 'per_unit_hour')!
+  assert.throws(() => quote(lanes, { ...base, packageId: flat.id, guests: flat.minGuests, date: null, hours: flat.durationMinutes / 60 + 1 }), /set/)
+})

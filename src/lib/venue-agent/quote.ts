@@ -13,6 +13,8 @@ export type QuoteRequest = {
   foodId: string | null
   /** Guests eating; defaults to everyone. */
   foodGuests: number | null
+  /** Hours wanted, for packages priced by the hour. Null means the package's own length. */
+  hours?: number | null
   addOns: { id: string; quantity: number }[]
 }
 
@@ -34,8 +36,8 @@ export type Quote = {
 
 export class QuoteError extends Error {}
 
-export function unitsFor(p: VenueProfile, guests: number, minUnits = 1): number {
-  return Math.max(minUnits, Math.ceil(guests / p.unit.guestsPerUnit))
+export function unitsFor(p: VenueProfile, guests: number, minUnits = 1, guestsPerUnit: number | null = null): number {
+  return Math.max(minUnits, Math.ceil(guests / (guestsPerUnit ?? p.unit.guestsPerUnit)))
 }
 
 export function quote(p: VenueProfile, r: QuoteRequest): Quote {
@@ -50,20 +52,25 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
   if (r.guests < pkg.minGuests || r.guests > pkg.maxGuests) {
     throw new QuoteError(`${pkg.name} is for ${pkg.minGuests} to ${pkg.maxGuests} guests`)
   }
+  const baseHours = pkg.durationMinutes / 60
+  if (r.hours != null && r.hours !== baseHours && pkg.pricing.type !== 'per_unit_hour') {
+    throw new QuoteError(`${pkg.name} is a set ${baseHours}-hour package`)
+  }
+  const hours = pkg.pricing.type === 'per_unit_hour' && r.hours != null ? r.hours : baseHours
+  if (hours < baseHours) throw new QuoteError(`${pkg.name} is booked for at least ${baseHours} hours`)
   if (r.date) {
     const day = hoursOn(p, r.date)
     if (day.closed) throw new QuoteError(`Closed on ${r.date}${day.note ? ` (${day.note})` : ''}`)
     if (pkg.days.length && !pkg.days.includes(weekdayOf(r.date))) {
       throw new QuoteError(`${pkg.name} isn't offered on that day of the week`)
     }
-    if (r.start && !fitsHours(p, r.date, r.start, pkg.durationMinutes)) {
-      throw new QuoteError(`A ${pkg.durationMinutes / 60}-hour party starting at ${r.start} doesn't fit the opening hours that day`)
+    if (r.start && !fitsHours(p, r.date, r.start, hours * 60)) {
+      throw new QuoteError(`A ${hours}-hour party starting at ${r.start} doesn't fit the opening hours that day`)
     }
   }
 
   const peak = r.date ? isPeak(p, r.date, r.start) : false
   const rate = peak && pkg.pricing.peakAmount != null ? pkg.pricing.peakAmount : pkg.pricing.amount
-  const hours = pkg.durationMinutes / 60
   const lines: QuoteLine[] = []
   let units: number | null = null
 
@@ -72,11 +79,12 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
   } else if (pkg.pricing.type === 'per_person') {
     lines.push({ item: pkg.name, detail: `${r.guests} guests`, amount: toMinor(rate, c) * r.guests })
   } else {
-    units = unitsFor(p, r.guests, pkg.pricing.minUnits)
-    if (p.unit.count != null && units > p.unit.count) throw new QuoteError(`That needs ${units} ${p.unit.plural}; the venue has ${p.unit.count}`)
+    const own = pkg.pricing.guestsPerUnit
+    units = unitsFor(p, r.guests, pkg.pricing.minUnits, own)
+    if (own == null && p.unit.count != null && units > p.unit.count) throw new QuoteError(`That needs ${units} ${p.unit.plural}; the venue has ${p.unit.count}`)
     lines.push({
       item: pkg.name,
-      detail: `${units} ${units === 1 ? p.unit.singular : p.unit.plural} for ${hours} h`,
+      detail: own != null ? `${units === 1 ? '' : `${units} bookings, `}${hours} h` : `${units} ${units === 1 ? p.unit.singular : p.unit.plural} for ${hours} h`,
       amount: Math.round(toMinor(rate, c) * units * hours),
     })
   }
