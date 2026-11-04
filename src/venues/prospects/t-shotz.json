@@ -1,0 +1,375 @@
+{
+  "slug": "t-shotz",
+  "name": "T-Shotz Golf & Entertainment Venue",
+  "kind": "driving_range",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "660 NW Metro North Dr, Kansas City, MO 64155",
+  "phone": "(816) 702-1320",
+  "website": "https://www.tshotz.com/",
+  "unit": {
+    "singular": "bay",
+    "plural": "bays",
+    "count": 61,
+    "guestsPerUnit": 8
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "11:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [
+      {
+        "open": "16:00",
+        "close": "21:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "11:00",
+        "close": "23:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "11:00",
+        "close": "23:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://www.tshotz.com/contact-sales-team",
+    "howItWorks": "Contact the event sales team (online form or sales@tshotz.com) with your date, guest count and goals; the team helps choose food, drinks, bays and event space. Bays can be booked online or walk-in.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book a bay (online reservations)",
+      "url": "https://www.sevenrooms.com/reservations/tshotz"
+    },
+    {
+      "what": "Book a bay or pickleball court",
+      "url": "https://www.tshotz.com/BOOK-A-BAY"
+    }
+  ],
+  "deposit": {
+    "percent": 50,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "bay-rental",
+      "name": "Hitting Bay Rental",
+      "description": "Climate-controlled Trackman hitting bay, up to 8 guests per bay. Book more hours as needed. Rates not shown on the pages provided.",
+      "includes": [
+        "Trackman point-scoring games",
+        "HDTVs",
+        "Complimentary clubs available"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 488,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 0,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": false
+    },
+    {
+      "id": "date-night",
+      "name": "Date Night",
+      "description": "Thursday date night deal for you and your special someone.",
+      "includes": [
+        "90 minutes of bay time",
+        "A select appetizer (Fried Pickles or Bavarian Pretzel)",
+        "Any Detroit Style Pizza to share"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 2,
+      "days": [
+        "thu"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 50,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "two-bays-your-way",
+      "name": "Two Bays Your Way VIP Package",
+      "description": "Two of the best bays, guaranteed side by side, for up to 16 people. Contact the sales team to book.",
+      "includes": [
+        "Two side-by-side bays",
+        "2.5 hours of golf (30 minutes complimentary)",
+        "Bites from the Pro's Pick selection"
+      ],
+      "durationMinutes": 150,
+      "minGuests": 1,
+      "maxGuests": 16,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false
+    },
+    {
+      "id": "kids-birthday",
+      "name": "Kids Birthday Party",
+      "description": "Kids birthday packages starting at $25. Upgrade with add-ons. Contact the sales team to book.",
+      "includes": [
+        "Souvenir cup for the guest of honor",
+        "Brownie sundae for the guest of honor"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 25,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "teen-birthday",
+      "name": "Teen Birthday Party",
+      "description": "Teen birthday packages starting at $35. Upgrade with add-ons. Contact the sales team to book.",
+      "includes": [
+        "Souvenir cup for the guest of honor",
+        "Brownie sundae for the guest of honor"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 35,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "signature-room",
+      "name": "Signature Banquet Room",
+      "description": "1,368 sq. ft. banquet room, up to 100 guests seated. HDTVs, full A/V, private bar available.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 100,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 0,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 100
+      },
+      "priceListed": false
+    },
+    {
+      "id": "event-room",
+      "name": "Event Room (Garden Level)",
+      "description": "700 sq. ft. room for up to 40 guests with HDTVs and A/V.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 0,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 40
+      },
+      "priceListed": false
+    },
+    {
+      "id": "game-room",
+      "name": "Game Room (Garden Level)",
+      "description": "1,991 sq. ft. room for up to 30 guests with arcade games, HDTVs and A/V.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 30,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 0,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 30
+      },
+      "priceListed": false
+    },
+    {
+      "id": "private-dining",
+      "name": "Private Dining Room",
+      "description": "Upper-level private dining room for up to 10 guests with HDTVs and access to the full menu.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 0,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 10
+      },
+      "priceListed": false
+    },
+    {
+      "id": "conference-room",
+      "name": "Conference Room",
+      "description": "200 sq. ft. room for up to 10 guests with HDTVs and A/V.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 0,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 10
+      },
+      "priceListed": false
+    }
+  ],
+  "food": [
+    {
+      "id": "detroit-pizza",
+      "name": "Detroit-Style Pizza",
+      "description": "8\" x 10\" pizza: The Antonio, KC BBQ Chicken, Margherita, Buffalo Chicken or T-Shotz Supreme. Gluten-free crust +$4.",
+      "pricing": "flat",
+      "amount": 18
+    },
+    {
+      "id": "chicken-wings",
+      "name": "Chicken Wings (10)",
+      "description": "10 bone-in wings in Buffalo, BBQ, Thai, Garlic Parmesan or Stroud's Spicy Hot.",
+      "pricing": "flat",
+      "amount": 16
+    },
+    {
+      "id": "trio-dip",
+      "name": "Trio Dip",
+      "description": "Queso, guacamole and salsa with tortilla chips.",
+      "pricing": "flat",
+      "amount": 12
+    },
+    {
+      "id": "stroud-bites",
+      "name": "Stroud's Fried Chicken Bites",
+      "description": "Boneless chicken in Stroud's breading and spicy hot sauce, with ranch.",
+      "pricing": "flat",
+      "amount": 14
+    },
+    {
+      "id": "kids-meal",
+      "name": "Kids Meal (12 & under)",
+      "description": "Cheese pizza, chicken tenders, sliders or mac n cheese, with beverage and a side.",
+      "pricing": "per_person",
+      "amount": 10
+    },
+    {
+      "id": "brownie-sundae",
+      "name": "Brownie Sundae",
+      "description": "",
+      "pricing": "flat",
+      "amount": 10
+    }
+  ],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Do I need golf experience?",
+      "a": "No. The games and bays are designed for beginners, casual players, and experienced golfers."
+    },
+    {
+      "q": "Is the venue weather-dependent?",
+      "a": "No. Climate-controlled bays help guests enjoy the experience in different weather conditions."
+    },
+    {
+      "q": "Do I need a reservation?",
+      "a": "Reserving your bay or court in advance is strongly suggested to secure your preferred time and avoid long waits. Walk-ins are welcome, but reserving in advance will save you time at check in!"
+    },
+    {
+      "q": "What do I pay when booking in advance?",
+      "a": "When booking in advance, you will pay half of costs upfront, including a processing fee and $5 membership fee if it is your first time at T-Shotz."
+    },
+    {
+      "q": "How many people fit in a bay?",
+      "a": "Our 61 climate controlled hitting bays accommodate up to 8 people. Complimentary clubs are available."
+    },
+    {
+      "q": "How do I book an event?",
+      "a": "Contact our event sales team at tshotz.com/contact-sales-team or email sales@tshotz.com, or call (816) 702-1320."
+    },
+    {
+      "q": "Can I get a private bar for my event?",
+      "a": "Yes. The Main Bar/Restaurant, the Top Bar, and the Banquet Room all offer private bar access."
+    },
+    {
+      "q": "Are there holiday party deals?",
+      "a": "Book before November 15th for a free Champagne Toast and 10% off golf for your event! Contact sales@tshotz.com."
+    },
+    {
+      "q": "Is there a kids menu?",
+      "a": "Yes, for 12 & under only, it comes with a beverage and choice of side: fries, fruit, or side salad."
+    },
+    {
+      "q": "Are gluten-free options available?",
+      "a": "Gluten-free pizza crusts are available on request for $4.00 and gluten-free buns for $3.50."
+    },
+    {
+      "q": "What else is there besides golf?",
+      "a": "4 regulation-sized pickleball courts, an arcade, and lively bars."
+    }
+  ],
+  "handoff": {
+    "email": "sales@tshotz.com",
+    "webhookUrl": null
+  }
+}

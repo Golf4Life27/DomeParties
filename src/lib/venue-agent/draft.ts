@@ -23,7 +23,7 @@ Always answer by calling the save_setup tool once, with no text reply. Fill it i
 - unit.guestsPerUnit is the most guests one bay, simulator or lane takes, as the pages state. If they don't say, use 4 for golf bays, simulators and stalls, 6 for bowling lanes, and add a line to "unsure" saying so. Never use 1 unless the pages say one guest per unit.
 - For packages priced per unit per hour, maxGuests is unit.count times unit.guestsPerUnit unless the pages state a lower limit (use 40 when the count is null).
 - A package the pages describe without a price ("call for pricing", "contact us") gets priceListed false and amount 0. Never save 0 as a real price, and never use priceListed false when the pages give a number.
-- Hourly rentals are per_unit_hour packages with durationMinutes 60, and guests can book more hours. A private room or suite priced per hour is its own per_unit_hour package with pricing.guestsPerUnit set to the most guests it takes; leave pricing.guestsPerUnit null for ordinary bays and lanes.
+- Hourly rentals are per_unit_hour packages with durationMinutes 60, and guests can book more hours. A private room or suite priced per hour, or any package whose hourly price covers the whole group ("$200 per hour for 2 simulators and the lounge"), is its own per_unit_hour package with pricing.guestsPerUnit set to the most guests it takes, the same as its maxGuests; leave pricing.guestsPerUnit null for ordinary bays and lanes.
 - hoursListed is false when the pages give no opening hours at all; leave hours empty then. Days the pages say are closed stay empty with hoursListed true.
 - peak: when prices are higher on some days from a time onwards, put those days in peak.days and the time in peak.from. Days that are peak all day (often weekends) go in peak.allDay. A package's peakAmount is its price at peak times.
 - notStated lists each of tax, deposit and service_charge that the pages don't mention at all. Leave the matching value at 0 or null. A charge the pages say doesn't apply is not "not stated".
@@ -88,7 +88,7 @@ export async function draftFromSite(website: string, contactEmail: string | null
     const out = wrapper.safeParse(call.input)
     try {
       if (!out.success) throw new Error('The tool input was not shaped as { setup, unsure }')
-      const profile = parseProfile({ ...(out.data.setup as object), sample: false, prospect: false, website: site.home.toString() })
+      const profile = trimLinks(parseProfile({ ...(out.data.setup as object), sample: false, prospect: false, website: site.home.toString() }))
       return { profile, unsure: out.data.unsure, sources: site.pages.map((p) => p.url), usage }
     } catch (e) {
       const problems = e instanceof z.ZodError ? e.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('\n') : String(e)
@@ -98,4 +98,14 @@ export async function draftFromSite(website: string, contactEmail: string | null
     }
   }
   throw new Error(`Could not draft a valid setup from that website: ${lastProblem.slice(0, 500)}`)
+}
+
+/** Links copied from a sentence often keep its full stop ("…?duration=true."). */
+function trimLinks(p: VenueProfile): VenueProfile {
+  const trim = (u: string) => u.replace(/[.,;:)\]]+$/, '')
+  return {
+    ...p,
+    booking: { ...p.booking, partyUrl: p.booking.partyUrl && trim(p.booking.partyUrl) },
+    otherLinks: p.otherLinks.map((l) => ({ ...l, url: trim(l.url) })),
+  }
 }
