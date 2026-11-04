@@ -39,6 +39,10 @@ export const venueProfileSchema = z.object({
   kind: z.enum(['golf_dome', 'indoor_golf', 'driving_range', 'bowling', 'family_entertainment', 'other']),
   /** True for the made-up venues that show the product. The agent says so if asked. */
   sample: z.boolean().default(false),
+  /** True for a real venue's chat that we set up from its public website for
+   * the owner to try, before they've signed up. Always runs as a demo: nothing
+   * is sent to the venue, and the agent says what it is if asked. */
+  prospect: z.boolean().default(false),
 
   /** BCP 47 locale for dates and money, e.g. en-US, en-GB, ja-JP. */
   locale: z.string().min(2).max(20),

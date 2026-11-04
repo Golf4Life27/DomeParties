@@ -4,7 +4,7 @@ import { runVenueAgent, type ChatTurn } from '@/lib/venue-agent/run'
 import { draftFromSite } from '@/lib/venue-agent/draft'
 import { isPreview, venueProductOn } from '@/lib/venue-agent/gate'
 
-// GET /api/venue-agent/selftest?case=N, or ?draft=<website>. Preview copies
+// GET /api/venue-agent/selftest?case=N, ?venue=<slug>&q=<message>, or ?draft=<website>. Preview copies
 // only: runs one scripted guest chat against a sample venue (or drafts a setup
 // from a website) on the server and returns the replies and token counts, so
 // cost and quality can be measured without anyone's browser. Never on the
@@ -29,10 +29,15 @@ export async function GET(req: NextRequest) {
     const d = await draftFromSite(site, null).catch((e: unknown) => ({ error: String(e) }))
     return NextResponse.json({ seconds: (Date.now() - t0) / 1000, ...d })
   }
+  // ?venue=<slug>&q=<guest message>[&q=<next message>…]: one chat against
+  // any set-up venue, sample or prospect.
+  const slug = req.nextUrl.searchParams.get('venue')
+  const asks = req.nextUrl.searchParams.getAll('q').filter((q) => q.trim()).slice(0, 4)
   const n = Number(req.nextUrl.searchParams.get('case'))
-  const c = CASES[n]
+  const c: [string, string[]] | undefined = slug && asks.length ? [slug, asks] : CASES[n]
   if (!c) return NextResponse.json({ cases: CASES.length })
-  const venue = getVenue(c[0])!
+  const venue = getVenue(c[0])
+  if (!venue) return NextResponse.json({ error: 'No such venue' }, { status: 404 })
   const turns: ChatTurn[] = []
   const usage = { calls: 0, inputTokens: 0, outputTokens: 0, cacheWriteTokens: 0, cacheReadTokens: 0 }
   const tools: string[] = []

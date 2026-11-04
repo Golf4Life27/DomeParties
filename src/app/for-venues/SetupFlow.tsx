@@ -134,6 +134,17 @@ export default function SetupFlow({ origin }: { origin: string }) {
           />
         </label>
         <label>
+          Most guests per {p.unit.singular}
+          <input
+            className="sf-num"
+            type="number"
+            min={1}
+            step={1}
+            value={p.unit.guestsPerUnit}
+            onChange={(e) => set({ unit: { ...p.unit, guestsPerUnit: Math.max(1, Math.round(Number(e.target.value) || 1)) } })}
+          />
+        </label>
+        <label>
           Where guests book a party
           <input value={p.booking.partyUrl ?? ''} onChange={(e) => set({ booking: { ...p.booking, partyUrl: e.target.value || null } })} placeholder="No booking page found: we'll send leads to your email" />
         </label>

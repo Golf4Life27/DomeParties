@@ -150,3 +150,10 @@ test('instructions follow the venue: its name, language, answers and sample noti
   assert.match(en, /Sample Lanes, a bowling center/)
   assert.doesNotMatch(en, /Whitetail/)
 })
+
+test('a prospect preview says what it is and stays off the public sample list', () => {
+  const p = parseProfile({ ...lanes, slug: 'real-lanes', sample: false, prospect: true })
+  assert.match(venueSystemPrompt(p), /preview set up from .*public website/)
+  assert.doesNotMatch(venueSystemPrompt(p), /made up to show/)
+  assert.ok(listVenues().every((v) => v.sample))
+})

@@ -18,7 +18,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
   const body = z.object({ messages: messagesSchema }).safeParse(await req.json().catch(() => null))
   if (!body.success) return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
   try {
-    const preview = isPreview() || venue.sample
+    const preview = isPreview() || venue.sample || venue.prospect
     const r = await runVenueAgent(venue, body.data.messages, { mode: preview ? 'dry' : 'live' })
     console.log('[venue-agent] turn', { venue: slug, tools: r.toolsUsed, ...r.usage, cutOff: r.cutOff })
     return NextResponse.json(isPreview() ? { reply: r.reply, usage: r.usage, tools: r.toolsUsed } : { reply: r.reply })
