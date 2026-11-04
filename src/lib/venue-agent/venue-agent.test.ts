@@ -129,6 +129,11 @@ test('tools: answers come back as JSON the agent can act on', async () => {
 
   const link = JSON.parse(await runVenueTool(lanes, 'booking_link', {}, 'dry', today))
   assert.equal(link.link, lanes.booking.partyUrl)
+  const noLinkVenue = { ...lanes, booking: { ...lanes.booking, partyUrl: null, howItWorks: 'Book online 7 days ahead or call.' } }
+  const noLink = JSON.parse(await runVenueTool(noLinkVenue, 'booking_link', {}, 'dry', today))
+  assert.equal(noLink.link, null)
+  assert.equal(noLink.how_it_works, 'Book online 7 days ahead or call.')
+  assert.match(noLink.note, /never offer or promise/)
 
   const bad = JSON.parse(await runVenueTool(lanes, 'price_party', { package_id: 'x' }, 'dry', today))
   assert.ok(bad.error)

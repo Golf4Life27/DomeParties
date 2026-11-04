@@ -217,7 +217,12 @@ function price(p: VenueProfile, raw: unknown, today: string) {
 
 function bookingLink(p: VenueProfile) {
   if (!p.booking.partyUrl) {
-    return { link: null, note: 'This venue books parties through its team. Get a name and email or phone and use hand_to_team with reason ready_to_book.' }
+    return {
+      link: null,
+      how_it_works: p.booking.howItWorks || null,
+      phone: p.phone || null,
+      note: 'No booking link is saved for this venue, so never offer or promise to send one. Tell the guest how to book in the words of how_it_works (or the phone). If they want the team to reach out, get a name and email or phone and use hand_to_team with reason ready_to_book.',
+    }
   }
   return {
     link: p.booking.partyUrl,
