@@ -1,0 +1,136 @@
+{
+  "slug": "perfect-games",
+  "name": "Perfect Games",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "1320 Dickinson Ave, Ames, IA 50014",
+  "phone": "515-598-2695",
+  "website": null,
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": 24,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": false,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "party-event-room",
+      "name": "Party room / event",
+      "description": "Party rooms and event options for birthdays, group gatherings and corporate events. Meeting rooms have computer screens and internet; the largest holds 48 people. Catering available.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 48,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "bowling-lane",
+      "name": "Bowling lane",
+      "description": "24 bowling lanes, with bumpers and ramps available for young children.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 144,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 0,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Is parking free?",
+      "a": "Yes, free parking."
+    },
+    {
+      "q": "Can young children bowl?",
+      "a": "Bumpers and ramps are available for young children."
+    },
+    {
+      "q": "Is there food on site?",
+      "a": "Kingpin Pizza is on site with stone oven pizzas, sandwiches, burgers and salads, plus a full sports bar and restaurant. Catering is available."
+    },
+    {
+      "q": "What else is there besides bowling?",
+      "a": "A two-story laser tag arena, an arcade with over 70 games, a 16-foot kids' play structure, two bounce houses and outdoor mini golf (weather permitting)."
+    },
+    {
+      "q": "Who can play laser tag?",
+      "a": "Laser tag is for kids over 7, with up to 14 players at a time."
+    },
+    {
+      "q": "Who can use the bounce houses?",
+      "a": "The bounce houses are for kids 7 and under."
+    },
+    {
+      "q": "Do you offer school group discounts?",
+      "a": "Yes, school group discounts are available."
+    },
+    {
+      "q": "Do you have meeting rooms?",
+      "a": "Yes, meeting rooms with computer screens and internet. The largest holds 48 people."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

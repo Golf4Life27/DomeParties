@@ -1,0 +1,262 @@
+{
+  "slug": "mvp-lanes",
+  "name": "MVP Lanes",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Indiana/Indianapolis",
+  "address": "3810 Lake Ave., Fort Wayne, IN 46805",
+  "phone": "(260) 420-2695",
+  "website": null,
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": 32,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "11:00",
+        "close": "21:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "11:00",
+        "close": "21:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "11:00",
+        "close": "21:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "11:00",
+        "close": "21:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "11:00",
+        "close": "00:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "11:00",
+        "close": "00:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Kids birthday parties need a reservation: call 260-420-2695. For adult, teen and company parties, call (260) 420-2695, email aj@mvplanes.com, or use the information request form on the website.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "kids-birthday",
+      "name": "Kids Birthday Party Package",
+      "description": "For 10 guests. Add 5 more guests for $100 (adds one lane, 1 1/2 hours of bowling, free shoes, one pizza, one pitcher of soft drink and five $10 arcade cards).",
+      "includes": [
+        "1 1/2 hours of bowling on two lanes",
+        "Free shoes",
+        "Two pizzas (cheese, pepperoni or sausage)",
+        "Two pitchers of soft drinks",
+        "Ten $10 arcade cards ($100 value)",
+        "Birthday bowling pin for the guest of honor"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 200,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "teen-birthday",
+      "name": "Teen Birthday Party",
+      "description": "Packages are being updated. Can include bowling, Cosmic Bowling, arcade, food, drinks and music. Contact the venue for details.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 192,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "adult-party",
+      "name": "Adult Party",
+      "description": "Packages are being updated. Can include bowling, Cosmic Bowling, arcade, food, drinks, music and group bowling games. Contact the venue for details.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 192,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "company-party",
+      "name": "Company Party",
+      "description": "Packages are under construction. Themed or custom events, team competitions and holiday events with bowling, food and drinks. Contact the venue for details.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 192,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [
+    {
+      "id": "pizza-cheese",
+      "name": "14\" cheese pizza",
+      "description": "",
+      "pricing": "flat",
+      "amount": 16
+    },
+    {
+      "id": "pizza-pepperoni",
+      "name": "14\" pepperoni pizza",
+      "description": "",
+      "pricing": "flat",
+      "amount": 18.5
+    },
+    {
+      "id": "pizza-sausage",
+      "name": "14\" sausage pizza",
+      "description": "",
+      "pricing": "flat",
+      "amount": 18.5
+    },
+    {
+      "id": "pizza-meat-monster",
+      "name": "14\" Meat Monster pizza",
+      "description": "",
+      "pricing": "flat",
+      "amount": 22
+    },
+    {
+      "id": "pizza-deluxe",
+      "name": "14\" Deluxe pizza",
+      "description": "",
+      "pricing": "flat",
+      "amount": 24
+    },
+    {
+      "id": "boneless-wings-12",
+      "name": "Boneless wings, 12 pc",
+      "description": "",
+      "pricing": "flat",
+      "amount": 14
+    },
+    {
+      "id": "bone-in-wings-12",
+      "name": "Bone-in wings, 12 pc",
+      "description": "",
+      "pricing": "flat",
+      "amount": 23
+    },
+    {
+      "id": "soft-drink-pitcher",
+      "name": "Fountain drink pitcher",
+      "description": "",
+      "pricing": "flat",
+      "amount": 7
+    }
+  ],
+  "addOns": [
+    {
+      "id": "kids-extra-5-guests",
+      "name": "5 additional kids birthday guests",
+      "description": "Adds one lane, 1 1/2 hours of bowling, free shoes, one pizza, one pitcher of soft drink and five $10 arcade cards.",
+      "unit": "each",
+      "amount": 100
+    }
+  ],
+  "faq": [
+    {
+      "q": "Do I need a reservation for a kids birthday party?",
+      "a": "Reservations are required. Call 260-420-2695."
+    },
+    {
+      "q": "When can kids birthday parties start?",
+      "a": "Saturdays at noon, 1 PM, 2 PM or 3 PM; Sundays at noon, 1 PM, 2 PM, 3 PM or 4 PM."
+    },
+    {
+      "q": "Is there food on site?",
+      "a": "Yes, Brunner's Pub is on site, with pizza, burgers, wings, kids meals and daily specials. A 10\" gluten-free crust is available for +$4."
+    },
+    {
+      "q": "What else is there besides bowling?",
+      "a": "32 lanes, leagues, a pro shop, and an arcade with pinball."
+    }
+  ],
+  "handoff": {
+    "email": "aj@mvplanes.com",
+    "webhookUrl": null
+  }
+}
