@@ -213,3 +213,10 @@ test('hourly packages price the hours asked for, and a private room counts as on
   const flat = lanes.packages.find((x) => x.pricing.type !== 'per_unit_hour')!
   assert.throws(() => quote(lanes, { ...base, packageId: flat.id, guests: flat.minGuests, date: null, hours: flat.durationMinutes / 60 + 1 }), /set/)
 })
+
+test('a "starting at" price is never quoted as exact', () => {
+  const pkgs = lanes.packages.map((x, i) => (i === 0 ? { ...x, priceFrom: true } : x))
+  const p = parseProfile({ ...lanes, packages: pkgs })
+  const q = describeQuote(p, quote(p, { ...base, packageId: pkgs[0].id, guests: pkgs[0].minGuests, date: null }))
+  assert.match(String(q.starting_price), /starting at/)
+})

@@ -136,6 +136,8 @@ export const venueProfileSchema = z.object({
         /** False when the website gives no price for it ("call for pricing").
          * The agent then offers a quote from the team instead of a number. */
         priceListed: z.boolean().default(true),
+        /** True when the website only gives a starting price ("from $25"). */
+        priceFrom: z.boolean().default(false),
       }),
     )
     .min(1)

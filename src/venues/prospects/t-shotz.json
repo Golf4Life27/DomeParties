@@ -165,7 +165,8 @@
         "amount": 25,
         "peakAmount": null
       },
-      "priceListed": true
+      "priceListed": true,
+      "priceFrom": true
     },
     {
       "id": "teen-birthday",
@@ -184,7 +185,8 @@
         "amount": 35,
         "peakAmount": null
       },
-      "priceListed": true
+      "priceListed": true,
+      "priceFrom": true
     },
     {
       "id": "signature-room",

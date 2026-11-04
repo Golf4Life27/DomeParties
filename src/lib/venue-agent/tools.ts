@@ -146,6 +146,7 @@ function partyOptions(p: VenueProfile) {
       const price = pkg.priceListed
         ? `${m(pr.amount)} ${per}${pr.peakAmount != null ? `, ${m(pr.peakAmount)} at peak times` : ''}`
         : 'not listed online: the team quotes it'
+      const shown = pkg.priceListed && pkg.priceFrom ? `starting at ${price}` : price
       const example =
         pr.type === 'per_unit_hour'
           ? pr.guestsPerUnit != null
@@ -160,7 +161,7 @@ function partyOptions(p: VenueProfile) {
         hours: pkg.durationMinutes / 60,
         guests: `${pkg.minGuests} to ${pkg.maxGuests}`,
         days: pkg.days.length ? pkg.days : 'every open day',
-        price,
+        price: shown,
         ...(example ? { sizing: example } : {}),
       }
     }),

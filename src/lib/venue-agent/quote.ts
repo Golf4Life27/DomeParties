@@ -32,6 +32,8 @@ export type Quote = {
   /** True when the date or time wasn't given, so peak pricing couldn't be checked. */
   estimate: boolean
   units: number | null
+  /** Packages in it whose website price is only a starting price. */
+  fromPrices: string[]
 }
 
 export class QuoteError extends Error {}
@@ -127,6 +129,7 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
     peak,
     estimate: !r.date || (p.peak.from != null && !r.start && p.peak.days.includes(weekdayOf(r.date)) && !p.peak.allDay.includes(weekdayOf(r.date))),
     units,
+    fromPrices: pkg.priceFrom ? [pkg.name] : [],
   }
 }
 
@@ -143,6 +146,9 @@ export function describeQuote(p: VenueProfile, q: Quote) {
     balance_later: q.balance == null ? null : m(q.balance),
     peak_pricing: q.peak,
     estimate_only: q.estimate,
+    ...(q.fromPrices.length
+      ? { starting_price: `The venue lists ${q.fromPrices.join(', ')} as "starting at" this price. Say it's a starting price and the team confirms the final one. Never call it exact.` }
+      : {}),
     ...(p.notStated.length
       ? {
           not_included: `The venue doesn't list its ${p.notStated.map((n) => n.replace('_', ' ')).join(', ')}. Say this price is before any of those and the team will confirm them. Never say there are none.`,
