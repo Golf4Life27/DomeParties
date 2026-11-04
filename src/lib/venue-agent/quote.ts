@@ -112,7 +112,7 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
     deposit,
     balance: deposit == null ? null : total - deposit,
     peak,
-    estimate: !r.date || (p.peak.from != null && !r.start),
+    estimate: !r.date || (p.peak.from != null && !r.start && p.peak.days.includes(weekdayOf(r.date)) && !p.peak.allDay.includes(weekdayOf(r.date))),
     units,
   }
 }

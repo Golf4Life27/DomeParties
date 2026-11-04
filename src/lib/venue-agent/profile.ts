@@ -69,10 +69,17 @@ export const venueProfileSchema = z.object({
   hours: z.record(WEEKDAY, z.array(window).max(3)),
   closures: z.array(z.object({ date: DATE, note: z.string().max(120).default('') })).max(366).default([]),
 
-  /** When peak prices apply. Empty days means there's no peak pricing. */
+  /** When peak prices apply: on `days` from `from` onwards (all day if
+   * `from` is null), and on `allDay` days all day. Many venues price weekday
+   * evenings and whole weekends the same, which takes both. Empty lists mean
+   * there's no peak pricing. */
   peak: z
-    .object({ days: z.array(WEEKDAY).max(7).default([]), from: TIME.nullable().default(null) })
-    .default({ days: [], from: null }),
+    .object({
+      days: z.array(WEEKDAY).max(7).default([]),
+      from: TIME.nullable().default(null),
+      allDay: z.array(WEEKDAY).max(7).default([]),
+    })
+    .default({ days: [], from: null, allDay: [] }),
 
   booking: z.object({
     /** Where a guest books and pays for a party. The agent sends guests here. */

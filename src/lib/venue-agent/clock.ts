@@ -78,7 +78,9 @@ export function fitsHours(p: VenueProfile, date: string, start: string, minutes:
 }
 
 export function isPeak(p: VenueProfile, date: string, start: string | null): boolean {
-  if (!p.peak.days.includes(weekdayOf(date))) return false
+  const day = weekdayOf(date)
+  if (p.peak.allDay.includes(day)) return true
+  if (!p.peak.days.includes(day)) return false
   if (!p.peak.from || !start) return true
   return toMinutes(start) >= toMinutes(p.peak.from)
 }

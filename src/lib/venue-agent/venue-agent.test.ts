@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { getVenue, listVenues } from '@/venues'
 import { parseProfile, type VenueProfile } from './profile'
 import { quote, QuoteError } from './quote'
-import { addDays, fitsHours, hoursOn, todayIn, weekdayOf } from './clock'
+import { addDays, fitsHours, hoursOn, isPeak, todayIn, weekdayOf } from './clock'
 import { formatMoney } from './money'
 import { runVenueTool } from './tools'
 import { venueSystemPrompt } from './prompt'
@@ -156,4 +156,12 @@ test('a prospect preview says what it is and stays off the public sample list', 
   assert.match(venueSystemPrompt(p), /preview set up from .*public website/)
   assert.doesNotMatch(venueSystemPrompt(p), /made up to show/)
   assert.ok(listVenues().every((v) => v.sample))
+})
+
+test('peak can be weekday evenings plus whole weekends', () => {
+  const p = parseProfile({ ...lanes, peak: { days: ['mon', 'tue', 'wed', 'thu', 'fri'], from: '16:00', allDay: ['sat', 'sun'] } })
+  // 2026-11-14 is a Saturday, 2026-11-11 a Wednesday.
+  assert.equal(isPeak(p, '2026-11-14', '10:00'), true)
+  assert.equal(isPeak(p, '2026-11-11', '10:00'), false)
+  assert.equal(isPeak(p, '2026-11-11', '17:00'), true)
 })
