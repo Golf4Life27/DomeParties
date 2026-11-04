@@ -54,5 +54,24 @@ export async function GET() {
     out.resendStatus = res.status
     out.resendBody = (await res.text()).slice(0, 400)
   }
+  // 3. What the failed alerts were about: leads and bookings since Oct 25.
+  const since = new Date('2026-10-25T00:00:00Z')
+  out.leads = await prisma.lead.findMany({
+    where: { createdAt: { gte: since } },
+    orderBy: { createdAt: 'asc' },
+    select: {
+      createdAt: true, customerName: true, eventType: true, headcountMin: true,
+      headcountMax: true, preferredDate: true, dateFlexible: true, status: true,
+      source: true, message: true, utmCampaign: true,
+    },
+  })
+  out.bookings = await prisma.booking.findMany({
+    where: { updatedAt: { gte: since }, status: { not: 'DRAFT' } },
+    orderBy: { updatedAt: 'asc' },
+    select: {
+      reference: true, status: true, eventType: true, date: true, partySize: true,
+      customerName: true, createdAt: true, updatedAt: true,
+    },
+  })
   return NextResponse.json(out)
 }
