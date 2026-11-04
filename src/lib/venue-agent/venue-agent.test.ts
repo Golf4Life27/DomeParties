@@ -9,6 +9,7 @@ import { formatMoney } from './money'
 import { runVenueTool } from './tools'
 import { venueSystemPrompt } from './prompt'
 import { leadEmailText } from './handoff'
+import { flagUnpricedCharges } from './draft'
 
 const venue = (slug: string): VenueProfile => {
   const v = getVenue(slug)
@@ -219,4 +220,16 @@ test('a "starting at" price is never quoted as exact', () => {
   const p = parseProfile({ ...lanes, packages: pkgs })
   const q = describeQuote(p, quote(p, { ...base, packageId: pkgs[0].id, guests: pkgs[0].minGuests, date: null }))
   assert.match(String(q.starting_price), /starting at/)
+})
+
+test('a tax or service charge mentioned with no rate is never quoted as zero', () => {
+  const base = { ...lanes, taxPercent: 0, serviceCharge: { ...lanes.serviceCharge, percent: 0 }, notStated: [] } as VenueProfile
+  const flagged = flagUnpricedCharges(base, [
+    "Tax is mentioned ('plus tax') but the rate isn't given",
+    'The escape party page mentions a service charge but gives no rate.',
+  ])
+  assert.deepEqual([...flagged.notStated].sort(), ['service_charge', 'tax'])
+  // A site that states its tax keeps it, and unrelated notes change nothing.
+  assert.equal(flagUnpricedCharges({ ...base, taxPercent: 7 }, ['The site mentions tax but gives no tax rate.']).notStated.length, 0)
+  assert.equal(flagUnpricedCharges(base, ['Number of lanes not listed']), base)
 })

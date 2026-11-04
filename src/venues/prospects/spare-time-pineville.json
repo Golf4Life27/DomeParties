@@ -68,7 +68,10 @@
     "from": null,
     "allDay": []
   },
-  "notStated": [],
+  "notStated": [
+    "service_charge",
+    "tax"
+  ],
   "booking": {
     "partyUrl": "https://secure.meriq.com/sparetimeentertainment-newengland/",
     "howItWorks": "Birthday parties book online with the Book Now button ($100 deposit, minimum 8 children). Weekday parties, parties over 20 guests and group events go through the event planners at (704) 900-2562.",

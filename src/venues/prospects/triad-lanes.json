@@ -69,7 +69,8 @@
     "allDay": []
   },
   "notStated": [
-    "service_charge"
+    "service_charge",
+    "tax"
   ],
   "booking": {
     "partyUrl": "https://www.triadlanes.com/Events-Parties/Birthday-Parties",
