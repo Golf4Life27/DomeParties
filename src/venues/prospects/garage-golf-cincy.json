@@ -170,5 +170,10 @@
  "handoff": {
   "email": "garagegolfcincy@gmail.com",
   "webhookUrl": null
- }
+ },
+ "notStated": [
+  "tax",
+  "deposit",
+  "service_charge"
+ ]
 }

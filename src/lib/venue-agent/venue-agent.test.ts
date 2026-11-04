@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { getVenue, listVenues } from '@/venues'
 import { parseProfile, type VenueProfile } from './profile'
-import { quote, QuoteError } from './quote'
+import { describeQuote, quote, QuoteError } from './quote'
 import { addDays, fitsHours, hoursOn, isPeak, todayIn, weekdayOf } from './clock'
 import { formatMoney } from './money'
 import { runVenueTool } from './tools'
@@ -164,4 +164,11 @@ test('peak can be weekday evenings plus whole weekends', () => {
   assert.equal(isPeak(p, '2026-11-14', '10:00'), true)
   assert.equal(isPeak(p, '2026-11-11', '10:00'), false)
   assert.equal(isPeak(p, '2026-11-11', '17:00'), true)
+})
+
+test('charges the venue never mentions are flagged, not quoted as zero', () => {
+  const p = parseProfile({ ...lanes, taxPercent: 0, notStated: ['tax', 'deposit'] })
+  const q = describeQuote(p, quote(p, { packageId: p.packages[0].id, guests: p.packages[0].minGuests, date: null, start: null, foodId: null, foodGuests: null, addOns: [] }))
+  assert.match(String(q.not_included), /doesn't list its tax, deposit/)
+  assert.equal(describeQuote(lanes, quote(lanes, { packageId: lanes.packages[0].id, guests: lanes.packages[0].minGuests, date: null, start: null, foodId: null, foodGuests: null, addOns: [] })).not_included, undefined)
 })

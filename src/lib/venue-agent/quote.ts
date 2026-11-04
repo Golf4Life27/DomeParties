@@ -130,5 +130,10 @@ export function describeQuote(p: VenueProfile, q: Quote) {
     balance_later: q.balance == null ? null : m(q.balance),
     peak_pricing: q.peak,
     estimate_only: q.estimate,
+    ...(p.notStated.length
+      ? {
+          not_included: `The venue doesn't list its ${p.notStated.map((n) => n.replace('_', ' ')).join(', ')}. Say this price is before any of those and the team will confirm them. Never say there are none.`,
+        }
+      : {}),
   }
 }

@@ -81,6 +81,11 @@ export const venueProfileSchema = z.object({
     })
     .default({ days: [], from: null, allDay: [] }),
 
+  /** Charges the venue's website doesn't mention. Zero tax or no deposit in
+   * the setup then means "not stated", not "none", and the agent says the
+   * team will confirm instead of telling a guest there's no tax. */
+  notStated: z.array(z.enum(['tax', 'deposit', 'service_charge'])).max(3).default([]),
+
   booking: z.object({
     /** Where a guest books and pays for a party. The agent sends guests here. */
     partyUrl: z.string().url().nullable(),
