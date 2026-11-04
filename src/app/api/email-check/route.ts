@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { prisma } from '@/lib/db'
-import { splitRecipients } from '@/lib/email'
+import { sendEmail, splitRecipients } from '@/lib/email'
 
 // Preview-only diagnostic: checks whether the dome Gmail login still works and
 // whether the Resend backup can deliver one test alert to the staff list.
@@ -33,27 +33,19 @@ export async function GET() {
     out.gmailLogin = `failed: ${(e as Error).message.split('\n')[0]}`
   }
 
-  // 2. One test alert to the staff list through Resend.
+  // 2. One test alert to the staff list through the normal sender.
   const setting = await prisma.setting.findUnique({ where: { id: 1 } })
   const to = splitRecipients(setting?.staffNotifyEmail)
   out.staffListCount = to.length
-  if (process.env.RESEND_API_KEY && to.length) {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: from || 'Whitetail Ridge Golf Dome <onboarding@resend.dev>',
-        to,
-        subject: 'TEST: party site alert check (no action needed)',
-        text: 'This is a one-time test from the party site to check that staff alerts can reach you. No action needed.',
-      }),
+  if (to.length) {
+    out.testSend = await sendEmail({
+      to,
+      subject: 'TEST: party site alerts are working again (no action needed)',
+      html: '<p>This is a one-time test from the party site. New lead alerts can reach you again. No action needed.</p>',
+      text: 'This is a one-time test from the party site. New lead alerts can reach you again. No action needed.',
     })
-    out.resendStatus = res.status
-    out.resendBody = (await res.text()).slice(0, 400)
   }
+
   // 3. What the failed alerts were about: leads and bookings since Oct 25.
   const since = new Date('2026-10-25T00:00:00Z')
   out.leads = await prisma.lead.findMany({
