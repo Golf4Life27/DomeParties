@@ -12,6 +12,8 @@ const KEYWORDS = /part(y|ies)|birthday|event|group|corporate|package|pric|rate|h
 
 export class SiteError extends Error {}
 
+export const READER_USER_AGENT = 'VenueSetupReader/1.0 (+drafts a booking chat setup from a public website)'
+
 function privateAddress(ip: string): boolean {
   if (net.isIPv4(ip)) {
     const [a, b] = ip.split('.').map(Number)
@@ -50,7 +52,7 @@ async function fetchPage(start: URL): Promise<{ url: URL; html: string } | null>
     await assertPublic(url)
     const res = await fetch(url, {
       redirect: 'manual',
-      headers: { 'user-agent': 'VenueSetupReader/1.0 (+drafts a booking chat setup from a public website)', accept: 'text/html' },
+      headers: { 'user-agent': READER_USER_AGENT, accept: 'text/html' },
       signal: AbortSignal.timeout(8000),
     })
     if (res.status >= 300 && res.status < 400) {

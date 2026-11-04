@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getVenue } from '@/venues'
 import { runVenueAgent, type ChatTurn } from '@/lib/venue-agent/run'
-import { draftFromSite } from '@/lib/venue-agent/draft'
+import { draftFromPasted, draftFromSite } from '@/lib/venue-agent/draft'
+import { PASTED_FIXTURES } from '@/venues/pasted-fixtures'
+import { READER_USER_AGENT } from '@/lib/venue-agent/read-site'
 import { isPreview, venueProductOn } from '@/lib/venue-agent/gate'
 
-// GET /api/venue-agent/selftest?case=N, ?venue=<slug>&q=<message>, or ?draft=<website>. Preview copies
+// GET /api/venue-agent/selftest?case=N, ?venue=<slug>&q=<message>, ?draft=<website>, or
+// ?pasted=<fixture> (drafts from saved pasted text, the path a blocked site's owner takes). Preview copies
 // only: runs one scripted guest chat against a sample venue (or drafts a setup
 // from a website) on the server and returns the replies and token counts, so
 // cost and quality can be measured without anyone's browser. Never on the
@@ -23,6 +26,27 @@ const CASES: [string, string[]][] = [
 
 export async function GET(req: NextRequest) {
   if (!isPreview() || !venueProductOn()) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  // ?probe=<url>: what the setup reader's own request gets back from a site, to
+  // see why a site refuses it. Same request as the reader, nothing else.
+  const probe = req.nextUrl.searchParams.get('probe')
+  if (probe) {
+    const r = await fetch(probe, {
+      redirect: 'manual',
+      headers: { 'user-agent': READER_USER_AGENT, accept: 'text/html' },
+      signal: AbortSignal.timeout(15000),
+    }).catch((e: unknown) => ({ error: String(e) }))
+    if ('error' in r) return NextResponse.json(r)
+    const h = (k: string) => r.headers.get(k)
+    return NextResponse.json({ status: r.status, contentType: h('content-type'), server: h('server'), location: h('location'), cfRay: Boolean(h('cf-ray')), snippet: (await r.text()).slice(0, 300) })
+  }
+  const fixture = req.nextUrl.searchParams.get('pasted')
+  if (fixture) {
+    const f = PASTED_FIXTURES[fixture]
+    if (!f) return NextResponse.json({ error: 'No such fixture', fixtures: Object.keys(PASTED_FIXTURES) }, { status: 404 })
+    const t0 = Date.now()
+    const d = await draftFromPasted({ text: f.text, website: f.website }, null).catch((e: unknown) => ({ error: String(e) }))
+    return NextResponse.json({ seconds: (Date.now() - t0) / 1000, ...d })
+  }
   const site = req.nextUrl.searchParams.get('draft')
   if (site) {
     const t0 = Date.now()
