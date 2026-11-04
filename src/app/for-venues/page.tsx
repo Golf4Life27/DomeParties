@@ -113,5 +113,6 @@ const CSS = `
 .sf-card .sf-num{display:inline-block;width:100px;margin:0;padding:4px 8px}
 .sf-unsure{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 10px 10px 28px;font-size:14px}
 .sf-error{color:#b91c1c}
+.sf-card .sf-link{background:none;color:#0f766e;padding:0;margin:0;font-weight:500;text-decoration:underline}
 .sf-code{white-space:pre-wrap;word-break:break-all;background:#f4f4f5;padding:12px;border-radius:10px;font-size:13px}
 `

@@ -9,7 +9,7 @@ import { formatMoney } from './money'
 import { runVenueTool } from './tools'
 import { venueSystemPrompt } from './prompt'
 import { leadEmailText } from './handoff'
-import { flagUnpricedCharges } from './draft'
+import { draftFromPasted, flagUnpricedCharges, MAX_PASTED_CHARS, PastedError } from './draft'
 
 const venue = (slug: string): VenueProfile => {
   const v = getVenue(slug)
@@ -232,4 +232,10 @@ test('a tax or service charge mentioned with no rate is never quoted as zero', (
   // A site that states its tax keeps it, and unrelated notes change nothing.
   assert.equal(flagUnpricedCharges({ ...base, taxPercent: 7 }, ['The site mentions tax but gives no tax rate.']).notStated.length, 0)
   assert.equal(flagUnpricedCharges(base, ['Number of lanes not listed']), base)
+})
+
+test('setup from pasted text turns away empty or oversized input before any model call', async () => {
+  await assert.rejects(draftFromPasted({ text: '   ' }, null), PastedError)
+  await assert.rejects(draftFromPasted({ text: 'x'.repeat(MAX_PASTED_CHARS + 1) }, null), PastedError)
+  await assert.rejects(draftFromPasted({ pdfBase64: Buffer.alloc(3 * 1024 * 1024 + 10).toString('base64') }, null), PastedError)
 })

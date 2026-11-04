@@ -6,7 +6,9 @@ import type { VenueProfile } from '@/lib/venue-agent/profile'
 
 // Setup in three short steps: give your website, check what we found, try it.
 // The owner never fills in a form beyond two boxes; everything else is read
-// from their own site and only needs a yes or a quick fix.
+// from their own site and only needs a yes or a quick fix. If their site won't
+// let us read it (or they have none), they paste their party page or price
+// list, or upload a PDF of it, and get the same draft.
 
 type Draft = { profile: VenueProfile; unsure: string[]; sources: string[] }
 const DAYS: [keyof VenueProfile['hours'], string][] = [
@@ -33,6 +35,9 @@ function priceLine(p: VenueProfile, pkg: VenueProfile['packages'][number]) {
 export default function SetupFlow({ origin }: { origin: string }) {
   const [website, setWebsite] = useState('')
   const [email, setEmail] = useState('')
+  const [pasteMode, setPasteMode] = useState(false)
+  const [pasted, setPasted] = useState('')
+  const [pdf, setPdf] = useState<{ name: string; base64: string } | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [draft, setDraft] = useState<Draft | null>(null)
@@ -46,13 +51,22 @@ export default function SetupFlow({ origin }: { origin: string }) {
     setBusy(true)
     setError(null)
     try {
+      const body = pasteMode
+        ? { website: website || null, email: email || null, text: pasted || null, pdfBase64: pdf?.base64 ?? null }
+        : { website, email: email || null }
       const r = await fetch('/api/venue-agent/draft', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ website, email: email || null }),
+        body: JSON.stringify(body),
       })
       const j = await r.json()
-      if (!r.ok) throw new Error(j.error ?? 'Something went wrong.')
+      if (!r.ok) {
+        if (j.canPaste && !pasteMode) {
+          setPasteMode(true)
+          throw new Error('Your website didn’t let us read it. No problem: paste your party page or price list below, or upload a PDF of it, and we’ll do the rest.')
+        }
+        throw new Error(j.error ?? 'Something went wrong.')
+      }
       setDraft(j)
       setProfile(j.profile)
     } catch (e) {
@@ -93,19 +107,63 @@ export default function SetupFlow({ origin }: { origin: string }) {
           void read()
         }}
       >
-        <h3>Step 1: your website</h3>
-        <p>That’s all we need. We read your site and set up your chat for you.</p>
+        <h3>Step 1: {pasteMode ? 'your parties and prices' : 'your website'}</h3>
+        <p>
+          {pasteMode
+            ? 'Paste your party page or price list, or upload it as a PDF. We set up your chat from it.'
+            : 'That’s all we need. We read your site and set up your chat for you.'}
+        </p>
         <label>
-          Website
-          <input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="yourvenue.com" required />
+          Website{pasteMode ? ' (if you have one)' : ''}
+          <input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="yourvenue.com" required={!pasteMode} />
         </label>
+        {pasteMode && (
+          <>
+            <label>
+              Your party page or price list
+              <textarea
+                value={pasted}
+                onChange={(e) => setPasted(e.target.value)}
+                rows={10}
+                maxLength={40000}
+                placeholder="Copy everything from your parties page, price list or menu and paste it here."
+              />
+            </label>
+            <label>
+              Or upload a PDF
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => {
+                  const f = e.target.files?.[0]
+                  if (!f) return setPdf(null)
+                  if (f.size > 3 * 1024 * 1024) {
+                    setError('That PDF is too big. Try one under 3 MB.')
+                    return setPdf(null)
+                  }
+                  const fr = new FileReader()
+                  fr.onload = () => setPdf({ name: f.name, base64: String(fr.result).split(',')[1] ?? '' })
+                  fr.readAsDataURL(f)
+                }}
+              />
+            </label>
+            {pdf && <p>Added {pdf.name}</p>}
+          </>
+        )}
         <label>
           Your email
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@yourvenue.com" />
         </label>
-        <button type="submit" disabled={busy || website.trim().length < 4}>
-          {busy ? 'Reading your website… about a minute' : 'Set up my chat'}
+        <button type="submit" disabled={busy || (pasteMode ? !pasted.trim() && !pdf : website.trim().length < 4)}>
+          {busy ? (pasteMode ? 'Reading what you gave us… about a minute' : 'Reading your website… about a minute') : 'Set up my chat'}
         </button>
+        {!pasteMode && (
+          <p>
+            <button type="button" className="sf-link" onClick={() => setPasteMode(true)}>
+              No website, or it won’t load? Paste your prices instead
+            </button>
+          </p>
+        )}
         {error && <p className="sf-error">{error}</p>}
       </form>
     )
