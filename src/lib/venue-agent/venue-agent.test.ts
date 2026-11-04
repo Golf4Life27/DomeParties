@@ -247,3 +247,13 @@ test('the setup reader treats www and subdomains as the same site, and a differe
   assert.equal(sameSite('www.partycentralinfo.com', 'shreveportssecrets.com'), false)
   assert.equal(sameSite('thehatchetbury.com', 'expireddomains.com'), false)
 })
+
+test('a draft with long or too many unsure notes, or a setup sent as text, is kept and tidied', async () => {
+  const { draftWrapper } = await import('./draft')
+  const long = 'x'.repeat(260)
+  const out = draftWrapper.parse({ setup: '{"name":"A"}', unsure: [long, ...Array(40).fill('note')] })
+  assert.deepEqual(out.setup, { name: 'A' })
+  assert.equal(out.unsure.length, 30)
+  assert.equal(out.unsure[0].length, 200)
+  assert.equal(draftWrapper.safeParse({ setup: 'not json', unsure: [] }).success, false)
+})
