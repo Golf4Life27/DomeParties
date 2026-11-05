@@ -72,14 +72,18 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
   }
 
   const peak = r.date ? isPeak(p, r.date, r.start) : false
-  const rate = peak && pkg.pricing.peakAmount != null ? pkg.pricing.peakAmount : pkg.pricing.amount
+  const tier =
+    pkg.pricing.type === 'per_person' && !(peak && pkg.pricing.peakAmount != null)
+      ? [...pkg.pricing.tiers].sort((a, b) => a.minGuests - b.minGuests).filter((t) => r.guests >= t.minGuests).pop()
+      : undefined
+  const rate = peak && pkg.pricing.peakAmount != null ? pkg.pricing.peakAmount : tier ? tier.amount : pkg.pricing.amount
   const lines: QuoteLine[] = []
   let units: number | null = null
 
   if (pkg.pricing.type === 'flat') {
     lines.push({ item: pkg.name, detail: `flat, up to ${pkg.maxGuests} guests`, amount: toMinor(rate, c) })
   } else if (pkg.pricing.type === 'per_person') {
-    lines.push({ item: pkg.name, detail: `${r.guests} guests`, amount: toMinor(rate, c) * r.guests })
+    lines.push({ item: pkg.name, detail: `${r.guests} guests at ${formatMoney(toMinor(rate, c), c, p.locale)} each${tier ? ` (the price for ${tier.minGuests} or more)` : ''}`, amount: toMinor(rate, c) * r.guests })
   } else {
     const own = pkg.pricing.guestsPerUnit
     units = unitsFor(p, r.guests, pkg.pricing.minUnits, own)
@@ -103,8 +107,12 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
   for (const a of r.addOns) {
     const add = p.addOns.find((x) => x.id === a.id)
     if (!add) throw new QuoteError(`Unknown add-on "${a.id}"`)
-    const qty = add.unit === 'per_person' ? r.guests * a.quantity : a.quantity
-    lines.push({ item: add.name, detail: add.unit === 'per_person' ? `${r.guests} guests` : `x${a.quantity}`, amount: toMinor(add.amount, c) * qty })
+    // A per-guest add-on's quantity is how many guests it's for, so age-priced extras ("$16 per jumper 6+,
+    // $12 per jumper 5 and under") can split one party between them.
+    if (add.unit === 'per_person' && a.quantity > r.guests) {
+      throw new QuoteError(`${add.name} is priced per guest: quantity is how many of the ${r.guests} guests it's for, not more`)
+    }
+    lines.push({ item: add.name, detail: add.unit === 'per_person' ? `${a.quantity} guests` : `x${a.quantity}`, amount: toMinor(add.amount, c) * a.quantity })
   }
 
   const subtotal = lines.reduce((s, l) => s + l.amount, 0)

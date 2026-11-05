@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { z } from 'zod'
-import { parseProfile, venueProfileSchema, type VenueProfile } from './profile'
+import { parseProfile, venueProfileSchema, type VenueProfile, type Weekday } from './profile'
 import { readVenueSite, type SitePages } from './read-site'
 import { venueAgentModel } from './run'
 
@@ -26,8 +26,10 @@ Always answer by calling the save_setup tool once, with no text reply. Fill it i
 - For packages priced per unit per hour, maxGuests is unit.count times unit.guestsPerUnit unless the pages state a lower limit (use 40 when the count is null).
 - A package the pages describe without a price ("call for pricing", "contact us") gets priceListed false and amount 0. Never save 0 as a real price, and never use priceListed false when the pages give a number.
 - Hourly rentals are per_unit_hour packages with durationMinutes 60, and guests can book more hours. A private room or suite priced per hour, or any package whose hourly price covers the whole group ("$200 per hour for 2 simulators and the lounge"), is its own per_unit_hour package with pricing.guestsPerUnit set to the most guests it takes, the same as its maxGuests; leave pricing.guestsPerUnit null for ordinary bays and lanes.
+- A per-guest price that drops for bigger groups ("$23 each, $21 each for 3 or more", "3 players $37, 4-6 $34, 7+ $31") goes in as amount for the smallest group and pricing.tiers for the rest, each with the group size it starts at. Never put a tier only in the description.
+- An extra charged per guest at different prices by age or type ("$16 per jumper 6+, $12 per jumper 5 and under") is one per_person add-on for each price.
 - A price the pages give only as a starting price ("from $25", "starting at $35") goes in as that amount with priceFrom true.
-- hoursListed is false when the pages give no opening hours at all; leave hours empty then. Days the pages say are closed stay empty with hoursListed true.
+- hoursListed is false when the pages give no opening hours at all; leave hours empty then. Days the pages say are closed stay empty with hoursListed true. A day whose hours the pages give but you can't read (garbled like "102:00pm", or contradicting each other) goes in hoursUnclear with its hours empty, never left looking closed.
 - peak: when prices are higher on some days from a time onwards, put those days in peak.days and the time in peak.from. Days that are peak all day (often weekends) go in peak.allDay. A package's peakAmount is its price at peak times.
 - notStated lists each of tax, deposit and service_charge whose rate or amount the pages don't give. That includes a charge they mention without a number, like "plus tax" or "prices don't include service charge". Leave the matching value at 0 or null. A charge the pages say doesn't apply is not "not stated".
 - sample and prospect are false.
@@ -159,8 +161,8 @@ async function draftFrom(
     const out = draftWrapper.safeParse(call.input)
     try {
       if (!out.success) throw out.error
-      const profile = flagUnpricedCharges(
-        trimLinks(parseProfile({ ...(out.data.setup as object), sample: false, prospect: false, website })),
+      const profile = flagUnclearDays(
+        flagUnpricedCharges(trimLinks(parseProfile({ ...(out.data.setup as object), sample: false, prospect: false, website })), out.data.unsure),
         out.data.unsure,
       )
       return { profile, unsure: out.data.unsure, sources: meta.sources, usage }
@@ -182,6 +184,23 @@ function trimLinks(p: VenueProfile): VenueProfile {
     booking: { ...p.booking, partyUrl: p.booking.partyUrl && trim(p.booking.partyUrl) },
     otherLinks: p.otherLinks.map((l) => ({ ...l, url: trim(l.url) })),
   }
+}
+
+const DAY_NAMES: Record<string, Weekday> = { sunday: 'sun', monday: 'mon', tuesday: 'tue', wednesday: 'wed', thursday: 'thu', friday: 'fri', saturday: 'sat' }
+
+/** A day left empty because its hours couldn't be read must never read as closed. Backstop for the
+ *  hoursUnclear rule: if the reader's own unsure notes say a weekday's hours were garbled, unclear or
+ *  left empty, and that day is still empty, mark it unclear so the chat says the team confirms it. */
+export function flagUnclearDays(p: VenueProfile, unsure: string[]): VenueProfile {
+  const add: Weekday[] = []
+  for (const u of unsure) {
+    if (!/(garbled|unclear|unreadable|can.t be read|couldn.t be read|contradict|left (it |them )?empty|left blank)/i.test(u)) continue
+    if (/\bclosed\b/i.test(u) && !/(garbled|unclear|unreadable)/i.test(u)) continue
+    for (const [name, day] of Object.entries(DAY_NAMES)) {
+      if (new RegExp(`\\b${name}\\b`, 'i').test(u) && !(p.hours[day]?.length) && !p.hoursUnclear.includes(day)) add.push(day)
+    }
+  }
+  return add.length ? { ...p, hoursUnclear: [...new Set([...p.hoursUnclear, ...add])] } : p
 }
 
 /** A charge the site mentions with no rate ("plus tax") must never be quoted as zero. Backstop for the

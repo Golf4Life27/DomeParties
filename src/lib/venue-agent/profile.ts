@@ -19,8 +19,14 @@ const money = z.number().min(0).max(1_000_000)
 const pricing = z.discriminatedUnion('type', [
   /** One price for the whole party, whatever the headcount. */
   z.object({ type: z.literal('flat'), amount: money, peakAmount: money.nullable().default(null) }),
-  /** Price per guest. */
-  z.object({ type: z.literal('per_person'), amount: money, peakAmount: money.nullable().default(null) }),
+  /** Price per guest. tiers: lower per-guest prices for bigger groups ("$23 each, $21 each for 3 or more"),
+   * each from minGuests up. amount is the price before any tier applies. */
+  z.object({
+    type: z.literal('per_person'),
+    amount: money,
+    peakAmount: money.nullable().default(null),
+    tiers: z.array(z.object({ minGuests: z.number().int().min(2).max(1000), amount: money })).max(6).default([]),
+  }),
   /**
    * Price per bay, lane or simulator per hour. The number of units is enough
    * for the headcount (guestsPerUnit), never fewer than minUnits.
@@ -74,6 +80,9 @@ export const venueProfileSchema = z.object({
   /** False when the website doesn't list opening hours at all. The agent then
    * says the team will confirm times instead of calling every day closed. */
   hoursListed: z.boolean().default(true),
+  /** Days the website gives hours for that couldn't be read (garbled or contradictory). Not closed:
+   * the agent says the team confirms that day's times. */
+  hoursUnclear: z.array(WEEKDAY).max(7).default([]),
   closures: z.array(z.object({ date: DATE, note: z.string().max(120).default('') })).max(366).default([]),
 
   /** When peak prices apply: on `days` from `from` onwards (all day if

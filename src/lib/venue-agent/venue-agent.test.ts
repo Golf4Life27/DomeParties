@@ -9,7 +9,7 @@ import { formatMoney } from './money'
 import { runVenueTool } from './tools'
 import { venueSystemPrompt } from './prompt'
 import { leadEmailText } from './handoff'
-import { draftFromPasted, flagUnpricedCharges, MAX_PASTED_CHARS, PastedError } from './draft'
+import { draftFromPasted, flagUnclearDays, flagUnpricedCharges, MAX_PASTED_CHARS, PastedError } from './draft'
 import { sameSite } from './read-site'
 
 const venue = (slug: string): VenueProfile => {
@@ -261,4 +261,42 @@ test('a draft with long or too many unsure notes, or a setup sent as text, is ke
   assert.equal(out.unsure.length, 30)
   assert.equal(out.unsure[0].length, 200)
   assert.equal(draftWrapper.safeParse({ setup: 'not json', unsure: [] }).success, false)
+})
+
+test('group prices, per-guest extras by age, and a day whose hours could not be read (new venue types, Nov 5)', async () => {
+  const p = parseProfile({
+    ...lanes,
+    hoursUnclear: ['fri'],
+    hours: { ...lanes.hours, fri: [] },
+    packages: [
+      { id: 'axe-hour', name: '1-hour axe throwing', durationMinutes: 60, maxGuests: 48, pricing: { type: 'per_person', amount: 23, tiers: [{ minGuests: 3, amount: 21 }] } },
+      { id: 'jump-party', name: 'Create Your Own Party', durationMinutes: 120, maxGuests: 40, pricing: { type: 'flat', amount: 120 } },
+    ],
+    addOns: [
+      { id: 'jumper-6-plus', name: 'Jumper 6+', unit: 'per_person', amount: 16 },
+      { id: 'jumper-5-under', name: 'Jumper 5 and under', unit: 'per_person', amount: 12 },
+    ],
+    food: [],
+    taxPercent: 0,
+    serviceCharge: { percent: 0 },
+  })
+  const fri = '2026-11-20'
+  assert.equal(weekdayOf(fri), 'fri')
+  // 4 throwers pay the 3-or-more price: $84, not $92.
+  assert.equal(quote(p, { ...base, packageId: 'axe-hour', guests: 4, date: null }).subtotal, 8400)
+  assert.equal(quote(p, { ...base, packageId: 'axe-hour', guests: 2, date: null }).subtotal, 4600)
+  // 12 kids 6+ and 3 under-5s: $120 + 12 x $16 + 3 x $12 = $348, never every price for every guest.
+  const party = quote(p, { ...base, packageId: 'jump-party', guests: 15, date: null, addOns: [{ id: 'jumper-6-plus', quantity: 12 }, { id: 'jumper-5-under', quantity: 3 }] })
+  assert.equal(party.subtotal, 34800)
+  assert.throws(() => quote(p, { ...base, packageId: 'jump-party', guests: 15, date: null, addOns: [{ id: 'jumper-6-plus', quantity: 16 }] }), /how many of the 15 guests/)
+  // An unreadable Friday is not closed: quotes go through and the hours tool says the team confirms.
+  assert.equal(hoursOn(p, fri).closed, false)
+  assert.ok(fitsHours(p, fri, '16:00', 60))
+  assert.equal(quote(p, { ...base, packageId: 'jump-party', guests: 10, date: fri, start: '16:00' }).subtotal, 12000)
+  const hrs = JSON.parse(await runVenueTool(p, 'venue_hours', { start_date: fri, days: 1 }, 'dry', '2026-11-05')) as { days: { open: string }[] }
+  assert.match(hrs.days[0].open, /team will confirm/)
+  // Backstop: the reader's own note about a garbled Friday marks it unclear; a plain closed day stays closed.
+  const plain = parseProfile({ ...lanes, hours: { ...lanes.hours, fri: [], mon: [] } })
+  assert.deepEqual(flagUnclearDays(plain, ['Friday opening time is garbled on the site ("102:00pm-9:00pm"), so Friday hours were left empty.']).hoursUnclear, ['fri'])
+  assert.equal(flagUnclearDays(plain, ['Closed Mondays']), plain)
 })

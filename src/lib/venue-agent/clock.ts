@@ -60,6 +60,7 @@ export function hoursOn(p: VenueProfile, date: string): DayHours {
   const closure = p.closures.find((c) => c.date === date)
   if (closure) return { date, weekday, closed: true, note: closure.note || 'Closed', windows: [] }
   if (!p.hoursListed) return { date, weekday, closed: false, note: 'Hours not listed online', windows: [] }
+  if (p.hoursUnclear.includes(weekday)) return { date, weekday, closed: false, note: 'Hours for this day not readable online', windows: [] }
   const windows = (p.hours[weekday] ?? []).map((w) => ({
     open: w.open,
     close: w.close,
@@ -70,7 +71,7 @@ export function hoursOn(p: VenueProfile, date: string): DayHours {
 
 /** Does a party of this length fit inside an opening window when it starts at this time? */
 export function fitsHours(p: VenueProfile, date: string, start: string, minutes: number): boolean {
-  if (!p.hoursListed) return true
+  if (!p.hoursListed || p.hoursUnclear.includes(weekdayOf(date))) return true
   const s = toMinutes(start)
   return hoursOn(p, date).windows.some((w) => {
     const open = toMinutes(w.open)

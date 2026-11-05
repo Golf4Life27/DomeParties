@@ -56,7 +56,10 @@ export const VENUE_TOOLS: Anthropic.Tool[] = [
           type: 'array',
           items: {
             type: 'object',
-            properties: { id: { type: 'string' }, quantity: { type: 'integer' } },
+            properties: {
+              id: { type: 'string' },
+              quantity: { type: 'integer', description: 'For an add-on priced per guest: how many guests it is for (all of them: the guest count; only the 3 under-5s: 3). For any other add-on: how many.' },
+            },
             required: ['id', 'quantity'],
             additionalProperties: false,
           },
@@ -129,6 +132,8 @@ function venueHours(p: VenueProfile, raw: unknown) {
         ? `closed${d.note ? ` (${d.note})` : ''}`
         : !p.hoursListed
           ? 'not listed online: say the team will confirm times, never that the venue is closed'
+          : p.hoursUnclear.includes(d.weekday)
+            ? 'not readable online for this day: say the team will confirm times that day, never that the venue is closed'
           : d.windows.map((w) => `${formatTime(p, w.open)} to ${formatTime(p, w.close)}${w.closesNextDay ? ' (after midnight)' : ''}`).join(', '),
     })
   }
@@ -144,7 +149,7 @@ function partyOptions(p: VenueProfile) {
       const pr = pkg.pricing
       const per = pr.type === 'flat' ? 'flat' : pr.type === 'per_person' ? 'per guest' : `per ${p.unit.singular} per hour`
       const price = pkg.priceListed
-        ? `${m(pr.amount)} ${per}${pr.peakAmount != null ? `, ${m(pr.peakAmount)} at peak times` : ''}`
+        ? `${m(pr.amount)} ${per}${pr.type === 'per_person' && pr.tiers.length ? pr.tiers.map((t) => `, ${m(t.amount)} per guest for ${t.minGuests} or more`).join('') : ''}${pr.peakAmount != null ? `, ${m(pr.peakAmount)} at peak times` : ''}`
         : 'not listed online: the team quotes it'
       const shown = pkg.priceListed && pkg.priceFrom ? `starting at ${price}` : price
       const example =
