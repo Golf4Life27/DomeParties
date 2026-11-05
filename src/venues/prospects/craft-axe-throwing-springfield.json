@@ -1,0 +1,255 @@
+{
+  "slug": "craft-axe-throwing-springfield",
+  "name": "Craft Axe Throwing Springfield, MO",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "431 S Jefferson Ave, Suite 132A, Springfield, MO 65806",
+  "phone": "(417) 409-2496",
+  "website": "https://craftaxethrowing.com/pricing",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": 12,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "14:00",
+        "close": "21:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "16:00",
+        "close": "21:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "16:00",
+        "close": "21:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "16:00",
+        "close": "21:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "16:00",
+        "close": "21:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "12:00",
+        "close": "23:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "12:00",
+        "close": "23:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Book standard lanes online. For 10+ throwers, buyouts and private events, contact the venue for custom group pricing. Off-hours private events need at least one week's notice.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "axe-45-min",
+      "name": "45-minute axe throwing",
+      "description": "Pay by the thrower. Standard axe only.",
+      "includes": [
+        "Safety & instruction",
+        "Standard axe"
+      ],
+      "durationMinutes": 45,
+      "minGuests": 1,
+      "maxGuests": 48,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 19,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "axe-1-hour",
+      "name": "1-hour axe throwing",
+      "description": "$23 per thrower for 1–2 throwers; $21 per thrower for 3+ throwers.",
+      "includes": [
+        "Safety & instruction",
+        "Standard axe",
+        "Small ninja star"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 48,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 23,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "axe-1-5-hours",
+      "name": "1.5-hour axe throwing",
+      "description": "$33 per thrower for 1–2 throwers; $30 per thrower for 3+ throwers.",
+      "includes": [
+        "Safety & instruction",
+        "Standard axe",
+        "Small ninja star",
+        "Large ninja star",
+        "The Stick All"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 48,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 33,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "monday-lane-special",
+      "name": "Monday Lane Special",
+      "description": "Fill a lane with up to 6 throwers for $80 per 1-hour session. Mondays only.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [
+        "mon"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 80,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-buyout",
+      "name": "Large group / facility rental",
+      "description": "Buyouts, parties & corporate events. Reserve multiple lanes or the whole venue. Custom pricing for groups, birthdays, and team-building. Event pricing kicks in at 10+ throwers; venue capacity over 80 people.",
+      "includes": [
+        "Reserved lanes",
+        "Dedicated coaches",
+        "Tournament brackets on request"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 80,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "What age do you have to be to throw axes?",
+      "a": "All ages 10 and up (with a parent present for minors). All participants must sign a waiver before throwing."
+    },
+    {
+      "q": "What should I wear?",
+      "a": "Closed-toe shoes are required for all participants - no sandals, flip-flops, or open-toed shoes. Beyond that, wear whatever you're comfortable in."
+    },
+    {
+      "q": "Can we bring outside food and drinks?",
+      "a": "Outside food and catering are welcome - just bring your own utensils and napkins. Outside drinks are not permitted; we serve craft beer, seltzers, and other beverages on site."
+    },
+    {
+      "q": "Is there parking?",
+      "a": "Free on-site parking (a real lot, no apps required)."
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Rescheduling is available for events. Refunds are not provided for cancellations. Please contact the venue as soon as possible if your plans change."
+    },
+    {
+      "q": "Do you charge spectators?",
+      "a": "No - watching is always free. Only active throwers need a session."
+    },
+    {
+      "q": "How many people per lane?",
+      "a": "Each lane holds up to 4 throwers. We can reserve multiple lanes or the entire venue for private buyouts."
+    },
+    {
+      "q": "Can we book an event outside normal business hours?",
+      "a": "Yes - off-hours private events are available with at least one week of advance notice. Contact the venue to discuss availability and pricing."
+    },
+    {
+      "q": "Do I need to book ahead?",
+      "a": "Strongly recommended, especially Friday/Saturday nights and any weekend. We take walk-ins when lanes are open, but can't guarantee a lane without a reservation."
+    },
+    {
+      "q": "Are you accessible?",
+      "a": "Every venue is wheelchair accessible. We can adapt the throwing setup for seated throwers - just let us know in advance."
+    },
+    {
+      "q": "Do you have weekly deals?",
+      "a": "Monday: fill a lane with up to 6 throwers for $80 per 1-hour session. Thursday: Ladies throw for 50% off (groups of four or fewer). Sunday: Kids ages 10–15 throw free with an equivalent purchased regular session; adult must be present."
+    },
+    {
+      "q": "Is there a birthday deal?",
+      "a": "Join the Birthday Club and get a free-throw voucher the week of your birthday. Show the email at check-in."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}
