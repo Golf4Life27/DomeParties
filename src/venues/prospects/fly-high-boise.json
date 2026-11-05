@@ -15,7 +15,7 @@
     "singular": "party table",
     "plural": "party tables",
     "count": null,
-    "guestsPerUnit": 6
+    "guestsPerUnit": 4
   },
   "hours": {
     "sun": [
@@ -62,7 +62,12 @@
     ]
   },
   "hoursListed": true,
+  "hoursUnclear": [],
   "closures": [
+    {
+      "date": "2026-04-05",
+      "note": "Easter: Closed"
+    },
     {
       "date": "2026-11-26",
       "note": "Thanksgiving: Closed"
@@ -70,10 +75,6 @@
     {
       "date": "2026-12-25",
       "note": "Christmas Day: Closed"
-    },
-    {
-      "date": "2027-03-28",
-      "note": "Easter: Closed"
     }
   ],
   "peak": {
@@ -87,7 +88,7 @@
   ],
   "booking": {
     "partyUrl": "https://boise.flyhighfun.com/book-a-party/",
-    "howItWorks": "To book please call us at 208-205-9048 or book online. $100 non-refundable deposit required upon booking.",
+    "howItWorks": "Call 208-205-9048 or book online. A $100 non-refundable deposit is required upon booking.",
     "leadTimeDays": 0
   },
   "otherLinks": [],
@@ -106,7 +107,7 @@
     {
       "id": "create-your-own-party",
       "name": "Create Your Own Party",
-      "description": "Base party price of $120 PLUS $16 per jumper 6+ and $12 per jumper 5 and under. Base price does NOT represent total price for party; all guests that are jumping must be paid for in addition to base price.",
+      "description": "Base party price of $120, plus $16 per jumper 6+ and $12 per jumper 5 and under. All guests that are jumping must be paid for in addition to the base price. No food included.",
       "includes": [
         "2 Hour Jump/Table Time",
         "Paper Products (tablecloths, plates, cups, utensils, napkins)",
@@ -183,23 +184,30 @@
     {
       "id": "jumper-6-plus",
       "name": "Jumper 6+",
-      "description": "Required for every jumping guest age 6 and up",
+      "description": "Every jumping guest aged 6+ must be paid for in addition to the base price",
       "unit": "per_person",
       "amount": 16
     },
     {
       "id": "jumper-5-under",
       "name": "Jumper 5 and Under",
-      "description": "Required for every jumping guest age 5 and under",
+      "description": "Every jumping guest aged 5 and under must be paid for in addition to the base price",
       "unit": "per_person",
       "amount": 12
     },
     {
       "id": "private-party-room",
-      "name": "Private Party Room upgrade",
-      "description": "Includes Fly High Shirt for Birthday Child. Rooms: Beach, Pink Ice, Space",
+      "name": "Private Party Room Upgrade",
+      "description": "Beach, Pink Ice or Space Party Room (Fly High Shirt for Birthday Child)",
       "unit": "each",
       "amount": 40
+    },
+    {
+      "id": "grip-socks",
+      "name": "Grip Socks",
+      "description": "Grip socks are required",
+      "unit": "per_person",
+      "amount": 3
     },
     {
       "id": "balloons-6",
@@ -221,13 +229,6 @@
       "description": "",
       "unit": "each",
       "amount": 20
-    },
-    {
-      "id": "grip-socks",
-      "name": "Grip Socks",
-      "description": "Grip socks are required",
-      "unit": "each",
-      "amount": 3
     }
   ],
   "faq": [
@@ -236,36 +237,48 @@
       "a": "No food is included. We offer cotton candy and drinks as an add-on. Outside food and drink is allowed if you wish to cater yourself. Fridge and freezer available for your own cake and ice cream."
     },
     {
-      "q": "Are grip socks required?",
+      "q": "Do I need special socks?",
       "a": "Fly High grip socks are required ($3). Non Fly High grip socks are subject to approval. Normal socks are not permitted."
     },
     {
-      "q": "What if our party runs over time?",
+      "q": "Is there a deposit for parties?",
+      "a": "$100 non-refundable deposit required upon booking."
+    },
+    {
+      "q": "What if our party runs late?",
       "a": "$25 fee for every 10 minutes that table is still occupied after official party end time."
     },
     {
-      "q": "Is the deposit refundable?",
-      "a": "$100 Non-Refundable Deposit Required Upon Booking."
+      "q": "Does the base party price cover everyone?",
+      "a": "Base price does NOT represent total price for party. All guests that are jumping must be paid for in addition to base price: $16 per jumper 6+, $12 per jumper 5 and under."
     },
     {
-      "q": "How much is general admission?",
-      "a": "Ages 6 and up: $16 for 1 hour, $24 for 2 hours, $32 for 3 hours. Ages 3-5: $12 for 1 hour, $18 for 2 hours, $23 for 3 hours. Ages 2 and under: $4 per hour. Parent access: $10 per hour. 3 hour access includes free grip socks and 1 small fountain drink."
+      "q": "What are the jump prices?",
+      "a": "Ages 6+: 1 hour $16, 2 hours $24, 3 hours $32 (with free grip socks and small fountain drink). Ages 3-5: 1 hour $12, 2 hours $18, 3 hours $23 (with free grip socks and drink). Ages 2 and under $4 per hour. Parent access $10 per hour."
     },
     {
-      "q": "Do you have monthly memberships?",
-      "a": "Ages 6 and up $34.95, ages 3-5 $24.95 per month, two hour jump time, $10 registration fee, 3-month contract (non-refundable), recurring credit card payment only."
+      "q": "Do you have memberships?",
+      "a": "Monthly memberships with two hour jump time: ages 6 and up $34.95, ages 3-5 $24.95. $10 registration fee, 3-month contract (non-refundable), recurring credit card payment only."
     },
     {
-      "q": "Do you have weekly specials?",
-      "a": "Monday Family Night 4-9 PM 20% off; Tuesday BOGO hour; Wednesday Buddy Night 2nd ticket 1/2 off; Thursday College Night $4 off with school ID; Friday Flight Night 7-10 pm for $23. Specials may not be valid on Holidays / No School Days."
+      "q": "What are the weekly specials?",
+      "a": "Monday Family Night 4-9 PM 20% off ticket price; Tuesday BOGO hour; Wednesday Buddy Night 2nd ticket 1/2 off; Thursday College Night $4 off with school ID and 50% off fountain drinks 4-9 PM; Friday Flight Night 7-10 pm for $23. Specials may not be valid on holidays / no school days."
     },
     {
-      "q": "Do you have summer hours?",
-      "a": "Summer hours: Monday-Thursday 10 am to 9 pm, Friday-Saturday 10 am to 10 pm, Sunday 10 am to 8 pm. Please check our Facebook/Instagram page for unexpected closures due to facility rentals."
+      "q": "Do you have Parents and Tots or sensory times?",
+      "a": "Parents and Tots (school year only): Mon & Fri from 10, Tues-Thurs 12-2 PM, 2 hours for $8 per child 5 & under with paying parent ($10). Sensory Bounce Fridays 10 AM to Noon, $6 per jumper, 1 caretaker free."
     },
     {
-      "q": "Are you open on holidays?",
-      "a": "4th of July: Close at 6pm. Oct 31: Close at 4pm. Thanksgiving: Closed. Christmas Eve: Close at 4 pm. Christmas Day: Closed. Easter: Closed."
+      "q": "Military / law enforcement discount?",
+      "a": "10% off regular jump admission with ID. Cannot be combined with memberships, daily specials, parties, group events and concessions."
+    },
+    {
+      "q": "What are your summer hours?",
+      "a": "Summer: Monday-Thursday 10 am to 9 pm, Friday-Saturday 10 am to 10 pm, Sunday 10 am to 8 pm. School year hours differ Tuesday-Thursday (12 pm to 9 pm)."
+    },
+    {
+      "q": "Holiday hours?",
+      "a": "4th of July: close at 6pm. Oct 31: close at 4pm. Christmas Eve: close at 4 pm. Thanksgiving, Christmas Day and Easter: closed. Check our Facebook/Instagram for unexpected closures due to facility rentals."
     }
   ],
   "handoff": {
