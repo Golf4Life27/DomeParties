@@ -1,0 +1,304 @@
+{
+  "slug": "broheims-golf",
+  "name": "Broheim's Indoor Golf & Pub",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "53 NE Carefree Lane, Waukee, IA 50263",
+  "phone": "515-528-9192",
+  "website": "https://www.broheimsgolf.com/",
+  "unit": {
+    "singular": "simulator",
+    "plural": "simulators",
+    "count": 5,
+    "guestsPerUnit": 8
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "10:00",
+        "close": "21:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "10:00",
+        "close": "23:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "10:00",
+        "close": "23:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "10:00",
+        "close": "23:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "10:00",
+        "close": "23:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "10:00",
+        "close": "23:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "10:00",
+        "close": "23:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit"
+  ],
+  "booking": {
+    "partyUrl": "https://www.broheimsgolf.com/events/parties",
+    "howItWorks": "Fill out the Event Request form on the Events & Parties page and choose a package. The venue gets back to you to confirm. All event and party packages must be booked in advance.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book a tee time (simulator rental)",
+      "url": "https://www.broheimsgolf.com/book-tee-time"
+    },
+    {
+      "what": "Membership packages",
+      "url": "https://www.broheimsgolf.com/summer-membership-package"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 20,
+    "appliesTo": "all",
+    "note": "A 20% gratuity will be added to groups of 10 or more."
+  },
+  "packages": [
+    {
+      "id": "par-package",
+      "name": "Par Package",
+      "description": "2 hours on all 5 simulators with a $100 bar tab. Made for groups of 10 to 30. Each guest beyond 30 is $10 extra.",
+      "includes": [
+        "2 hours on 5 simulators",
+        "$100 bar tab"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 30,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 450,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "birdie-package",
+      "name": "Birdie Package",
+      "description": "3 hours on all 5 simulators with a $150 bar tab. Made for groups of 10 to 30. Each guest beyond 30 is $10 extra.",
+      "includes": [
+        "3 hours on 5 simulators",
+        "$150 bar tab"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 10,
+      "maxGuests": 30,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 675,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "eagle-package",
+      "name": "Eagle Package",
+      "description": "4 hours on all 5 simulators with a $200 bar tab. Made for groups of 10 to 30. Each guest beyond 30 is $10 extra.",
+      "includes": [
+        "4 hours on 5 simulators",
+        "$200 bar tab"
+      ],
+      "durationMinutes": 240,
+      "minGuests": 10,
+      "maxGuests": 30,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 900,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "golf-sim-rental",
+      "name": "Simulator Rental - Golf (90+ Courses)",
+      "description": "Simulator rental to play 90+ golf courses. Up to 8 players per simulator.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 45,
+        "peakAmount": null,
+        "minUnits": 1
+      },
+      "priceListed": true
+    },
+    {
+      "id": "driving-range-rental",
+      "name": "Simulator Rental - Driving Range",
+      "description": "Simulator rental on 10+ driving range venues.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 30,
+        "peakAmount": null,
+        "minUnits": 1
+      },
+      "priceListed": true
+    },
+    {
+      "id": "mini-games-rental",
+      "name": "Simulator Rental - Mini Games / Multi-Sport",
+      "description": "Simulator rental for mini games and multi-sport (football, soccer, baseball, stick-ball).",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 30,
+        "peakAmount": null,
+        "minUnits": 1
+      },
+      "priceListed": true
+    },
+    {
+      "id": "senior-discount",
+      "name": "Senior Discount (Ages 55+)",
+      "description": "$35 per hour for ages 55+. Monday to Friday, 9:00 AM to 3:00 PM, holidays excluded.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 35,
+        "peakAmount": null,
+        "minUnits": 1
+      },
+      "priceListed": true
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "extra-guest",
+      "name": "Additional guest over 30 (party packages)",
+      "description": "Each guest beyond 30 on a party package. Example: 35 guests = $50 added.",
+      "unit": "per_person",
+      "amount": 10
+    },
+    {
+      "id": "club-rental",
+      "name": "Golf Club Rental",
+      "description": "Per set",
+      "unit": "each",
+      "amount": 15
+    },
+    {
+      "id": "prov1-upgrade",
+      "name": "Titleist ProV1 Ball Upgrade",
+      "description": "",
+      "unit": "each",
+      "amount": 10
+    }
+  ],
+  "faq": [
+    {
+      "q": "Can we bring outside food?",
+      "a": "Outside catering is welcome. There is no on-site kitchen, and there is a full bar."
+    },
+    {
+      "q": "How many players fit on a simulator?",
+      "a": "Up to 8 players per simulator, and there are 5 wide-screen simulators for simultaneous play."
+    },
+    {
+      "q": "What size groups are the party packages for?",
+      "a": "These packages are designed for groups of 10 to 30 people. For smaller gatherings, please check out our standard bay rental options. More than 30 people? Add $10 per additional guest."
+    },
+    {
+      "q": "Can we rent the whole place for a private event?",
+      "a": "We welcome large groups and can even close to the public for private events. Hourly shutdown fees apply and must be requested through the contact form."
+    },
+    {
+      "q": "Is there a gratuity?",
+      "a": "A 20% gratuity will be added to groups of 10 or more."
+    },
+    {
+      "q": "Do you rent golf clubs?",
+      "a": "Yes, golf club set rental is $15 per set."
+    },
+    {
+      "q": "What else can we play besides golf?",
+      "a": "Miniature Golf, Darts, Cornhole, and Skee-Ball, plus Multi-Sport (Football, Soccer, Baseball, and Stick-Ball) and 7 Ball Striking Games."
+    },
+    {
+      "q": "Do you have a senior discount?",
+      "a": "$35 per hour for ages 55+, 9:00 AM to 3:00 PM, Monday to Friday (holidays excluded)."
+    },
+    {
+      "q": "Do you offer private leagues?",
+      "a": "With as few as 8 players, we can create and manage a league for your group. Private leagues are $80 per simulator for 2 hours, or $40 per simulator for 1 hour. They are not available Mondays 6:45pm-9pm, Tuesdays 5:45pm-8pm, Wednesdays 7:15pm-9:30pm, and Thursdays 5:45pm-8pm."
+    },
+    {
+      "q": "Are there projectors for presentations?",
+      "a": "Yes. There's a customizable space for presentations, private events and company parties, and projector screens are available."
+    }
+  ],
+  "handoff": {
+    "email": "info@broheimsgolf.com",
+    "webhookUrl": null
+  }
+}

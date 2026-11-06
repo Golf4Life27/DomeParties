@@ -1,0 +1,189 @@
+{
+  "slug": "nextgen-golf",
+  "name": "NextGen Golf",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "1671 Hoffman Road, Suite 70, Green Bay, WI 54311",
+  "phone": "920-425-4038",
+  "website": null,
+  "unit": {
+    "singular": "simulator",
+    "plural": "simulators",
+    "count": 4,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [],
+    "mon": [
+      {
+        "open": "09:00",
+        "close": "19:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "09:00",
+        "close": "19:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "09:00",
+        "close": "19:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "09:00",
+        "close": "19:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "09:00",
+        "close": "19:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "09:00",
+        "close": "19:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Book simulator time online with 'Book Your Sim Time' and lessons with 'Book a Lesson'. For events and buyouts, use the Contact Us page or call 920-425-4038.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Golf simulator info",
+      "url": "https://www.nextgengolfgb.com/golf-simulator"
+    },
+    {
+      "what": "Lessons",
+      "url": "https://www.nextgengolfgb.com/lessons"
+    },
+    {
+      "what": "Events",
+      "url": "https://www.nextgengolfgb.com/events"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "simulator-hour",
+      "name": "Simulator Rental (per hour)",
+      "description": "TrackMan simulator time. Book more hours if you like. Games include Scrapyard and Streets of Neon, plus the TrackMan course library.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 24,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 20,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "private-event",
+      "name": "Private Event / Full Buyout",
+      "description": "Event rentals for team building, happy hours, holiday parties, corporate outings, client entertaining, fundraising and birthdays. Full buyouts available. Food options include party platters, open bar and buffet-style packages. Contact the venue for pricing.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 24,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Can I bring outside food or drink?",
+      "a": "Outside food and drink are not permitted."
+    },
+    {
+      "q": "Do you serve food and drinks?",
+      "a": "Yes, there's a full bar and full kitchen, and food and drinks are served while you play."
+    },
+    {
+      "q": "Do I need a reservation?",
+      "a": "Walk-ins are welcome. Booking ahead is recommended at peak times."
+    },
+    {
+      "q": "How many players can share a bay?",
+      "a": "Up to 6 players per bay."
+    },
+    {
+      "q": "How long does a round take?",
+      "a": "An 18-hole round typically takes 2 to 3 hours."
+    },
+    {
+      "q": "Do you offer lessons and club fitting?",
+      "a": "Yes. There are TrackMan-based lessons with a golf pro, plus custom club and putter fitting. Book lessons online with 'Book a Lesson'."
+    },
+    {
+      "q": "Are you open in summer?",
+      "a": "The events page shows 'May - August' and 'Closed for Summer', so please check with the venue before planning a summer visit."
+    }
+  ],
+  "handoff": {
+    "email": "customerservice@nextgengolfgb.com",
+    "webhookUrl": null
+  }
+}

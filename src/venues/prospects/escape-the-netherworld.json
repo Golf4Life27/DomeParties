@@ -1,0 +1,241 @@
+{
+  "slug": "escape-the-netherworld",
+  "name": "Escape The NetherWorld",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "1313 Netherworld Way, Stone Mountain, GA 30087",
+  "phone": "(404) 999-3722",
+  "website": "https://www.escapethenetherworld.com/groups/",
+  "unit": {
+    "singular": "escape room",
+    "plural": "escape rooms",
+    "count": 5,
+    "guestsPerUnit": 10
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": false,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "For group packages, corporate events and private parties, call 404-999-3722. Regular escape games are booked and paid online at the time of booking.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book an escape game",
+      "url": "https://bookeo.com/netherworldgames?category=415727TY34616A6AD9704A"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "group-package-1",
+      "name": "Group Package #1",
+      "description": "For corporate events and private parties, up to 8 people. One private escape game of your choice, then one hour in the Party Room.",
+      "includes": [
+        "One private escape game of your choice",
+        "One hour after your game in the Party Room",
+        "Cold water and an assortment of chips",
+        "Use of the TV in the room"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 8,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 300,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-package-2",
+      "name": "Group Package #2",
+      "description": "For corporate events and private parties, up to 16 people. Two private escape games of your choice, half an hour before and one hour after in the Party Room.",
+      "includes": [
+        "Two private escape games of your choice",
+        "One hour after your games in the Party Room",
+        "Half hour before your games in the Party Room",
+        "Keep your stuff set up in the Party Room during your games",
+        "Cold water and an assortment of chips",
+        "Use of the TV in the room"
+      ],
+      "durationMinutes": 150,
+      "minGuests": 1,
+      "maxGuests": 16,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 550,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-package-3",
+      "name": "Group Package #3",
+      "description": "For corporate events and private parties, up to 24 people. Three private escape games of your choice, half an hour before and one and a half hours after in the Party Room.",
+      "includes": [
+        "Three private escape games of your choice",
+        "One and a half hours after your games in the Party Room",
+        "Half hour before your games in the Party Room",
+        "Keep your stuff set up in the Party Room during your games",
+        "Cold water and an assortment of chips",
+        "Use of the TV in the room"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 24,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 750,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "escape-game",
+      "name": "Private Escape Game",
+      "description": "60-minute escape game, tiered pricing: 3 players $37 per person, 4-6 players $34 per person, 7+ players $31 per person, plus taxes and fees. Groups of 1-3 pay the base price of $111. Max 8 players (Sasquatch, Tiki Island, Alien Terror) or 10 (Haunted, Nosferatu).",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 31,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "monster-museum",
+      "name": "House of Creeps Monster Museum",
+      "description": "Must be purchased for the entire group. Unlimited in and out during room rental period. Not private space, open to other guests too. Plus tax.",
+      "unit": "per_person",
+      "amount": 5
+    },
+    {
+      "id": "party-room-extra-hour",
+      "name": "Party Room Additional Hour",
+      "description": "Per additional hour in the Party Room.",
+      "unit": "each",
+      "amount": 100
+    },
+    {
+      "id": "add-person",
+      "name": "Add People to your Party",
+      "description": "Up to 2 additional people per room. Plus tax.",
+      "unit": "per_person",
+      "amount": 30
+    },
+    {
+      "id": "extra-space",
+      "name": "Additional Space",
+      "description": "Per hour. For larger groups, additional space during unpublished hours. Call for details.",
+      "unit": "each",
+      "amount": 100
+    }
+  ],
+  "faq": [
+    {
+      "q": "Is there an age limit?",
+      "a": "Our games are not recommended for anyone under the age of seven (7). A ticket purchase is required for ANYONE entering the game, regardless of age. Alien Terror is not recommended for anyone under the age of 12. There must be at least one adult accompanying children under age 16."
+    },
+    {
+      "q": "When should I arrive?",
+      "a": "Please plan to arrive fifteen (15) minutes PRIOR to your game's scheduled start time."
+    },
+    {
+      "q": "What happens if I'm late?",
+      "a": "Your sixty (60) minute game play timer will start five (5) minutes AFTER your scheduled game time, regardless of arrival time."
+    },
+    {
+      "q": "What is your cancellation / refund policy?",
+      "a": "There are no refunds for cancellations or no-shows. Please book responsibly."
+    },
+    {
+      "q": "Can I reschedule?",
+      "a": "Yes! Please call 404-999-ESCAPE (3722) or email EscapeTheNetherworld@gmail.com to reschedule. We require at least 24 hours notice to reschedule a game."
+    },
+    {
+      "q": "What is the minimum number of players?",
+      "a": "We highly recommend groups of 4-6 players. Even one player may attempt our rooms, but there is a pricing minimum that requires a purchase of three (3) players to reserve the game. Sasquatch, Tiki Island, and Alien Terror accommodate a maximum of eight (8) players; Haunted or Nosferatu up to ten (10)."
+    },
+    {
+      "q": "Can my friends and I book separately?",
+      "a": "Payment is due at the time of booking. Games are private experiences and disappear from the website once one person has booked. If unsure of your total, reserve the minimum and add players on-site. We can not refund for fewer players than were already purchased."
+    },
+    {
+      "q": "Is it scary like the haunted house?",
+      "a": "Our games have creepy themes and some surprise elements, but there are no actors in the rooms to scare you. Alien Terror is our most intense experience and is not recommended for anyone sensitive to darkness, motion sickness, fog, strobe lights, or loud noises."
+    },
+    {
+      "q": "Is it wheelchair accessible?",
+      "a": "Yes! All of our games, our lobby, and briefing room are wheelchair accessible, although a few areas within the games may be difficult to access in a wheelchair. We also have a wheelchair accessible bathroom."
+    },
+    {
+      "q": "Will we really be locked in a room?",
+      "a": "No! The room doors are never actually locked. If you need to step out you are free to do so, but you may not be allowed to reenter. There is no refund for leaving a room early."
+    },
+    {
+      "q": "I have a health condition. Is it safe to play?",
+      "a": "Some health conditions may pose safety risks. If you have a pace-maker, severe heart conditions, epilepsy, claustrophobia, are pregnant, or have a disability that makes standing or crawling difficult we may politely ask you not to participate. You will be in a room without seating for up to an hour."
+    },
+    {
+      "q": "How does pricing work during Haunted House season?",
+      "a": "During the Netherworld Haunted House Season, pricing is a flat $37 per player plus taxes & fees, and games are PUBLIC. To guarantee a private room, groups must book the maximum number of spots for the room. Group package availability, rates and conditions will vary during this time."
+    },
+    {
+      "q": "Can larger groups be accommodated?",
+      "a": "Events held during unpublished hours can be better tailored to your schedule and accommodate larger groups. Have a large group or need a different package? Call us at 404-999-3722."
+    }
+  ],
+  "handoff": {
+    "email": "EscapeTheNetherworld@gmail.com",
+    "webhookUrl": null
+  }
+}

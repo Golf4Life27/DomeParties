@@ -1,0 +1,419 @@
+{
+  "slug": "all-out-smash",
+  "name": "All Out Smash",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Denver",
+  "address": "3899 N Jackson St, Denver, CO 80205",
+  "phone": "720-646-0840",
+  "website": "https://www.alloutsmash.com/",
+  "unit": {
+    "singular": "smash room",
+    "plural": "smash rooms",
+    "count": 4,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [],
+    "tue": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Sessions are booked online in 30-minute increments. For corporate events, birthday parties, or groups larger than 16 people, call (720) 646-0840.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Rage room packages and booking",
+      "url": "https://www.alloutsmash.com/our-rooms/denver-rage-room/"
+    },
+    {
+      "what": "Splatter room packages and booking",
+      "url": "https://www.alloutsmash.com/our-rooms/denver-splatter-room/"
+    },
+    {
+      "what": "Axe throwing packages and booking",
+      "url": "https://www.alloutsmash.com/our-rooms/denver-axe-throwing/"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "solo-quick-smash",
+      "name": "Solo Quick Smash",
+      "description": "10 minutes of smashing for 1 person only. 1 large milk crate full of glass cups, plates or coffee mugs and multiple small electronics.",
+      "includes": [],
+      "durationMinutes": 30,
+      "minGuests": 1,
+      "maxGuests": 1,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 39,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "basic-smash",
+      "name": "Basic Smash",
+      "description": "20 minutes of smashing. Recommended for 2-4 people, max 6 per smash room. 1 large milk crate of glassware plus multiple small electronics.",
+      "includes": [],
+      "durationMinutes": 20,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 49,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "gold-smash",
+      "name": "Gold Smash",
+      "description": "Most popular. 30 minutes, double the items, for 2-8 guests at $79 per person. 2 large milk crates of glassware plus multiple small electronics.",
+      "includes": [],
+      "durationMinutes": 30,
+      "minGuests": 2,
+      "maxGuests": 8,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 79,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "extreme-smash",
+      "name": "Extreme Smash",
+      "description": "40 minutes, triple the breakable inventory, for 4-20 guests. 3 large milk crates of glassware plus multiple small electronics.",
+      "includes": [],
+      "durationMinutes": 40,
+      "minGuests": 4,
+      "maxGuests": 20,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "private-group-smash",
+      "name": "Private Group Smash",
+      "description": "60 minutes of smashing, recommended for 8-16 people.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 8,
+      "maxGuests": 16,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "xl-event-smash",
+      "name": "XL Event Smash",
+      "description": "Larger groups, corporate events, birthday parties. Rent out the entire facility for 3 hours with both the rage room and paint splatter room experiences.",
+      "includes": [],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 95,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "splatter-basic",
+      "name": "All Out Splatter Basic",
+      "description": "Glow-in-the-dark paint splatter. 8x10 take-home canvas per person, four 2 oz cups of paint each, brushes, ponchos, goggles, gloves, shower caps and shoe covers. Bigger discounts for bigger groups.",
+      "includes": [],
+      "durationMinutes": 30,
+      "minGuests": 1,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 45,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "splatter-plus",
+      "name": "All Out Splatter Plus",
+      "description": "Premium splatter package with a premium canvas to keep. Ages 4 and up. Group discounts (more than 2) applied at checkout. Bigger and/or multiple canvases available.",
+      "includes": [],
+      "durationMinutes": 30,
+      "minGuests": 1,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 75,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-private-splatter",
+      "name": "Group Private Splatter",
+      "description": "For groups of 13-26 guests, 60 minutes. Listed at $45 per person, shown as discounted $40 per person. Groups of 12 or more alternate. 8x10 canvas and four 2 oz cups of paint per person, brushes, ponchos and protective gear.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 13,
+      "maxGuests": 26,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 45,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "birthday-special",
+      "name": "Birthday Special",
+      "description": "Birthday parties only, 15% discount included. Black light glow paint splatter with 8 oz of paint per person, take-home 8x10 canvas, brushes, ponchos, safety gear and a private time slot. 6 person minimum, up to 15 at once.",
+      "includes": [],
+      "durationMinutes": 30,
+      "minGuests": 6,
+      "maxGuests": 15,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 42.95,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "axe-30",
+      "name": "30-minute Axe Throwing Session",
+      "description": "Private lanes for 1-4 people, self-guided, keep your own score.",
+      "includes": [],
+      "durationMinutes": 30,
+      "minGuests": 1,
+      "maxGuests": 4,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 20,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "axe-60",
+      "name": "60-minute Axe Throwing Session",
+      "description": "Great for groups. Instruction from a World Axe Throwing League-certified coach included.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 16,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 29.95,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "axe-120",
+      "name": "120-minute Axe Throwing Session",
+      "description": "Best value. 2 hours of competitive axe throwing with private lanes for groups of 6 or more, with a dedicated coach and a quick lesson.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 6,
+      "maxGuests": 16,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 39.95,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "double-trouble",
+      "name": "Double Trouble",
+      "description": "60 minutes of coached axe throwing, then 20 minutes smashing a large crate of glassware and small electronics.",
+      "includes": [],
+      "durationMinutes": 80,
+      "minGuests": 1,
+      "maxGuests": 16,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 74.95,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "triple-threat",
+      "name": "Triple Threat",
+      "description": "60 minutes of coached axe throwing, 20 minutes in the smash room, and a 20-minute black light glow paint splatter session with take-home canvases.",
+      "includes": [],
+      "durationMinutes": 100,
+      "minGuests": 1,
+      "maxGuests": 16,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 119.95,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "platinum-triple-threat",
+      "name": "Platinum Triple Threat",
+      "description": "For 2-20 people. Call (720) 646-0840 for details.",
+      "includes": [],
+      "durationMinutes": 100,
+      "minGuests": 2,
+      "maxGuests": 20,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Is there an age limit?",
+      "a": "Rage Room & Axe-Throwing: minimum age 10 years. Anyone under 18 must arrive with a parent or legal guardian who will sign the waiver and stay in the room/lane during the session. Splatter Room: all ages welcome! Kids 12 and under should still have an adult nearby to help with goggles and paint ponchos."
+    },
+    {
+      "q": "What should I wear?",
+      "a": "All participants must wear long pants, socks that cover their ankles, and closed-toed, flat shoes only. NO shorts, dresses, skirts, sandals, flip-flops, high heels, or open-toed shoes of any kind will be permitted. Long sleeves and rugged, thick-soled shoes are required. We suggest lightweight, breathable clothing, such as workout attire."
+    },
+    {
+      "q": "What is the refund and rescheduling policy?",
+      "a": "All Out Smash has a no refund policy. Once you make your appointment, we go to work purchasing items for your experience. You are able to freely reschedule up to 24 hours before your scheduled time."
+    },
+    {
+      "q": "Can I donate unwanted items?",
+      "a": "We accept electronics, un-upholstered furniture, glass, cups, mugs, windows, doors, ceramics, household items, and pretty much anything smashable. We cannot take tube TVs, vacuum cleaners, BBQ grills, upholstered furniture, mattresses, and light bulbs of any kind."
+    },
+    {
+      "q": "What about large groups, birthdays or corporate events?",
+      "a": "For corporate events, birthday parties, or groups larger than 16 people, please call us at (720) 646-0840. Private lanes and venue buyouts are available for groups and corporate events."
+    },
+    {
+      "q": "Can we drink and throw?",
+      "a": "You must remain safe to participate. Staff may pause or stop throwing if anyone appears impaired. The Smash Shack is a full-service bar on site."
+    },
+    {
+      "q": "What if someone in our group doesn't want to throw?",
+      "a": "No problem. They can cheer you on with food or drinks from the Smash Shack nearby."
+    },
+    {
+      "q": "Do you host axe leagues or tournaments?",
+      "a": "We do our axe throwing based off of World Axe Throwing League (WATL) but we do not currently do leagues or tournaments."
+    },
+    {
+      "q": "Do I need experience for axe throwing?",
+      "a": "Nope! Our coaches teach you stance, grip, and scoring games, with a quick safety briefing before throwing."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}
