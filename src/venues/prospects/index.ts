@@ -1,10 +1,12 @@
 import allOutSmash from './all-out-smash.json'
 import anchorLanes from './anchor-lanes.json'
+import badAxeThrowingNashville from './bad-axe-throwing-nashville.json'
 import birdieBoyzIndoorGolf from './birdie-boyz-indoor-golf.json'
 import broheimsGolf from './broheims-golf.json'
 import caddysDelight from './caddys-delight.json'
 import castleFunCenter from './castle-fun-center.json'
 import classicFunCenter from './classic-fun-center.json'
+import coolSpringz from './cool-springz.json'
 import craftAxeThrowingSpringfield from './craft-axe-throwing-springfield.json'
 import escapeTheNetherworld from './escape-the-netherworld.json'
 import exeterBowlingLanes from './exeter-bowling-lanes.json'
@@ -12,9 +14,11 @@ import flahertysArdenBowl from './flahertys-arden-bowl.json'
 import flyHighBoise from './fly-high-boise.json'
 import fwGolfHouse from './fw-golf-house.json'
 import garageGolfCincy from './garage-golf-cincy.json'
+import getoutGamesProvo from './getout-games-provo.json'
 import gimmesParAndGrill from './gimmes-par-and-grill.json'
 import golf616 from './golf-616.json'
 import golfIn from './golf-in.json'
+import monsterMiniGolfNorwood from './monster-mini-golf-norwood.json'
 import mvpLanes from './mvp-lanes.json'
 import nextgenGolf from './nextgen-golf.json'
 import officeGolf from './office-golf.json'
@@ -40,11 +44,13 @@ import wisconsinIndoorGolfCenter from './wisconsin-indoor-golf-center.json'
 export const PROSPECTS: unknown[] = [
   allOutSmash,
   anchorLanes,
+  badAxeThrowingNashville,
   birdieBoyzIndoorGolf,
   broheimsGolf,
   caddysDelight,
   castleFunCenter,
   classicFunCenter,
+  coolSpringz,
   craftAxeThrowingSpringfield,
   escapeTheNetherworld,
   exeterBowlingLanes,
@@ -52,9 +58,11 @@ export const PROSPECTS: unknown[] = [
   flyHighBoise,
   fwGolfHouse,
   garageGolfCincy,
+  getoutGamesProvo,
   gimmesParAndGrill,
   golf616,
   golfIn,
+  monsterMiniGolfNorwood,
   mvpLanes,
   nextgenGolf,
   officeGolf,

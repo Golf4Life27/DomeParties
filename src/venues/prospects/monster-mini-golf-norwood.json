@@ -1,0 +1,275 @@
+{
+  "slug": "monster-mini-golf-norwood",
+  "name": "Monster Mini Golf Norwood",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "",
+  "phone": "",
+  "website": "https://monsterminigolf.com/locations/us/ma/norwood/birthday-parties",
+  "unit": {
+    "singular": "private event room",
+    "plural": "private event rooms",
+    "count": null,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": false,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://online.monsterminigolf.com/party/build-party/norwood",
+    "howItWorks": "Book online in five steps: choose your package, pick date, time and guest count, select add-ons, sign into an account, confirm details. You can also call or visit the store. Walk-in or unscheduled parties are not accommodated.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Online purchase options / attractions and arcade",
+      "url": "https://online.monsterminigolf.com/package/main/Norwood"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "ghostly-gala",
+      "name": "Ghostly Gala",
+      "description": "Birthday party package with 10 guests included and a private event room for 90 minutes. Additional guests can be added.",
+      "includes": [
+        "10 guests included",
+        "1 private event room for 90 minutes",
+        "1 game of mini golf",
+        "$8 of arcade game play for guests",
+        "MMG T-shirt for the guest of honor"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [
+        "sun",
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 275,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "bones-bash",
+      "name": "Bones Bash",
+      "description": "Birthday party package with 12 guests included and a private event room for 90 minutes. Additional guests can be added.",
+      "includes": [
+        "12 guests included",
+        "1 private event room for 90 minutes",
+        "1 game of mini golf",
+        "$10 of arcade game play for guests",
+        "MMG T-shirt for the guest of honor"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 12,
+      "days": [
+        "sun",
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 325,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "monster-mania",
+      "name": "Monster Mania",
+      "description": "Birthday party package with 15 guests included and a private event room for 90 minutes. Additional guests can be added.",
+      "includes": [
+        "15 guests included",
+        "1 private event room for 90 minutes",
+        "1 game of mini golf",
+        "$12 of arcade game play for guests",
+        "Return mini golf passes",
+        "MMG T-shirt for the guest of honor",
+        "Glow Hand Print Experience for the guest of honor",
+        "Monster Challenge Experience for the guest of honor"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 15,
+      "days": [
+        "sun",
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 400,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "vim-package",
+      "name": "VIM Package",
+      "description": "Private use of the facility for 2 hours with 25 guests included. Available 10AM-12PM, Saturday and Sunday only.",
+      "includes": [
+        "Private use of facility for 2 hours",
+        "25 guests included",
+        "2 private event rooms for 2 hours",
+        "Unlimited mini golf",
+        "$15 of arcade game play for guests",
+        "Rule the Airwaves - play your own music",
+        "Return mini golf passes",
+        "MMG T-shirt, Glow Hand Print and Monster Challenge Experience for the guest of honor"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 25,
+      "days": [
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 550,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [
+    {
+      "id": "large-cheese-pizza",
+      "name": "Large Cheese Pizza",
+      "description": "",
+      "pricing": "flat",
+      "amount": 13
+    },
+    {
+      "id": "laser-pepperoni",
+      "name": "Laser Pepperoni",
+      "description": "",
+      "pricing": "flat",
+      "amount": 14
+    },
+    {
+      "id": "juice-boxes",
+      "name": "Juice Boxes (10)",
+      "description": "",
+      "pricing": "flat",
+      "amount": 4
+    }
+  ],
+  "addOns": [
+    {
+      "id": "additional-guest",
+      "name": "Additional guest",
+      "description": "Listed as $15 – $18 per guest",
+      "unit": "per_person",
+      "amount": 15
+    },
+    {
+      "id": "mmg-t-shirt",
+      "name": "Monster Mini Golf T-Shirt",
+      "description": "",
+      "unit": "each",
+      "amount": 12
+    },
+    {
+      "id": "goodie-bag",
+      "name": "Monster Mini Golf Goodie Bag",
+      "description": "",
+      "unit": "each",
+      "amount": 3.5
+    }
+  ],
+  "faq": [
+    {
+      "q": "Can I show up for a walk-in party?",
+      "a": "This location cannot accommodate walk-in or unscheduled birthday parties/events."
+    },
+    {
+      "q": "What ages are good for a birthday party?",
+      "a": "Our Birthday Party Events are wonderful for children of most ages, but at times can be challenging for children under 5 years, as some younger children lack the physical ability to play the game of Mini Golf as well as the concentration to play a full 18 holes course."
+    },
+    {
+      "q": "How can I reserve a birthday party?",
+      "a": "Visit the store, call the store directly, or book online from the location webpage. A deposit will be required to hold your preferred day and time; deposits vary by location and package."
+    },
+    {
+      "q": "Do you offer a party specialist?",
+      "a": "We do! Just let us know you're looking for a specialist to help plan the day for you, and we'll be happy to help."
+    },
+    {
+      "q": "Can you host a birthday party for adults?",
+      "a": "Absolutely! Parties are suitable for all ages, including adults."
+    },
+    {
+      "q": "How long is a mini golf game?",
+      "a": "Your party can most likely plan on a round taking about 30-45 minutes, but the game really is what you make it."
+    },
+    {
+      "q": "Are reservations required for mini golf?",
+      "a": "Walk-in guests are welcome for mini golf and other activities. Walk-ins may have to wait when it's very busy, so we recommend reserving your tee time ahead."
+    },
+    {
+      "q": "What happens at a party?",
+      "a": "Arrival and set up, introductions, secondary attractions and/or in-room games, food and refreshments, birthday song and cake, Monster Mini Golf, and arcade play. We handle set up, service, entertainment and clean up."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

@@ -161,6 +161,11 @@ export function linksIn(html: string, base: URL): { url: URL; text: string }[] {
   return out
 }
 
+/** Fewer than about 300 readable characters across every page read: not enough to draft from. */
+export function tooThinToDraft(pages: { text: string }[]): boolean {
+  return pages.reduce((n, p) => n + p.text.replace(/\s+/g, ' ').trim().length, 0) < 300
+}
+
 export type SitePages = { home: URL; pages: { url: string; text: string }[]; links: { url: string; text: string }[] }
 
 /** The home page plus the few pages most likely to hold hours, parties and prices. */
@@ -190,6 +195,15 @@ export async function readVenueSite(input: string): Promise<SitePages> {
     seen.add(key)
     const page = await fetchPage(c.url).catch(() => null)
     if (page) pages.push({ url: page.url.toString(), text: htmlToText(page.html).slice(0, 12000) })
+  }
+  // Some site builders (Square Online, for one) send an empty shell and draw
+  // the page in the browser, so the reader sees little more than the venue's
+  // name. A demo drafted from that would only say "contact the venue", so ask
+  // the owner to paste the page instead, as for a site that blocks the reader.
+  if (tooThinToDraft(pages)) {
+    throw new SiteError(
+      `${home.hostname} draws its pages in the browser, so our reader could see almost nothing on it. Paste your party page or upload a PDF of it instead.`,
+    )
   }
   // Booking links often point to another site (a booking system), so keep those too.
   const links = allLinks

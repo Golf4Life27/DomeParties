@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError } from './read-site'
+import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError, tooThinToDraft } from './read-site'
 
 test('website addresses: plain names work, anything not a public site is refused', () => {
   assert.equal(normaliseUrl('example.com').toString(), 'https://example.com/')
@@ -34,4 +34,11 @@ test('reads email addresses that Cloudflare hides on the page', () => {
   const html = `<p>Email <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="${hex}">[email&#160;protected]</a> today</p>`
   assert.match(htmlToText(html), /Email events@example\.com today/)
   assert.equal(cfDecode('zz'), null)
+})
+
+test('a site that only draws its pages in the browser is too thin to draft from', () => {
+  const shell = htmlToText('<html><head><title>Smash - Home</title><script>window.__STATE__={}</script></head><body><div id="app"></div></body></html>')
+  assert.equal(tooThinToDraft([{ text: shell }]), true)
+  const real = 'Birthday parties: 90 minutes in a private room, pizza and soda, $199.99 for up to 10 guests. Extra guests $15 each. Open Monday to Friday 12pm to 8pm, weekends 10am to 8pm. A $50 deposit holds your date and comes off the balance on the day. Book three to four weeks ahead. Grip socks are included for every jumper and are theirs to keep.'
+  assert.equal(tooThinToDraft([{ text: real }]), false)
 })
