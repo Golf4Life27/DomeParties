@@ -217,7 +217,8 @@
       "name": "Additional guest",
       "description": "Listed as $15 – $18 per guest",
       "unit": "per_person",
-      "amount": 15
+      "amount": 15,
+      "amountTo": 18
     },
     {
       "id": "mmg-t-shirt",

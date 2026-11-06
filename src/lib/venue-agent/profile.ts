@@ -159,6 +159,8 @@ export const venueProfileSchema = z.object({
         description: z.string().max(300).default(''),
         pricing: z.enum(['per_person', 'flat']),
         amount: money,
+        /** The top of a price the venue lists as a range ("$15 to $18"); amount is the bottom. */
+        amountTo: money.nullable().default(null),
       }),
     )
     .max(30)
@@ -171,6 +173,8 @@ export const venueProfileSchema = z.object({
         description: z.string().max(300).default(''),
         unit: z.enum(['each', 'per_person']),
         amount: money,
+        /** The top of a price the venue lists as a range ("$15 to $18"); amount is the bottom. */
+        amountTo: money.nullable().default(null),
       }),
     )
     .max(30)

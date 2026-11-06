@@ -170,8 +170,8 @@ function partyOptions(p: VenueProfile) {
         ...(example ? { sizing: example } : {}),
       }
     }),
-    food: p.food.map((f) => ({ id: f.id, name: f.name, description: f.description, price: `${m(f.amount)} ${f.pricing === 'per_person' ? 'per guest' : 'flat'}` })),
-    add_ons: p.addOns.map((a) => ({ id: a.id, name: a.name, description: a.description, price: `${m(a.amount)} ${a.unit === 'per_person' ? 'per guest' : 'each'}` })),
+    food: p.food.map((f) => ({ id: f.id, name: f.name, description: f.description, price: `${m(f.amount)}${f.amountTo != null && f.amountTo > f.amount ? ` to ${m(f.amountTo)}` : ''} ${f.pricing === 'per_person' ? 'per guest' : 'flat'}` })),
+    add_ons: p.addOns.map((a) => ({ id: a.id, name: a.name, description: a.description, price: `${m(a.amount)}${a.amountTo != null && a.amountTo > a.amount ? ` to ${m(a.amountTo)}` : ''} ${a.unit === 'per_person' ? 'per guest' : 'each'}` })),
     peak_times:
       p.peak.days.length || p.peak.allDay.length
         ? { days: p.peak.days, from: p.peak.from ? formatTime(p, p.peak.from) : 'all day', all_day_on: p.peak.allDay }

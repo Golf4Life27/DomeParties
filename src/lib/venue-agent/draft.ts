@@ -29,6 +29,7 @@ Always answer by calling the save_setup tool once, with no text reply. Fill it i
 - A per-guest price that drops for bigger groups ("$23 each, $21 each for 3 or more", "3 players $37, 4-6 $34, 7+ $31") goes in as amount for the smallest group and pricing.tiers for the rest, each with the group size it starts at. Never put a tier only in the description.
 - An extra charged per guest at different prices by age or type ("$16 per jumper 6+, $12 per jumper 5 and under") is one per_person add-on for each price.
 - A price the pages give only as a starting price ("from $25", "starting at $35") goes in as that amount with priceFrom true.
+- A food or add-on price the pages give as a range ("$15 - $18 per guest") goes in with amount the bottom and amountTo the top. A package priced as a range goes in at the bottom with priceFrom true. Never save only one end of a range.
 - hoursListed is false when the pages give no opening hours at all; leave hours empty then. Days the pages say are closed stay empty with hoursListed true. A day whose hours the pages give but you can't read (garbled like "102:00pm", or contradicting each other) goes in hoursUnclear with its hours empty, never left looking closed.
 - peak: when prices are higher on some days from a time onwards, put those days in peak.days and the time in peak.from. Days that are peak all day (often weekends) go in peak.allDay. A package's peakAmount is its price at peak times.
 - notStated lists each of tax, deposit and service_charge whose rate or amount the pages don't give. That includes a charge they mention without a number, like "plus tax" or "prices don't include service charge". Leave the matching value at 0 or null. A charge the pages say doesn't apply is not "not stated".
@@ -161,10 +162,10 @@ async function draftFrom(
     const out = draftWrapper.safeParse(call.input)
     try {
       if (!out.success) throw out.error
-      const profile = flagUnclearDays(
+      const profile = keepPriceRanges(flagUnclearDays(
         flagUnpricedCharges(trimLinks(parseProfile({ ...(out.data.setup as object), sample: false, prospect: false, website })), out.data.unsure),
         out.data.unsure,
-      )
+      ))
       return { profile, unsure: out.data.unsure, sources: meta.sources, usage }
     } catch (e) {
       const problems = e instanceof z.ZodError ? e.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('\n') : String(e)
@@ -191,6 +192,21 @@ const DAY_NAMES: Record<string, Weekday> = { sunday: 'sun', monday: 'mon', tuesd
 /** A day left empty because its hours couldn't be read must never read as closed. Backstop for the
  *  hoursUnclear rule: if the reader's own unsure notes say a weekday's hours were garbled, unclear or
  *  left empty, and that day is still empty, mark it unclear so the chat says the team confirms it. */
+/** Backstop for a price range saved as only its bottom: when a food or add-on's own description
+ *  gives "$15 - $18" (or "$15 to $18") and its amount is the bottom, the top goes in amountTo. */
+export function keepPriceRanges(p: VenueProfile): VenueProfile {
+  const range = /\$\s?(\d+(?:\.\d{1,2})?)\s*(?:-|–|—|to)\s*\$?\s?(\d+(?:\.\d{1,2})?)/i
+  const fix = <T extends { description: string; amount: number; amountTo: number | null }>(x: T): T => {
+    if (x.amountTo != null) return x
+    const m = x.description.match(range)
+    if (!m) return x
+    const lo = Number(m[1])
+    const hi = Number(m[2])
+    return lo === x.amount && hi > lo ? { ...x, amountTo: hi } : x
+  }
+  return { ...p, food: p.food.map(fix), addOns: p.addOns.map(fix) }
+}
+
 export function flagUnclearDays(p: VenueProfile, unsure: string[]): VenueProfile {
   const add: Weekday[] = []
   for (const u of unsure) {

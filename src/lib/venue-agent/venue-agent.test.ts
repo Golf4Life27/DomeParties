@@ -9,7 +9,7 @@ import { formatMoney } from './money'
 import { runVenueTool } from './tools'
 import { venueSystemPrompt } from './prompt'
 import { leadEmailText } from './handoff'
-import { draftFromPasted, flagUnclearDays, flagUnpricedCharges, MAX_PASTED_CHARS, PastedError } from './draft'
+import { draftFromPasted, flagUnclearDays, flagUnpricedCharges, keepPriceRanges, MAX_PASTED_CHARS, PastedError } from './draft'
 import { sameSite } from './read-site'
 
 const venue = (slug: string): VenueProfile => {
@@ -299,4 +299,29 @@ test('group prices, per-guest extras by age, and a day whose hours could not be 
   const plain = parseProfile({ ...lanes, hours: { ...lanes.hours, fri: [], mon: [] } })
   assert.deepEqual(flagUnclearDays(plain, ['Friday opening time is garbled on the site ("102:00pm-9:00pm"), so Friday hours were left empty.']).hoursUnclear, ['fri'])
   assert.equal(flagUnclearDays(plain, ['Closed Mondays']), plain)
+})
+
+test('an extra listed as a price range is quoted as a range, never one exact total (Nov 6)', async () => {
+  const p = parseProfile({
+    ...lanes,
+    packages: [{ id: 'bones-bash', name: 'Bones Bash', durationMinutes: 90, maxGuests: 12, pricing: { type: 'flat', amount: 325 } }],
+    addOns: [{ id: 'extra-guest', name: 'Additional guest', unit: 'per_person', amount: 15, amountTo: 18 }],
+    food: [],
+    taxPercent: 0,
+    serviceCharge: { percent: 0 },
+  })
+  // 14 kids on a 12-guest package: $325 + 2 extra guests at $15 to $18 = $355 to $361.
+  const q = quote(p, { ...base, packageId: 'bones-bash', guests: 12, date: null, addOns: [{ id: 'extra-guest', quantity: 2 }] })
+  assert.equal(q.total, 35500)
+  assert.equal(q.totalHigh, 36100)
+  assert.match(String(describeQuote(p, q).price_range), /\$355\.00 to \$361\.00/)
+  // No range, no range note.
+  const flat = quote(p, { ...base, packageId: 'bones-bash', guests: 12, date: null })
+  assert.equal(flat.totalHigh, null)
+  assert.equal(describeQuote(p, flat).price_range, undefined)
+  // Backstop: a range left only in the description is put back.
+  const saved = parseProfile({ ...p, addOns: [{ id: 'extra-guest', name: 'Additional guest', description: 'Listed as $15 – $18 per guest', unit: 'per_person', amount: 15 }] })
+  assert.equal(keepPriceRanges(saved).addOns[0].amountTo, 18)
+  const opts = JSON.parse(await runVenueTool(keepPriceRanges(saved), 'party_options', {}, 'dry', '2026-11-06')) as { add_ons: { price: string }[] }
+  assert.match(opts.add_ons[0].price, /\$15\.00 to \$18\.00 per guest/)
 })

@@ -34,6 +34,9 @@ export type Quote = {
   units: number | null
   /** Packages in it whose website price is only a starting price. */
   fromPrices: string[]
+  /** Items the venue prices as a range, and the total if every one lands at the top of it. */
+  ranges: string[]
+  totalHigh: number | null
 }
 
 export class QuoteError extends Error {}
@@ -95,6 +98,10 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
     })
   }
 
+  // Prices listed as a range are quoted at the bottom; what the top would add is kept apart.
+  let rangeExtra = 0
+  let rangeFoodExtra = 0
+  const ranges: string[] = []
   let foodTotal = 0
   if (r.foodId) {
     const f = p.food.find((x) => x.id === r.foodId)
@@ -102,6 +109,10 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
     const eaters = r.foodGuests ?? r.guests
     foodTotal = f.pricing === 'per_person' ? toMinor(f.amount, c) * eaters : toMinor(f.amount, c)
     lines.push({ item: f.name, detail: f.pricing === 'per_person' ? `${eaters} guests` : 'flat', amount: foodTotal })
+    if (f.amountTo != null && f.amountTo > f.amount) {
+      rangeFoodExtra = (toMinor(f.amountTo, c) - toMinor(f.amount, c)) * (f.pricing === 'per_person' ? eaters : 1)
+      ranges.push(`${f.name} (${formatMoney(toMinor(f.amount, c), c, p.locale)} to ${formatMoney(toMinor(f.amountTo, c), c, p.locale)})`)
+    }
   }
 
   for (const a of r.addOns) {
@@ -113,6 +124,10 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
       throw new QuoteError(`${add.name} is priced per guest: quantity is how many of the ${r.guests} guests it's for, not more`)
     }
     lines.push({ item: add.name, detail: add.unit === 'per_person' ? `${a.quantity} guests` : `x${a.quantity}`, amount: toMinor(add.amount, c) * a.quantity })
+    if (add.amountTo != null && add.amountTo > add.amount && a.quantity > 0) {
+      rangeExtra += (toMinor(add.amountTo, c) - toMinor(add.amount, c)) * a.quantity
+      ranges.push(`${add.name} (${formatMoney(toMinor(add.amount, c), c, p.locale)} to ${formatMoney(toMinor(add.amountTo, c), c, p.locale)})`)
+    }
   }
 
   const subtotal = lines.reduce((s, l) => s + l.amount, 0)
@@ -121,6 +136,13 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
   const serviceCharge = percentOf(scBase, sc.percent)
   const tax = percentOf(subtotal + (p.taxOnServiceCharge ? serviceCharge : 0), p.taxPercent)
   const total = subtotal + serviceCharge + tax
+  let totalHigh: number | null = null
+  if (ranges.length) {
+    const subHigh = subtotal + rangeExtra + rangeFoodExtra
+    const scBaseHigh = sc.appliesTo === 'all' ? subHigh : sc.appliesTo === 'with_food' ? (r.foodId ? subHigh : 0) : foodTotal + rangeFoodExtra
+    const scHigh = percentOf(scBaseHigh, sc.percent)
+    totalHigh = subHigh + scHigh + percentOf(subHigh + (p.taxOnServiceCharge ? scHigh : 0), p.taxPercent)
+  }
 
   let deposit: number | null = null
   if (p.deposit.flat != null) deposit = Math.min(total, toMinor(p.deposit.flat, c))
@@ -138,6 +160,8 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
     estimate: !r.date || (p.peak.from != null && !r.start && p.peak.days.includes(weekdayOf(r.date)) && !p.peak.allDay.includes(weekdayOf(r.date))),
     units,
     fromPrices: pkg.priceFrom ? [pkg.name] : [],
+    ranges,
+    totalHigh,
   }
 }
 
@@ -156,6 +180,11 @@ export function describeQuote(p: VenueProfile, q: Quote) {
     estimate_only: q.estimate,
     ...(q.fromPrices.length
       ? { starting_price: `The venue lists ${q.fromPrices.join(', ')} as "starting at" this price. Say it's a starting price and the team confirms the final one. Never call it exact.` }
+      : {}),
+    ...(q.ranges.length && q.totalHigh != null
+      ? {
+          price_range: `The venue lists ${q.ranges.join(', ')} as a price range, so the total is ${m(q.total)} to ${m(q.totalHigh)}. Give both ends and say the team confirms the exact price. Never give one exact total.`,
+        }
       : {}),
     ...(p.notStated.length
       ? {
