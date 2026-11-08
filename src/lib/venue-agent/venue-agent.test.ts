@@ -9,7 +9,7 @@ import { formatMoney } from './money'
 import { runVenueTool } from './tools'
 import { venueSystemPrompt } from './prompt'
 import { leadEmailText } from './handoff'
-import { draftFromPasted, flagUnclearDays, flagUnpricedCharges, keepPriceRanges, MAX_PASTED_CHARS, PastedError } from './draft'
+import { draftFromPasted, flagUnclearDays, flagUnpricedCharges, hasAnyPrice, keepPriceRanges, MAX_PASTED_CHARS, PastedError } from './draft'
 import { sameSite } from './read-site'
 
 const venue = (slug: string): VenueProfile => {
@@ -324,4 +324,17 @@ test('an extra listed as a price range is quoted as a range, never one exact tot
   assert.equal(keepPriceRanges(saved).addOns[0].amountTo, 18)
   const opts = JSON.parse(await runVenueTool(keepPriceRanges(saved), 'party_options', {}, 'dry', '2026-11-06')) as { add_ons: { price: string }[] }
   assert.match(opts.add_ons[0].price, /\$15\.00 to \$18\.00 per guest/)
+})
+
+test('a setup with no price anywhere is caught, so the owner is asked for their own location page', () => {
+  assert.equal(hasAnyPrice(lanes), true)
+  const noPrices = parseProfile({
+    ...lanes,
+    packages: lanes.packages.map((k) => ({ ...k, priceListed: false })),
+    food: [],
+    addOns: [],
+  })
+  assert.equal(hasAnyPrice(noPrices), false)
+  const oneAddOn = parseProfile({ ...noPrices, addOns: [{ id: 'socks', name: 'Grip socks', unit: 'each', amount: 3 }] })
+  assert.equal(hasAnyPrice(oneAddOn), true)
 })

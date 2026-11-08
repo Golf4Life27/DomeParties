@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { z } from 'zod'
 import { parseProfile, venueProfileSchema, type VenueProfile, type Weekday } from './profile'
-import { readVenueSite, type SitePages } from './read-site'
+import { readVenueSite, SiteError, type SitePages } from './read-site'
 import { venueAgentModel } from './run'
 
 // Turns a venue's website into a ready-to-check setup, so the owner only
@@ -75,11 +75,27 @@ function pagesText(site: SitePages): string {
 
 export async function draftFromSite(website: string, contactEmail: string | null): Promise<Draft> {
   const site = await readVenueSite(website)
-  return draftFrom([{ type: 'text', text: pagesText(site) }], {
+  const d = await draftFrom([{ type: 'text', text: pagesText(site) }], {
     website: site.home.toString(),
     contactEmail,
     sources: site.pages.map((p) => p.url),
   })
+  if (!hasAnyPrice(d.profile)) {
+    throw new SiteError(
+      `We couldn’t find any prices on ${site.home.hostname}. If it covers several locations, paste your own location’s party page or upload a PDF of your price list instead.`,
+    )
+  }
+  return d
+}
+
+/** A demo with no price anywhere only says "contact the venue", which makes it look broken to the
+ *  owner trying it. Seen on a chain's home page that lists its parks but no location's prices. */
+export function hasAnyPrice(p: VenueProfile): boolean {
+  return (
+    p.packages.some((k) => k.priceListed && k.pricing.amount > 0) ||
+    p.food.some((f) => f.amount > 0) ||
+    p.addOns.some((a) => a.amount > 0)
+  )
 }
 
 /** Most an owner can paste: about 15 printed pages. */
