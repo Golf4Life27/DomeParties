@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError, tooThinToDraft } from './read-site'
+import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError, tooThinToDraft, bookingHostsIn } from './read-site'
 
 test('website addresses: plain names work, anything not a public site is refused', () => {
   assert.equal(normaliseUrl('example.com').toString(), 'https://example.com/')
@@ -41,4 +41,15 @@ test('a site that only draws its pages in the browser is too thin to draft from'
   assert.equal(tooThinToDraft([{ text: shell }]), true)
   const real = 'Birthday parties: 90 minutes in a private room, pizza and soda, $199.99 for up to 10 guests. Extra guests $15 each. Open Monday to Friday 12pm to 8pm, weekends 10am to 8pm. A $50 deposit holds your date and comes off the balance on the day. Book three to four weeks ahead. Grip socks are included for every jumper and are theirs to keep.'
   assert.equal(tooThinToDraft([{ text: real }]), false)
+})
+
+test('a booking tool embedded or linked from another site is noted, so a no-price draft asks the owner to paste', () => {
+  const base = new URL('https://funpark.example/birthdays/')
+  const html = `
+    <iframe src="https://fsp-widgets.web.app/embed/party"></iframe>
+    <iframe src="/our-own-map"></iframe>
+    <a href="https://funpark.bookingzone.com/rc/plans">Book a party</a>
+    <a href="https://www.facebook.com/funpark">Facebook</a>`
+  assert.deepEqual(bookingHostsIn(html, base).sort(), ['fsp-widgets.web.app', 'funpark.bookingzone.com'])
+  assert.deepEqual(bookingHostsIn('<a href="/parties">Parties</a>', base), [])
 })

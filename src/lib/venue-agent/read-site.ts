@@ -166,7 +166,31 @@ export function tooThinToDraft(pages: { text: string }[]): boolean {
   return pages.reduce((n, p) => n + p.text.replace(/\s+/g, ' ').trim().length, 0) < 300
 }
 
-export type SitePages = { home: URL; pages: { url: string; text: string }[]; links: { url: string; text: string }[] }
+export type SitePages = {
+  home: URL
+  pages: { url: string; text: string }[]
+  links: { url: string; text: string }[]
+  /** Other sites whose booking tools the pages embed or link to, where prices may live out of the reader's sight. */
+  bookingHosts: string[]
+}
+
+/** Booking and ticketing tools venues commonly embed or link to for parties and groups. */
+const BOOKING_HOST = /(^|\.)(roller\.app|rollerdigital\.com|bookingzone\.com|bookeo\.com|fareharbor\.com|resova\.(us|com|io)|xola\.com|checkfront\.com|peek\.com|clubspeed\.com|centeredgeonline\.com|centeredge\.io|partywirks\.com|bookthatapp\.com|setmore\.com|square\.site|acuityscheduling\.com|zenoti\.com|tixr\.com|eventbrite\.com|web\.app)$/i
+
+/** Hosts of off-site iframes and of links to known booking tools. */
+export function bookingHostsIn(html: string, base: URL): string[] {
+  const hosts = new Set<string>()
+  for (const m of html.matchAll(/<iframe\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi)) {
+    try {
+      const u = new URL(decode(m[1]), base)
+      if (bare(u.hostname) !== bare(base.hostname)) hosts.add(u.hostname)
+    } catch {
+      /* not a usable address */
+    }
+  }
+  for (const l of linksIn(html, base)) if (BOOKING_HOST.test(l.url.hostname)) hosts.add(l.url.hostname)
+  return [...hosts].slice(0, 10)
+}
 
 /** The home page plus the few pages most likely to hold hours, parties and prices. */
 export async function readVenueSite(input: string): Promise<SitePages> {
@@ -183,6 +207,7 @@ export async function readVenueSite(input: string): Promise<SitePages> {
   if (!first) throw new SiteError(`Couldn't open ${home.hostname}. Check the address, or paste your party page instead.`)
   const pages = [{ url: first.url.toString(), text: htmlToText(first.html).slice(0, 20000) }]
   const allLinks = linksIn(first.html, first.url)
+  const bookingHosts = new Set(bookingHostsIn(first.html, first.url))
   const seen = new Set([first.url.toString()])
   const candidates = allLinks
     .filter((l) => bare(l.url.hostname) === bare(first.url.hostname))
@@ -194,7 +219,10 @@ export async function readVenueSite(input: string): Promise<SitePages> {
     if (seen.has(key)) continue
     seen.add(key)
     const page = await fetchPage(c.url).catch(() => null)
-    if (page) pages.push({ url: page.url.toString(), text: htmlToText(page.html).slice(0, 12000) })
+    if (page) {
+      pages.push({ url: page.url.toString(), text: htmlToText(page.html).slice(0, 12000) })
+      for (const h of bookingHostsIn(page.html, page.url)) bookingHosts.add(h)
+    }
   }
   // Some site builders (Square Online, for one) send an empty shell and draw
   // the page in the browser, so the reader sees little more than the venue's
@@ -210,5 +238,5 @@ export async function readVenueSite(input: string): Promise<SitePages> {
     .filter((l) => KEYWORDS.test(l.text) || KEYWORDS.test(l.url.toString()))
     .slice(0, 60)
     .map((l) => ({ url: l.url.toString(), text: l.text }))
-  return { home: first.url, pages, links }
+  return { home: first.url, pages, links, bookingHosts: [...bookingHosts] }
 }

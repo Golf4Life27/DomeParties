@@ -80,11 +80,13 @@ export async function draftFromSite(website: string, contactEmail: string | null
     contactEmail,
     sources: site.pages.map((p) => p.url),
   })
-  if (!hasAnyPrice(d.profile)) {
+  if (!hasAnyPrice(d.profile) && site.bookingHosts.length > 0) {
     throw new SiteError(
-      `We couldn’t find any prices on ${site.home.hostname}. If it covers several locations, paste your own location’s party page or upload a PDF of your price list instead.`,
+      `We couldn’t see any prices on ${site.home.hostname}; they may load inside your booking system (${site.bookingHosts[0]}). Paste your party page or price list, or upload a PDF of it, so the chat can quote exact totals.`,
     )
   }
+  // No prices and no booking tool: a venue that prices by quote. The demo takes the guest's details
+  // for a quote instead of guessing a number, which is what those owners want.
   return d
 }
 
