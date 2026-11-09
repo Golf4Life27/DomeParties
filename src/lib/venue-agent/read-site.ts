@@ -177,13 +177,16 @@ export type SitePages = {
 /** Booking and ticketing tools venues commonly embed or link to for parties and groups. */
 const BOOKING_HOST = /(^|\.)(roller\.app|rollerdigital\.com|bookingzone\.com|bookeo\.com|fareharbor\.com|resova\.(us|com|io)|xola\.com|checkfront\.com|peek\.com|clubspeed\.com|centeredgeonline\.com|centeredge\.io|partywirks\.com|bookthatapp\.com|setmore\.com|square\.site|acuityscheduling\.com|zenoti\.com|tixr\.com|eventbrite\.com|web\.app)$/i
 
+/** Iframes nearly every site carries (tracking, maps, video, social) that never hold party prices. */
+const NOT_BOOKING = /(^|\.)(googletagmanager\.com|google\.com|doubleclick\.net|youtube\.com|youtube-nocookie\.com|vimeo\.com|facebook\.com|instagram\.com|twitter\.com|x\.com|tiktok\.com|spotify\.com|hotjar\.com|googleapis\.com|recaptcha\.net|gstatic\.com)$/i
+
 /** Hosts of off-site iframes and of links to known booking tools. */
 export function bookingHostsIn(html: string, base: URL): string[] {
   const hosts = new Set<string>()
   for (const m of html.matchAll(/<iframe\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi)) {
     try {
       const u = new URL(decode(m[1]), base)
-      if (bare(u.hostname) !== bare(base.hostname)) hosts.add(u.hostname)
+      if (bare(u.hostname) !== bare(base.hostname) && !NOT_BOOKING.test(u.hostname)) hosts.add(u.hostname)
     } catch {
       /* not a usable address */
     }

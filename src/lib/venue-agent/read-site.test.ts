@@ -48,6 +48,8 @@ test('a booking tool embedded or linked from another site is noted, so a no-pric
   const html = `
     <iframe src="https://fsp-widgets.web.app/embed/party"></iframe>
     <iframe src="/our-own-map"></iframe>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-X"></iframe></noscript>
+    <iframe src="https://www.youtube.com/embed/abc"></iframe>
     <a href="https://funpark.bookingzone.com/rc/plans">Book a party</a>
     <a href="https://www.facebook.com/funpark">Facebook</a>`
   assert.deepEqual(bookingHostsIn(html, base).sort(), ['fsp-widgets.web.app', 'funpark.bookingzone.com'])
