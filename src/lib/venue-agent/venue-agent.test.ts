@@ -186,6 +186,8 @@ test('a package with no price online is never quoted at zero', async () => {
   assert.throws(() => quote(p, { ...base, packageId: pkgs[0].id, guests: pkgs[0].minGuests, date: null }), (e: unknown) => e instanceof QuoteError && /doesn't list a price/.test(e.message))
   const opts = JSON.parse(await runVenueTool(p, 'party_options', {}, 'dry', '2026-11-04')) as { packages: { price: string }[] }
   assert.match(opts.packages[0].price, /not listed online/)
+  // The chat takes the quote request itself rather than only sending the guest to email or call.
+  assert.match(opts.packages[0].price, /hand_to_team/)
 })
 
 test('an unknown bay or lane count skips the capacity check instead of assuming one', async () => {

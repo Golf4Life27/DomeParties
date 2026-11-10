@@ -150,7 +150,7 @@ function partyOptions(p: VenueProfile) {
       const per = pr.type === 'flat' ? 'flat' : pr.type === 'per_person' ? 'per guest' : `per ${p.unit.singular} per hour`
       const price = pkg.priceListed
         ? `${m(pr.amount)} ${per}${pr.type === 'per_person' && pr.tiers.length ? pr.tiers.map((t) => `, ${m(t.amount)} per guest for ${t.minGuests} or more`).join('') : ''}${pr.peakAmount != null ? `, ${m(pr.peakAmount)} at peak times` : ''}`
-        : 'not listed online: the team quotes it'
+        : "not listed online: never give or guess a number. Offer to get the guest a quote here: ask for whatever's missing of the date, headcount, name and email or phone, then send it with hand_to_team"
       const shown = pkg.priceListed && pkg.priceFrom ? `starting at ${price}` : price
       const example =
         pr.type === 'per_unit_hour'
