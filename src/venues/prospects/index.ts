@@ -22,6 +22,7 @@ import getoutGamesProvo from './getout-games-provo.json'
 import gimmesParAndGrill from './gimmes-par-and-grill.json'
 import golf616 from './golf-616.json'
 import golfIn from './golf-in.json'
+import hubCityGolfClub from './hub-city-golf-club.json'
 import lonestarRage from './lonestar-rage.json'
 import monsterMiniGolfNorwood from './monster-mini-golf-norwood.json'
 import motorWorldVirginiaBeach from './motor-world-virginia-beach.json'
@@ -36,6 +37,8 @@ import royalScot from './royal-scot.json'
 import schwoeglers from './schwoeglers.json'
 import sirGoonys from './sir-goonys.json'
 import spareTimePineville from './spare-time-pineville.json'
+import speedFactoryIndoorKarting from './speed-factory-indoor-karting.json'
+import stonehedgeIndoorGolf from './stonehedge-indoor-golf.json'
 import strikersJc from './strikers-jc.json'
 import surgeBatonRouge from './surge-baton-rouge.json'
 import tShotz from './t-shotz.json'
@@ -75,6 +78,7 @@ export const PROSPECTS: unknown[] = [
   gimmesParAndGrill,
   golf616,
   golfIn,
+  hubCityGolfClub,
   lonestarRage,
   monsterMiniGolfNorwood,
   motorWorldVirginiaBeach,
@@ -89,6 +93,8 @@ export const PROSPECTS: unknown[] = [
   schwoeglers,
   sirGoonys,
   spareTimePineville,
+  speedFactoryIndoorKarting,
+  stonehedgeIndoorGolf,
   strikersJc,
   surgeBatonRouge,
   tShotz,
