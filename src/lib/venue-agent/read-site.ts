@@ -8,6 +8,11 @@ import net from 'node:net'
 
 const MAX_BYTES = 1_500_000
 const MAX_PAGES = 6
+const MAX_PDFS = 2
+/** Same cap as an owner's upload: base64 adds a third, and the model request has a size limit. */
+const MAX_PDF_BYTES = 3 * 1024 * 1024
+/** A PDF worth reading names parties, groups or prices in its file name or link text. */
+const PDF_KEYWORDS = /part(y|ies)|birthday|event|group|corporate|package|pric|rate|menu|food|field ?trip|camp|outing/i
 const KEYWORDS = /part(y|ies)|birthday|event|group|corporate|package|pric|rate|hour|menu|food|book|reserv|faq|league|lane|bay|simulator|team/i
 
 export class SiteError extends Error {}
@@ -172,6 +177,8 @@ export type SitePages = {
   links: { url: string; text: string }[]
   /** Other sites whose booking tools the pages embed or link to, where prices may live out of the reader's sight. */
   bookingHosts: string[]
+  /** Party or price-list PDFs the venue links to from its own pages, read along with the pages. */
+  pdfs: { url: string; base64: string }[]
 }
 
 /** Booking and ticketing tools venues commonly embed or link to for parties and groups. */
@@ -196,6 +203,54 @@ export function bookingHostsIn(html: string, base: URL): string[] {
 }
 
 /** The home page plus the few pages most likely to hold hours, parties and prices. */
+/** The party or price-list PDFs a page links to, by file name or link text. A venue often keeps its
+ *  packages in a PDF on its site builder's file host, so the host can differ from the site's own. */
+export function pdfLinksIn(html: string, base: URL): URL[] {
+  const out: URL[] = []
+  for (const l of linksIn(html, base)) {
+    if (!/\.pdf$/i.test(l.url.pathname)) continue
+    if (!PDF_KEYWORDS.test(l.text) && !PDF_KEYWORDS.test(decodeURIComponent(l.url.pathname))) continue
+    if (!out.some((u) => u.toString() === l.url.toString())) out.push(l.url)
+  }
+  return out
+}
+
+async function fetchPdf(start: URL): Promise<{ url: string; base64: string } | null> {
+  let url = start
+  for (let hop = 0; hop < 4; hop++) {
+    await assertPublic(url)
+    const res = await fetch(url, { redirect: 'manual', headers: { 'user-agent': READER_USER_AGENT, accept: 'application/pdf' }, signal: AbortSignal.timeout(8000) })
+    if (res.status >= 300 && res.status < 400) {
+      const loc = res.headers.get('location')
+      if (!loc) return null
+      url = normaliseUrl(new URL(loc, url).toString())
+      continue
+    }
+    if (!res.ok) return null
+    const declared = Number(res.headers.get('content-length') ?? 0)
+    if (declared > MAX_PDF_BYTES) return null
+    const reader = res.body?.getReader()
+    if (!reader) return null
+    const chunks: Uint8Array[] = []
+    let size = 0
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      size += value.length
+      if (size > MAX_PDF_BYTES) {
+        await reader.cancel().catch(() => {})
+        return null
+      }
+      chunks.push(value)
+    }
+    const buf = Buffer.concat(chunks)
+    // Only a real PDF, whatever the server calls it.
+    if (buf.subarray(0, 5).toString('latin1') !== '%PDF-') return null
+    return { url: url.toString(), base64: buf.toString('base64') }
+  }
+  return null
+}
+
 export async function readVenueSite(input: string): Promise<SitePages> {
   const home = normaliseUrl(input)
   const tryPage = (u: URL) =>
@@ -211,6 +266,7 @@ export async function readVenueSite(input: string): Promise<SitePages> {
   const pages = [{ url: first.url.toString(), text: htmlToText(first.html).slice(0, 20000) }]
   const allLinks = linksIn(first.html, first.url)
   const bookingHosts = new Set(bookingHostsIn(first.html, first.url))
+  const pdfLinks = pdfLinksIn(first.html, first.url)
   const seen = new Set([first.url.toString()])
   const candidates = allLinks
     .filter((l) => bare(l.url.hostname) === bare(first.url.hostname))
@@ -225,13 +281,20 @@ export async function readVenueSite(input: string): Promise<SitePages> {
     if (page) {
       pages.push({ url: page.url.toString(), text: htmlToText(page.html).slice(0, 12000) })
       for (const h of bookingHostsIn(page.html, page.url)) bookingHosts.add(h)
+      for (const u of pdfLinksIn(page.html, page.url)) if (!pdfLinks.some((x) => x.toString() === u.toString())) pdfLinks.push(u)
     }
+  }
+  const pdfs: { url: string; base64: string }[] = []
+  for (const u of pdfLinks.slice(0, MAX_PDFS * 2)) {
+    if (pdfs.length >= MAX_PDFS) break
+    const pdf = await fetchPdf(u).catch(() => null)
+    if (pdf) pdfs.push(pdf)
   }
   // Some site builders (Square Online, for one) send an empty shell and draw
   // the page in the browser, so the reader sees little more than the venue's
   // name. A demo drafted from that would only say "contact the venue", so ask
   // the owner to paste the page instead, as for a site that blocks the reader.
-  if (tooThinToDraft(pages)) {
+  if (pdfs.length === 0 && tooThinToDraft(pages)) {
     throw new SiteError(
       `${home.hostname} draws its pages in the browser, so our reader could see almost nothing on it. Paste your party page or upload a PDF of it instead.`,
     )
@@ -241,5 +304,5 @@ export async function readVenueSite(input: string): Promise<SitePages> {
     .filter((l) => KEYWORDS.test(l.text) || KEYWORDS.test(l.url.toString()))
     .slice(0, 60)
     .map((l) => ({ url: l.url.toString(), text: l.text }))
-  return { home: first.url, pages, links, bookingHosts: [...bookingHosts] }
+  return { home: first.url, pages, links, bookingHosts: [...bookingHosts], pdfs }
 }

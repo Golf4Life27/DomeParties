@@ -13,6 +13,7 @@ export type Draft = { profile: VenueProfile; unsure: string[]; sources: string[]
 const SYSTEM = `You set up a website chat agent for an entertainment venue (golf dome, indoor golf simulators, driving range, bowling center or family entertainment center) by reading the venue's own website.
 
 When the venue's website can't be read, the owner pastes their party page or a price list, or uploads a PDF, instead. Read that the same way as website pages: it is the venue's own information, and "the pages" below means it too. A pasted price list rarely has links, so leave booking links null unless the text gives one in full.
+A PDF the venue links to from its own website (a party menu or price list) is the venue's own information as well, read with its pages. If the PDF and a page give different prices for the same thing, use the page and add a line to "unsure" naming both.
 
 Always answer by calling the save_setup tool once, with no text reply. Fill it in from what the pages say. Rules:
 - Use only facts the pages state. Never invent a price, an hour, a package or a policy. When something isn't on the pages, use the safest empty value (an empty list, null, 0) and add a short plain line about it to "unsure", for example "No party prices on the website" or "Hours for Sunday not listed".
@@ -75,10 +76,16 @@ function pagesText(site: SitePages): string {
 
 export async function draftFromSite(website: string, contactEmail: string | null): Promise<Draft> {
   const site = await readVenueSite(website)
-  const d = await draftFrom([{ type: 'text', text: pagesText(site) }], {
+  // A party or price-list PDF the venue links to is read with the pages, as an owner's upload would be.
+  const pdfs: Anthropic.ContentBlockParam[] = site.pdfs.map((f) => ({
+    type: 'document',
+    source: { type: 'base64', media_type: 'application/pdf', data: f.base64 },
+    title: `PDF linked from the venue's website: ${f.url}`,
+  }))
+  const d = await draftFrom([...pdfs, { type: 'text', text: pagesText(site) }], {
     website: site.home.toString(),
     contactEmail,
-    sources: site.pages.map((p) => p.url),
+    sources: [...site.pages.map((p) => p.url), ...site.pdfs.map((f) => f.url)],
   })
   if (!hasAnyPrice(d.profile) && site.bookingHosts.length > 0) {
     throw new SiteError(

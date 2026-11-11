@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError, tooThinToDraft, bookingHostsIn } from './read-site'
+import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError, tooThinToDraft, bookingHostsIn, pdfLinksIn } from './read-site'
 
 test('website addresses: plain names work, anything not a public site is refused', () => {
   assert.equal(normaliseUrl('example.com').toString(), 'https://example.com/')
@@ -54,4 +54,15 @@ test('a booking tool embedded or linked from another site is noted, so a no-pric
     <a href="https://www.facebook.com/funpark">Facebook</a>`
   assert.deepEqual(bookingHostsIn(html, base).sort(), ['fsp-widgets.web.app', 'funpark.bookingzone.com'])
   assert.deepEqual(bookingHostsIn('<a href="/parties">Parties</a>', base), [])
+})
+
+test('party and price PDFs are picked up, even on the site builder\'s file host; other PDFs are not', () => {
+  const html = `
+    <a href="/files/2026-Birthday-Party-Packages.pdf">Download</a>
+    <a href="https://irp.cdn-website.com/abc/files/uploaded/menu.pdf">Party Menu</a>
+    <a href="/files/waiver.pdf">Waiver</a>
+    <a href="/files/employment-application.pdf">Apply</a>
+    <a href="/parties">Parties</a>`
+  const got = pdfLinksIn(html, new URL('https://funpark.example.com/')).map((u) => u.toString())
+  assert.deepEqual(got, ['https://funpark.example.com/files/2026-Birthday-Party-Packages.pdf', 'https://irp.cdn-website.com/abc/files/uploaded/menu.pdf'])
 })
