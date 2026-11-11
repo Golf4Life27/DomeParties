@@ -8,6 +8,9 @@ import net from 'node:net'
 
 const MAX_BYTES = 1_500_000
 const MAX_PAGES = 6
+/** Off after the Nov 11 test (1 of 3): a 3.1 MB packages PDF was over the size cap, menus were read
+ *  ahead of the packages PDF, and two PDFs pushed one setup to 115 seconds. Owners can still upload a PDF. */
+const READ_PDFS = false
 const MAX_PDFS = 2
 /** Same cap as an owner's upload: base64 adds a third, and the model request has a size limit. */
 const MAX_PDF_BYTES = 3 * 1024 * 1024
@@ -285,7 +288,7 @@ export async function readVenueSite(input: string): Promise<SitePages> {
     }
   }
   const pdfs: { url: string; base64: string }[] = []
-  for (const u of pdfLinks.slice(0, MAX_PDFS * 2)) {
+  for (const u of READ_PDFS ? pdfLinks.slice(0, MAX_PDFS * 2) : []) {
     if (pdfs.length >= MAX_PDFS) break
     const pdf = await fetchPdf(u).catch(() => null)
     if (pdf) pdfs.push(pdf)
