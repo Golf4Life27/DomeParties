@@ -8,20 +8,20 @@ import type { Handoff } from './tools'
 //    and VENUE_AGENT_EMAIL_FROM), never from Whitetail's, so another venue's
 //    leads never come from the dome's name.
 // Returns true when at least one way got through.
-export async function deliverHandoff(p: VenueProfile, h: Handoff): Promise<boolean> {
+export async function deliverHandoff(p: VenueProfile, h: Handoff, pilotNote?: string): Promise<boolean> {
   const results = await Promise.all([
-    p.handoff.webhookUrl ? postWebhook(p.handoff.webhookUrl, p, h) : Promise.resolve(false),
-    p.handoff.email ? sendLeadEmail(p.handoff.email, p, h) : Promise.resolve(false),
+    p.handoff.webhookUrl ? postWebhook(p.handoff.webhookUrl, p, h, pilotNote) : Promise.resolve(false),
+    p.handoff.email ? sendLeadEmail(p.handoff.email, p, h, pilotNote) : Promise.resolve(false),
   ])
   return results.some(Boolean)
 }
 
-async function postWebhook(url: string, p: VenueProfile, h: Handoff) {
+async function postWebhook(url: string, p: VenueProfile, h: Handoff, pilotNote?: string) {
   try {
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ venue: p.slug, source: 'chat', ...h }),
+      body: JSON.stringify({ venue: p.slug, source: 'chat', ...h, ...(pilotNote ? { pilot_note: pilotNote } : {}) }),
       signal: AbortSignal.timeout(8000),
     })
     return res.ok
@@ -31,7 +31,7 @@ async function postWebhook(url: string, p: VenueProfile, h: Handoff) {
   }
 }
 
-export function leadEmailText(p: VenueProfile, h: Handoff): { subject: string; text: string } {
+export function leadEmailText(p: VenueProfile, h: Handoff, pilotNote?: string): { subject: string; text: string } {
   const who = h.guest_name || 'A guest'
   const lines = [
     `${who} asked about ${h.reason.replace(/_/g, ' ')} in your website chat.`,
@@ -42,18 +42,19 @@ export function leadEmailText(p: VenueProfile, h: Handoff): { subject: string; t
     ...(h.headcount ? [`Guests: ${h.headcount}`] : []),
     ...(h.guest_email ? [`Email: ${h.guest_email}`] : []),
     ...(h.guest_phone ? [`Phone: ${h.guest_phone}`] : []),
+    ...(pilotNote ? ['', pilotNote] : []),
   ]
   return { subject: `Chat lead: ${who}${h.headcount ? `, ${h.headcount} guests` : ''}`, text: lines.join('\n') }
 }
 
-async function sendLeadEmail(to: string, p: VenueProfile, h: Handoff) {
+async function sendLeadEmail(to: string, p: VenueProfile, h: Handoff, pilotNote?: string) {
   const key = process.env.VENUE_AGENT_RESEND_KEY
   const from = process.env.VENUE_AGENT_EMAIL_FROM
   if (!key || !from) {
     console.warn(`[venue-agent] ${p.slug} lead email skipped: no sending address set up`)
     return false
   }
-  const { subject, text } = leadEmailText(p, h)
+  const { subject, text } = leadEmailText(p, h, pilotNote)
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',

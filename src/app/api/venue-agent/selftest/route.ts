@@ -65,12 +65,14 @@ export async function GET(req: NextRequest) {
   const turns: ChatTurn[] = []
   const usage = { calls: 0, inputTokens: 0, outputTokens: 0, cacheWriteTokens: 0, cacheReadTokens: 0 }
   const tools: string[] = []
+  const handoffs: unknown[] = []
   for (const g of c[1]) {
     turns.push({ role: 'guest', text: g })
     const r = await runVenueAgent(venue, turns, { mode: 'dry' })
     turns.push({ role: 'agent', text: r.reply })
     tools.push(...r.toolsUsed)
+    handoffs.push(...r.handoffs)
     for (const k of Object.keys(usage) as (keyof typeof usage)[]) usage[k] += r.usage[k]
   }
-  return NextResponse.json({ venue: venue.slug, turns, tools, usage })
+  return NextResponse.json({ venue: venue.slug, turns, tools, handoffs, usage })
 }

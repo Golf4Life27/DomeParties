@@ -4,6 +4,8 @@ import { addDays, formatDate, formatTime, hoursOn, isRealDate, todayIn } from '.
 import type { VenueProfile } from './profile'
 import { describeQuote, quote, QuoteError, unitsFor } from './quote'
 import { deliverHandoff } from './handoff'
+import { decide, pilotLine } from './pilot'
+import { dbPilotStore } from './pilot-store'
 
 // The agent's hands, for any venue. Every answer is read from the venue's own
 // setup, so nothing here knows whether it's serving a dome or a bowling alley.
@@ -85,6 +87,11 @@ export const VENUE_TOOLS: Anthropic.Tool[] = [
       type: 'object',
       properties: {
         reason: { type: 'string', enum: ['question', 'big_event', 'custom_request', 'complaint', 'asked_for_person', 'ready_to_book'] },
+        topic: {
+          type: 'string',
+          enum: ['party_or_event', 'other'],
+          description: 'party_or_event when the guest wants to book or ask about a party, event, group outing or package; other for anything else, complaints included',
+        },
         summary: { type: 'string', description: 'What the guest wants, in two or three sentences' },
         guest_name: { type: ['string', 'null'] },
         guest_email: { type: ['string', 'null'] },
@@ -92,7 +99,7 @@ export const VENUE_TOOLS: Anthropic.Tool[] = [
         preferred_date: { type: ['string', 'null'], description: 'YYYY-MM-DD or null' },
         headcount: { type: ['integer', 'null'] },
       },
-      required: ['reason', 'summary', 'guest_name', 'guest_email', 'guest_phone', 'preferred_date', 'headcount'],
+      required: ['reason', 'topic', 'summary', 'guest_name', 'guest_email', 'guest_phone', 'preferred_date', 'headcount'],
       additionalProperties: false,
     },
   },
@@ -111,6 +118,8 @@ const priceInput = z.object({
 })
 const handoffInput = z.object({
   reason: z.enum(['question', 'big_event', 'custom_request', 'complaint', 'asked_for_person', 'ready_to_book']),
+  // Older callers may leave it out; then nothing is counted for the pilot.
+  topic: z.enum(['party_or_event', 'other']).default('other'),
   summary: z.string().trim().min(1).max(1500),
   guest_name: z.string().trim().max(120).nullable(),
   guest_email: z.string().trim().email().max(200).nullable(),
@@ -244,8 +253,15 @@ async function handToTeam(p: VenueProfile, raw: unknown, mode: ToolMode) {
     }
   }
   if (mode === 'dry') return { passed_to_team: true, note: 'Demo: nothing was sent.' }
-  const sent = await deliverHandoff(p, h)
+  // Pilot venues: decide whether this is a counted party request before sending,
+  // so the lead email can say so, and save it only once the venue has it. A
+  // counting problem never stops the guest's request from going through.
+  const now = new Date()
+  const pilot = p.pilot ? await decide(p, h, now, dbPilotStore).catch((e) => (console.error(`[venue-agent] ${p.slug} pilot count failed`, e), null)) : null
+  const sent = await deliverHandoff(p, h, pilot?.count ? pilotLine(pilot) : undefined)
   if (!sent) return { error: `Couldn't reach the team just now. Give the guest ${p.phone ? `the phone number ${p.phone}` : 'the website'} instead.` }
+  if (pilot?.count) await dbPilotStore.add(pilot.request).catch((e) => console.error(`[venue-agent] ${p.slug} pilot save failed`, e))
+  else if (pilot) console.log('[venue-agent] pilot not counted', { venue: p.slug, why: pilot.why })
   return { passed_to_team: true }
 }
 

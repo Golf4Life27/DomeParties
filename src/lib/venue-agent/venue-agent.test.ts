@@ -140,7 +140,7 @@ test('tools: answers come back as JSON the agent can act on', async () => {
 })
 
 test('hand-off: never sent without a way to reach the guest, never sent in a demo', async () => {
-  const h = { reason: 'question', summary: 'Asks about leagues.', guest_name: 'Sam', guest_email: null, guest_phone: null, preferred_date: null, headcount: null }
+  const h = { reason: 'question', topic: 'other' as const, summary: 'Asks about leagues.', guest_name: 'Sam', guest_email: null, guest_phone: null, preferred_date: null, headcount: null }
   assert.match(JSON.parse(await runVenueTool(lanes, 'hand_to_team', h, 'dry')).error, /no way to reach/)
   const ok = JSON.parse(await runVenueTool(lanes, 'hand_to_team', { ...h, guest_email: 'sam@example.com' }, 'dry'))
   assert.equal(ok.passed_to_team, true)

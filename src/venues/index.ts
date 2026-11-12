@@ -23,3 +23,8 @@ export function getVenue(slug: string): VenueProfile | null {
 export function listVenues(): VenueProfile[] {
   return Object.values(VENUES).filter((v) => v.sample)
 }
+
+/** Venues on the pilot price, for the monthly list of counted party requests. */
+export function listPilotVenues(): VenueProfile[] {
+  return Object.values(VENUES).filter((v) => v.pilot && !v.sample && !v.prospect)
+}

@@ -185,6 +185,9 @@ export const venueProfileSchema = z.object({
 
   /** Where hand-offs go. The agent asks the guest for an email or phone first. */
   handoff: z.object({ email: z.string().email().nullable().default(null), webhookUrl: z.string().url().nullable().default(null) }),
+
+  /** Pilot price (nothing up front, $20 per counted party request, capped at $299 a month, for 60 days). Set the day it starts; null means no pilot. */
+  pilot: z.object({ startDate: DATE }).nullable().default(null),
 })
 
 export type VenueProfile = z.infer<typeof venueProfileSchema>

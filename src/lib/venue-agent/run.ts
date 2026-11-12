@@ -9,7 +9,7 @@ import { todayIn } from './clock'
 
 export type ChatTurn = { role: 'guest' | 'agent'; text: string }
 export type AgentUsage = { calls: number; inputTokens: number; outputTokens: number; cacheWriteTokens: number; cacheReadTokens: number }
-export type AgentResult = { reply: string; toolsUsed: string[]; usage: AgentUsage; cutOff: boolean }
+export type AgentResult = { reply: string; toolsUsed: string[]; handoffs: unknown[]; usage: AgentUsage; cutOff: boolean }
 
 const MAX_STEPS = 6
 
@@ -37,6 +37,8 @@ export async function runVenueAgent(
 ): Promise<AgentResult> {
   const usage: AgentUsage = { calls: 0, inputTokens: 0, outputTokens: 0, cacheWriteTokens: 0, cacheReadTokens: 0 }
   const toolsUsed: string[] = []
+  // What the chat passed to the team, so the self-test can show it.
+  const handoffs: unknown[] = []
   const today = todayIn(p.timeZone, opts.now)
   const system = venueSystemPrompt(p)
   const messages: Anthropic.MessageParam[] = history.map((t) => ({ role: t.role === 'guest' ? 'user' : 'assistant', content: t.text }))
@@ -65,16 +67,17 @@ export async function runVenueAgent(
       .map((b) => b.text)
       .join('\n')
       .trim()
-    if (response.stop_reason !== 'tool_use') return { reply: text || fallback(p), toolsUsed, usage, cutOff: false }
+    if (response.stop_reason !== 'tool_use') return { reply: text || fallback(p), toolsUsed, handoffs, usage, cutOff: false }
 
     const calls = response.content.filter((b): b is Anthropic.ToolUseBlock => b.type === 'tool_use')
     messages.push({ role: 'assistant', content: response.content })
     const results: Anthropic.ToolResultBlockParam[] = []
     for (const call of calls) {
       toolsUsed.push(call.name)
+      if (call.name === 'hand_to_team') handoffs.push(call.input)
       results.push({ type: 'tool_result', tool_use_id: call.id, content: await runVenueTool(p, call.name, call.input, opts.mode, today) })
     }
     messages.push({ role: 'user', content: results })
   }
-  return { reply: fallback(p), toolsUsed, usage, cutOff: true }
+  return { reply: fallback(p), toolsUsed, handoffs, usage, cutOff: true }
 }
