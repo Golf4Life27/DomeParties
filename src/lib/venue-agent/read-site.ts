@@ -8,12 +8,13 @@ import net from 'node:net'
 
 const MAX_BYTES = 1_500_000
 const MAX_PAGES = 6
-/** Off after the Nov 11 test (1 of 3): a 3.1 MB packages PDF was over the size cap, menus were read
- *  ahead of the packages PDF, and two PDFs pushed one setup to 115 seconds. Owners can still upload a PDF. */
-const READ_PDFS = false
-const MAX_PDFS = 2
-/** Same cap as an owner's upload: base64 adds a third, and the model request has a size limit. */
-const MAX_PDF_BYTES = 3 * 1024 * 1024
+/** Nov 11 (1 of 3) read two whole PDFs by copying them in: a 3.1 MB file was over the cap, menus came
+ *  ahead of packages, and one setup took 115 seconds. Now: rank the PDFs, read only the best one, and
+ *  hand the model its web address so size is no longer capped by our copy. Retested Nov 13. */
+const READ_PDFS = true
+const MAX_PDFS = 1
+/** The model reads a linked PDF itself, up to 32 MB; stay under that. */
+const MAX_PDF_BYTES = 30 * 1024 * 1024
 /** A PDF worth reading names parties, groups or prices in its file name or link text. */
 const PDF_KEYWORDS = /part(y|ies)|birthday|event|group|corporate|package|pric|rate|menu|food|field ?trip|camp|outing/i
 const KEYWORDS = /part(y|ies)|birthday|event|group|corporate|package|pric|rate|hour|menu|food|book|reserv|faq|league|lane|bay|simulator|team/i
@@ -181,7 +182,7 @@ export type SitePages = {
   /** Other sites whose booking tools the pages embed or link to, where prices may live out of the reader's sight. */
   bookingHosts: string[]
   /** Party or price-list PDFs the venue links to from its own pages, read along with the pages. */
-  pdfs: { url: string; base64: string }[]
+  pdfs: { url: string }[]
 }
 
 /** Booking and ticketing tools venues commonly embed or link to for parties and groups. */
@@ -209,16 +210,40 @@ export function bookingHostsIn(html: string, base: URL): string[] {
 /** The party or price-list PDFs a page links to, by file name or link text. A venue often keeps its
  *  packages in a PDF on its site builder's file host, so the host can differ from the site's own. */
 export function pdfLinksIn(html: string, base: URL): URL[] {
-  const out: URL[] = []
-  for (const l of linksIn(html, base)) {
-    if (!/\.pdf$/i.test(l.url.pathname)) continue
-    if (!PDF_KEYWORDS.test(l.text) && !PDF_KEYWORDS.test(decodeURIComponent(l.url.pathname))) continue
-    if (!out.some((u) => u.toString() === l.url.toString())) out.push(l.url)
-  }
-  return out
+  return rankedPdfLinksIn(html, base).map((r) => r.url)
 }
 
-async function fetchPdf(start: URL): Promise<{ url: string; base64: string } | null> {
+/** How likely a PDF is to hold party packages and their prices, from its link text and file name.
+ *  Packages and prices first; event and group sheets next; menus and food last. */
+export function pdfScore(text: string, path: string): number {
+  const s = `${text} ${path}`.toLowerCase()
+  let n = 0
+  if (/part(y|ies)|birthday|bday/.test(s)) n += 5
+  if (/package|pkg/.test(s)) n += 4
+  if (/pric|rate/.test(s)) n += 4
+  if (/group|event|corporate|field ?trip|camp|outing/.test(s)) n += 2
+  if (/menu|food|catering|drink|bar\b/.test(s)) n -= 3
+  if (/waiver|application|employ|job|career|policy|policies|rule/.test(s)) n -= 10
+  return n
+}
+
+export function rankedPdfLinksIn(html: string, base: URL): { url: URL; score: number }[] {
+  const out: { url: URL; score: number }[] = []
+  for (const l of linksIn(html, base)) {
+    if (!/\.pdf$/i.test(l.url.pathname)) continue
+    const path = decodeURIComponent(l.url.pathname)
+    if (!PDF_KEYWORDS.test(l.text) && !PDF_KEYWORDS.test(path)) continue
+    const score = pdfScore(l.text, path)
+    const had = out.find((u) => u.url.toString() === l.url.toString())
+    if (had) had.score = Math.max(had.score, score)
+    else out.push({ url: l.url, score })
+  }
+  return out.sort((a, b) => b.score - a.score)
+}
+
+/** Checks a PDF link without copying it: follows redirects (each must stay public), confirms the
+ *  file really is a PDF under the size cap, and returns the address the model should read. */
+async function checkPdf(start: URL): Promise<{ url: string } | null> {
   let url = start
   for (let hop = 0; hop < 4; hop++) {
     await assertPublic(url)
@@ -231,25 +256,14 @@ async function fetchPdf(start: URL): Promise<{ url: string; base64: string } | n
     }
     if (!res.ok) return null
     const declared = Number(res.headers.get('content-length') ?? 0)
-    if (declared > MAX_PDF_BYTES) return null
     const reader = res.body?.getReader()
     if (!reader) return null
-    const chunks: Uint8Array[] = []
-    let size = 0
-    for (;;) {
-      const { done, value } = await reader.read()
-      if (done) break
-      size += value.length
-      if (size > MAX_PDF_BYTES) {
-        await reader.cancel().catch(() => {})
-        return null
-      }
-      chunks.push(value)
-    }
-    const buf = Buffer.concat(chunks)
+    const { value } = await reader.read()
+    await reader.cancel().catch(() => {})
+    if (declared > MAX_PDF_BYTES) return null
     // Only a real PDF, whatever the server calls it.
-    if (buf.subarray(0, 5).toString('latin1') !== '%PDF-') return null
-    return { url: url.toString(), base64: buf.toString('base64') }
+    if (!value || Buffer.from(value.subarray(0, 5)).toString('latin1') !== '%PDF-') return null
+    return { url: url.toString() }
   }
   return null
 }
@@ -269,7 +283,7 @@ export async function readVenueSite(input: string): Promise<SitePages> {
   const pages = [{ url: first.url.toString(), text: htmlToText(first.html).slice(0, 20000) }]
   const allLinks = linksIn(first.html, first.url)
   const bookingHosts = new Set(bookingHostsIn(first.html, first.url))
-  const pdfLinks = pdfLinksIn(first.html, first.url)
+  const pdfLinks = rankedPdfLinksIn(first.html, first.url)
   const seen = new Set([first.url.toString()])
   const candidates = allLinks
     .filter((l) => bare(l.url.hostname) === bare(first.url.hostname))
@@ -284,13 +298,15 @@ export async function readVenueSite(input: string): Promise<SitePages> {
     if (page) {
       pages.push({ url: page.url.toString(), text: htmlToText(page.html).slice(0, 12000) })
       for (const h of bookingHostsIn(page.html, page.url)) bookingHosts.add(h)
-      for (const u of pdfLinksIn(page.html, page.url)) if (!pdfLinks.some((x) => x.toString() === u.toString())) pdfLinks.push(u)
+      for (const r of rankedPdfLinksIn(page.html, page.url)) if (!pdfLinks.some((x) => x.url.toString() === r.url.toString())) pdfLinks.push(r)
     }
   }
-  const pdfs: { url: string; base64: string }[] = []
-  for (const u of READ_PDFS ? pdfLinks.slice(0, MAX_PDFS * 2) : []) {
+  // Best first across every page read; a menu or anything scored below zero is never read.
+  pdfLinks.sort((a, b) => b.score - a.score)
+  const pdfs: { url: string }[] = []
+  for (const { url: u } of READ_PDFS ? pdfLinks.filter((r) => r.score > 0).slice(0, 3) : []) {
     if (pdfs.length >= MAX_PDFS) break
-    const pdf = await fetchPdf(u).catch(() => null)
+    const pdf = await checkPdf(u).catch(() => null)
     if (pdf) pdfs.push(pdf)
   }
   // Some site builders (Square Online, for one) send an empty shell and draw

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError, tooThinToDraft, bookingHostsIn, pdfLinksIn } from './read-site'
+import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError, tooThinToDraft, bookingHostsIn, pdfLinksIn, rankedPdfLinksIn } from './read-site'
 
 test('website addresses: plain names work, anything not a public site is refused', () => {
   assert.equal(normaliseUrl('example.com').toString(), 'https://example.com/')
@@ -65,4 +65,17 @@ test('party and price PDFs are picked up, even on the site builder\'s file host;
     <a href="/parties">Parties</a>`
   const got = pdfLinksIn(html, new URL('https://funpark.example.com/')).map((u) => u.toString())
   assert.deepEqual(got, ['https://funpark.example.com/files/2026-Birthday-Party-Packages.pdf', 'https://irp.cdn-website.com/abc/files/uploaded/menu.pdf'])
+})
+
+test('the party packages PDF is ranked ahead of menus and event-space sheets', () => {
+  const html = `
+    <a href="/wp-content/uploads/Holiday-Menu-2026.pdf">Holiday Menu</a>
+    <a href="/wp-content/uploads/Event-Spaces.pdf">Event Spaces</a>
+    <a href="/wp-content/uploads/2026/03/Pricing-Packages.pdf">Pricing Packages</a>
+    <a href="/wp-content/uploads/Birthday-Waiver.pdf">Birthday waiver</a>`
+  const got = rankedPdfLinksIn(html, new URL('https://golf.example.com/')).map((r) => [r.url.pathname.split('/').pop(), r.score])
+  assert.deepEqual(got[0], ['Pricing-Packages.pdf', 8])
+  assert.deepEqual(got[1][0], 'Event-Spaces.pdf')
+  assert.ok((got.find((g) => g[0] === 'Holiday-Menu-2026.pdf')?.[1] as number) < 0)
+  assert.ok((got.find((g) => g[0] === 'Birthday-Waiver.pdf')?.[1] as number) < 0)
 })

@@ -79,7 +79,7 @@ export async function draftFromSite(website: string, contactEmail: string | null
   // A party or price-list PDF the venue links to is read with the pages, as an owner's upload would be.
   const pdfs: Anthropic.ContentBlockParam[] = site.pdfs.map((f) => ({
     type: 'document',
-    source: { type: 'base64', media_type: 'application/pdf', data: f.base64 },
+    source: { type: 'url', url: f.url },
     title: `PDF linked from the venue's website: ${f.url}`,
   }))
   const d = await draftFrom([...pdfs, { type: 'text', text: pagesText(site) }], {
