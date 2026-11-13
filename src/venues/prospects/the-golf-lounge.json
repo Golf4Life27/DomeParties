@@ -1,0 +1,166 @@
+{
+  "slug": "the-golf-lounge",
+  "name": "The Golf Lounge",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "136B Park Ave, Amherst, OH 44001",
+  "phone": "(440) 935-0180",
+  "website": null,
+  "unit": {
+    "singular": "bay",
+    "plural": "bays",
+    "count": null,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "09:00",
+        "close": "21:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Bays are booked online through the venue's booking link. Walk-ins welcome, but booking ahead is recommended for peak hours and weekends. Contact the venue for parties and events.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "bay-rental",
+      "name": "Simulator bay rental",
+      "description": "Foresight GCHawk simulator bay, charged per bay, not per person. Up to 4 players per bay. Bring your own clubs.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 30,
+        "peakAmount": 40,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "private-party-room",
+      "name": "Private party room",
+      "description": "Private party room for parties, corporate events and large groups. Contact the venue for pricing and details.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Do you provide golf clubs?",
+      "a": "Golf clubs are not provided; bring your own."
+    },
+    {
+      "q": "How many players can use one bay?",
+      "a": "Up to 4 players per bay."
+    },
+    {
+      "q": "How long does a round take?",
+      "a": "About one hour for one person to play 18 holes; about four hours for four people."
+    },
+    {
+      "q": "Do I need to book ahead?",
+      "a": "Walk-ins are welcome, but booking ahead is recommended for peak hours and weekends."
+    },
+    {
+      "q": "Do you serve food and drinks?",
+      "a": "Yes, there is a full bar with beer, wine and liquor, and kitchen food is available."
+    },
+    {
+      "q": "Do you offer leagues?",
+      "a": "Yes, leagues are offered, including 9-hole youth scramble leagues."
+    }
+  ],
+  "handoff": {
+    "email": "golfthelounge@gmail.com",
+    "webhookUrl": null
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "slug": "office-golf",
+  "name": "Office Golf",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "7807 Creekridge Circle, Bloomington, MN 55439",
+  "phone": "(952) 324-5236",
+  "website": "https://officegolf.com/",
+  "unit": {
+    "singular": "simulator",
+    "plural": "simulators",
+    "count": 18,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "10:00",
+        "close": "18:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "09:00",
+        "close": "21:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "09:00",
+        "close": "21:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "09:00",
+        "close": "21:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "09:00",
+        "close": "23:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "09:00",
+        "close": "23:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "09:00",
+        "close": "23:00"
+      }
+    ]
+  },
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "thu",
+      "fri",
+      "sat",
+      "sun"
+    ]
+  },
+  "booking": {
+    "partyUrl": "https://officegolf.com/visit/",
+    "howItWorks": "Fill in the event form with your name, contact details, event type, guest count (1 to 300) and date, and the Office Golf team gets back to you. You can also call (952) 324-5236.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Reserve a simulator",
+      "url": "https://www.sevenrooms.com/reservations/officegolf?duration_picker=true"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "simulator-hourly",
+      "name": "Hourly Simulator Rental",
+      "description": "TrackMan iO golf simulator rental by the hour. $39 per hour Monday–Wednesday, $59 per hour Thursday–Sunday.",
+      "includes": [
+        "TrackMan iO simulator"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 72,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 39,
+        "peakAmount": 59,
+        "minUnits": 1
+      }
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "How many guests can you host for an event?",
+      "a": "Office Golf features a dynamic facility designed to captivate and energize groups of up to 300 guests."
+    },
+    {
+      "q": "What kinds of events do you host?",
+      "a": "Corporate gatherings, holiday parties, senior all-night parties, birthday bashes, bachelor or bachelorette parties, baby or bridal showers, rehearsal dinners and more."
+    },
+    {
+      "q": "How much is simulator time?",
+      "a": "$39 per hour Monday – Wednesday, $59 per hour Thursday – Sunday."
+    },
+    {
+      "q": "Do you serve food?",
+      "a": "Yes. The Boardroom is an American restaurant on site. Kitchen hours are 11am - 9pm Monday thru Saturday and 11am - 6pm Sunday. There are three bars across our two-floor facility."
+    },
+    {
+      "q": "Is there a café?",
+      "a": "Yes, a café serving Edina Coffee Roasters beans, open Monday–Saturday, 7 a.m.–noon."
+    },
+    {
+      "q": "Do you have a golf league?",
+      "a": "2026 OG Golf League: Tuesdays, November 3rd – December 22nd, 6-9pm. $240 non-member/$150 member, sim time included. Weekly competitions & prizes. Email to register."
+    },
+    {
+      "q": "What payment do you accept?",
+      "a": "Visa, MasterCard and American Express."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ]
+}

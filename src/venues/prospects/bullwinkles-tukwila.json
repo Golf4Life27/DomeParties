@@ -1,0 +1,288 @@
+{
+  "slug": "bullwinkles-tukwila",
+  "name": "Bullwinkle's Tukwila",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Los_Angeles",
+  "address": "7300 Fun Center Way, Tukwila, WA 98188",
+  "phone": "(425) 228-7300",
+  "website": "https://bullwinkles.com/tukwila/go-karts",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "11:00",
+        "close": "21:00"
+      }
+    ],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [
+      {
+        "open": "16:00",
+        "close": "23:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "11:00",
+        "close": "23:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://bullwinkles.com/tukwila/birthday",
+    "howItWorks": "Send your party details through the form or call. An Event Coordinator gets back to you to confirm the date and package.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": "Service/Rental fees will be applied (Food & Fun Package); amount not stated."
+  },
+  "packages": [
+    {
+      "id": "elite",
+      "name": "Elite Package",
+      "description": "3 hours of unlimited play on select attractions. Sorry, no substitutions to packages. Must have 15 participants.",
+      "includes": [
+        "Go-Karts",
+        "Lazer Tag",
+        "Bumper Boats",
+        "Bumper Cars",
+        "Miniature Golf",
+        "Plus 2 attractions (one-time use) of each guest's choice",
+        "50 Arcade Points ($12.50 value)"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 15,
+      "maxGuests": 1000,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 36.95,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "ultimate",
+      "name": "Ultimate Package",
+      "description": "3 hours of unlimited play on select attractions. Sorry, no substitutions to packages. Must have 15 guests.",
+      "includes": [
+        "Go-Karts",
+        "Lazer Tag",
+        "Bumper Boats",
+        "Bumper Cars",
+        "Miniature Golf",
+        "Plus 1 attraction (one-time use) of each guest's choice",
+        "50 Arcade Points ($12.50 value)"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 15,
+      "maxGuests": 1000,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 31.95,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "funtastic",
+      "name": "Funtastic Package",
+      "description": "3 hours of unlimited play on select attractions. Sorry, no substitutions to packages. Must have 15 guests.",
+      "includes": [
+        "Lazer Tag",
+        "Bumper Boats",
+        "Bumper Cars",
+        "Miniature Golf",
+        "Plus 1 attraction (one-time use) of each guest's choice",
+        "50 Arcade Points ($12.50 value)"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 15,
+      "maxGuests": 1000,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 26.95,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "basic",
+      "name": "Basic Package",
+      "description": "3 hours of unlimited play on select attractions. Sorry, no substitutions to packages. Must have 15 guests.",
+      "includes": [
+        "Kidz Kartz",
+        "Frog Hopper",
+        "Kidopolis",
+        "Miniature Golf",
+        "50 Arcade Points ($12.50 value)"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 15,
+      "maxGuests": 1000,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 21.95,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "food-and-fun",
+      "name": "Food & Fun Package",
+      "description": "Play package plus a 1 hour Pizza, Salad & Soda Buffet. Service/Rental fees will be applied. Ask about the group alcohol rate for beer & wine service.",
+      "includes": [
+        "Go-Karts",
+        "Lazer Tag",
+        "Bumper Boats",
+        "Bumper Cars",
+        "Miniature Golf",
+        "Plus 2 attractions (one-time use) of each guest's choice",
+        "50 Arcade Points ($12.50 value)",
+        "1 hour Pizza, Salad & Soda Buffet with bottomless fountain soda"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 15,
+      "maxGuests": 1000,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 51.9,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "vip-bowling-birthday",
+      "name": "VIP Bowling Reservation (Birthday)",
+      "description": "Birthday package with a dedicated party host. Closed due to renovation through 1/27.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "restaurant-birthday",
+      "name": "Restaurant Birthday Reservation",
+      "description": "Birthday package with a dedicated party host. Closed due to renovation through 1/27.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "private-skybox-birthday",
+      "name": "Private Skybox Reservation (Birthday)",
+      "description": "Birthday package with a dedicated party host.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "go-karts",
+      "name": "Go Karts (48 Points)",
+      "description": "$12.00 + tax per person, Monday to Sunday. Passengers pay the regular price.",
+      "unit": "per_person",
+      "amount": 12,
+      "amountTo": null
+    }
+  ],
+  "faq": [
+    {
+      "q": "Is there a height requirement to drive the go-karts?",
+      "a": "Must be 58″ or taller to drive go karts. Go Kart passengers must be at least 40 inches tall (regular price applies to passengers). Anyone driving a passenger must be 18 years or older or the child's guardian."
+    },
+    {
+      "q": "Can we swap attractions in a group package?",
+      "a": "Sorry, no substitutions to packages."
+    },
+    {
+      "q": "How big a group can you host?",
+      "a": "Rent a private room for a group of 15 or take over the entire complex for up to 1,000."
+    },
+    {
+      "q": "Are drinks like beer and wine available for groups?",
+      "a": "Want Beer & Wine Service? Ask us about the group alcohol rate!"
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

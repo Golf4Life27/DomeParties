@@ -1,0 +1,176 @@
+{
+  "slug": "the-shack-golf-club",
+  "name": "The Shack Indoor Golf Club & Sports Bar",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "1717 Chestnut Ave, Glenview, IL 60025",
+  "phone": "(847) 904-2905",
+  "website": "https://www.theshackgolfclub.com/",
+  "unit": {
+    "singular": "simulator",
+    "plural": "simulators",
+    "count": null,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "11:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "booking": {
+    "partyUrl": "https://www.theshackgolfclub.com/parties/",
+    "howItWorks": "Parties and events are booked in blocks of two to three hours. Use the form on the Parties page or contact the venue to book. Food and drink packages and extras (teaching pros) are available.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book a simulator / tee time",
+      "url": "https://booking.trackmangolf.com/venues/the-shack-indoor-club/booking/bays"
+    },
+    {
+      "what": "Purchase membership",
+      "url": "https://yourgolfbooking.com/venues/the-shack-indoor-club/memberships?_gl=1*13lhrz7*_ga*MTExNjY4OTg2Ny4xNzY1OTg3NTg5*_ga_3HC0N7J790*czE3NjU5ODc1ODgkbzEkZzEkdDE3NjU5ODc2MjAkajI4JGwwJGgw"
+    },
+    {
+      "what": "Join a league",
+      "url": "https://www.theshackgolfclub.com/leagues/"
+    },
+    {
+      "what": "High School League",
+      "url": "https://www.theshackgolfclub.com/high-school-league/"
+    },
+    {
+      "what": "Events calendar",
+      "url": "https://www.theshackgolfclub.com/events/"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "party-event",
+      "name": "Party or Event",
+      "description": "Book your next party or event at The Shack. Schedule in blocks of two to three hours, with food and drink packages and extras such as our teaching pros available. Price on request.",
+      "includes": [
+        "Trackman golf simulator time",
+        "Food and drink packages available",
+        "Extras with teaching pros available"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 4,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 0,
+        "peakAmount": null,
+        "minUnits": 1
+      },
+      "priceListed": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "How many people can play on one simulator?",
+      "a": "Come in by yourself and practice on the dynamic range or bring up to three friends and play Pebble Beach — it's all the same hourly rate."
+    },
+    {
+      "q": "How is simulator time sold?",
+      "a": "The Shack offers half-hour and hourly simulator time and monthly memberships."
+    },
+    {
+      "q": "What kind of events do you host?",
+      "a": "We host all types of events, from corporate events to smaller bachelor/bachelorette, birthday parties, or the Game Day of your choice."
+    },
+    {
+      "q": "How long are parties?",
+      "a": "Schedule in blocks of two to three hours with Food and Drink packages available to keep the fun going. Extras are available to take advantage of our teaching pros."
+    },
+    {
+      "q": "What simulators do you use?",
+      "a": "Trackman golf simulators featuring over 100 championship courses."
+    },
+    {
+      "q": "Do you offer lessons?",
+      "a": "Both private and group instruction is available from our team of talented PGA Professionals for players of all ages and skill level."
+    },
+    {
+      "q": "Do you have golf leagues?",
+      "a": "Adult leagues run 8 weeks on Monday (starting October 19, 2026) and Wednesday (starting October 21, 2026), 7:30pm warm-up and 8:00pm tee off, $600 per team. The High School League runs 6 weeks on Tuesdays 4:00 to 6:00 pm starting November 3, 2026, $400 per team. Questions? Please email nick@theshackgolfclub.com."
+    },
+    {
+      "q": "Do you serve food and drinks?",
+      "a": "We offer fresh squeezed, handcrafted cocktails, local craft beers, fine wines and an outstanding selection of bourbon, scotch and tequila, plus starters, flatbreads, sandwiches and chef crafted dishes."
+    }
+  ],
+  "handoff": {
+    "email": "nick@theshackgolfclub.com",
+    "webhookUrl": null
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ]
+}

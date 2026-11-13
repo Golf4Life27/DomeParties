@@ -1,0 +1,225 @@
+{
+  "slug": "reno-axe",
+  "name": "Reno Axe & Bar",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Los_Angeles",
+  "address": "Downtown Reno, off First St. and North Sierra St., Reno, NV",
+  "phone": "(775) 235-5658",
+  "website": "https://www.renoaxe.com/",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": 7,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "13:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "13:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "13:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "13:00",
+        "close": "23:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "11:00",
+        "close": "00:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "11:00",
+        "close": "00:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://www.renoaxe.com/book-online/",
+    "howItWorks": "Book online for groups of 2 or more; booking online guarantees a private lane. Walk-ins allowed but lanes not guaranteed. Contact the venue to rent the whole space.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Online waiver",
+      "url": "https://renoexperiences.checkfront.com/reserve/documents/directory/?kiosk=2"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "axe-throwing-1-hour",
+      "name": "Axe Throwing - 1 Hour",
+      "description": "One-hour axe throwing session with instruction, targets and axes. Groups of 2-5 may share a lane with another small group depending on availability.",
+      "includes": [
+        "Professional instructors",
+        "Targets and axes"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 2,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 27,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "axe-throwing-2-hours",
+      "name": "Axe Throwing - 2 Hours",
+      "description": "Two-hour axe throwing session with instruction, targets and axes.",
+      "includes": [
+        "Professional instructors",
+        "Targets and axes"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 2,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 45,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "facility-buyout",
+      "name": "Private Event / Facility Buyout",
+      "description": "Rent the entire Reno Axe & Social space for a private event, up to 250 people. Contact us for pricing.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 250,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "loaner-shoes",
+      "name": "Loaner closed-toe shoes",
+      "description": "For guests who forget closed-toe shoes",
+      "unit": "each",
+      "amount": 2,
+      "amountTo": null
+    }
+  ],
+  "faq": [
+    {
+      "q": "What is the dress code?",
+      "a": "Keep it comfy, but remember: closed-toe shoes are REQUIRED. If any member of your group forgets to wear closed-toe shoes, we offer loaner pairs for $2.00."
+    },
+    {
+      "q": "Is there an age limit?",
+      "a": "Children under the age of 10 are not permitted in our lanes, and any players under 18 must be accompanied by an adult. Our bar area is only open to those age 21 and older."
+    },
+    {
+      "q": "Can we bring in outside food or drink?",
+      "a": "Outside food is allowed; however, drinks are not. Reno Axe provides its own full-service bar for any players age 21 or older!"
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "All purchases are final, and we do not offer refunds for cancellations. You can reschedule a game with 24 hours' notice free of charge."
+    },
+    {
+      "q": "How many people can be in a group?",
+      "a": "We allow bookings for groups of 2 to 12 people. Depending on lane availability, groups of 2-5 players may need to share a lane with another small group; each group gets its own target. Groups of 6 or more receive a private lane(s)."
+    },
+    {
+      "q": "Are walk-ins allowed?",
+      "a": "We do allow walk-ins, but we cannot guarantee that we will have a lane available. We highly recommend booking ahead of time."
+    },
+    {
+      "q": "Can I bring my own axe?",
+      "a": "We provide every team with their own targets and axes. We do not permit the use of outside equipment."
+    },
+    {
+      "q": "Can I rent the entire space for a private event?",
+      "a": "Yes! Our space is available for rent for private events with a max capacity of 250 people. Please contact us for more information."
+    },
+    {
+      "q": "Do you serve food?",
+      "a": "Yes! We have a full menu for you to enjoy! Our bar serves craft beers and cocktails as well as tasty bites from Liberty Food & Wine."
+    },
+    {
+      "q": "Is there a bar with games?",
+      "a": "Reno Social is a social gaming bar in the basement of Reno Axe with pool, ping-pong, air hockey, connect-4 basketball and more. All games are free! Bar is 21+."
+    },
+    {
+      "q": "Can I sign waivers in advance?",
+      "a": "Yes! Fill out our online waiver ahead of time to speed up the process."
+    },
+    {
+      "q": "When is the bar open?",
+      "a": "Bar service is open until 11p Sunday - Wednesday, until 1a Thursday - Saturday, with late night bar service on Friday and Saturday until 3a."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

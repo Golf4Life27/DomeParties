@@ -1,0 +1,212 @@
+{
+  "slug": "stonehedge-indoor-golf",
+  "name": "Stonehedge Indoor Golf",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "172 South Main St, Rutland, VT",
+  "phone": "(802) 779-9595",
+  "website": "https://stonehedgeindoorgolf.com/",
+  "unit": {
+    "singular": "simulator bay",
+    "plural": "simulator bays",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [],
+    "mon": [
+      {
+        "open": "18:00",
+        "close": "20:00"
+      }
+    ],
+    "tue": [],
+    "wed": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [],
+    "sat": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [
+    "fri",
+    "sun"
+  ],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Private parties and events are planned with the venue: email info@stonehedgeindoorgolf.com or call (802) 779-9595. Simulator bays can be booked online.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book a simulator bay / tee time",
+      "url": "https://stonehedgeindoorgolf.fullslate.com/"
+    },
+    {
+      "what": "Indoor league registration",
+      "url": "https://golfhub.golfgenius.com/clubs/b323426b-626d-485e-bfb6-64194e16c32c/league?fbclid=IwY2xjawVbBP5leHRuA2FlbQIxMABwZG9mAWJyaWQRMTk4cHUwUGp1Y1F4RThXS05zcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEfJJjswCxBTsjg-ONS-N8cFIATwkW9Jf1N84E0uXR5skipu03jBNuGfnKPryQ_aem_s1V9VNaA6K_6rt6xkxhT1g"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "standard-bay",
+      "name": "Standard Bay (Golf & Multi-Sport)",
+      "description": "Flat hourly rate for a golf and multi-sport simulator bay. No additional per-player charge, up to six players per bay.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 45,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "semi-private-bay",
+      "name": "Semi-Private Bay (Golf)",
+      "description": "Flat hourly rate for a semi-private golf bay. No additional per-player charge, up to six players per bay.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 50,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "private-suite",
+      "name": "Private Suite (Golf)",
+      "description": "Flat hourly rate for the private golf suite. No additional per-player charge. The private suite can be transformed into a corporate space or party central.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 80,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 6
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "private-event",
+      "name": "Private Party or Event",
+      "description": "Full-service private parties and events (birthdays, corporate events, bachelor/bachelorette parties, class reunions and more) in an 8,000-square-foot climate-controlled space, for events up to 150 guests. Contact the venue for pricing.",
+      "includes": [
+        "Event planning and management",
+        "VR gaming for golfers and non-golfers",
+        "12 big-screen HDTVs",
+        "Food and drinks from Mulligan's Bar & Grill"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 150,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Is there a per-player charge?",
+      "a": "There is no additional per player charge, meaning that your total price will not go up whether you come alone or bring five of your friends!"
+    },
+    {
+      "q": "How many players can share a bay?",
+      "a": "There is no additional charge for having more players in your bay (a maximum of six)."
+    },
+    {
+      "q": "How long does a round take?",
+      "a": "A nine-hole course will take you roughly half an hour as a solo player. If you're playing with three friends, that nine-hole course will likely take two hours. 18 holes takes about 1 hour per player."
+    },
+    {
+      "q": "How many guests can attend a private event?",
+      "a": "7,500 square feet for events up to 150 guests."
+    },
+    {
+      "q": "What else is there besides golf?",
+      "a": "Indoor miniature golf, shuffleboard at our 22-foot table, foosball, a shooting simulator, VR gaming, and Mulligan's, our in-house bar and grill."
+    },
+    {
+      "q": "Do you have live music?",
+      "a": "Duane Carleton performs at Stonehedge every Friday night (6PM-9PM)."
+    },
+    {
+      "q": "Do you show NFL games?",
+      "a": "We have the NFL Sunday Ticket and are NOW OPEN on Sundays (12PM-7PM). We'll have EVERY NFL GAME being broadcast!"
+    },
+    {
+      "q": "Can we start our own league?",
+      "a": "Have a group of 8-to-24 that's interested in forming a new, indoor, golf league? Give us a call and we'll do our best to create a customized golf league for you and your group!"
+    }
+  ],
+  "handoff": {
+    "email": "info@stonehedgeindoorgolf.com",
+    "webhookUrl": null
+  }
+}

@@ -1,0 +1,726 @@
+{
+  "slug": "elev8-fun-tampa",
+  "name": "Elev8 Fun Tampa",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "7902 Citrus Park Town Center Mall, Tampa, FL 33625",
+  "phone": "(813) 761-5699",
+  "website": "https://www.elev8fun.com/activities",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "12:00",
+        "close": "01:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "10:00",
+        "close": "02:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://www.elev8fun.com/events?hsLang=en",
+    "howItWorks": "Guests fill out the event request form on the party pages; the events team plans the itinerary. Booking needs an event space, activity choices and a minimum food & beverage spend.",
+    "leadTimeDays": 14
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "power-up",
+      "name": "Power Up (Birthday)",
+      "description": "Arcade play and a sweet treat to celebrate. Minimum 10, maximum 15 participants.",
+      "includes": [
+        "1 Hr Arcade Time Card + 250 Redemption Tickets",
+        "1 Ice Cream per guest",
+        "Party Zone Staff Member",
+        "Designated Party Zone"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 15,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 15,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "strikers",
+      "name": "Strikers (Birthday)",
+      "description": "1 hour of bowling with preloaded arcade cards, soda and a dedicated party host. Private room available for additional fee.",
+      "includes": [
+        "1 Hr Bowling",
+        "1 Activity of Choice (excludes go-karts)",
+        "30 Minute Arcade Time Card + 500 Redemption Tickets",
+        "Unlimited Soft Drinks",
+        "Dedicated Party Host",
+        "Goodie Bag per guest",
+        "Custom Birthday Signage",
+        "Table Decor",
+        "Birthday Kid Custom Item",
+        "Dedicated Bowling Lanes"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 36,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "thrill-seeker",
+      "name": "Thrill Seeker (Birthday)",
+      "description": "Choose activities from Laser Tag, Mini Golf or Ropes Course, with arcade cards, soda, event space and a dedicated server.",
+      "includes": [
+        "2 Activities of Choice",
+        "30 min Arcade Time Card + 500 Redemption Tickets",
+        "Unlimited Soft Drinks",
+        "Dedicated Party Host",
+        "Goodie Bag per guest",
+        "Custom Birthday Signage",
+        "Table Decor",
+        "Birthday Kid Custom Item",
+        "Private Room Included"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 41,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "all-star",
+      "name": "All Star (Birthday)",
+      "description": "Bowling, multiple attractions, arcade play, plus drinks.",
+      "includes": [
+        "1 Hr Bowling",
+        "3 Activities of Choice",
+        "1 Hr Arcade Time Card + 1000 Redemption Tickets",
+        "Unlimited Soft Drinks",
+        "Dedicated Party Host",
+        "Designated Party Zone",
+        "Goodie Bag per guest",
+        "Birthday Kid Custom Item"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 61,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "all-star-sports",
+      "name": "All Star Sports (Birthday)",
+      "description": "Bowling, sport-inspired attractions, arcade gameplay and drinks.",
+      "includes": [
+        "1 Hr Bowling",
+        "1 Hr Batbox",
+        "1 Swish XR Game",
+        "Unlimited Soft Drinks",
+        "1 Hr Arcade Time Card + 1000 Redemption Tickets",
+        "Dedicated Party Host",
+        "Dedicated Sports Lounge",
+        "Goodie Bag for each guest",
+        "Birthday Kid Custom Item"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 61,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "winners-circle",
+      "name": "Winners Circle (Birthday)",
+      "description": "Top-tier package: Pro Race, three attractions of your choice, and arcade play.",
+      "includes": [
+        "1 Pro Race (7-min)",
+        "3 Activities of Choice",
+        "1 Hr Arcade Time Card + 1000 Redemption Tickets",
+        "Unlimited Soft Drinks",
+        "Dedicated Party Host",
+        "Goodie Bag per guest",
+        "Custom Birthday Signage",
+        "Table Decor",
+        "Birthday Kid Custom Item",
+        "Private Room Included"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 79,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "racers-junior",
+      "name": "Racers - Junior Races (Birthday)",
+      "description": "For kids ages 5-9. 1 Go-Kart Junior Race per person plus an activity (Laser Tag, Dark Ride, X-Cube or Mini Golf).",
+      "includes": [
+        "1 Junior Race (5-min)",
+        "1 Activity of Choice",
+        "1 Hr Arcade Time Card + 500 Redemption Tickets",
+        "Unlimited Soft Drinks",
+        "Dedicated Party Host",
+        "Goodie Bag per guest",
+        "Custom Birthday Signage",
+        "Table Decor",
+        "Birthday Kid Custom Item",
+        "Private Room Included"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 41,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "racers-cadet",
+      "name": "Racers - Cadet Races (Birthday)",
+      "description": "1 Go-Kart Cadet Race per person plus an activity (Laser Tag, Mini Golf or Ropes Course). Cadet race ages 8-13.",
+      "includes": [
+        "1 Cadet Race (5-min)",
+        "1 Activity of Choice",
+        "1 Hr Arcade Time Card + 500 Redemption Tickets",
+        "Unlimited Soft Drinks",
+        "Dedicated Party Host",
+        "Goodie Bag per guest",
+        "Custom Birthday Signage",
+        "Table Decor",
+        "Birthday Kid Custom Item",
+        "Private Room Included"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 51,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "racers-pro",
+      "name": "Racers - Pro Races (Birthday)",
+      "description": "1 Go-Kart Pro Race per person plus an activity (Laser Tag, Mini Golf or Dark Ride). Pro race ages 14+.",
+      "includes": [
+        "1 Pro Race (7-min)",
+        "1 Activity of Choice",
+        "1 Hr Arcade Time Card + 500 Redemption Tickets",
+        "Unlimited Soft Drinks",
+        "Dedicated Party Host",
+        "Goodie Bag per guest",
+        "Custom Birthday Signage",
+        "Table Decor",
+        "Birthday Kid Custom Item",
+        "Private Room Included"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 56,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "adrenaline-rush",
+      "name": "Adrenaline Rush (Corporate)",
+      "description": "Go-Karting Pro Race with event space, food options, arcade play and drinks. Participants must be at least 14 years old and 62 inches tall. Closed-toed shoes required. Minimum 10, maximum 30 participants.",
+      "includes": [
+        "Room Rental for 2 Hours",
+        "1 Pro Race Per Participant",
+        "1 Hour Arcade Time Card Per Guest",
+        "Catering Selection - Food & Drink Packages Available",
+        "Unlimited Non-Alcoholic Beverages",
+        "Dedicated Event Host",
+        "Custom Welcome Signage",
+        "Scheduled Priority Time Slots"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 30,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "double-fun",
+      "name": "Double Fun (Corporate)",
+      "description": "Mix and match Laser Tag, Mini Golf or Arcade Free Play with event space, food options and a dedicated server.",
+      "includes": [
+        "Room Rental for 2 Hours",
+        "1 Activity Per Guest (excludes go-karts)",
+        "1 Hour Arcade Time Card Per Guest",
+        "Catering Selection - Food & Drink Packages Available",
+        "Unlimited Non-Alcoholic Beverages",
+        "Dedicated Event Host",
+        "Custom Welcome Signage",
+        "Scheduled Priority Time Slots"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "strike-and-play",
+      "name": "Strike & Play (Corporate)",
+      "description": "1 hour of bowling and arcade fun with event space, food options and a dedicated server. Private event space available for an additional fee.",
+      "includes": [
+        "1 Activity Per Guest (excludes go-karts)",
+        "1 Hour of Bowling",
+        "1 Hour Arcade Time Card Per Guest",
+        "Catering Selection - Food & Drink Packages Available",
+        "Unlimited Non-Alcoholic Beverages",
+        "Dedicated Event Host",
+        "Custom Welcome Signage",
+        "Scheduled Priority Time Slots"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "axe-and-aim",
+      "name": "Axe & Aim (Corporate)",
+      "description": "Axe-throwing plus billiards, electronic darts, retro arcade games in the Level Up Lounge. Participants must be 18+. Closed-toe shoes required.",
+      "includes": [
+        "Level Up Lounge Rental for 2 Hours",
+        "1 Hour of Axe Throwing for 10 Guests",
+        "Catering Selection - Food & Drink Packages Available",
+        "Unlimited Non-Alcoholic Beverages",
+        "Dedicated Event Host",
+        "Custom Welcome Signage",
+        "Scheduled Priority Time Slots"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "bowling",
+      "name": "Bowling",
+      "description": "$16 per person per hour. Lanes are first-come, first-served unless pre-booked through a private event package.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 16,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "axe-throwing",
+      "name": "Axe Throwing",
+      "description": "$21 per person per hour.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 21,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "gamers-hideaway",
+      "name": "Gamer's Hideaway",
+      "description": "$18 per person per hour.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 18,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [
+    {
+      "id": "cheese-pizza",
+      "name": "Classic Cheese Pizza",
+      "description": "",
+      "pricing": "flat",
+      "amount": 20,
+      "amountTo": null
+    },
+    {
+      "id": "pepperoni-pizza",
+      "name": "Classic Pepperoni Pizza",
+      "description": "",
+      "pricing": "flat",
+      "amount": 22,
+      "amountTo": null
+    },
+    {
+      "id": "power-pack-sampler",
+      "name": "Power Pack Sampler",
+      "description": "Choice of 3 appetizers.",
+      "pricing": "flat",
+      "amount": 18,
+      "amountTo": null
+    },
+    {
+      "id": "kids-meal",
+      "name": "Kids Meal",
+      "description": "Sliders, chicken tenders or kids pizza.",
+      "pricing": "flat",
+      "amount": 10,
+      "amountTo": null
+    }
+  ],
+  "addOns": [
+    {
+      "id": "go-kart-junior",
+      "name": "Go-Kart Junior Race (Ages 5-9)",
+      "description": "",
+      "unit": "per_person",
+      "amount": 10,
+      "amountTo": null
+    },
+    {
+      "id": "go-kart-cadet",
+      "name": "Go-Kart Cadet Race (Ages 8-13)",
+      "description": "",
+      "unit": "per_person",
+      "amount": 19,
+      "amountTo": null
+    },
+    {
+      "id": "go-kart-pro",
+      "name": "Go-Kart Pro Race (Ages 14+)",
+      "description": "",
+      "unit": "per_person",
+      "amount": 27,
+      "amountTo": null
+    },
+    {
+      "id": "pro-race-3-pack",
+      "name": "3 Pack Pro Races",
+      "description": "",
+      "unit": "each",
+      "amount": 60,
+      "amountTo": null
+    },
+    {
+      "id": "ropes-course",
+      "name": "Ropes Course",
+      "description": "",
+      "unit": "per_person",
+      "amount": 13,
+      "amountTo": null
+    },
+    {
+      "id": "laser-tag",
+      "name": "Laser Tag",
+      "description": "",
+      "unit": "per_person",
+      "amount": 13,
+      "amountTo": null
+    },
+    {
+      "id": "mini-golf",
+      "name": "Mini Golf",
+      "description": "",
+      "unit": "per_person",
+      "amount": 13,
+      "amountTo": null
+    },
+    {
+      "id": "xd-dark-ride",
+      "name": "XD Dark Ride",
+      "description": "",
+      "unit": "per_person",
+      "amount": 13,
+      "amountTo": null
+    },
+    {
+      "id": "x-cube",
+      "name": "X-Cube",
+      "description": "",
+      "unit": "per_person",
+      "amount": 10,
+      "amountTo": null
+    },
+    {
+      "id": "swish-xr",
+      "name": "Swish XR Basketball",
+      "description": "",
+      "unit": "per_person",
+      "amount": 13,
+      "amountTo": null
+    },
+    {
+      "id": "billiards",
+      "name": "Billiards (per hour)",
+      "description": "",
+      "unit": "each",
+      "amount": 10,
+      "amountTo": null
+    },
+    {
+      "id": "batbox",
+      "name": "Batbox Immersive Batting Cage (per group per hour)",
+      "description": "",
+      "unit": "each",
+      "amount": 50,
+      "amountTo": null
+    },
+    {
+      "id": "arcade-1hr",
+      "name": "Arcade Time Card 1 Hour",
+      "description": "Excludes prize games and winning tickets for redeemable prizes.",
+      "unit": "each",
+      "amount": 25,
+      "amountTo": null
+    },
+    {
+      "id": "arcade-2hr",
+      "name": "Arcade Time Card 2 Hour",
+      "description": "",
+      "unit": "each",
+      "amount": 40,
+      "amountTo": null
+    },
+    {
+      "id": "arcade-3hr",
+      "name": "Arcade Time Card 3 Hour",
+      "description": "",
+      "unit": "each",
+      "amount": 50,
+      "amountTo": null
+    }
+  ],
+  "faq": [
+    {
+      "q": "How far in advance should I book my event?",
+      "a": "We recommend booking at least 2-3 weeks in advance to secure your preferred date and time."
+    },
+    {
+      "q": "Does everyone need to sign a waiver?",
+      "a": "Yes, anyone participating in activities must sign a waiver."
+    },
+    {
+      "q": "Can I bring outside food or a birthday cake?",
+      "a": "Outside food and drinks are not allowed, but you may bring a store-bought cake or dessert for celebrations."
+    },
+    {
+      "q": "How early can I arrive to set up?",
+      "a": "30 minutes prior to your event start time."
+    },
+    {
+      "q": "What is required for booking a pre-planned event?",
+      "a": "Booking an event space, activity selections and a minimum food & beverage spend of $100 for birthday parties and $40 per person for adult social gatherings and corporate events."
+    },
+    {
+      "q": "Can I add food on the day of my event?",
+      "a": "Yes! However, food ordered on the day will come from the regular restaurant menu, not the catering menu. It may also take longer if there are other guest orders at the same time."
+    },
+    {
+      "q": "Can I bring decorations?",
+      "a": "Yes! You are welcome to bring themed decorations. However, confetti, glitter, and silly string are not allowed. In a private event room, only tape may be used to attach banners to walls."
+    },
+    {
+      "q": "Do you provide decorations?",
+      "a": "We provide tablecloths, plates, napkins, cups, and utensils in red, blue, green, purple, pink, or black."
+    },
+    {
+      "q": "Can I reserve bowling lanes?",
+      "a": "Bowling lanes can be pre-booked through private event packages. Otherwise, lanes are first-come, first-served."
+    },
+    {
+      "q": "Is there a minimum or maximum number of participants?",
+      "a": "Minimum: 10 participants. Maximum: No limit!"
+    },
+    {
+      "q": "Can I book just a party room?",
+      "a": "No, party rooms are reserved for guests who book a full event package."
+    },
+    {
+      "q": "Can I request a custom event package?",
+      "a": "Yes! We can customize event packages based on your needs. Contact our event team to discuss options."
+    },
+    {
+      "q": "Can I extend my event?",
+      "a": "Extensions may be possible based on availability. Additional fees may apply."
+    },
+    {
+      "q": "What shoes are needed for go-karts and axe throwing?",
+      "a": "Closed-toed shoes are required; crocs and sandals are not permitted. Pro races need age 14+ and 62 inches tall; axe throwing is 18+."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

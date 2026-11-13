@@ -4,6 +4,10 @@
     {
       "path": "/api/cron/recovery?minutes=60",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/venue-pilot-statements",
+      "schedule": "0 14 1 * *"
     }
   ],
   "framework": "nextjs"

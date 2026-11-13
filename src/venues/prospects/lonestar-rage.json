@@ -1,0 +1,191 @@
+{
+  "slug": "lonestar-rage",
+  "name": "Lonestar Rage & Entertainment Austin",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "12233 FM 620 N, Suite 109, Austin, TX 78750",
+  "phone": "(737) 270-4790",
+  "website": "https://www.lonestarrage.com/",
+  "unit": {
+    "singular": "room",
+    "plural": "rooms",
+    "count": 4,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": false,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "For events and parties, fill out the event form on the Events page, or call or email to reserve a time slot. The venue gets back to you to set up your event package. Rooms are often sold out 1-2 weeks ahead, so book early.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book Now (individual rooms)",
+      "url": "https://ecom.roller.app/thebreakingpoint/buynow/en-us/products"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "rage-room",
+      "name": "Rage Room",
+      "description": "Smash glass items like bottles, plates and glasses. Boosters (TV, small appliance, etc.) can be added.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 30,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "axe-throwing",
+      "name": "Axe Throwing",
+      "description": "Weapons throwing lanes.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 30,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "escape-room",
+      "name": "Escape Room",
+      "description": "",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 30,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "splatter-room",
+      "name": "Splatter Room",
+      "description": "Paint splatter room.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 35,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "facility-rental",
+      "name": "Entire Facility Rental",
+      "description": "Rent the entire facility for an extended period. Ask on the event form and the venue will send pricing.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Can we bring outside food and drinks?",
+      "a": "Space is available for you to bring in your own food and drinks! Let us know your catering plans when booking your event so we can make accommodations."
+    },
+    {
+      "q": "Is there an age limit?",
+      "a": "Each room is different. These details are located on the Book Now page. Participants must also be able to fit our safety equipment so they can participate. Anyone under the age of 18 must have a parent or guardian fill out the liability waiver for them in-house."
+    },
+    {
+      "q": "Do I need an appointment?",
+      "a": "We will always try to fit you in if you walk-in, however, we do get really busy. We always strongly recommend booking in advance via our Book Now link and buttons."
+    },
+    {
+      "q": "How big of a group can we bring?",
+      "a": "The group size is dependent on each room. We have the amount allowed into each room on the Book Now page. For parties, we can get creative if they are doing more than one room by dividing up the group into smaller groups and utilizing multiple rooms at one time."
+    },
+    {
+      "q": "How far out should we book our event?",
+      "a": "If the date and time is most important, plan ahead for an event. Often times our rage room is sold out 1-2 weeks ahead."
+    },
+    {
+      "q": "What is breakable?",
+      "a": "Breakable items are glass items. Things that pop when you hit them! Like beer bottles, liquor bottles, plates, glasses and more!"
+    },
+    {
+      "q": "What is a booster?",
+      "a": "A booster is an add on to your package. Like a TV/Small Appliance/Etc that we may have in stock to add to the rage room package."
+    }
+  ],
+  "handoff": {
+    "email": "TheBreakingPointAustin@gmail.com",
+    "webhookUrl": null
+  }
+}

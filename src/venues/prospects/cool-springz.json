@@ -1,0 +1,382 @@
+{
+  "slug": "cool-springz",
+  "name": "Cool Springz",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Denver",
+  "address": "5205 San Mateo Blvd NE, Albuquerque, NM 87109",
+  "phone": "505.345.JUMP",
+  "website": "https://www.coolspringz.com/",
+  "unit": {
+    "singular": "party table",
+    "plural": "party tables",
+    "count": null,
+    "guestsPerUnit": 5
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "10:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "10:00",
+        "close": "20:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://www.coolspringz.com/birthday-parties.html",
+    "howItWorks": "Pick your party size, date and start time in the booking box on the Birthday Parties page; a $50 deposit confirms the reservation. Book 3-4 weeks ahead; as little as 48 hours depending on availability.",
+    "leadTimeDays": 2
+  },
+  "otherLinks": [
+    {
+      "what": "Group quote request",
+      "url": "https://www.coolspringz.com/group-inquiry.html"
+    },
+    {
+      "what": "Lights Out Friday nights tickets",
+      "url": "https://checkout.roller.app/coolspringzalbuquerque/products/event24"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": 50
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "jax-5",
+      "name": "Jax 5 Birthday Party",
+      "description": "Day pass admission for 5 participating guests, socks, 1 reserved decorated table for 90 minutes, 1 large pizza and 1 pitcher of soda. Party size up to 9. Birthday child free.",
+      "includes": [
+        "Day pass admission for 5 participating guests",
+        "Grip socks to keep",
+        "1 reserved decorated table for 90 minutes",
+        "1 large pizza",
+        "1 pitcher of soda",
+        "Setup and cleanup",
+        "Birthday child free"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 5,
+      "maxGuests": 9,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 199.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "jax-10",
+      "name": "Jax 10 Birthday Party",
+      "description": "Day pass admission for 10 participating guests, socks, 2 reserved decorated tables for 90 minutes, 2 large pizzas and 2 pitchers of soda. Party size up to 14. Birthday child free.",
+      "includes": [
+        "Day pass admission for 10 participating guests",
+        "Grip socks to keep",
+        "2 reserved decorated tables for 90 minutes",
+        "2 large pizzas",
+        "2 pitchers of soda",
+        "Setup and cleanup",
+        "Birthday child free"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 10,
+      "maxGuests": 14,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 279.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "jax-15",
+      "name": "Jax 15 Birthday Party",
+      "description": "Day pass admission for 15 participating guests, socks, 3 reserved decorated tables for 90 minutes, 3 large pizzas and 3 pitchers of soda. Party size up to 19. Birthday child free.",
+      "includes": [
+        "Day pass admission for 15 participating guests",
+        "Grip socks to keep",
+        "3 reserved decorated tables for 90 minutes",
+        "3 large pizzas",
+        "3 pitchers of soda",
+        "Setup and cleanup",
+        "Birthday child free"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 15,
+      "maxGuests": 19,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 379.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "jax-20",
+      "name": "Jax 20 Birthday Party",
+      "description": "Day pass admission for 20 participating guests, socks, 4 reserved decorated tables for 90 minutes, 4 large pizzas and 4 pitchers of soda. For 20 guests and over; guests beyond the booked total are $30 each. Birthday child free.",
+      "includes": [
+        "Day pass admission for 20 participating guests",
+        "Grip socks to keep",
+        "4 reserved decorated tables for 90 minutes",
+        "4 large pizzas",
+        "4 pitchers of soda",
+        "Setup and cleanup",
+        "Birthday child free"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 20,
+      "maxGuests": 100,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 449.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "half-day-pass",
+      "name": "Half Day Pass",
+      "description": "One flat price for any height. Choose one window: open until 4pm, or 4pm until close. Weekday price; weekend (Sat-Sun) price is higher. Excludes NM gross receipts tax and grip socks. Online passes 10% off. Under 2 free with a paying adult.",
+      "includes": [
+        "All attractions"
+      ],
+      "durationMinutes": 240,
+      "minGuests": 1,
+      "maxGuests": 14,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 18.99,
+        "peakAmount": 22.99,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "day-pass-little",
+      "name": "Day Pass - Little (48 inches and under)",
+      "description": "From arrival until close, for jumpers 48 inches and under. Weekday price; weekend (Sat-Sun) price is higher. Excludes tax and grip socks.",
+      "includes": [
+        "All attractions",
+        "Small kids area"
+      ],
+      "durationMinutes": 480,
+      "minGuests": 1,
+      "maxGuests": 14,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 18.99,
+        "peakAmount": 22.99,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "day-pass-tall",
+      "name": "Day Pass - Tall (over 48 inches, adults included)",
+      "description": "From arrival until close, for jumpers over 48 inches including adults. Weekday price; weekend (Sat-Sun) price is higher. Excludes tax and grip socks.",
+      "includes": [
+        "All attractions"
+      ],
+      "durationMinutes": 480,
+      "minGuests": 1,
+      "maxGuests": 14,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 24.99,
+        "peakAmount": 28.99,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "lights-out",
+      "name": "Lights Out (Friday nights)",
+      "description": "Glow lighting, a fire playlist, the whole park. Ages 12 and up. Every Friday from October 9, 8:00pm to 10:00pm. $15, or $10 for members. Cafe open.",
+      "includes": [
+        "Whole park",
+        "Glow lighting"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 14,
+      "days": [
+        "fri"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 15,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "arcade-card",
+      "name": "$10 arcade game card",
+      "description": "A $10 arcade game card may be added to any party package for $4 each.",
+      "unit": "each",
+      "amount": 4
+    },
+    {
+      "id": "extra-guest",
+      "name": "Extra party guest",
+      "description": "Guests beyond your booked party total are $30 per person.",
+      "unit": "per_person",
+      "amount": 30
+    }
+  ],
+  "faq": [
+    {
+      "q": "Can we bring outside food?",
+      "a": "No, with one exception: birthday cake for a booked party. Jumpin' Jax Cafe covers everything else. School groups with packed lunches are also fine — tell us in advance and we'll set aside tables."
+    },
+    {
+      "q": "Do I need a waiver?",
+      "a": "Yes — everyone entering the park needs one, jumping or not. A parent or legal guardian must sign for anyone under 18. The waiver is valid for one year from signing."
+    },
+    {
+      "q": "Do I have to buy grip socks?",
+      "a": "Grip socks are required on the trampolines and sold separately at the front desk. Party packages include socks for the whole party, theirs to keep."
+    },
+    {
+      "q": "Is there an age minimum?",
+      "a": "No minimum age, but the small kids area is reserved for jumpers under 48 inches. Lights Out, on Friday nights, is ages 12 and up only. Children under 2 jump free with a paying adult."
+    },
+    {
+      "q": "Where do we park?",
+      "a": "Free parking, no validation needed. School bus parking available — tell us in advance."
+    },
+    {
+      "q": "Can I stay and watch without paying?",
+      "a": "Yes. Spectators don't pay admission but still need a signed waiver. Non-participant party guests are no charge but must have a waiver on file."
+    },
+    {
+      "q": "What's the party deposit and cancellation policy?",
+      "a": "A $50 deposit confirms your date and comes off the final balance, due on the date of the event. Rescheduling within 72 hours of your date is fine. Call if something unexpected happens — we're reasonable."
+    },
+    {
+      "q": "How far in advance should I book a party?",
+      "a": "Three to four weeks, although you can book up to 48 hours in advance depending on availability. Weekday parties can often be booked with very little notice."
+    },
+    {
+      "q": "How long do we have the party tables?",
+      "a": "Your tables are yours for 90 minutes from the booked start. The jump passes are not limited to those 90 minutes — everyone keeps their pass for its full length."
+    },
+    {
+      "q": "Can we decorate?",
+      "a": "Bring what you like for your table, with two exceptions: no confetti and no piñatas."
+    },
+    {
+      "q": "Do you do group outings?",
+      "a": "15 or more and you're a group, with group rates. Get a group quote — quote back within one business day. A deposit holds your date; balance is due on the day. POs and invoices accepted for schools and companies."
+    },
+    {
+      "q": "Do you take school field trips?",
+      "a": "Yes, on reserved weekday mornings from 9:00am, September to May, minimum 25 students. We handle bus parking, bulk digital waivers, purchase orders and a W-9."
+    },
+    {
+      "q": "Is tax included?",
+      "a": "No. Listed prices exclude New Mexico gross receipts tax."
+    },
+    {
+      "q": "Do you offer discounts?",
+      "a": "Military, first responders, teachers and nurses receive a standing discount with valid ID. Online passes are 10% off the desk price."
+    },
+    {
+      "q": "Do you offer memberships?",
+      "a": "Weekday is $24.99 a month (Monday to Friday). Anytime is $33.99 a month. Additional children in the same household join at 20% off Weekday or 15% off Anytime. Cancel on request; the paid month runs to its end."
+    },
+    {
+      "q": "What are the hours?",
+      "a": "Monday to Friday 12:00pm to 8:00pm, Saturday and Sunday 10:00am to 8:00pm. Last entry 45 minutes before close. Holiday and school-break hours often differ."
+    },
+    {
+      "q": "Is the park accessible?",
+      "a": "The entrance, main floor, cafe and restrooms are wheelchair accessible."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

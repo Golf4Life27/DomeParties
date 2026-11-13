@@ -1,0 +1,381 @@
+{
+  "slug": "motor-world-virginia-beach",
+  "name": "Motor World Virginia Beach",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "700 South Birdneck Road, Virginia Beach, Virginia 23451",
+  "phone": "757-422-6419",
+  "website": "https://vbmotorworld.com/",
+  "unit": {
+    "singular": "kart",
+    "plural": "karts",
+    "count": 250,
+    "guestsPerUnit": 2
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": true,
+  "hoursUnclear": [
+    "sun",
+    "mon",
+    "tue",
+    "wed",
+    "thu",
+    "fri",
+    "sat"
+  ],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Birthday parties and groups: fill in the Request Quote form on the Parties & Events page (name, phone, email, date interested in, message) or call the office at 757-422-6419.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Party and group quote request form",
+      "url": "https://vbmotorworld.com/parties/"
+    },
+    {
+      "what": "Buy tickets and wristbands",
+      "url": "https://vbmotorworld.com/prices/"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "birthday-party-group",
+      "name": "Birthday Parties and Groups",
+      "description": "Birthday parties and group events. Request a quote through the form on the Parties & Events page.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "pro-wristband-3-hour",
+      "name": "Pro Wristband - 3 Hours Unlimited",
+      "description": "For guests over 48 inches. Includes all go-kart rides the person meets the height requirement for. Does not include the Adult Speed Track. Per person, cannot be shared.",
+      "includes": [],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 69.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "rookie-kiddie-special",
+      "name": "Rookie Wristband - Kiddie Special All Day",
+      "description": "For guests under 48 inches. Good for kiddie rides and kiddie tracks only.",
+      "includes": [],
+      "durationMinutes": 720,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 49.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "twilight-special",
+      "name": "Twilight Special Wristband",
+      "description": "Available daily 2 hours before closing (call the office to confirm closing time). Must be bought in person at the park. Does not include the Adult Speed Track or mini golf. No rain checks. Cannot be combined with coupons, discounts or promo codes.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 49.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "go-kart-single-race",
+      "name": "Go-Kart Race - 1 Race",
+      "description": "Your choice of Slick 8, Cannon Ball, Outlaw, Grand Prix, or Family Track. Must meet height requirements.",
+      "includes": [],
+      "durationMinutes": 15,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 13,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "kiddie-go-karts",
+      "name": "Kiddie Go Karts",
+      "description": "Your choice of Kiddie Track, Jr. Stock Track, Kiddie Dune Buggy, or Mini Indy Track. Must meet height requirements.",
+      "includes": [],
+      "durationMinutes": 15,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 9,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "road-racer-3-laps",
+      "name": "Road Racer 1/2 Mile Track - 3 Laps",
+      "description": "3 laps for $13; receive the 4th lap free per person.",
+      "includes": [],
+      "durationMinutes": 15,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 13,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "adult-speed-track-single",
+      "name": "Adult Speed Track - Single Race (Non-Member)",
+      "description": "European-style racetrack. Must be 16 or older to drive. Head sock $2 extra.",
+      "includes": [],
+      "durationMinutes": 15,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 27.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "adult-speed-track-2-race",
+      "name": "Adult Speed Track - 2 Race Special (Non-Member)",
+      "description": "2 races plus a free head sock. Must be 16 or older to drive.",
+      "includes": [],
+      "durationMinutes": 30,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 39.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "speed-track-membership-1",
+      "name": "Adult Speed Track 1-Year Membership - Single Race",
+      "description": "Includes first race, head sock, one free race during birthday month, and discounted races for the year ($22.99 single, $49.99 three races).",
+      "includes": [],
+      "durationMinutes": 15,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 31.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "speed-track-membership-3",
+      "name": "Adult Speed Track 1-Year Membership - Three Races",
+      "description": "Includes first three races, head sock, one free race during birthday month, and discounted races for the year ($22.99 single, $49.99 three races).",
+      "includes": [],
+      "durationMinutes": 45,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 54.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "mini-golf-18",
+      "name": "Shipwreck Mini Golf - 18 Holes",
+      "description": "Virginia Beach's most challenging mini golf courses.",
+      "includes": [],
+      "durationMinutes": 30,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 15,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "mini-golf-36",
+      "name": "Shipwreck Mini Golf - 36 Holes",
+      "description": "Newly renovated 36-hole course, the largest in the Virginia Beach resort area.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 17,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "head-sock",
+      "name": "Head Sock",
+      "description": "For the Adult Speed Track (non-members).",
+      "unit": "each",
+      "amount": 2,
+      "amountTo": null
+    },
+    {
+      "id": "speed-track-upgrade",
+      "name": "Adult Speed Track Upgrade with Pro Band",
+      "description": "1 race on the Adult Speed Track with the purchase of a 3 Hour Unlimited Pro Band.",
+      "unit": "per_person",
+      "amount": 22.99,
+      "amountTo": null
+    }
+  ],
+  "faq": [
+    {
+      "q": "Does Motor World sell food?",
+      "a": "YES! Tropical Treats is located towards the back of the park. They offer a variety of options from refreshing lemonade to sweet treats such as funnel cakes."
+    },
+    {
+      "q": "What is the shoe policy and clothing restrictions?",
+      "a": "All shoes must stay secured on all feet to drive. No loose clothing will be permitted and all long hair must be tied up in a bun off the shoulders. Closed toe shoes are recommended."
+    },
+    {
+      "q": "How tall does my child need to be to ride the go karts?",
+      "a": "Motor World offers go kart tracks for children as small as 36\". They must be at least 48\" tall to start to drive the bigger go karts by themselves."
+    },
+    {
+      "q": "What is included with the wristband?",
+      "a": "Pro Band will include all go kart rides that the person meets the height requirement for. Rookie bands include all small amusement rides and go kart tracks that the person meets the height requirement for. All Unlimited Armbands do not include Adult Speed Track."
+    },
+    {
+      "q": "Do I have to pay if I am not riding?",
+      "a": "Admission into the park is free and you only pay for the activities you want to do. Pricing is based per person."
+    },
+    {
+      "q": "What is the difference between a Rookie Band and Pro Band?",
+      "a": "Rookie Band: Under 48\" tall. Pro Band: Over 48\" tall."
+    },
+    {
+      "q": "What are the hours of operation?",
+      "a": "March - Memorial Day: 10 am - Dark. Memorial Day - Labor Day: 10 am - 10 pm. After Labor Day: 10 am - Dark. Please visit our calendar for hours or call our office at 757-422-6419."
+    },
+    {
+      "q": "Do you have parking and is it free?",
+      "a": "Yes, all parking for cars and buses is free."
+    },
+    {
+      "q": "What is the weather policy?",
+      "a": "Go-karts can still operate in the rain. Three tracks will typically close when it rains: slick 8, outlaw, and the adult speed track. During inclement weather Motor World reserves the right to close for the day. We will gladly reschedule for another date or a deposit refund will be issued for the inconvenience."
+    },
+    {
+      "q": "Where is Motor World located?",
+      "a": "Motor World is located at 700 S. Birdneck Rd. Virginia Beach, about 2.5 miles south of the oceanfront."
+    },
+    {
+      "q": "Is there an age requirement for the Adult Speed Track?",
+      "a": "Must be 16 years of age or older to drive. Riders under the age of 18 must have a parent/guardian present in order to sign the waiver. All racers must sign a liability waiver."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

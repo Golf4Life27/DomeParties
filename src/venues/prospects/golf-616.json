@@ -1,0 +1,207 @@
+{
+  "slug": "golf-616",
+  "name": "Golf 616",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Detroit",
+  "address": "400 Dodge St. NE, Comstock Park, MI",
+  "phone": "616-223-4465",
+  "website": "https://golf616michigan.com/",
+  "unit": {
+    "singular": "bay",
+    "plural": "bays",
+    "count": 4,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "08:00",
+        "close": "18:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "08:00",
+        "close": "23:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "08:00",
+        "close": "23:00"
+      }
+    ]
+  },
+  "closures": [],
+  "peak": {
+    "days": [
+      "fri",
+      "sat",
+      "sun"
+    ],
+    "from": "11:00",
+    "allDay": []
+  },
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Tee times and lessons are reserved online through Trackman. For group events, private room or full facility rental, contact Golf 616 by phone or email.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Reserve a tee time or lesson",
+      "url": "https://booking.trackmangolf.com/venues/golf-616/booking/bays"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "public-bay",
+      "name": "Public Bay (Trackman iO)",
+      "description": "Price per hour, per bay, not per person. Weekdays (Mon-Thu) $40/hr. Weekends (Fri-Sun) $60/hr, with an Early Bird Special of $40/hr from 8AM-11AM.",
+      "includes": [
+        "Trackman iO simulator"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 16,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 40,
+        "peakAmount": 60,
+        "minUnits": 1
+      }
+    },
+    {
+      "id": "weekend-2-hour-special",
+      "name": "2 Hour Weekend Special",
+      "description": "2 hours of bay time on the weekend for $100.",
+      "includes": [
+        "2 hours in a bay"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 4,
+      "days": [
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 100,
+        "peakAmount": null
+      }
+    },
+    {
+      "id": "vip-room",
+      "name": "VIP Room - Private Simulator",
+      "description": "Private simulator room. 1 hour minimum, up to 6 golfers.",
+      "includes": [
+        "Private simulator",
+        "Complimentary refreshments",
+        "Couch, TV and bar stools"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 80,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 6
+      }
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Are rates per person?",
+      "a": "Price per hour, per bay, not per person."
+    },
+    {
+      "q": "Do you serve food and drinks?",
+      "a": "We have Michigan Craft Beer, liquor, wine, & hot food in the 616 lounge."
+    },
+    {
+      "q": "Do you host private events?",
+      "a": "Whether you need a private room or complete facility rental, we have your outing covered! We offer flexible group packages, catering options, and a dedicated team to make your event seamless and fun."
+    },
+    {
+      "q": "Do you offer leagues?",
+      "a": "Yes. Contact us at 616-223-4465 to join a league."
+    },
+    {
+      "q": "How many guests fit in the VIP room?",
+      "a": "1 hour minimum, up to 6 golfers."
+    }
+  ],
+  "handoff": {
+    "email": "info@golf616michigan.com",
+    "webhookUrl": null
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ]
+}

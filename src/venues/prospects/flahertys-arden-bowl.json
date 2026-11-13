@@ -1,0 +1,245 @@
+{
+  "slug": "flahertys-arden-bowl",
+  "name": "Flaherty's Arden Bowl",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "1273 West County Road E, Arden Hills, MN 55112",
+  "phone": "651-633-1777",
+  "website": null,
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "09:00",
+        "close": "23:59"
+      }
+    ],
+    "mon": [
+      {
+        "open": "09:00",
+        "close": "23:59"
+      }
+    ],
+    "tue": [
+      {
+        "open": "09:00",
+        "close": "23:59"
+      }
+    ],
+    "wed": [
+      {
+        "open": "09:00",
+        "close": "23:59"
+      }
+    ],
+    "thu": [
+      {
+        "open": "09:00",
+        "close": "23:59"
+      }
+    ],
+    "fri": [
+      {
+        "open": "09:00",
+        "close": "23:59"
+      }
+    ],
+    "sat": [
+      {
+        "open": "09:00",
+        "close": "23:59"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "fri",
+      "sat"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://party-request.tripleseat.com/venues/Yz1IE9Rg",
+    "howItWorks": "Call 651-633-1777, stop in, or send the online event request form (event type, date, guest count, start and end time, name, email).",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "all-you-can-bowl",
+      "name": "All You Can Bowl",
+      "description": "9 pm to midnight, shoes included. $14.99 Sunday to Thursday, $23.99 Friday and Saturday. Start time may shift for league schedules. Not valid on holidays.",
+      "includes": [
+        "Unlimited bowling 9 pm to midnight",
+        "Shoe rental"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "sun",
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 14.99,
+        "peakAmount": 23.99
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "party-package",
+      "name": "Party Packages",
+      "description": "Party packages from $69.99 to $92.99 per event. Inclusions not listed.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 50,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 69.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "kids-party-package",
+      "name": "Kids Party Packages",
+      "description": "Kids party packages at $19.99 per person. Kids pricing applies to ages 15 and under.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 50,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 19.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "banquet-room",
+      "name": "Banquet Room Rental",
+      "description": "Banquet room rental, $150 to $600. Event spaces include North Hall (seats 50, private bar, A/V) and South Hall (seats 50, patio and fire pit access, A/V available). Onsite catering and private bar available.",
+      "includes": [
+        "Private event space",
+        "A/V"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 20,
+      "maxGuests": 100,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 150,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "banquet-room-lounge",
+      "name": "Banquet Room plus Lounge Area",
+      "description": "Banquet room plus lounge area, $600 to $1,000. Full Event Space seats 100 with private bar, patio and fire pit.",
+      "includes": [
+        "Full event space",
+        "Private bar",
+        "Patio and fire pit"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 20,
+      "maxGuests": 100,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 600,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Can we have alcohol at our event?",
+      "a": "Yes, alcohol is allowed. Private bars and onsite catering are available for events."
+    },
+    {
+      "q": "Is the venue wheelchair accessible?",
+      "a": "Yes, the venue is wheelchair accessible."
+    },
+    {
+      "q": "What ages get kids pricing?",
+      "a": "Kids pricing applies to ages 15 and under; adults are 16 and over."
+    },
+    {
+      "q": "Is All You Can Bowl valid on holidays?",
+      "a": "No, All You Can Bowl is not valid on holidays. Start time may shift for league schedules."
+    },
+    {
+      "q": "When is food served?",
+      "a": "Flaherty's Pub & Grill serves food every day from 9 am to 10:15 pm: appetizers, pizzas, burgers, sandwiches, soups and salads."
+    },
+    {
+      "q": "What is the Lucky Strike Lounge?",
+      "a": "A 1,115 sq ft private space with VR Vive Pro 2 (600+ games), an 85\" 4K TV, and an optional bar setup with food and beverages."
+    },
+    {
+      "q": "What is Scotch Doubles?",
+      "a": "A mixed couples tournament on the last Saturday of each month. Check-in 2:30 pm, bowling 4 pm, $30 per couple. Questions: 651-633-1777 or info@flahertysbowl.com."
+    },
+    {
+      "q": "When is Bar Bingo?",
+      "a": "Fridays at 6:30 pm, coverall prize $1,000. No reservation needed; arrive early."
+    },
+    {
+      "q": "What else is there besides bowling?",
+      "a": "25+ arcade games, and a patio with turf, cornhole, a gas fire pit and live music. Leagues and tournaments are also offered."
+    }
+  ],
+  "handoff": {
+    "email": "info@flahertysbowl.com",
+    "webhookUrl": null
+  }
+}

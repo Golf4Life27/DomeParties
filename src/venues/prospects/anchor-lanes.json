@@ -1,0 +1,149 @@
+{
+  "slug": "anchor-lanes",
+  "name": "Anchor Lanes",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "230 Lincoln St, Elkhart Lake, WI 53020",
+  "phone": "(920) 781-2062",
+  "website": "https://anchor-lanes.com/",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": false,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Party packages are available any time during open play hours providing lanes are available. Contact us to reserve your lane and special pricing. A $20 pre-paid deposit is required to reserve your lane.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": 20
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 18,
+    "appliesTo": "all",
+    "note": "A gratuity will be automatically added to all parties of $100 or more at 18%."
+  },
+  "packages": [
+    {
+      "id": "birthday-package",
+      "name": "Birthday Package",
+      "description": "Minimum of 6. $14.95 per child. Available any time during open play hours providing lanes are available.",
+      "includes": [
+        "1 hour of bowling and bowling shoes",
+        "Soda: 1 pitcher per 4 bowlers",
+        "Pizza: 1 12\" one topping per 4 bowlers",
+        "Plates, napkins and cups available upon request",
+        "\"Real Bowling Pin\" for the birthday child",
+        "BoGo bowling game cards for all that are bowling"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 6,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 14.95,
+        "peakAmount": null
+      },
+      "priceListed": true
+    }
+  ],
+  "food": [
+    {
+      "id": "pizza-16",
+      "name": "Build your own 16\" pizza",
+      "description": "Toppings $1.50 each: onion, green pepper, mushroom, black olive, sausage, bacon, pepperoni",
+      "pricing": "flat",
+      "amount": 16.49
+    },
+    {
+      "id": "bavarian-pretzel",
+      "name": "Bavarian Pretzel",
+      "description": "Served with cheese sauce and honey mustard",
+      "pricing": "flat",
+      "amount": 11.99
+    },
+    {
+      "id": "chicken-strips",
+      "name": "Chicken Strips",
+      "description": "",
+      "pricing": "flat",
+      "amount": 6.49
+    },
+    {
+      "id": "cheese-nuggets",
+      "name": "Cheese Nuggets",
+      "description": "",
+      "pricing": "flat",
+      "amount": 6.49
+    },
+    {
+      "id": "french-fries",
+      "name": "French Fries",
+      "description": "",
+      "pricing": "flat",
+      "amount": 3.49
+    }
+  ],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Can we bring our own food or cake?",
+      "a": "Birthday cake or cupcakes are your responsibility. NO OTHER CARRY-INS PLEASE."
+    },
+    {
+      "q": "Are bumpers available?",
+      "a": "Bumpers are available for bowlers aged 12 and under."
+    },
+    {
+      "q": "Is a deposit required for parties?",
+      "a": "A $20 pre-paid deposit is required to reserve your lane."
+    },
+    {
+      "q": "Is gratuity added to parties?",
+      "a": "A gratuity will be automatically added to all parties of $100 or more at 18%."
+    },
+    {
+      "q": "When can I book a party?",
+      "a": "Party packages are available any time during open play hours providing lanes are available. Please contact us to reserve your lane and special pricing."
+    },
+    {
+      "q": "What are the bar & grill hours?",
+      "a": "Sunday–Tuesday closed; Wednesday and Thursday 4PM-10PM; Friday and Saturday 4PM-11PM."
+    }
+  ],
+  "handoff": {
+    "email": "bowl@anchor-lanes.com",
+    "webhookUrl": null
+  }
+}

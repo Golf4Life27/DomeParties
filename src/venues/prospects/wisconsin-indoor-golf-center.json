@@ -1,0 +1,174 @@
+{
+  "slug": "wisconsin-indoor-golf-center",
+  "name": "Wisconsin Indoor Golf Center",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "206 Travis Lane, Waukesha, WI 53189",
+  "phone": "(262) 436-0002",
+  "website": "https://www.wisconsinindoorgolfcenter.com/",
+  "unit": {
+    "singular": "simulator",
+    "plural": "simulators",
+    "count": 12,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "07:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "07:00",
+        "close": "23:00"
+      }
+    ]
+  },
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "fri",
+      "sat",
+      "sun"
+    ]
+  },
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Book a simulator tee time online, call (262) 436-0002, visit, or fill out the contact form. Ask about corporate outings by phone.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book a simulator tee time",
+      "url": "https://app.acuityscheduling.com/schedule.php?owner=18145763"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "simulator-hourly",
+      "name": "Golf simulator hourly rental",
+      "description": "Simulator stall rented by the hour. $35 per hour Monday-Thursday and $47 per hour Friday-Sunday. Play 2000+ courses worldwide on TrackMan and aboutGolf simulators.",
+      "includes": [
+        "Golf balls supplied",
+        "Access to 2000+ courses"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 48,
+      "days": [
+        "sun",
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 35,
+        "peakAmount": 47,
+        "minUnits": 1
+      }
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Can I bring my own clubs?",
+      "a": "Bring your own clubs. Rental clubs are available."
+    },
+    {
+      "q": "Are golf balls provided?",
+      "a": "Golf balls supplied."
+    },
+    {
+      "q": "Do you have food and drinks?",
+      "a": "A full bar, specialty cocktails, bar food and food service. NFL Sunday Ticket too."
+    },
+    {
+      "q": "Is it family friendly?",
+      "a": "Our well-appointed facility provides a family-friendly environment."
+    },
+    {
+      "q": "Do you sell gift cards?",
+      "a": "Gift cards are available."
+    },
+    {
+      "q": "What simulators do you have?",
+      "a": "TrackMan and aboutGolf simulators on-site. 12 state-of-the-art indoor golf simulators featuring 2000+ courses worldwide."
+    },
+    {
+      "q": "Do you offer club fittings or regripping?",
+      "a": "We regrip golf clubs, or you can set up a custom fitting with a 40-year Ping representative for a full set or specific clubs."
+    },
+    {
+      "q": "Do you have leagues?",
+      "a": "All of our league information is now available at WIGCLeagues.com."
+    },
+    {
+      "q": "When are you open?",
+      "a": "9am-10pm Monday-Friday, 7am-11pm Saturday, 7am-8pm Sunday. Open through October by appointment only. Stop in November through April!"
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ]
+}

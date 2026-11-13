@@ -1,0 +1,304 @@
+{
+  "slug": "sir-goonys",
+  "name": "Sir Goony's Family Fun Center",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "5918 Brainerd Rd, Chattanooga, TN 37421",
+  "phone": "423-892-5922",
+  "website": "https://sirgoonys.com/",
+  "unit": {
+    "singular": "party room",
+    "plural": "party rooms",
+    "count": null,
+    "guestsPerUnit": 10
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "12:00",
+        "close": "18:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "12:00",
+        "close": "19:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "12:00",
+        "close": "19:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "12:00",
+        "close": "19:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "12:00",
+        "close": "19:00"
+      }
+    ],
+    "fri": [],
+    "sat": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [
+    "fri"
+  ],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://online.sirgoonys.com/party/build-party/sirgoonys",
+    "howItWorks": "Book online or fill out the party form with dates, guest count and requests; the party coordinator reaches out to confirm. A non-refundable deposit secures the date. Don't pay a deposit until you get a confirmation email.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Group events deposit",
+      "url": "https://sirgoonys.com/deposit/"
+    },
+    {
+      "what": "Group events inquiry",
+      "url": "https://sirgoonys.com/group-events/"
+    },
+    {
+      "what": "Pricing & specials",
+      "url": "https://sirgoonys.com/pricing-specials/"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "goony-golf-party",
+      "name": "Goony Golf Party",
+      "description": "Mini golf birthday party for 10 guests.",
+      "includes": [
+        "18 holes of miniature golf for 10 guests",
+        "$2 game card for 10 guests",
+        "2 large one-topping Papa Johns pizzas",
+        "2 pitchers of Coke products",
+        "Plates, cups, napkins and silverware for 10 guests",
+        "Party favor for 10 guests",
+        "Souvenir shirt for the birthday child",
+        "45 minutes in private party room",
+        "Party host"
+      ],
+      "durationMinutes": 45,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 175,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "half-off-games-party",
+      "name": "1/2 Off Price Games Party",
+      "description": "Arcade party for 10 guests, Monday-Thursday only.",
+      "includes": [
+        "$12 game card for 10 guests",
+        "2 large one-topping Papa Johns pizzas",
+        "2 pitchers of Coke products",
+        "Plates, cups, napkins and silverware for 10 guests",
+        "Party favor for 10 guests",
+        "Souvenir shirt for the birthday child",
+        "45 minutes in private party room",
+        "Party host"
+      ],
+      "durationMinutes": 45,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 199,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "two-attraction-party",
+      "name": "2 Attraction Party",
+      "description": "Party for 10 guests with 2 attractions each.",
+      "includes": [
+        "2 attractions for 10 guests",
+        "$2 game card",
+        "2 pizzas of your choice (pepperoni/cheese/beef/ham)",
+        "2 pitchers of your choice (Coke/Sprite/Mello Yello/Dr Pepper/Cherry Fanta/Lemonade/Sweet Tea)"
+      ],
+      "durationMinutes": 45,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 250,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "three-attraction-party",
+      "name": "3 Attraction Party",
+      "description": "3 attractions for 10 guests (mini golf, go-karts, Lazer Fury 360, Spin/Flip Zone, VEX VR, batting cages).",
+      "includes": [
+        "3 attractions for 10 guests",
+        "$2 game card for 10 guests",
+        "2 large one-topping Papa Johns pizzas",
+        "2 pitchers of Coke products",
+        "Plates, cups, napkins and silverware for 10 guests",
+        "Party favor for 10 guests",
+        "Souvenir shirt for the birthday child",
+        "45 minutes in private party room",
+        "Party host"
+      ],
+      "durationMinutes": 45,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 300,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "splash-golf-party",
+      "name": "Unlimited Splash Zone and Golf Party",
+      "description": "Mini golf plus 1.5 hours of Splash Zone inflatables for 10 guests. Each child must be 42\" tall for Splash Zone, no exceptions.",
+      "includes": [
+        "18 holes of miniature golf for 10 guests",
+        "1.5 hours of Splash Zone inflatables for 10 guests",
+        "$2 game card for 10 guests",
+        "2 large one-topping Papa Johns pizzas",
+        "2 pitchers of Coke products",
+        "Plates, cups, napkins and silverware for 10 guests",
+        "Party favor for 10 guests",
+        "Souvenir shirt for the birthday child",
+        "45 minutes in private party room",
+        "Party host"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 350,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "unlimited-attraction-party",
+      "name": "Unlimited Attraction Party",
+      "description": "1.5 hours of attractions for 10 guests (mini golf, go-karts, Lazer Fury 360, Spin/Flip Zone, VEX VR, batting cages).",
+      "includes": [
+        "1.5 hours of attractions for 10 guests",
+        "$2 game card for 10 guests",
+        "2 large one-topping Papa Johns pizzas",
+        "2 pitchers of Coke products",
+        "Plates, cups, napkins and silverware for 10 guests",
+        "Party favor for 10 guests",
+        "Souvenir shirt for the birthday child",
+        "45 minutes in private party room",
+        "Party host"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 400,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Is a deposit required for parties?",
+      "a": "A non-refundable deposit is required to secure the party date. Please do not submit a deposit until you receive a confirmation email."
+    },
+    {
+      "q": "Do you host group events?",
+      "a": "We can accommodate a wide variety of group events such as field trips, church events, birthday parties, company team bonding, sports team party, fundraising and more. Contact Brooke using the group events form."
+    },
+    {
+      "q": "Are there height requirements for the Splash Zone?",
+      "a": "Must be 5 years old and 36\" tall to play. For the Splash Zone party, each child must be 42\" tall to participate, no exceptions."
+    },
+    {
+      "q": "Is the Splash Zone open?",
+      "a": "Closed for the season. Join us next May to beat the summer heat with our giant inflatable water slides and bounce house!"
+    },
+    {
+      "q": "Who can drive the Supercharged go-karts?",
+      "a": "Must have a driver's license to participate. Single passenger only."
+    },
+    {
+      "q": "Can a child ride with a parent?",
+      "a": "Parent and child in a two-seater Power Up kart, and child passengers on Spin Zone with a parent, are allowed for children age 3 and up."
+    },
+    {
+      "q": "Are you open in bad weather?",
+      "a": "During our slow season, we are weather and foot traffic permitted. Call us or check our Facebook page for real time updates."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

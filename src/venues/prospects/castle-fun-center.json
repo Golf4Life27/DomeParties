@@ -1,0 +1,343 @@
+{
+  "slug": "castle-fun-center",
+  "name": "The Castle Fun Center",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "109 Brookside Avenue, Chester, NY 10918",
+  "phone": "(845) 469-2116",
+  "website": null,
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "11:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [],
+    "tue": [],
+    "wed": [
+      {
+        "open": "15:00",
+        "close": "20:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "15:00",
+        "close": "20:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "15:00",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Birthday parties are booked online at least 7 days in advance. For shorter notice, call (845) 469-2116. Groups call Group Sales at (845) 469-2116 ext. 0. General visits need no reservation, and none are taken.",
+    "leadTimeDays": 7
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "kids-birthday-party",
+      "name": "Castle Hosted Kids' Birthday Party",
+      "description": "Starts at $349 for up to 8 kids. Each additional child is $26.99 to $29.99. About 2 hours total, including 40 minutes in the party area. Main activity choices: Ballocity, Roller Skating, Laser Tag, Activity Bounce / InflataPark, Mini Golf, Bowling.",
+      "includes": [
+        "Party host",
+        "Table balloons, Happy Birthday plates, tablecloth, utensils",
+        "One pizza slice and one soft drink per guest",
+        "Your chosen main party activity",
+        "Arcade card per child (1,000 or 500 points; pages differ)",
+        "Castle T-shirt for the birthday child",
+        "Castle mug for every child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 8,
+      "days": [
+        "wed",
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 349,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "all-access-party",
+      "name": "Teen & Adult All Access Party",
+      "description": "1-hour table reservation in Jesters Cafe or Pub plus 90 minutes of unlimited Castle activities. Contact the venue for pricing.",
+      "includes": [
+        "1-hour table reservation in Jesters Cafe or Pub",
+        "90 minutes of unlimited Castle activities"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "wed",
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "bowling-lane",
+      "name": "Bowling Lane Rental",
+      "description": "$45 per lane per hour on weekdays, $48 on weekends. Up to 6 people per lane. Shoe rental $5 per person.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "wed",
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 45,
+        "peakAmount": 48,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-2-hours",
+      "name": "School / Camp / Non-Profit Group - 2 Hours",
+      "description": "Unlimited rides on available attractions (excludes axe throwing, bowling, Slick Track). Minimum 30 people; groups under 30 pay for 30. 1 adult chaperone per 15 minors. Weekdays only, no Saturdays, Sundays or holidays. Fall/Winter: Thursdays and Fridays, arrivals from 3 pm. Summer camp trips on weekdays from 10 am. Not exclusive.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 30,
+      "maxGuests": 40,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 29.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-3-hours",
+      "name": "School / Camp / Non-Profit Group - 3 Hours",
+      "description": "Unlimited rides on available attractions (excludes axe throwing, bowling, Slick Track). Minimum 30 people; groups under 30 pay for 30. 1 adult chaperone per 15 minors. Weekdays only, no Saturdays, Sundays or holidays. Fall/Winter: Thursdays and Fridays, arrivals from 3 pm. Summer camp trips on weekdays from 10 am. Not exclusive.",
+      "includes": [],
+      "durationMinutes": 180,
+      "minGuests": 30,
+      "maxGuests": 40,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 34.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [
+    {
+      "id": "group-pizza-1",
+      "name": "Pizza slice, soft drink, ice cream cup",
+      "description": "Group food option. All group members choose the same option.",
+      "pricing": "per_person",
+      "amount": 7
+    },
+    {
+      "id": "group-pizza-2",
+      "name": "2 pizza slices, soft drink, ice cream cup",
+      "description": "Group food option. All group members choose the same option.",
+      "pricing": "per_person",
+      "amount": 9.5
+    },
+    {
+      "id": "group-nuggets",
+      "name": "Chicken nuggets, fries, soft drink, ice cream cup",
+      "description": "Group food option. All group members choose the same option.",
+      "pricing": "per_person",
+      "amount": 11.25
+    },
+    {
+      "id": "group-bagged-lunch",
+      "name": "Bring your own bagged lunch",
+      "description": "Group option, must be pre-booked.",
+      "pricing": "per_person",
+      "amount": 2
+    }
+  ],
+  "addOns": [
+    {
+      "id": "additional-child",
+      "name": "Additional child (birthday party)",
+      "description": "Each additional child beyond 8 is $26.99 to $29.99.",
+      "unit": "per_person",
+      "amount": 26.99
+    },
+    {
+      "id": "arcade-500",
+      "name": "Arcade card 500 points (groups)",
+      "description": "",
+      "unit": "each",
+      "amount": 4
+    },
+    {
+      "id": "arcade-1000",
+      "name": "Arcade card 1,000 points (groups)",
+      "description": "",
+      "unit": "each",
+      "amount": 8
+    },
+    {
+      "id": "bowling-shoes",
+      "name": "Bowling shoe rental",
+      "description": "",
+      "unit": "per_person",
+      "amount": 5
+    },
+    {
+      "id": "skate-rental",
+      "name": "Skate rental",
+      "description": "",
+      "unit": "per_person",
+      "amount": 5
+    },
+    {
+      "id": "inflatapark-socks",
+      "name": "InflataPark socks",
+      "description": "Per pair.",
+      "unit": "each",
+      "amount": 3
+    },
+    {
+      "id": "castle-card",
+      "name": "New Castle Card",
+      "description": "",
+      "unit": "each",
+      "amount": 2
+    }
+  ],
+  "faq": [
+    {
+      "q": "Do I need a reservation for a regular visit?",
+      "a": "No reservations are needed or taken for general visits. Admission and parking are free; you pay per attraction with a Castle Card (new card $2)."
+    },
+    {
+      "q": "Can we bring outside food?",
+      "a": "No outside food or drinks in the facility. Party guests may bring a cake or cupcakes. A Castle Ice Cream cake can be pre-ordered."
+    },
+    {
+      "q": "How much do attractions cost?",
+      "a": "Bowling $45 per lane per hour weekdays, $48 weekends (up to 6 people), shoes $5. Roller skating day session $11 for 2 hours ($4 each extra hour), night session $15 for 3 hours, skate rental $5. Axe throwing $28 per person (1 hour), $18 (half hour). Laser tag $9.50 per game. Ballocity $10.25. Rock wall $7 (2 climbs). Free Fall $6.50. InflataPark 1 hour $14.95, 90 min $19.95, 2 hours $22.95, Toddler Zone $4. Arcade $0.95 to $3.50 per game; VR $5 to $7."
+    },
+    {
+      "q": "What seasonal outdoor attractions are there?",
+      "a": "Outdoor attractions run spring through fall, weather permitting: go karts $8.50 to $13.75 per ride, zip line $10, mini golf $8 (7 and under, seniors) or $11 (8+), dragon coaster $6, swing ride $5.75. They may close in rain or lightning with no refund."
+    },
+    {
+      "q": "Are hours different for some attractions?",
+      "a": "On Wednesdays only bowling, axe throwing, free fall, rock wall, laser tag, mini golf, and the bar and restaurant are open. Last mini golf tee time is 45 minutes before close. InflataPark and Ballocity close one hour before closing. Hours change seasonally."
+    },
+    {
+      "q": "Can I host my own party in Jesters?",
+      "a": "Reserve table time in advance. One-hour limit, $150 table minimum. Bringing your own cake has a $1 per-person plating fee. A 20% service fee is added to the check, and a $200 Castle Card purchase is required. No party decorations. Table seating is otherwise reserved for Castle-hosted parties."
+    },
+    {
+      "q": "What payment do you accept?",
+      "a": "Cash, Visa, Mastercard, Discover, American Express. No checks; ATM on site. Unused Castle Card points are not refundable. Cards can't be used for alcohol, gratuities or special packages."
+    },
+    {
+      "q": "Can kids come without an adult?",
+      "a": "Unaccompanied minors must buy a Castle Card with at least $20."
+    },
+    {
+      "q": "What are the group booking policies?",
+      "a": "A non-refundable $100 deposit books the trip. Final payment is due on the day of the trip, cash or card. Confirmed headcount is due 48 hours before. Cancelling within 24 hours costs 50% of the final invoice. Late arrival: 10% surcharge or time deducted. Tax applies to the food portion only; activities are not taxed."
+    },
+    {
+      "q": "What food is there?",
+      "a": "Jesters Restaurant & Pub has table service with burgers, wings, pizza, sandwiches, appetizers, weekly specials, craft beer and a full bar. Jesters Cafe has quick bites."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}
