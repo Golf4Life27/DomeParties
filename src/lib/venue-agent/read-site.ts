@@ -8,10 +8,10 @@ import net from 'node:net'
 
 const MAX_BYTES = 1_500_000
 const MAX_PAGES = 6
-/** Nov 11 (1 of 3) read two whole PDFs by copying them in: a 3.1 MB file was over the cap, menus came
- *  ahead of packages, and one setup took 115 seconds. Now: rank the PDFs, read only the best one, and
- *  hand the model its web address so size is no longer capped by our copy. Retested Nov 13. */
-const READ_PDFS = true
+/** Nov 11 (1 of 3) read two whole PDFs by copying them in. Nov 13: ranking and reading one PDF by its
+ *  web address got every price right on 3 of 3, but one setup took 62 seconds (line 60), and no new
+ *  PDF-only venue could be found to finish the 5. Off: owners upload their PDF at setup instead. */
+const READ_PDFS = false
 const MAX_PDFS = 1
 /** The model reads a linked PDF itself, up to 32 MB; stay under that. */
 const MAX_PDF_BYTES = 30 * 1024 * 1024
