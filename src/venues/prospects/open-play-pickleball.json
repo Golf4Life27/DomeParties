@@ -1,0 +1,113 @@
+{
+  "slug": "open-play-pickleball",
+  "name": "Open Play Pickleball",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "8 Fernwood Road, Florham Park, NJ 07932",
+  "phone": "973-302-5268",
+  "website": "https://openplaypickleball.com/",
+  "unit": { "singular": "court", "plural": "courts", "count": 14, "guestsPerUnit": 6 },
+  "hours": {
+    "sun": [{ "open": "07:00", "close": "22:00" }],
+    "mon": [{ "open": "07:00", "close": "22:00" }],
+    "tue": [{ "open": "07:00", "close": "22:00" }],
+    "wed": [{ "open": "07:00", "close": "22:00" }],
+    "thu": [{ "open": "07:00", "close": "22:00" }],
+    "fri": [{ "open": "07:00", "close": "22:00" }],
+    "sat": [{ "open": "07:00", "close": "22:00" }]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": { "days": [], "from": null, "allDay": [] },
+  "notStated": ["tax", "deposit", "service_charge"],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Parties and events are booked by emailing play@openplaypickleball.com. Court reservations and open play are booked online through CourtReserve (free account required).",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    { "what": "Book a court, open play, memberships (CourtReserve)", "url": "https://app.courtreserve.com/Online/Portal/Index/16810" }
+  ],
+  "deposit": { "percent": null, "flat": null },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": { "percent": 0, "appliesTo": "all", "note": "" },
+  "packages": [
+    {
+      "id": "party-court-time",
+      "name": "Party / Event Court Time",
+      "description": "Private party or event (birthday, corporate team building, holiday party). Minimum 20 guests, 2 courts, 2 hours. Courts $50 per court per hour, plus a $10 per guest fee covering paddle rentals, balls, the private party room and a dedicated party coordinator. For 20-30 guests the venue suggests 4 to 5 courts.",
+      "includes": [
+        "Dedicated party coordinator for the whole session",
+        "Use of the private party room (with guest fee)",
+        "Paddle rentals and balls (with guest fee)"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 20,
+      "maxGuests": 84,
+      "days": [],
+      "pricing": { "type": "per_unit_hour", "amount": 50, "peakAmount": null, "minUnits": 2, "guestsPerUnit": null },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "private-court",
+      "name": "Private Court Reservation",
+      "description": "Dedicated court for your group, max 6 players. Base court rate $52/hour ($13 per share for a foursome) at Drop-In rates; members pay less depending on tier. Empty slots under 4 players are billed at $13. Book up to 28 days out depending on membership.",
+      "includes": ["Exclusive access to a court"],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": { "type": "per_unit_hour", "amount": 52, "peakAmount": null, "minUnits": 1, "guestsPerUnit": null },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [
+    {
+      "id": "catering",
+      "name": "Catering from Nonna's or Pastosa",
+      "description": "Optional; typically runs about $20 per person. You may also bring your own food and refreshments.",
+      "pricing": "per_person",
+      "amount": 20,
+      "amountTo": null
+    }
+  ],
+  "addOns": [
+    {
+      "id": "party-guest-fee",
+      "name": "Party guest fee",
+      "description": "Covers paddle rentals, balls, use of the private party room and a dedicated party coordinator.",
+      "unit": "per_person",
+      "amount": 10,
+      "amountTo": null
+    },
+    {
+      "id": "instructor",
+      "name": "Instruction (optional)",
+      "description": "$100 per instructor per hour, on a separate court to teach new players.",
+      "unit": "each",
+      "amount": 100,
+      "amountTo": null
+    }
+  ],
+  "faq": [
+    { "q": "Can we bring our own food?", "a": "You are always welcome to bring your own food and refreshments to celebrate your event." },
+    { "q": "Do I need a membership to play?", "a": "OPEN TO THE PUBLIC! Paid membership not required to play but a free CourtReserve account is required to book and participate." },
+    { "q": "How many players per court?", "a": "A max of 6 players are allowed per court. Players 5 & 6 pay their individual share rate based on their membership level." },
+    { "q": "What if fewer than 4 players book a court?", "a": "The empty \"Ghost Slots\" are billed at the full Drop-In rate ($13.00) and must be covered by the players present." },
+    { "q": "What is the cancellation policy?", "a": "Cancellation: Up to 4 hours in advance without penalty." },
+    { "q": "How much is Open Play?", "a": "Open Play (2-hr sessions) is $18.00 per session for Drop-In players, $9.00 for Silver Members, $10.00 with the College Pass, and free for Plus, Platinum and Weekday (M-F 7am-5pm, excludes holidays) members." },
+    { "q": "What is the minimum for a party?", "a": "MINIMUM REQUIREMENT: 20 GUESTS • 2 COURTS • 2 HOURS" },
+    { "q": "How do I book a party?", "a": "Email us to book your event at play@openplaypickleball.com." }
+  ],
+  "handoff": { "email": "play@openplaypickleball.com", "webhookUrl": null },
+  "pilot": null
+}

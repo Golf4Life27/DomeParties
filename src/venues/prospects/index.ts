@@ -27,6 +27,8 @@ import lonestarRage from './lonestar-rage.json'
 import monsterMiniGolfNorwood from './monster-mini-golf-norwood.json'
 import motorWorldVirginiaBeach from './motor-world-virginia-beach.json'
 import mvpLanes from './mvp-lanes.json'
+import openPlayPickleball from './open-play-pickleball.json'
+import pkldMillstone from './pkld-millstone.json'
 import nextgenGolf from './nextgen-golf.json'
 import officeGolf from './office-golf.json'
 import pacificLanes from './pacific-lanes.json'
@@ -98,6 +100,8 @@ export const PROSPECTS: unknown[] = [
   strikersJc,
   surgeBatonRouge,
   tShotz,
+  openPlayPickleball,
+  pkldMillstone,
   tenPinAlley,
   theGolfDome,
   theGolfLounge,

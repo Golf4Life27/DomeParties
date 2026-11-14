@@ -1,0 +1,471 @@
+{
+  "slug": "pkld-millstone",
+  "name": "PKLD Millstone",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "400 Rike Drive, Suite 2B, Millstone Township, NJ 08535",
+  "phone": "732-813-7553",
+  "website": "https://www.pkldmillstone.com/",
+  "unit": {
+    "singular": "court",
+    "plural": "courts",
+    "count": 4,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "06:00",
+        "close": "22:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "06:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "06:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "06:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "06:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "06:00",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "06:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Courts are by reservation only through the online court reservation portal. For parties, fill in the party quote form on the website or call 732-813-7553.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Reserve a court",
+      "url": "https://app.courtreserve.com/Portal/PKLD"
+    },
+    {
+      "what": "Reserve a court (portal)",
+      "url": "https://app.courtreserve.com/Online/Portal/Index/14163"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "court-rental",
+      "name": "Court Rental (Courts 1, 2 & 3)",
+      "description": "Per court per hour, up to 6 players. Early Bird $22 (6:00 AM - 8:00 AM). Mid-Day $26 (Monday - Friday, 12:00 PM - 5:00 PM). Includes use of the Players Lounge and seating near your court.",
+      "includes": [
+        "Use of the Players Lounge",
+        "Seating near your rented court"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 18,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 44,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "court-3-half",
+      "name": "Court 3 1/2 Rental",
+      "description": "Per hour, up to 2 players. Early Bird $12 (6:00 AM - 8:00 AM). Mid-Day $14 (Monday - Friday, 12:00 PM - 5:00 PM).",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 2,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 24,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 2
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "court-4-hourly",
+      "name": "Court 4 (Private) Rental",
+      "description": "New Jersey's only completely private indoor pickleball court. Per hour, up to 6 players. Early Bird $24 (6:00 AM - 8:00 AM). Mid-Day $28 (Monday - Friday, 12:00 PM - 5:00 PM).",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 48,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 6
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "lesson",
+      "name": "Lesson with a Pro",
+      "description": "Private Lesson $90/hour. Pro + 2: $50 per hour per person. Pro + 3: $35 per hour per person.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 3,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 90,
+        "peakAmount": null,
+        "tiers": [
+          {
+            "minGuests": 2,
+            "amount": 50
+          },
+          {
+            "minGuests": 3,
+            "amount": 35
+          }
+        ]
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "play-with-a-pro",
+      "name": "Play with a Pro (For 3 People)",
+      "description": "$30 per hour per person, for 3 people.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 3,
+      "maxGuests": 3,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 30,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "facility-3-court-2h",
+      "name": "3 Court Facility Rental - 2 Hours",
+      "description": "Private party rental of Courts 1, 2 & 3.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 18,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 425,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "facility-3-court-3h",
+      "name": "3 Court Facility Rental - 3 Hours",
+      "description": "Private party rental of Courts 1, 2 & 3.",
+      "includes": [],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 18,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 625,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "facility-3-court-4h",
+      "name": "3 Court Facility Rental - 4 Hours",
+      "description": "Private party rental of Courts 1, 2 & 3.",
+      "includes": [],
+      "durationMinutes": 240,
+      "minGuests": 1,
+      "maxGuests": 18,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 825,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "facility-3-court-5h",
+      "name": "3 Court Facility Rental - 5 Hours",
+      "description": "Private party rental of Courts 1, 2 & 3.",
+      "includes": [],
+      "durationMinutes": 300,
+      "minGuests": 1,
+      "maxGuests": 18,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 995,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "court-4-party-2h",
+      "name": "Court 4 Only Private Court Rental - 2 Hours",
+      "description": "Private party rental of Court 4.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 145,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "court-4-party-3h",
+      "name": "Court 4 Only Private Court Rental - 3 Hours",
+      "description": "Private party rental of Court 4.",
+      "includes": [],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 225,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "court-4-party-4h",
+      "name": "Court 4 Only Private Court Rental - 4 Hours",
+      "description": "Private party rental of Court 4.",
+      "includes": [],
+      "durationMinutes": 240,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 295,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "court-4-party-5h",
+      "name": "Court 4 Only Private Court Rental - 5 Hours",
+      "description": "Private party rental of Court 4.",
+      "includes": [],
+      "durationMinutes": 300,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 350,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "facility-4-court-2h",
+      "name": "4 Court Facility Rental - 2 Hours",
+      "description": "Private party rental of Courts 1, 2, 3 & 4.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 24,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 525,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "facility-4-court-3h",
+      "name": "4 Court Facility Rental - 3 Hours",
+      "description": "Private party rental of Courts 1, 2, 3 & 4.",
+      "includes": [],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 24,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 775,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "facility-4-court-4h",
+      "name": "4 Court Facility Rental - 4 Hours",
+      "description": "Private party rental of Courts 1, 2, 3 & 4.",
+      "includes": [],
+      "durationMinutes": 240,
+      "minGuests": 1,
+      "maxGuests": 24,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 1025,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "facility-4-court-5h",
+      "name": "4 Court Facility Rental - 5 Hours",
+      "description": "Private party rental of Courts 1, 2, 3 & 4.",
+      "includes": [],
+      "durationMinutes": 300,
+      "minGuests": 1,
+      "maxGuests": 24,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 1225,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "private-suite",
+      "name": "Private Suite Rental",
+      "description": "$65 per hour for a private suite. $25 per hour if accompanied by a court rental. Call 732-813-7553.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 65,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 40
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "suite-with-court",
+      "name": "Private Suite with Court Rental",
+      "description": "Per hour, when booked together with a court rental.",
+      "unit": "each",
+      "amount": 25,
+      "amountTo": null
+    }
+  ],
+  "faq": [
+    {
+      "q": "Do I need a reservation?",
+      "a": "Hours of Availability: BY RESERVATION ONLY. Monday - Sunday 6:00 AM - 10:00 PM."
+    },
+    {
+      "q": "Can I bring outside food or decorations to a court rental?",
+      "a": "Hourly Court Rental includes the use of our Players Lounge and Seating near your rented court. If any outside food, decorations, entertainment, unordinary number of spectators, etc., is brought into the facility, PKLD considers this applicable to Private Party Rental Rates."
+    },
+    {
+      "q": "Do we need pickleball experience for a party?",
+      "a": "No pickleball experience necessary — just bring your holiday spirit and get ready for a great time!"
+    },
+    {
+      "q": "What kinds of parties do you host?",
+      "a": "Whether it's a birthday, corporate function, or just a gathering with friends, hosting a pickleball party with us is guaranteed to be a smash! Book A Court or the Entire Facility! We'll tailor the party to fit your needs and preferences, with catering options and coaching & games available."
+    },
+    {
+      "q": "Who are the courts for?",
+      "a": "Players of all skill levels, from beginners to advanced players."
+    }
+  ],
+  "handoff": {
+    "email": "info@pkldmillstone.com",
+    "webhookUrl": null
+  },
+  "pilot": null
+}
