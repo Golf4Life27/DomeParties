@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError, tooThinToDraft, bookingHostsIn, pdfLinksIn, rankedPdfLinksIn } from './read-site'
+import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError, tooThinToDraft, bookingHostsIn, pdfLinksIn, rankedPdfLinksIn, linkScore } from './read-site'
 
 test('website addresses: plain names work, anything not a public site is refused', () => {
   assert.equal(normaliseUrl('example.com').toString(), 'https://example.com/')
@@ -79,3 +79,24 @@ test('the party packages PDF is ranked ahead of menus and event-space sheets', (
   assert.ok((got.find((g) => g[0] === 'Holiday-Menu-2026.pdf')?.[1] as number) < 0)
   assert.ok((got.find((g) => g[0] === 'Birthday-Waiver.pdf')?.[1] as number) < 0)
 })
+
+test('link ranking: party, private event and package pages come before hours, leagues and blogs', () => {
+  const links = [
+    ['Hours', '/hours/'],
+    ['Leagues', '/tennis-leagues/'],
+    ['Pricing', '/pricing/'],
+    ['VIEW PACKAGE', '/premiumpackage'],
+    ['Private Events', '/private/'],
+    ['Parties & Events', '/parties-events/'],
+    ['Team Building', '/teambuilding'],
+    ['Our Teams', '/pickleball-team/'],
+  ]
+  const ranked = [...links].sort((a, b) => linkScore(b[0], b[1]) - linkScore(a[0], a[1])).map((l) => l[1])
+  assert.deepEqual(ranked.slice(0, 2).sort(), ['/parties-events/', '/private/'])
+  assert.ok(ranked.indexOf('/premiumpackage') < ranked.indexOf('/pricing/'))
+  assert.ok(ranked.indexOf('/teambuilding') < ranked.indexOf('/hours/'))
+  assert.ok(linkScore('Leagues', '/tennis-leagues/') < 0)
+  assert.ok(linkScore('Our Teams', '/pickleball-team/') < 0)
+  assert.ok(linkScore('Team Building', '/teambuilding') >= 4)
+})
+

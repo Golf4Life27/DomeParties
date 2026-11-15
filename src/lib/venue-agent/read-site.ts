@@ -7,7 +7,11 @@ import net from 'node:net'
 // pointed at anything but the open web.
 
 const MAX_BYTES = 1_500_000
-const MAX_PAGES = 6
+/** Nov 14: 6 pages in home page order missed party prices one click deeper on 3 of 6 venues. Now the
+ *  best-scored links go first, party pages' own links are followed, and up to 8 pages are read. */
+const MAX_PAGES = 8
+/** Pages fetched side by side, so the extra pages add little time. */
+const BATCH = 3
 /** Nov 11 (1 of 3) read two whole PDFs by copying them in. Nov 13: ranking and reading one PDF by its
  *  web address got every price right on 3 of 3, but one setup took 62 seconds (line 60), and no new
  *  PDF-only venue could be found to finish the 5. Off: owners upload their PDF at setup instead. */
@@ -206,7 +210,6 @@ export function bookingHostsIn(html: string, base: URL): string[] {
   return [...hosts].slice(0, 10)
 }
 
-/** The home page plus the few pages most likely to hold hours, parties and prices. */
 /** The party or price-list PDFs a page links to, by file name or link text. A venue often keeps its
  *  packages in a PDF on its site builder's file host, so the host can differ from the site's own. */
 export function pdfLinksIn(html: string, base: URL): URL[] {
@@ -268,6 +271,23 @@ async function checkPdf(start: URL): Promise<{ url: string } | null> {
   return null
 }
 
+/** A link scoring this high is a party page, whose own links are followed. */
+const PARTY_PAGE = 4
+
+/** How likely a link is to lead to party prices, from its text and path. Party, private event,
+ *  group and package pages first; prices next; hours, FAQ and menus after; leagues, teams,
+ *  memberships, jobs and blogs last. */
+export function linkScore(text: string, path: string): number {
+  const s = `${text} ${path}`.toLowerCase()
+  let n = 0
+  if (/part(y|ies)|birthday|bday|private|celebrat/.test(s)) n += 6
+  if (/package|pkg|event|group|corporate|team ?build|outing|field ?trip/.test(s)) n += 4
+  if (/pric|rate|cost/.test(s)) n += 3
+  if (/hour|faq|book|reserv|menu|food|lane|bay|simulator/.test(s)) n += 1
+  if (/league|teams?\b(?! ?build)|member|career|job|employ|blog|news|waiver|privacy|terms|login|account|gift ?card|cart/.test(s)) n -= 4
+  return n
+}
+
 export async function readVenueSite(input: string): Promise<SitePages> {
   const home = normaliseUrl(input)
   const tryPage = (u: URL) =>
@@ -285,21 +305,36 @@ export async function readVenueSite(input: string): Promise<SitePages> {
   const bookingHosts = new Set(bookingHostsIn(first.html, first.url))
   const pdfLinks = rankedPdfLinksIn(first.html, first.url)
   const seen = new Set([first.url.toString()])
-  const candidates = allLinks
-    .filter((l) => bare(l.url.hostname) === bare(first.url.hostname))
-    .filter((l) => KEYWORDS.test(l.text) || KEYWORDS.test(l.url.pathname))
-    .filter((l) => !/\.(pdf|jpe?g|png|gif|zip)$/i.test(l.url.pathname))
-  for (const c of candidates) {
-    if (pages.length >= MAX_PAGES) break
-    const key = c.url.toString()
-    if (seen.has(key)) continue
-    seen.add(key)
-    const page = await fetchPage(c.url).catch(() => null)
-    if (page) {
+  const queue: { url: URL; score: number; order: number }[] = []
+  let order = 0
+  const enqueue = (html: string, base: URL) => {
+    for (const l of linksIn(html, base)) {
+      if (bare(l.url.hostname) !== bare(first.url.hostname)) continue
+      if (!(KEYWORDS.test(l.text) || KEYWORDS.test(l.url.pathname))) continue
+      if (/\.(pdf|jpe?g|png|gif|zip)$/i.test(l.url.pathname)) continue
+      const key = l.url.toString()
+      if (seen.has(key)) continue
+      const score = linkScore(l.text, l.url.pathname)
+      const had = queue.find((q) => q.url.toString() === key)
+      if (had) had.score = Math.max(had.score, score)
+      else queue.push({ url: l.url, score, order: order++ })
+    }
+  }
+  enqueue(first.html, first.url)
+  while (pages.length < MAX_PAGES && queue.length) {
+    // Best first; ties keep the order the site lists them in.
+    queue.sort((a, b) => b.score - a.score || a.order - b.order)
+    const batch = queue.splice(0, Math.min(BATCH, MAX_PAGES - pages.length))
+    for (const c of batch) seen.add(c.url.toString())
+    const got = await Promise.all(batch.map((c) => fetchPage(c.url).catch(() => null)))
+    got.forEach((page, i) => {
+      if (!page || pages.length >= MAX_PAGES || pages.some((x) => x.url === page.url.toString())) return
       pages.push({ url: page.url.toString(), text: htmlToText(page.html).slice(0, 12000) })
       for (const h of bookingHostsIn(page.html, page.url)) bookingHosts.add(h)
       for (const r of rankedPdfLinksIn(page.html, page.url)) if (!pdfLinks.some((x) => x.url.toString() === r.url.toString())) pdfLinks.push(r)
-    }
+      // A party page often links each package from its own page: follow those too.
+      if (batch[i].score >= PARTY_PAGE) enqueue(page.html, page.url)
+    })
   }
   // Best first across every page read; a menu or anything scored below zero is never read.
   pdfLinks.sort((a, b) => b.score - a.score)
