@@ -1,0 +1,682 @@
+{
+  "slug": "hukd-golf-bury",
+  "name": "HUKD Golf Bury",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-GB",
+  "language": "English",
+  "currency": "GBP",
+  "timeZone": "Europe/London",
+  "address": "Hukd Golf, 35 Walmersley Rd, Bury, BL9 5AE",
+  "phone": "0161 729 0666",
+  "website": "https://hukdgolf.com/",
+  "unit": {
+    "singular": "bay",
+    "plural": "bays",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "09:00",
+        "close": "19:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": true,
+  "hoursUnclear": [
+    "fri",
+    "sat"
+  ],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "fri",
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://togo2.app/BookingJourney?venueId=693fd4516c4208bed9e88df8",
+    "howItWorks": "Groups of 15 or under book online. Groups of 16+ speak to the party team. Kids parties are booked by enquiry.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Activity booking (alternate booking page)",
+      "url": "https://alpha.togo.uk.com/booking/v4/activity.aspx?venueid=2495"
+    },
+    {
+      "what": "HUKD Rewards sign up",
+      "url": "https://ordertab.menu/hukdgolf/public-member-registration/HUKDREWARDS%20%20"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "golf-sim-1-player",
+      "name": "Golf Simulator - 1 Player",
+      "description": "TrackMan golf simulator, 350+ courses and mini games. £20 per hour for 1 player. Save 25% before 5pm Mon-Fri (excludes school holidays and peak dates).",
+      "includes": [
+        "1 hour golf simulator bay"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 1,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 20,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "golf-sim-2-6-players",
+      "name": "Golf Simulator - 2-6 Players",
+      "description": "TrackMan golf simulator, up to 6 players per bay. £32 per hour per bay. Save 25% before 5pm Mon-Fri (excludes school holidays and peak dates).",
+      "includes": [
+        "1 hour golf simulator bay"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 2,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 32,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "sports-sim",
+      "name": "Sports Simulator",
+      "description": "Multisport simulator (football, basketball, bowling, disc golf, dodgeball), up to 6 players, £20 per 30 minutes per bay.",
+      "includes": [
+        "30 minutes sports simulator"
+      ],
+      "durationMinutes": 30,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 20,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "crazy-golf",
+      "name": "Crazy Golf - 18 Holes",
+      "description": "18 holes of neon glow-in-the-dark crazy golf. £12 per adult, £9 per under 16. Free silent disco.",
+      "includes": [
+        "18 holes of crazy golf"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 12,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "tech-darts",
+      "name": "Tech Darts",
+      "description": "High-tech darts with 14 games. Up to 8 players per lane. Peak periods have a minimum charge of 4 players per lane.",
+      "includes": [
+        "1 hour tech darts"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 8,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 8,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "racing-sim",
+      "name": "Racing Simulator",
+      "description": "£12pp per session (2 x 10 min experiences), up to 6 players.",
+      "includes": [
+        "2 x 10 minute racing experiences"
+      ],
+      "durationMinutes": 20,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 12,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "party-1-activity",
+      "name": "Group Package - 1 Activity",
+      "description": "For groups of 15 or under. Choose Golf Sim, Crazy Golf, Tech Darts or Sport Sim. Alcoholic drink upgrades available.",
+      "includes": [
+        "1 activity",
+        "1 soft drink"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 15,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 16,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "party-2-activities",
+      "name": "Group Package - 2 Activities",
+      "description": "For groups of 15 or under. Choose from Golf Sim, Crazy Golf, Tech Darts or Sport Sim. Alcoholic drink upgrades available.",
+      "includes": [
+        "2 activities",
+        "1 soft drink"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 15,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 22,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "party-3-activities",
+      "name": "Group Package - 3 Activities",
+      "description": "For groups of 15 or under. Choose from Golf Sim, Crazy Golf, Tech Darts or Sport Sim. Alcoholic drink upgrades available.",
+      "includes": [
+        "3 activities",
+        "1 soft drink"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 15,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 28,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "xmas-tinsel-taster",
+      "name": "Christmas - Tinsel Taster",
+      "description": "Available 13th November to 31st December. 1 activity (Golf Sim, Crazy Golf, Sport Sim, Tech Darts) and a welcome drink. Add a festive feast for £12pp.",
+      "includes": [
+        "1 activity",
+        "1 welcome drink"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 15,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 16,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "xmas-get-merry",
+      "name": "Christmas - Get Merry",
+      "description": "Available 13th November to 31st December. 2 activities and a welcome drink. Add a festive feast for £12pp.",
+      "includes": [
+        "2 activities",
+        "1 welcome drink"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 15,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 22,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "xmas-got-sleighed",
+      "name": "Christmas - Got Sleighed",
+      "description": "Available 13th November to 31st December. 3 activities and a welcome drink. Add a festive feast for £12pp.",
+      "includes": [
+        "3 activities",
+        "1 welcome drink"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 15,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 28,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "kids-ultimate-party",
+      "name": "Kids Ultimate Party",
+      "description": "Book Mon-Fri and save 25% (excludes school holidays, bank holidays and select dates). By enquiry.",
+      "includes": [
+        "45 mins in the party area",
+        "30 min sim (Golf or Sports)",
+        "18 holes of Crazy Golf",
+        "Party menu",
+        "Bottomless Squash"
+      ],
+      "durationMinutes": 45,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 24,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "kids-mega-party",
+      "name": "Kids Mega Party",
+      "description": "Book Mon-Fri and save 25% (excludes school holidays, bank holidays and select dates). By enquiry.",
+      "includes": [
+        "45 mins in the party area",
+        "18 holes of Crazy Golf",
+        "Party menu",
+        "Bottomless Squash"
+      ],
+      "durationMinutes": 45,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 20,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "eat-drink-play",
+      "name": "Eat, Drink, Play",
+      "description": "Choose 1 activity, main meal and a soft drink (upgrade to house drink available).",
+      "includes": [
+        "1 activity",
+        "Main meal",
+        "1 soft drink"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 20,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "social-golf-1h",
+      "name": "Social Golf - 1 Hour",
+      "description": "Off-peak Mon-Thu £25pp, peak Fri-Sun £35pp. Min 2 players. Upgrade to house drink £3pp. Days and times vary.",
+      "includes": [
+        "1 hour golf sim",
+        "Main meal",
+        "Soft drink"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 2,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 25,
+        "peakAmount": 35,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "social-golf-2h",
+      "name": "Social Golf - 2 Hours",
+      "description": "Off-peak Mon-Thu £35pp, peak Fri-Sun £45pp. Min 2 players. Upgrade to house drink £3pp. Days and times vary.",
+      "includes": [
+        "2 hours golf sim",
+        "Main meal",
+        "Soft drink"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 2,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 35,
+        "peakAmount": 45,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "fourball-and-beer",
+      "name": "Fourball & a Beer",
+      "description": "2 hours golf and a beer. £10pp Mon-Thu, £15pp Fri-Sun. Up to 6 players. Exclusion dates apply.",
+      "includes": [
+        "2 hours golf sim",
+        "1 beer"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 10,
+        "peakAmount": 15,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "lets-play-2",
+      "name": "Let's Play - 2 Activities",
+      "description": "Mix & match 2 activities: Crazy Golf, Golf Sim, Sport Sim, Tech Darts.",
+      "includes": [
+        "2 activities"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 18,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "lets-play-3",
+      "name": "Let's Play - 3 Activities",
+      "description": "Mix & match 3 activities: Crazy Golf, Golf Sim, Sport Sim, Tech Darts.",
+      "includes": [
+        "3 activities"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 22,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "unlimited-crazy-drink",
+      "name": "Unlimited Crazy + Drink",
+      "description": "Every Friday & Saturday 7pm - close. Unlimited crazy golf plus one house drink or cocktail. Over 18s only.",
+      "includes": [
+        "Unlimited crazy golf from 7pm",
+        "1 house drink or cocktail"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 18,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [
+    {
+      "id": "pizza-fries",
+      "name": "Pizza & Fries",
+      "description": "The Marge, Pepperoni, Spicy BBQ meatball, The Veggie",
+      "pricing": "per_person",
+      "amount": 12,
+      "amountTo": null
+    },
+    {
+      "id": "add-sides",
+      "name": "Add Sides",
+      "description": "Mac and cheese bites, mozzarella sticks, cauli bites, chicken wings",
+      "pricing": "per_person",
+      "amount": 4,
+      "amountTo": null
+    },
+    {
+      "id": "festive-feast",
+      "name": "Festive Feast (Christmas packages)",
+      "description": "Add-on for Christmas packages",
+      "pricing": "per_person",
+      "amount": 12,
+      "amountTo": null
+    }
+  ],
+  "addOns": [
+    {
+      "id": "house-drinks-upgrade",
+      "name": "House Drinks Upgrade",
+      "description": "Draught, bottled beers / ciders & house wines",
+      "unit": "per_person",
+      "amount": 3,
+      "amountTo": null
+    },
+    {
+      "id": "premium-drinks-upgrade",
+      "name": "Premium Drinks Upgrade",
+      "description": "House drinks plus cocktails, spirits & mixers",
+      "unit": "per_person",
+      "amount": 6,
+      "amountTo": null
+    },
+    {
+      "id": "house-drink-tokens",
+      "name": "House Drink Tokens",
+      "description": "Draught, bottled beers / ciders & house wines",
+      "unit": "per_person",
+      "amount": 6,
+      "amountTo": null
+    },
+    {
+      "id": "premium-drink-tokens",
+      "name": "Premium Drink Tokens",
+      "description": "",
+      "unit": "per_person",
+      "amount": 9,
+      "amountTo": null
+    },
+    {
+      "id": "beer-bucket",
+      "name": "Beer Bucket",
+      "description": "6 x bottled beers / ciders served ice cold",
+      "unit": "each",
+      "amount": 25,
+      "amountTo": null
+    },
+    {
+      "id": "shots",
+      "name": "Shots",
+      "description": "",
+      "unit": "each",
+      "amount": 4,
+      "amountTo": null
+    },
+    {
+      "id": "extra-sport-sim",
+      "name": "Extra Sport Simulator (30 min)",
+      "description": "",
+      "unit": "per_person",
+      "amount": 5,
+      "amountTo": null
+    },
+    {
+      "id": "extra-golf-sim",
+      "name": "Extra Golf Simulator (30 min)",
+      "description": "",
+      "unit": "per_person",
+      "amount": 5,
+      "amountTo": null
+    },
+    {
+      "id": "extra-crazy-golf",
+      "name": "Extra Crazy Golf (per game)",
+      "description": "",
+      "unit": "per_person",
+      "amount": 8,
+      "amountTo": null
+    }
+  ],
+  "faq": [
+    {
+      "q": "Do I need to book to watch live sport?",
+      "a": "Just want to watch the match? There's no need to book to watch in the bar area. You can book a VIP 4-metre viewing bay, with match day packages from £15pp."
+    },
+    {
+      "q": "How do I book for a big group?",
+      "a": "Groups of 15 or under can book online. Groups of 16+: speak to our party team and we'll tee up the perfect celebration."
+    },
+    {
+      "q": "How many players per golf bay?",
+      "a": "Up to six players per bay."
+    },
+    {
+      "q": "Is there an age limit?",
+      "a": "Unlimited Crazy + Drink (Friday & Saturday 7pm - close) is over 18s only. Crazy golf is £9 for under 16s."
+    },
+    {
+      "q": "Are there discounts on kids parties?",
+      "a": "Book a Kids Party Monday to Friday and save 25%. Excludes school holidays, Bank Holidays and select dates."
+    },
+    {
+      "q": "Do you offer junior coaching?",
+      "a": "Junior group coaching Tuesdays & Thursdays: ages 6-10 5pm-6pm, ages 11-16 6pm-7pm, from £7 per child."
+    },
+    {
+      "q": "Is there anything extra at crazy golf?",
+      "a": "There's even a silent disco which is free to use."
+    }
+  ],
+  "handoff": {
+    "email": "bury@hukdgolf.com",
+    "webhookUrl": null
+  },
+  "pilot": null
+}

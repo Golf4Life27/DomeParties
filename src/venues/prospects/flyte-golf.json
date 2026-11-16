@@ -1,0 +1,184 @@
+{
+  "slug": "flyte-golf",
+  "name": "Flyte Golf",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-IE",
+  "language": "English",
+  "currency": "EUR",
+  "timeZone": "Europe/Dublin",
+  "address": "Unit 1A, Marina Commercial Park, Ballintemple, Cork, T12 WY83",
+  "phone": "",
+  "website": "https://www.flytegolf.ie/",
+  "unit": {
+    "singular": "bay",
+    "plural": "bays",
+    "count": 5,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": false,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Book bays online. For group events and private or corporate hire, send an enquiry by form or email to info@flytegolf.ie. Flyte Golf replies within one business day with a tailored proposal.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book a bay",
+      "url": "https://yourgolfbooking.com/venues/flyte/booking/simulator-bays"
+    },
+    {
+      "what": "Gift cards",
+      "url": "https://yourgolfbooking.com/venues/flyte/topups"
+    },
+    {
+      "what": "Memberships",
+      "url": "https://yourgolfbooking.com/venues/flyte/memberships"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "bay-session",
+      "name": "Bay Session (hourly)",
+      "description": "Per bay. Up to 4 players, and the rate stays the same whatever the group size. Includes all 400+ courses, full TrackMan data, driving range and skills game modes. 60 min €60, 90 min €90 (Extended Play), 120 min €120 (Full Session).",
+      "includes": [
+        "Up to 4 players per bay",
+        "All 400+ courses",
+        "Full TrackMan data",
+        "Driving range & skills game modes"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 20,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 60,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "quick-hit",
+      "name": "Quick Hit (30 minutes)",
+      "description": "30 minutes per bay. Good for a warm-up, a practice drill or a quick solo session. Up to 4 players.",
+      "includes": [
+        "Up to 4 players",
+        "All 400+ courses",
+        "Full TrackMan data",
+        "Driving range mode"
+      ],
+      "durationMinutes": 30,
+      "minGuests": 1,
+      "maxGuests": 4,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 30,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "private-hire",
+      "name": "Private Hire – Group & Corporate Events",
+      "description": "Exclusive hire of 1 bay or all 5 for corporate days, birthdays, stag & hen parties, golf societies, client entertainment and schools. Custom competitions and catering options are available. Pricing comes in a tailored proposal.",
+      "includes": [
+        "Exclusive bay or full venue access",
+        "Full TrackMan technology",
+        "Custom competitions",
+        "Catering options",
+        "Dedicated event contact"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 20,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "How many players can use one bay?",
+      "a": "Bring up to 4 players. The rate stays the same regardless of group size."
+    },
+    {
+      "q": "How big a group can you take?",
+      "a": "Up to 20 guests for full venue hire, all 5 bays. Custom formats available."
+    },
+    {
+      "q": "Is there parking?",
+      "a": "Parking available on-site. Easy public transport access."
+    },
+    {
+      "q": "Is the venue accessible?",
+      "a": "Accessible venue."
+    },
+    {
+      "q": "Do we need golf experience?",
+      "a": "No golf experience needed. TrackMan technology levels the playing field, so first-timers compete with seasoned golfers from minute one."
+    },
+    {
+      "q": "Can we add food and drinks?",
+      "a": "Add food and drinks packages to your event. We'll coordinate catering to suit your group size, duration, and budget."
+    },
+    {
+      "q": "Do you offer memberships?",
+      "a": "Monthly €199/month: 2 hrs Mon–Fri, 10am–7pm, cancel anytime. Annual €1,399/year: 2 hrs, 7 days/wk, 10am–7pm."
+    },
+    {
+      "q": "How quickly do you reply to enquiries?",
+      "a": "We'll respond within one business day."
+    }
+  ],
+  "handoff": {
+    "email": "info@flytegolf.ie",
+    "webhookUrl": null
+  },
+  "pilot": null
+}

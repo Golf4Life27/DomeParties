@@ -51,6 +51,12 @@ import theShackGolfClub from './the-shack-golf-club.json'
 import triadLanes from './triad-lanes.json'
 import tusseyMountainFunCentre from './tussey-mountain-fun-centre.json'
 import wisconsinIndoorGolfCenter from './wisconsin-indoor-golf-center.json'
+import cityGreensGolf from './city-greens-golf.json'
+import hukdGolfBury from './hukd-golf-bury.json'
+import pitchDublin from './pitch-dublin.json'
+import flyteGolf from './flyte-golf.json'
+import golfspace from './golfspace.json'
+import golfSquare from './golf-square.json'
 
 // Real venues' chats set up from their public websites (or, where a site blocked
 // the reader, from text gathered off public listings), for the owner to try.
@@ -102,6 +108,12 @@ export const PROSPECTS: unknown[] = [
   tShotz,
   openPlayPickleball,
   pkldMillstone,
+  cityGreensGolf,
+  hukdGolfBury,
+  pitchDublin,
+  flyteGolf,
+  golfspace,
+  golfSquare,
   tenPinAlley,
   theGolfDome,
   theGolfLounge,
