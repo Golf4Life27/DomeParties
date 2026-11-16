@@ -214,7 +214,37 @@ async function verifyIntentAmount(
       : !booking.stripePaymentIntentId || booking.stripePaymentIntentId === intent.id
   if (intent.amount >= expected && intentMatches) return true
 
-  await prisma.booking.update({ where: { id: bookingId }, data: { needsReview: true } })
+  // A deposit intent that was minted for THIS booking (its metadata says so —
+  // that is how it was routed here) and covers at least what is owed now is real
+  // money for this event. Refusing it only because a newer intent replaced it on
+  // file is what left paid guests unconfirmed, then had their hold released and
+  // their bays put back on sale 30 minutes later. Confirm it; if it paid MORE
+  // than is owed (the price dropped after the intent was made, e.g. a promo),
+  // tell staff exactly how much to hand back, and retire the replaced intent so
+  // the guest cannot be charged a second time from another tab.
+  if (kind === 'deposit' && intent.amount >= expected && intent.metadata?.bookingId === bookingId) {
+    const replaced = booking.stripePaymentIntentId
+    if (replaced && replaced !== intent.id) {
+      await getStripe()?.paymentIntents.cancel(replaced).catch(() => undefined)
+    }
+    const over = intent.amount - expected
+    if (over > 0) {
+      await notifyStaff({
+        title: `Deposit overpaid by ${formatCents(over)} — ${booking.reference}`,
+        lines: [
+          `${booking.customerName ?? 'Guest'} paid ${formatCents(intent.amount)} but the deposit owed is ${formatCents(expected)}.`,
+          'The booking is being confirmed. Refund the difference in Stripe and let the guest know.',
+        ],
+        adminPath: `/admin/bookings/${bookingId}`,
+        urgent: true,
+      })
+    }
+    return true
+  }
+
+  // Not confirmed: keep the bays held while staff look, so the money is never
+  // sitting against a booking whose hold has quietly lapsed back to a draft.
+  await prisma.booking.update({ where: { id: bookingId }, data: { needsReview: true, holdExpiresAt: null } })
   await notifyStaff({
     title: `Payment amount mismatch — ${booking.reference}`,
     lines: [
@@ -227,7 +257,7 @@ async function verifyIntentAmount(
       }.`,
       kind === 'balance'
         ? 'The money IS in Stripe but was NOT recorded against the booking, so it still reads as owing. Check both, then mark it paid or refund it.'
-        : 'The booking was NOT confirmed. Check Stripe and the booking, then approve or refund.',
+        : 'The booking was NOT confirmed, and its bays stay held. Check Stripe; to keep it, press Approve on the booking (it finds the payment in Stripe), otherwise refund.',
     ],
     adminPath: `/admin/bookings/${bookingId}`,
     urgent: true,

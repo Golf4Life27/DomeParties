@@ -16,6 +16,12 @@ export async function POST(_req: NextRequest, ctx: { params: Promise<{ id: strin
     return NextResponse.json({ error: 'This booking is not awaiting payment.' }, { status: 409 })
   }
   const payment = await createDepositIntent(id)
+  if (payment.mode === 'paid') {
+    return NextResponse.json(
+      { error: 'Your deposit has already come through — we are confirming your booking now.' },
+      { status: 409 },
+    )
+  }
   return NextResponse.json({
     payment,
     depositAmount: booking.depositAmount,

@@ -13,7 +13,7 @@ export default function PayDeposit({ bookingId }: { bookingId: string }) {
     fetch(`/api/bookings/${bookingId}/pay`, { method: 'POST' })
       .then((r) => r.json())
       .then((d) => {
-        if (d.payment) setInfo({ ...d.payment, depositAmount: d.depositAmount })
+        if (d.payment) setInfo({ ...d.payment, depositAmount: d.payment.amount }) // what is actually charged, card fee included
         else setError(d.error ?? 'Could not start payment.')
       })
       .catch(() => setError('Could not start payment.'))

@@ -488,6 +488,39 @@ export async function createDepositIntent(id: string) {
   if (!stripe) {
     return { mode: 'dev' as const, clientSecret: null, amount: charge, cardFee }
   }
+  // ONE deposit intent per booking, kept in step with what is owed.
+  //
+  // This used to mint a fresh intent on every call — and the checkout page calls
+  // it again whenever a promo or gift card is applied, and every time the pay
+  // link is opened. The card form already on screen stays bound to the FIRST
+  // intent (Stripe's payment form cannot switch intents once mounted), so the
+  // guest saw the new, lower amount on the button but was charged the old one,
+  // and the webhook then refused the payment because it was not the intent on
+  // file: money taken, booking left unconfirmed, hold released 30 minutes later.
+  // Updating the existing intent's amount instead means whichever form the guest
+  // pays from charges what is owed now.
+  if (booking.stripePaymentIntentId) {
+    const existing = await stripe.paymentIntents.retrieve(booking.stripePaymentIntentId)
+    if (existing.status === 'succeeded' || existing.status === 'processing') {
+      // Money is already in (or on its way). Never open a second charge; the
+      // webhook will confirm the booking.
+      return { mode: 'paid' as const, clientSecret: null, amount: existing.amount, cardFee: 0 }
+    }
+    if (existing.status !== 'canceled') {
+      if (existing.amount === charge) {
+        return { mode: 'stripe' as const, clientSecret: existing.client_secret, amount: charge, cardFee }
+      }
+      try {
+        const live = await stripe.paymentIntents.update(existing.id, { amount: charge })
+        return { mode: 'stripe' as const, clientSecret: live.client_secret, amount: charge, cardFee }
+      } catch (e) {
+        // Stripe refused the change (e.g. mid-authentication). Retire the old
+        // intent so it can no longer be paid, then mint a fresh one below.
+        console.error('deposit intent update failed; replacing it', e)
+        await stripe.paymentIntents.cancel(existing.id).catch(() => undefined)
+      }
+    }
+  }
   const intent = await stripe.paymentIntents.create({
     amount: charge,
     currency: 'usd',
@@ -1359,8 +1392,16 @@ export async function approveBooking(id: string) {
   if (booking.status === 'CANCELLED') {
     throw new BookingIncompleteError('This booking was cancelled — it can’t be approved.')
   }
+  // The deposit may be in Stripe without the booking knowing — the webhook
+  // parks a payment it is unsure of and tells staff to "approve or refund". That
+  // approve used to dead-end right here on "Deposit not yet paid", leaving staff
+  // no way to put a paid guest on the books. Look the money up in Stripe itself:
+  // a succeeded deposit raised for THIS booking is proof enough for a human
+  // approving it by hand.
+  let paidIntentId: string | undefined
   if (!booking.depositPaid) {
-    throw new BookingIncompleteError('Deposit not yet paid')
+    paidIntentId = await findPaidDepositIntent(booking.id)
+    if (!paidIntentId) throw new BookingIncompleteError('Deposit not yet paid')
   }
 
   // The queue exists because a conflict was suspected — never approve on stale
@@ -1385,7 +1426,21 @@ export async function approveBooking(id: string) {
       data: assignment.resourceIds.map((resourceId) => ({ bookingId: id, resourceId })),
     })
   })
-  return finalizeConfirmed(id)
+  return finalizeConfirmed(id, paidIntentId)
+}
+
+/** The largest succeeded deposit Stripe holds for this booking, if any. */
+async function findPaidDepositIntent(bookingId: string): Promise<string | undefined> {
+  const stripe = getStripe()
+  if (!stripe) return undefined
+  const found = await stripe.paymentIntents.search({
+    query: `metadata['bookingId']:'${bookingId.replace(/[^a-z0-9]/gi, '')}' AND status:'succeeded'`,
+    limit: 20,
+  })
+  const deposits = found.data
+    .filter((pi) => pi.metadata?.kind !== 'balance' && pi.metadata?.bookingId === bookingId)
+    .sort((a, b) => b.amount_received - a.amount_received)
+  return deposits[0]?.id
 }
 
 

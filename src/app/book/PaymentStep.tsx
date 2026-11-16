@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { formatCents } from '@/lib/money'
@@ -36,7 +36,10 @@ export default function PaymentStep({
 
   if (mode === 'stripe' && clientSecret && stripePromise) {
     return (
-      <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'flat' } }}>
+      // Keyed by the intent: Stripe's payment form cannot switch intents once
+      // mounted, so a new intent must mean a new form, never the old one paying
+      // a payment the booking no longer has on file.
+      <Elements key={clientSecret} stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'flat' } }}>
         <StripeForm amount={depositAmount} label={label} successPath={successPath} />
       </Elements>
     )
@@ -70,6 +73,12 @@ function StripeForm({ amount, label, successPath }: { amount: number; label: str
   const elements = useElements()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // The server updates the intent's amount in place when a promo or gift card
+  // changes what is owed; pull the new amount into the form (wallet sheets show it).
+  useEffect(() => {
+    void elements?.fetchUpdates()
+  }, [elements, amount])
 
   async function pay() {
     if (!stripe || !elements) return
