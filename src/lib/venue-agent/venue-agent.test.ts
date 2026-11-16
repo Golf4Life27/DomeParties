@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { getVenue, listVenues } from '@/venues'
 import { parseProfile, type VenueProfile } from './profile'
 import { describeQuote, quote, QuoteError } from './quote'
-import { addDays, fitsHours, hoursOn, isPeak, todayIn, weekdayOf } from './clock'
+import { addDays, fitsHours, formatDate, formatTime, hoursOn, isPeak, todayIn, weekdayOf } from './clock'
 import { formatMoney } from './money'
 import { runVenueTool } from './tools'
 import { venueSystemPrompt } from './prompt'
@@ -96,6 +96,15 @@ test('London: pounds, VAT-inclusive prices and a percent deposit', () => {
   assert.equal(q.total, 138000)
   assert.equal(q.deposit, 34500)
   assert.equal(formatMoney(q.total, london.currency, london.locale), '£1,380.00')
+})
+
+test('UK, Ireland and Australia: dates day first, 24-hour times with two-digit hours', () => {
+  assert.equal(formatTime({ locale: 'en-IE' }, '00:30'), '00:30')
+  assert.equal(formatTime({ locale: 'en-GB' }, '09:00'), '09:00')
+  assert.equal(formatTime({ locale: 'en-US' }, '09:00'), '9:00 AM')
+  assert.match(formatDate({ locale: 'en-GB' }, '2026-12-04'), /^Friday,? 4 December 2026$/)
+  assert.equal(formatMoney(55200, 'EUR', 'en-IE'), '€552.00')
+  assert.equal(formatMoney(180000, 'AUD', 'en-AU'), '$1,800.00')
 })
 
 test('Tokyo: yen have no decimals and tax is added on top', () => {

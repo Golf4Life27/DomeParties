@@ -34,10 +34,13 @@ export function formatDate(p: Pick<VenueProfile, 'locale'>, date: string): strin
   }).format(new Date(Date.UTC(y, m - 1, d)))
 }
 
-/** "6:00 PM" or "18:00", as the venue's locale writes it. */
+/** "6:00 PM" or "18:00", as the venue's locale writes it. 24-hour clocks get two-digit hours
+ * ("00:30", "09:00"), since "0:30" reads as a typo in the UK and Ireland. */
 export function formatTime(p: Pick<VenueProfile, 'locale'>, hhmm: string): string {
   const [h, m] = hhmm.split(':').map(Number)
-  return new Intl.DateTimeFormat(p.locale, { timeZone: 'UTC', hour: 'numeric', minute: '2-digit' }).format(
+  const cycle = new Intl.DateTimeFormat(p.locale, { hour: 'numeric' }).resolvedOptions().hourCycle
+  const hour = cycle === 'h23' || cycle === 'h24' ? '2-digit' : 'numeric'
+  return new Intl.DateTimeFormat(p.locale, { timeZone: 'UTC', hour, minute: '2-digit' }).format(
     new Date(Date.UTC(2000, 0, 1, h, m)),
   )
 }
