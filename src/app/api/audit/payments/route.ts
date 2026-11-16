@@ -7,6 +7,7 @@ import { computeQuote } from '@/lib/pricing'
 // Lists every booking that has money on it and every Stripe payment the site
 // minted, so the two can be matched. Writes nothing to the database or Stripe.
 // Answers 404 anywhere except the payment-audit preview with its token set.
+// Remove this route and the AUDIT_TOKEN preview variable once the audit is done.
 export const maxDuration = 300
 
 function short(name: string | null): string | null {
