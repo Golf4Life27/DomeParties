@@ -107,6 +107,10 @@ export default function BookingActions({
       if (res.ok) setSentRecovery(true)
       return
     }
+    if (action === 'approve' && !res.ok) {
+      const data = await res.json().catch(() => null)
+      alert(`Not approved: ${data?.error ?? 'something went wrong'}`)
+    }
     router.refresh()
   }
 
@@ -159,7 +163,10 @@ export default function BookingActions({
     router.refresh()
   }
 
-  const canApprove = status === 'PENDING' && needsReview && depositPaid
+  // Approve looks the deposit up in Stripe itself, so it must show even when the
+  // site never recorded the payment (that is exactly when staff need it). It
+  // refuses with "Deposit not yet paid" if Stripe has nothing for this booking.
+  const canApprove = (status === 'PENDING' && (needsReview || !depositPaid)) || status === 'DRAFT'
   const canMarkBalance = (status === 'CONFIRMED' || status === 'COMPLETED') && !balancePaid && (balanceDue ?? 0) > 0
   const canCancel = status === 'CONFIRMED' || status === 'PENDING'
   // Same states as cancel: anything holding bays can be moved instead of killed.
@@ -175,7 +182,7 @@ export default function BookingActions({
           disabled={busy}
           className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark disabled:opacity-60"
         >
-          ✓ Confirm (checked Trackman)
+          {depositPaid ? '✓ Confirm (checked Trackman)' : '✓ Approve (finds the deposit in Stripe)'}
         </button>
       )}
       {canMarkBalance && (
