@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { planOffers, type PlanId } from '@/lib/venue-agent/plans'
 import VenueChat from '../VenueChat'
 import type { VenueProfile } from '@/lib/venue-agent/profile'
 
@@ -42,6 +43,7 @@ export default function SetupFlow({ origin }: { origin: string }) {
   const [error, setError] = useState<string | null>(null)
   const [draft, setDraft] = useState<Draft | null>(null)
   const [profile, setProfile] = useState<VenueProfile | null>(null)
+  const [plan, setPlan] = useState<PlanId>('pro')
   const [name, setName] = useState('')
   const [fixes, setFixes] = useState('')
   const [done, setDone] = useState<string | null>(null)
@@ -84,7 +86,7 @@ export default function SetupFlow({ origin }: { origin: string }) {
       const r = await fetch('/api/venue-agent/signup', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ profile, name, email, plan: 'founding', fixes }),
+        body: JSON.stringify({ profile, name, email, plan, fixes }),
       })
       const j = await r.json()
       if (!r.ok) throw new Error(j.error ?? 'Something went wrong.')
@@ -274,6 +276,12 @@ export default function SetupFlow({ origin }: { origin: string }) {
             </>
           ) : (
             <>
+              {profile &&
+                planOffers(profile.currency, profile.locale).map((o) => (
+                  <label key={o.id}>
+                    <input type="radio" name="plan" checked={plan === o.id} onChange={() => setPlan(o.id)} /> <strong>{o.name}: {o.price}.</strong> {o.line}
+                  </label>
+                ))}
               <label>
                 Your name
                 <input value={name} onChange={(e) => setName(e.target.value)} />

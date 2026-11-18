@@ -2,14 +2,18 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getVenue } from '@/venues'
 import { venueProductOn } from '@/lib/venue-agent/gate'
+import { headers } from 'next/headers'
 import VenueChat from '../../../VenueChat'
+import SwitchOn from '../../SwitchOn'
+import { planOffers } from '@/lib/venue-agent/plans'
 
 // A sample venue's chat, or a real venue's preview set up from its public
 // website, to show an owner what their guests would get.
 export const metadata = { robots: { index: false, follow: false } }
 
-export default async function VenueDemo({ params }: { params: Promise<{ slug: string }> }) {
+export default async function VenueDemo({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ offer?: string }> }) {
   const { slug } = await params
+  const { offer } = await searchParams
   const venue = venueProductOn() ? getVenue(slug) : null
   if (!venue) notFound()
   return (
@@ -31,6 +35,13 @@ export default async function VenueDemo({ params }: { params: Promise<{ slug: st
         welcome={venue.locale.startsWith('ja') ? `こんにちは！${venue.name}での団体・イベントのご相談ですか？日にちと人数を教えてください。` : `Hi! Planning a party or group event at ${venue.name}? Tell me the date and how many people.`}
         endpoint={`/api/venue-agent/chat/${venue.slug}`}
       />
+      {venue.prospect && <SwitchOn profile={venue} plans={planOffers(venue.currency, venue.locale, offer === 'pilot')} origin={await siteOrigin()} />}
     </main>
   )
+}
+
+async function siteOrigin(): Promise<string> {
+  const h = await headers()
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'partydesk.ai'
+  return `${h.get('x-forwarded-proto') ?? 'https'}://${host}`
 }

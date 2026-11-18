@@ -11,6 +11,7 @@ import { venueSystemPrompt } from './prompt'
 import { leadEmailText } from './handoff'
 import { draftFromPasted, flagUnclearDays, flagUnpricedCharges, hasAnyPrice, keepPriceRanges, MAX_PASTED_CHARS, PastedError } from './draft'
 import { sameSite } from './read-site'
+import { planOffers } from './plans'
 
 const venue = (slug: string): VenueProfile => {
   const v = getVenue(slug)
@@ -348,4 +349,18 @@ test('a setup with no price anywhere is caught, so the owner is asked for their 
   assert.equal(hasAnyPrice(noPrices), false)
   const oneAddOn = parseProfile({ ...noPrices, addOns: [{ id: 'socks', name: 'Grip socks', unit: 'each', amount: 3 }] })
   assert.equal(hasAnyPrice(oneAddOn), true)
+})
+
+test('every venue is offered the same two plans the emails promise, in its own money; the pilot only from a US pilot email', () => {
+  const show = (cur: string, loc: string, pilot = false) => planOffers(cur, loc, pilot).map((o) => `${o.id} ${o.price}`)
+  assert.deepEqual(show('USD', 'en-US'), ['pro $499 a month', 'starter $299 a month'])
+  assert.deepEqual(show('GBP', 'en-GB'), ['pro £379 a month', 'starter £229 a month'])
+  assert.deepEqual(show('EUR', 'en-IE'), ['pro €449 a month', 'starter €269 a month'])
+  assert.deepEqual(show('AUD', 'en-AU'), ['pro $749 a month (Australian dollars)', 'starter $449 a month (Australian dollars)'])
+  assert.deepEqual(show('JPY', 'ja-JP'), ['pro $499 a month', 'starter $299 a month'])
+  assert.deepEqual(show('GBP', 'en-GB', true), ['pro £379 a month', 'starter £229 a month'])
+  const us = planOffers('USD', 'en-US', true)
+  assert.equal(us[0].id, 'pilot')
+  assert.match(us[0].line, /60 days you pay \$20 for each party request.*never more than \$299 a month/)
+  for (const v of listVenues()) assert.ok(planOffers(v.currency, v.locale).length === 2, v.slug)
 })

@@ -30,7 +30,7 @@ export default async function ForVenues() {
           with the guest’s details.
         </p>
         <p className="fv-price">
-          <strong>$499 a month.</strong> First month free. No setup fee, no contract, cancel any time.
+          <strong>$299 a month</strong> for the chat, or <strong>$499</strong> with your party prices kept up to date for you each month. First month free. No setup fee, no contract, cancel any time. Outside the US you pay in pounds, euros or Australian dollars.
         </p>
         <a href="#setup" className="fv-cta">
           Set it up in two minutes
