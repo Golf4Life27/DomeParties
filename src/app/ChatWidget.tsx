@@ -153,7 +153,8 @@ export default function ChatWidget({
   const [dismissed, setDismissed] = useState(false)
   const [anchor, setAnchor] = useState<{ right: number; top: number } | null>(null)
 
-  const suppressed = pathname?.startsWith('/admin') ?? false
+  // The venue product's pages are another business's pages: no dome bubble there.
+  const suppressed = (pathname?.startsWith('/admin') ?? false) || (pathname?.startsWith('/for-venues') ?? false)
 
   const mount = useCallback(() => {
     // onReady fires again on re-mount; mounting twice would stack two bubbles.

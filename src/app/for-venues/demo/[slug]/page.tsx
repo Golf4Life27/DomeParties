@@ -9,7 +9,11 @@ import { planOffers } from '@/lib/venue-agent/plans'
 
 // A sample venue's chat, or a real venue's preview set up from its public
 // website, to show an owner what their guests would get.
-export const metadata = { robots: { index: false, follow: false } }
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const venue = venueProductOn() ? getVenue(slug) : null
+  return { title: venue ? `${venue.name}: party chat preview` : 'Party chat preview', description: 'A preview of an after-hours party chat.', robots: { index: false, follow: false } }
+}
 
 export default async function VenueDemo({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ offer?: string }> }) {
   const { slug } = await params
