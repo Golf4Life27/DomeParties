@@ -121,13 +121,13 @@
       }
     },
     {
-      "id": "weekend-2-hour-special",
-      "name": "2 Hour Weekend Special",
-      "description": "2 hours of bay time on the weekend for $100.",
+      "id": "weekend-3-hour-special",
+      "name": "3 Hour Weekend Special",
+      "description": "3 hours of bay time on the weekend for $150 ($30 savings).",
       "includes": [
-        "2 hours in a bay"
+        "3 hours in a bay"
       ],
-      "durationMinutes": 120,
+      "durationMinutes": 180,
       "minGuests": 1,
       "maxGuests": 4,
       "days": [
@@ -137,7 +137,7 @@
       ],
       "pricing": {
         "type": "flat",
-        "amount": 100,
+        "amount": 150,
         "peakAmount": null
       }
     },
