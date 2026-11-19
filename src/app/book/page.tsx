@@ -219,8 +219,11 @@ export default function BookPage() {
         }
         if (booking.customerName) setName(booking.customerName)
         if (booking.customerPhone) setPhone(booking.customerPhone)
-        // Resume at the first incomplete step.
-        setStep(!booking.packageId ? 1 : 2)
+        // Resume at the first incomplete step. A family who already chose a date
+        // and time goes straight to "Your details" with every choice kept (food
+        // and extras are optional and one Back away). Checkout re-checks the time,
+        // and if it was taken meanwhile sends them back to pick another.
+        setStep(!booking.packageId ? 1 : hasDate && booking.startMinutes > 0 ? 5 : 2)
       })
       .catch(() => {})
   }, [])

@@ -555,12 +555,31 @@ Reference: ${data.reference}
   return { subject, html, text }
 }
 
-/** Nudge a customer who started but didn't finish a booking (3-touch sequence). */
+/** "Saturday, December 5" — a party date short enough for a subject line. */
+function shortDate(dateStr: string): string {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+/**
+ * Nudge a customer who started but didn't finish a booking (3-touch sequence).
+ *
+ * When they already chose a date and time (`slot`), the email is about THAT
+ * party: the day, the time, the guest count, the total and what is due today.
+ * Families who left before choosing a time get the general version.
+ */
 export function buildRecoveryEmail(data: {
   name?: string | null
   resumeUrl: string
+  unsubscribeUrl?: string
   stage?: 1 | 2 | 3
   promo?: { code: string; percentOff: number; amountOff: number } | null
+  slot?: { dateStr: string; startMinutes: number; guests: number; total: number; dueToday: number } | null
 }) {
   const stage = data.stage ?? 1
   const hi = data.name ? `Hi ${data.name},` : 'Hi there,'
@@ -569,6 +588,56 @@ export function buildRecoveryEmail(data: {
         data.promo.percentOff > 0 ? `${data.promo.percentOff}% off` : `${formatCents(data.promo.amountOff)} off`
       } — just enter it at checkout.`
     : ''
+  const unsubText = data.unsubscribeUrl ? `\n\nDon't want these reminders? Unsubscribe: ${data.unsubscribeUrl}` : ''
+  const unsubHtml = data.unsubscribeUrl
+    ? `<p style="color:#999;font-size:12px">Don't want these reminders? <a href="${data.unsubscribeUrl}" style="color:#999">Unsubscribe</a>.</p>`
+    : ''
+
+  if (data.slot) {
+    const day = shortDate(data.slot.dateStr)
+    const time = minutesToLabel(data.slot.startMinutes)
+    const guests = `${data.slot.guests} ${data.slot.guests === 1 ? 'guest' : 'guests'}`
+    const subjects: Record<number, string> = {
+      1: `Your ${day} party at the Dome is still open`,
+      2: `${day} at ${time} is still open, for now`,
+      3: data.promo ? `A little something for your ${day} party` : `Last reminder about your ${day} party`,
+    }
+    const leads: Record<number, string> = {
+      1: `You picked <strong>${day} at ${time}</strong> for ${guests}, and that time is still open. Everything you chose is saved, so it only takes a minute to finish.`,
+      2: `Quick heads-up: <strong>${day} at ${time}</strong> is still open for your party of ${data.slot.guests}. Good party times go fast, and we can only lock yours in once the deposit is paid.`,
+      3: data.promo
+        ? `<strong>${day} at ${time}</strong> is still open, and here's a little help: <strong>${promoLine}</strong>`
+        : `This is our last reminder: <strong>${day} at ${time}</strong> is still open for your party, but we can't promise it for long.`,
+    }
+    const subject = subjects[stage]
+    const facts = `Party total: ${formatCents(data.slot.total)}\nDue today to lock it in: ${formatCents(data.slot.dueToday)}`
+    const text = `${hi}
+
+${leads[stage].replace(/<[^>]+>/g, '')}
+
+${facts}
+
+Finish booking your party:
+${data.resumeUrl}
+
+Questions? Just reply to this email and our events team will help.
+— Whitetail Ridge Golf Dome, Oswego, IL${unsubText}`
+    const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
+  <h1 style="color:#0e1740">${subject}</h1>
+  <p>${hi} ${leads[stage]}</p>
+  <table style="margin:16px 0;border-collapse:collapse">
+    <tr><td style="padding:4px 16px 4px 0;color:#666">Party total</td><td style="padding:4px 0"><strong>${formatCents(data.slot.total)}</strong></td></tr>
+    <tr><td style="padding:4px 16px 4px 0;color:#666">Due today to lock it in</td><td style="padding:4px 0"><strong>${formatCents(data.slot.dueToday)}</strong></td></tr>
+  </table>
+  <p style="text-align:center;margin:28px 0">
+    <a href="${data.resumeUrl}" style="background:#c8ff2e;color:#0e1740;padding:14px 28px;border-radius:999px;text-decoration:none;font-weight:bold">Finish booking my party →</a>
+  </p>
+  <p>Questions? Just reply to this email and our events team will help.</p>
+  <p style="color:#666">— Whitetail Ridge Golf Dome, Oswego, IL</p>
+  ${unsubHtml}
+</div>`
+    return { subject, html, text }
+  }
 
   const subjects: Record<number, string> = {
     1: 'Still thinking it over? Your Dome party is waiting 🎉',
@@ -592,7 +661,7 @@ Pick up right where you left off:
 ${data.resumeUrl}
 ${promoLine && stage === 3 ? `\n${promoLine}\n` : ''}
 Lock your date in with just a 10% deposit.
-— Whitetail Ridge Golf Dome, Oswego, IL`
+— Whitetail Ridge Golf Dome, Oswego, IL${unsubText}`
 
   const html = `<div style="font-family:system-ui,Arial,sans-serif;max-width:560px;margin:auto">
   <h1 style="color:#0e1740">${subject.replace(/ [^ ]*$/, '')}</h1>
@@ -602,6 +671,7 @@ Lock your date in with just a 10% deposit.
   </p>
   <p>Lock your date in with just a 10% deposit.</p>
   <p style="color:#666">— Whitetail Ridge Golf Dome, Oswego, IL</p>
+  ${unsubHtml}
 </div>`
   return { subject, html, text }
 }

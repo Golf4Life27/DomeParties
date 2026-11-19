@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import { RECOVERY_STOPPED, RECOVERY_UNSUBSCRIBED, recoverySkipReason, slotReminderFacts } from '@/lib/recovery'
 import { computeQuote, addOnLineTotal, baysFor } from '@/lib/pricing'
 import { availability } from '@/lib/availability'
 import { generateReference } from '@/lib/ref'
@@ -598,12 +599,20 @@ export async function sendRecoveryEmail(
 ) {
   const booking = await prisma.booking.findUniqueOrThrow({ where: { id } })
   if (booking.status !== 'DRAFT' || !booking.customerEmail) return false
+  if (booking.recoveryStage === RECOVERY_UNSUBSCRIBED) return false // they asked us to stop
   const stage = Math.min(booking.recoveryStage + 1, 3) as 1 | 2 | 3
-  const resumeUrl = `${appUrl()}/book?draft=${booking.id}&t=${bookingToken(booking.id)}`
+  const token = bookingToken(booking.id)
+  const resumeUrl = `${appUrl()}/book?draft=${booking.id}&t=${token}`
+  const unsubscribeUrl = `${appUrl()}/unsubscribe?b=${booking.id}&t=${token}`
+  // A family who already chose a date and time gets a reminder about THAT party:
+  // the day, the time, the price and what it takes to lock it in.
+  const slot = await slotReminderFacts(booking.id).catch(() => null)
   const email = buildRecoveryEmail({
     name: booking.customerName,
     resumeUrl,
+    unsubscribeUrl,
     stage,
+    slot,
     promo: stage >= 2 ? promo : null, // sweeten only the later touches
   })
   await sendEmail({ to: booking.customerEmail, subject: email.subject, html: email.html, text: email.text })
@@ -617,6 +626,12 @@ export async function sendRecoveryEmail(
 /**
  * Staged abandoned-cart recovery (cron): touch 1 after `minutesOld`, touch 2
  * after 24h, touch 3 after 72h (later touches can feature a promo code).
+ *
+ * Before each send it checks the reminder still makes sense (see
+ * recoverySkipReason): not unsubscribed, not already booked under the same
+ * address, not superseded by a newer try from the same family, and — for a
+ * family that chose a time — that the time can still be booked. A draft that
+ * fails those checks is stamped RECOVERY_STOPPED so it leaves the queue.
  */
 export async function sendRecoveryEmailsToStaleDrafts(minutesOld = 60) {
   const now = Date.now()
@@ -630,6 +645,7 @@ export async function sendRecoveryEmailsToStaleDrafts(minutesOld = 60) {
         updatedAt: { lt: new Date(now - minutesOld * 60_000) },
       },
       select: { id: true },
+      orderBy: { updatedAt: 'desc' },
       take: 200,
     }),
     prisma.booking.findMany({
@@ -640,6 +656,7 @@ export async function sendRecoveryEmailsToStaleDrafts(minutesOld = 60) {
         recoveryEmailSentAt: { lt: new Date(now - 24 * 3_600_000) },
       },
       select: { id: true },
+      orderBy: { updatedAt: 'desc' },
       take: 200,
     }),
     prisma.booking.findMany({
@@ -650,20 +667,34 @@ export async function sendRecoveryEmailsToStaleDrafts(minutesOld = 60) {
         recoveryEmailSentAt: { lt: new Date(now - 72 * 3_600_000) },
       },
       select: { id: true },
+      orderBy: { updatedAt: 'desc' },
       take: 200,
     }),
   ])
 
   const promo = await featuredRecoveryPromo()
   let sent = 0
+  let skipped = 0
   for (const { id } of [...first, ...second, ...third]) {
     try {
+      const draft = await prisma.booking.findUniqueOrThrow({
+        where: { id },
+        select: { id: true, createdAt: true, customerEmail: true, packageId: true, date: true, startMinutes: true },
+      })
+      const reason = await recoverySkipReason(draft)
+      if (reason) {
+        skipped++
+        if (reason !== 'unsubscribed') {
+          await prisma.booking.update({ where: { id }, data: { recoveryStage: RECOVERY_STOPPED } })
+        }
+        continue
+      }
       if (await sendRecoveryEmail(id, promo)) sent++
     } catch (e) {
       console.error('recovery email failed for', id, e)
     }
   }
-  return { eligible: first.length + second.length + third.length, sent }
+  return { eligible: first.length + second.length + third.length, sent, recoverySkipped: skipped }
 }
 
 /** 24h follow-up for NEW leads no one has closed yet (speed-to-lead insurance). */
