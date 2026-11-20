@@ -590,3 +590,22 @@ model PromoCode {
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 }
+
+// ---------------------------------------------------------------------------
+// PartyDesk pilot: party requests the venue chat passed to other venues (never
+// the dome's own), counted at $20 each, capped at $299 a calendar month, for
+// the first 60 days. Only the venue agent writes here.
+// ---------------------------------------------------------------------------
+model VenuePartyRequest {
+  id         String   @id @default(cuid())
+  venue      String // the venue's slug
+  createdAt  DateTime @default(now())
+  guestName  String
+  guestEmail String?
+  guestPhone String?
+  partyDate  String // YYYY-MM-DD, the date the guest asked about
+  headcount  Int
+  summary    String
+
+  @@index([venue, createdAt])
+}

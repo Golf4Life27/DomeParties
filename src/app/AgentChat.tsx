@@ -84,7 +84,7 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
     () => false,
   )
   const suppressed =
-    !embedded && ((pathname?.startsWith('/admin') ?? false) || (pathname?.startsWith('/embed/') ?? false) || inFrame)
+    !embedded && ((pathname?.startsWith('/admin') ?? false) || (pathname?.startsWith('/embed/') ?? false) || (pathname?.startsWith('/for-venues') ?? false) || inFrame)
   const state = open ? 'open' : teaserShown ? 'teaser' : 'closed'
 
   // In the /chat.js iframe: tell the host page what's showing so it sizes the

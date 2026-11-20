@@ -1,0 +1,282 @@
+{
+  "slug": "craft-axe-throwing-springfield",
+  "name": "Craft Axe Throwing Springfield",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "431 S Jefferson Ave, Suite 132A, Springfield, MO 65806",
+  "phone": "(417) 409-2496",
+  "website": "https://craftaxethrowing.com/pricing",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": 12,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "14:00",
+        "close": "21:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "16:00",
+        "close": "21:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "16:00",
+        "close": "21:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "16:00",
+        "close": "21:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "16:00",
+        "close": "21:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "12:00",
+        "close": "23:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "12:00",
+        "close": "23:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Book standard lanes online. For groups of around 10+ throwers, buyouts and corporate events, contact the venue for custom pricing and availability. Off-hours private events need at least one week of notice.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "session-45-min",
+      "name": "45-Minute Session",
+      "description": "Pay by the thrower. Up to 4 throwers per lane. Ninja stars and The Stick All not included.",
+      "includes": [
+        "Safety & instruction",
+        "Standard axe"
+      ],
+      "durationMinutes": 45,
+      "minGuests": 1,
+      "maxGuests": 48,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 19,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "session-1-hour",
+      "name": "1-Hour Session",
+      "description": "$23 each for 1–2 throwers, $21 each for 3+ throwers. Up to 4 throwers per lane. Large ninja star and The Stick All not included.",
+      "includes": [
+        "Safety & instruction",
+        "Standard axe",
+        "Small ninja star"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 48,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 23,
+        "peakAmount": null,
+        "tiers": [
+          {
+            "minGuests": 3,
+            "amount": 21
+          }
+        ]
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "session-90-min",
+      "name": "1.5-Hour Session",
+      "description": "$33 each for 1–2 throwers, $30 each for 3+ throwers. Up to 4 throwers per lane.",
+      "includes": [
+        "Safety & instruction",
+        "Standard axe",
+        "Small ninja star",
+        "Large ninja star",
+        "The Stick All"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 48,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 33,
+        "peakAmount": null,
+        "tiers": [
+          {
+            "minGuests": 3,
+            "amount": 30
+          }
+        ]
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "monday-lane-special",
+      "name": "Monday Lane Special",
+      "description": "Fill a lane with up to 6 throwers for $80 per 1-hour session. Mondays only.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [
+        "mon"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 80,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-event-buyout",
+      "name": "Large Group / Facility Rental",
+      "description": "Buyouts, parties and corporate events. Reserve multiple lanes or the whole venue. Event pricing kicks in at 10+ throwers; custom pricing - contact the venue. Capacity over 80 people.",
+      "includes": [
+        "Reserved lanes",
+        "Dedicated coaches",
+        "Tournament brackets on request"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 80,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "What age do you have to be?",
+      "a": "A safe, welcoming environment for all ages 10 and up (with a parent present for minors). All participants must sign a waiver before throwing."
+    },
+    {
+      "q": "What should I wear?",
+      "a": "Closed-toe shoes are required for all participants - no sandals, flip-flops, or open-toed shoes. Beyond that, wear whatever you're comfortable in."
+    },
+    {
+      "q": "Can we bring outside food and drinks?",
+      "a": "Outside food and catering are welcome - just bring your own utensils and napkins. Outside drinks are not permitted; we serve craft beer, seltzers, and other beverages on site."
+    },
+    {
+      "q": "Is there parking?",
+      "a": "Free on-site parking (a real lot, not an app)."
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Rescheduling is available for events. Refunds are not provided for cancellations. Please contact the venue as soon as possible if your plans change."
+    },
+    {
+      "q": "Do spectators pay?",
+      "a": "No - watching is always free. Only active throwers need a session."
+    },
+    {
+      "q": "How many people can you host?",
+      "a": "12 lanes, up to 4 throwers per lane, and a capacity of over 80 people. Event pricing kicks in at 10+ throwers; smaller crews just book a lane online."
+    },
+    {
+      "q": "Can we book outside normal hours?",
+      "a": "Yes - off-hours private events are available with at least one week of advance notice. Contact the venue to discuss availability and pricing."
+    },
+    {
+      "q": "Do I need to book ahead?",
+      "a": "Strongly recommended, especially Friday/Saturday nights and weekends. Walk-ins are welcome when lanes are open."
+    },
+    {
+      "q": "Do you provide instruction?",
+      "a": "Yes. Every session includes a safety briefing and hands-on coaching from a trained instructor. No experience necessary."
+    },
+    {
+      "q": "Is the venue accessible?",
+      "a": "Every venue is wheelchair accessible. We can adapt the throwing setup for seated throwers - just let us know in advance."
+    },
+    {
+      "q": "Are there weekly deals?",
+      "a": "Monday: fill a lane with up to 6 throwers for $80 per 1-hour session. Thursday: ladies throw for 50% off (groups of four or fewer). Sunday: kids 10–15 throw free with an equivalent purchased regular session; adult must be present."
+    },
+    {
+      "q": "Do you have a birthday program?",
+      "a": "Join the Birthday Club and throw for free on your birthday. You'll get an email the week of your birthday; show it when you arrive."
+    },
+    {
+      "q": "What else is there to do?",
+      "a": "Ninja stars, The Stick All, cornhole, giant jenga, table games, HDTVs, and the RC Dirt Box (ages 5 and up)."
+    },
+    {
+      "q": "Do you have leagues?",
+      "a": "WATL-sanctioned 8-week leagues; most start around $135–$145 for the season. Contact the venue for the next start date."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

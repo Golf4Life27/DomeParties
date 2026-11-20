@@ -1,0 +1,520 @@
+{
+  "slug": "spare-time-pineville",
+  "name": "Spare Time Pineville",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "9600 Pineville-Matthews Rd, Pineville, NC 28134",
+  "phone": "704-900-2562",
+  "website": "https://www.sparetimeentertainment.com/pineville/birthday-parties/",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "10:00",
+        "close": "23:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "11:00",
+        "close": "23:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "11:00",
+        "close": "23:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "11:00",
+        "close": "23:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "11:00",
+        "close": "23:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "11:00",
+        "close": "00:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "10:00",
+        "close": "00:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "service_charge",
+    "tax"
+  ],
+  "booking": {
+    "partyUrl": "https://secure.meriq.com/sparetimeentertainment-newengland/",
+    "howItWorks": "Birthday parties book online with the Book Now button ($100 deposit, minimum 8 children). Weekday parties, parties over 20 guests and group events go through the event planners at (704) 900-2562.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Fast Lane lane reservations",
+      "url": "https://www.sparetimeentertainment.com/pineville/reservations/"
+    },
+    {
+      "what": "Plan a custom group event",
+      "url": "https://www.sparetimeentertainment.com/pineville/events/plan-a-custom-event/"
+    },
+    {
+      "what": "Escape Room parties",
+      "url": "https://www.sparetimeentertainment.com/pineville/games/escape-rooms/escape-parties/"
+    },
+    {
+      "what": "Eat & Play Party Pack",
+      "url": "https://www.sparetimeentertainment.com/pineville/eat-play-party-pack/"
+    },
+    {
+      "what": "Birthday party add-ons and invitations",
+      "url": "https://www.sparetimeentertainment.com/pineville/birthday-parties/parties/"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": 100
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": "Escape party prices do not include applicable taxes or service charge. Rate not stated."
+  },
+  "packages": [
+    {
+      "id": "bowling-birthday",
+      "name": "Bowling Birthday Party",
+      "description": "2-hour birthday party for kids. Parties with more than 20 guests: call the event planners.",
+      "includes": [
+        "Unlimited bowling and rental shoes",
+        "Hand-tossed pizza and soft drinks",
+        "$10 Game Zone play for each guest",
+        "Souvenir item for the birthday child",
+        "2000 Win Zone Prize Points for the birthday child",
+        "Party host, music, lights and place settings"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 8,
+      "maxGuests": 20,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 24.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "bash-birthday",
+      "name": "Bash Birthday Party",
+      "description": "2-hour birthday party for kids with bowling and laser tag.",
+      "includes": [
+        "Unlimited bowling and rental shoes",
+        "1 Laser Tag Adventure",
+        "Hand-tossed pizza and soft drinks",
+        "$10 Game Zone play for each guest",
+        "Souvenir item for the birthday child",
+        "2000 Win Zone Prize Points for the birthday child",
+        "Party host, music, lights and place settings"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 8,
+      "maxGuests": 20,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 29.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "laser-tag-birthday",
+      "name": "Laser Tag Birthday Party",
+      "description": "2-hour birthday party for kids. Timed Game Zone play can't be used on prize/redemption games.",
+      "includes": [
+        "2 games of laser tag",
+        "60 minutes of Game Zone play",
+        "Hand-tossed pizza and soft drinks",
+        "500 prize points for each guest",
+        "2000 Win Zone Prize Points for the birthday child",
+        "Party host, music, lights and place settings"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 8,
+      "maxGuests": 20,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 29.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "gamer-birthday",
+      "name": "Gamer Birthday Party",
+      "description": "2-hour birthday party for kids. Timed Game Zone play can't be used on prize/redemption games.",
+      "includes": [
+        "75 minutes of Game Zone play",
+        "Hand-tossed pizza and soft drinks",
+        "500 prize points for each guest",
+        "2000 Win Zone Prize Points for the birthday child",
+        "Party host, music, lights and place settings"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 8,
+      "maxGuests": 20,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 24.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "fast-lane-sun-thu",
+      "name": "Fast Lane Reservation (Sun-Thu)",
+      "description": "Price per lane. Includes 2 hours of unlimited bowling and shoe rental for up to 6 guests per lane. Up to 2 lanes (12 guests) bookable online, 12 hours to 90 days in advance. Payment is required to reserve.",
+      "includes": [
+        "2 hours unlimited bowling",
+        "Shoe rental"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [
+        "sun",
+        "mon",
+        "tue",
+        "wed",
+        "thu"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 134.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "fast-lane-fri-sat",
+      "name": "Fast Lane Reservation (Fri-Sat)",
+      "description": "Price per lane. Includes 2 hours of unlimited bowling and shoe rental for up to 6 guests per lane. Up to 2 lanes (12 guests) bookable online, 12 hours to 90 days in advance. Payment is required to reserve.",
+      "includes": [
+        "2 hours unlimited bowling",
+        "Shoe rental"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 159.99,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "open-bowling-mon-thu",
+      "name": "Open Bowling per lane hour (Mon-Thu)",
+      "description": "Walk-in open bowling, first come first served. Shoes not included. Also $6.49 per game per person.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 39.99,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "open-bowling-fri-sun",
+      "name": "Open Bowling per lane hour (Fri-Sun)",
+      "description": "Walk-in open bowling, first come first served. Shoes not included.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 45.99,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "escape-room-party",
+      "name": "Escape Room Party",
+      "description": "Recommended for ages 13+. Advance reservations required, payment required to reserve. Contact the event team for availability.",
+      "includes": [
+        "One escape room experience for up to 8 guests",
+        "Soft drink pitcher",
+        "16 inch hand-tossed cheese or pepperoni pizza",
+        "One appetizer platter (chicken tenders, mozzarella sticks, bone-in wings or beef sliders)"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 8,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "eat-play-party-pack",
+      "name": "Eat & Play Party Pack",
+      "description": "For teen or adult birthdays, office parties and small group outings. Contact the event experts to reserve.",
+      "includes": [
+        "2 lanes of bowling",
+        "Hand-tossed pizza",
+        "Soft drinks",
+        "Appetizers"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "elite-suite",
+      "name": "Elite Suite",
+      "description": "Private room with 6 luxury bowling lanes, plush seating, dining space and private bar. Contact the event experts for pricing.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 100,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "sunroom",
+      "name": "Sunroom",
+      "description": "Private room for events, banquets, meetings and catered meals. Contact the event experts for pricing.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 50,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "restaurant-event-space",
+      "name": "Restaurant Event Space",
+      "description": "Catered meetings, banquets, rehearsal dinners and corporate events. Contact the event experts for pricing.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 200,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "bowling-event",
+      "name": "Bowling Group Event",
+      "description": "Custom group events on the lanes with catering options. Contact the event experts for pricing.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 13,
+      "maxGuests": 1200,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "rent-the-center",
+      "name": "Rent the Center",
+      "description": "Private rental of the whole venue with all attractions and catering. Contact the event experts for pricing.",
+      "includes": [],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 1300,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "shoe-rental",
+      "name": "Shoe Rental",
+      "description": "",
+      "unit": "per_person",
+      "amount": 5.59
+    },
+    {
+      "id": "laser-tag",
+      "name": "Laser Tag",
+      "description": "",
+      "unit": "per_person",
+      "amount": 9
+    },
+    {
+      "id": "escape-room-30",
+      "name": "30 Minute Escape Room",
+      "description": "",
+      "unit": "per_person",
+      "amount": 12
+    },
+    {
+      "id": "escape-room-60",
+      "name": "60 Minute Escape Room",
+      "description": "",
+      "unit": "per_person",
+      "amount": 25
+    },
+    {
+      "id": "bowling-game",
+      "name": "Open Bowling per game (Mon-Thu)",
+      "description": "",
+      "unit": "per_person",
+      "amount": 6.49
+    }
+  ],
+  "faq": [
+    {
+      "q": "What payment do you accept?",
+      "a": "Our restaurant and entertainment areas accept credit, debit, and Spare Time cards only. Cash can be loaded onto a Spare Time card at the red teller machines near the front entrance."
+    },
+    {
+      "q": "Do I need bowling shoes?",
+      "a": "Owned or Rented Bowling Shoes are required while Bowling. Shoe rental is $5.59 per person."
+    },
+    {
+      "q": "Is there a minimum for birthday parties?",
+      "a": "Minimum of 8 children. $100 deposit required to reserve. To book weekday parties, or parties with more than 20 guests, please contact our event planners at (704) 900-2562."
+    },
+    {
+      "q": "Are birthday packages for adults too?",
+      "a": "These packages are intended for children celebrating birthdays, and portion sizes and decorative place settings reflect that. For other types of celebrations, we recommend contacting our event experts."
+    },
+    {
+      "q": "How far ahead can I reserve a lane?",
+      "a": "Online reservations are accepted 12 hours \u2013 90 days in advance. Payment is required to reserve. Maximum of 12 guests/2 lanes bookable online. For larger groups, please contact our event team."
+    },
+    {
+      "q": "Can I just walk in to bowl?",
+      "a": "Open bowling is also typically available at our everyday rates, on a first come, first serve basis. During busy times, guests can join the waitlist. We recommend calling ahead to check open bowling availability."
+    },
+    {
+      "q": "What ages are escape rooms for?",
+      "a": "Escape room experiences are recommended for ages 13+, though younger participants may be allowed to play with adult supervision."
+    },
+    {
+      "q": "When is the kitchen open?",
+      "a": "Weekdays after 11AM, weekends after 10AM."
+    },
+    {
+      "q": "What are your holiday hours?",
+      "a": "Thanksgiving Day (Nov 26) 3PM-11PM; Christmas Eve (Dec 24) 11AM-6PM; Christmas Day (Dec 25) 3PM-12AM; New Year's Eve (Dec 31) 10AM-1AM; New Year's Day (Jan 1) 10AM-12AM. Holiday specials are first come, first serve \u2013 no reservations."
+    },
+    {
+      "q": "Can I bring a date at night?",
+      "a": "Bring a date for Spare Time After Dark on Friday and Saturday nights."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

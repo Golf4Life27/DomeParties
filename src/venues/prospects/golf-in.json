@@ -1,0 +1,223 @@
+{
+  "slug": "golf-in",
+  "name": "Golf-In",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "7330 W 33rd St., Suite 110, Wichita, KS 67205",
+  "phone": "316-347-7599",
+  "website": "https://www.golfinict.com/",
+  "unit": {
+    "singular": "simulator bay",
+    "plural": "simulator bays",
+    "count": 2,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "08:00",
+        "close": "18:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "08:00",
+        "close": "21:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "08:00",
+        "close": "21:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "06:00",
+        "close": "21:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "08:00",
+        "close": "21:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "08:00",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "08:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+    ],
+    "from": "16:00",
+    "allDay": [
+      "fri",
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Book tee times online and pay in full at booking (or pay by phone at 316-347-7599). Public can book 21 days out, members 30 days. For whole-facility or party rentals, call/text or email.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book a tee time",
+      "url": "https://clients.uschedule.com/golfin/booking"
+    },
+    {
+      "what": "Create an account",
+      "url": "https://clients.uschedule.com/golfin/account/login?returnUrl=/golfin/booking"
+    },
+    {
+      "what": "Memberships",
+      "url": "https://www.golfinict.com/memberships"
+    },
+    {
+      "what": "League play sign-up",
+      "url": "https://www.golfinict.com/league-play"
+    }
+  ],
+  "deposit": {
+    "percent": 100,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "simulator-bay",
+      "name": "Simulator Bay Rental",
+      "description": "Uneekor simulator bay with E6 Connect (100 courses). Priced per hour regardless of how many people play. About one hour per person for 18 holes. Bring your own clubs; no club rental.",
+      "includes": [
+        "Uneekor simulator with Optic technology",
+        "E6 Connect course library",
+        "Driving range feature",
+        "Simulator golf balls and stand tees"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 8,
+      "days": [
+        "sun",
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 32,
+        "peakAmount": 42,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Can I rent out the whole place for parties or team events?",
+      "a": "Absolutely! Please contact us for different availability. Call or text us at 316-347-7599 or e-mail golfin@love2move.org."
+    },
+    {
+      "q": "Do I bring my own clubs, balls, and tees?",
+      "a": "We ask that you bring your own clubs, as we do not have any for rent. Please do not use your own golf balls, as our specially marked golf balls must be used with the simulator. Please use the stand tees that are provided instead of real tees."
+    },
+    {
+      "q": "How long does it take to play a round?",
+      "a": "It takes approximately one hour to play 18 holes, per person. So for four people playing 18 holes, book four hours. Sessions are over at the end of the booking time, even if the round has not finished."
+    },
+    {
+      "q": "How early should I arrive?",
+      "a": "We ask that you check in 10 minutes prior to your scheduled tee time."
+    },
+    {
+      "q": "How many people can play?",
+      "a": "Due to spacing, we ask that a maximum of four players sign up per bay."
+    },
+    {
+      "q": "Do you take walk-ins?",
+      "a": "While there might be times that we can accommodate walk-ins, this might not always be the case. We ask that you book your tee times online."
+    },
+    {
+      "q": "Is food and drink available? Can I bring my own?",
+      "a": "Feel free to bring in your own food and drinks (or have them delivered), as there is not any available for purchase. All food and drinks must stay off of the turf and out of the bays. No glass, please."
+    },
+    {
+      "q": "How do I pay?",
+      "a": "Payment is taken at the time of booking online or by phone at 316-347-7599. Payment must be in full to book. We accept Visa, Mastercard, and Discover; no cash or American Express."
+    },
+    {
+      "q": "Do I wear golf shoes?",
+      "a": "Wear whatever footwear is most comfortable, as long as there are no metal spikes. We suggest bringing in the shoes you plan to play in or making sure they are clean."
+    },
+    {
+      "q": "Can I cancel my reservation?",
+      "a": "Reservations must be canceled 24 hours ahead for a full refund; account credit is given for later cancellations (call 316-347-7599). No refund or credit for no-shows. Facility/party reservations must be canceled 120 hours (5 days) ahead, by phone, for a refund."
+    },
+    {
+      "q": "Do I pay for time used or time reserved?",
+      "a": "You pay for the whole time booked. If you finish early, feel free to practice on the driving range feature."
+    },
+    {
+      "q": "Can children play?",
+      "a": "Children under 16 can play if accompanied by an adult. Children over 16 can play unsupervised as long as a guardian has signed the waiver."
+    },
+    {
+      "q": "Can I have a lesson with my own instructor?",
+      "a": "Absolutely! Just book your tee time as you normally would."
+    },
+    {
+      "q": "Is there a dress code?",
+      "a": "We ask that people wear appropriate attire for a public place and be mindful of loud music, foul language, and overall general behavior."
+    },
+    {
+      "q": "Do you offer memberships?",
+      "a": "$249 per month for 10 hours of sim rental, shareable with up to 3 people; extra hours $29/hr. No initiation fee; six-month agreement."
+    },
+    {
+      "q": "Do you offer gift certificates?",
+      "a": "Absolutely! E-gift certificates can be purchased on our website."
+    }
+  ],
+  "handoff": {
+    "email": "golfin@love2move.org",
+    "webhookUrl": null
+  }
+}

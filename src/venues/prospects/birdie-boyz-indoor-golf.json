@@ -1,0 +1,208 @@
+{
+  "slug": "birdie-boyz-indoor-golf",
+  "name": "Birdie Boyz Indoor Golf",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "407 Pilot Ct, Waukesha, WI 53188",
+  "phone": "262-875-3066",
+  "website": null,
+  "unit": {
+    "singular": "bay",
+    "plural": "bays",
+    "count": 6,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "08:00",
+        "close": "22:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "08:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "fri",
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Tee times (bays) are booked online through foreUP (\"Book A Tee Time\"); reservations are required. For events, parties, memberships and club fittings, contact owner Brandon Schider at 262-875-3066.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "bay-rental",
+      "name": "Simulator Bay Rental",
+      "description": "Hourly simulator play. Monday to Thursday $38.09 + tax per hour; Friday to Sunday $47.62 + tax per hour. Daily discounts when booking online. Minimum play: 1 person 1 hour; 2 people 2 hours; 3 people 2 hours; 4 people 3 hours.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 24,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 38.09,
+        "peakAmount": 47.62,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "senior-rate",
+      "name": "Senior Rate",
+      "description": "Seniors $35, Monday to Friday before 4:00 PM.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 24,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 35,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "events-parties",
+      "name": "Events & Parties",
+      "description": "We Do Events & Parties! Private party room, corporate events and date-night packages. Contact Brandon Schider for details and pricing.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 24,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Can we bring outside food or drinks?",
+      "a": "Outside food and drink are not permitted."
+    },
+    {
+      "q": "Do I need a reservation?",
+      "a": "Yes, reservations are required. Book a tee time online through foreUP."
+    },
+    {
+      "q": "Is there a minimum play time?",
+      "a": "Minimum play: 1 person 1 hour; 2 people 2 hours; 3 people 2 hours; 4 people 3 hours."
+    },
+    {
+      "q": "Do you have food and drinks?",
+      "a": "We have a full bar with beers, seltzers and spirits, and a small kitchen menu."
+    },
+    {
+      "q": "Do you have a senior rate?",
+      "a": "Seniors $35, Monday to Friday before 4:00 PM. Senior Monthly membership: $50 upfront plus $20 per hour for 30 days, Monday to Friday 10 AM to 4 PM only, month to month."
+    },
+    {
+      "q": "Do you offer memberships?",
+      "a": "VIP $249.99 per month: 20 hours of play per month, extra hours $25 each, up to 3 hours per day, 3 guest passes per visit, BOGO half-off domestic beers while playing, one free Callaway club fitting every 6 months. 6-month minimum, billed monthly, non-refundable. Free punchcard: buy 10 visits, 11th visit free (one free hour)."
+    },
+    {
+      "q": "Do you have leagues?",
+      "a": "Yes. Men's Tuesday, Wednesday and Thursday nights: $350 per person, $50 deposit, tee-off 6:00 PM. Couples Monday nights: $550 per couple, $100 deposit, 6:00 PM. Weekday Scramble (Wednesday mornings): $300 per person, $50 deposit. Weekend Scramble (Sunday mornings): $350 per person, $50 deposit, 11:00 AM. Senior leagues: $275 per person, $50 deposit, 10:00 AM to 4:00 PM. Deposit due first day. League perks: buy one get one half off domestic beers, 10% off food. For 20-week options contact the club."
+    },
+    {
+      "q": "Do you sell gift cards?",
+      "a": "Yes, gift cards are sold online through foreUP."
+    },
+    {
+      "q": "Do you offer club fittings?",
+      "a": "Yes, club fitting is offered. Contact Brandon Schider for details."
+    },
+    {
+      "q": "What simulators do you have?",
+      "a": "6 simulator bays: 3 TruGolf and 3 aboutGolf."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

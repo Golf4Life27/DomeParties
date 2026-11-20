@@ -1,0 +1,326 @@
+{
+  "slug": "strikers-jc",
+  "name": "Strikers",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "2017 Christy Dr., Jefferson City, MO, 65101",
+  "phone": "(573) 644-1006",
+  "website": "https://www.strikersjc.com/",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "11:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "11:00",
+        "close": "23:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "11:00",
+        "close": "23:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "fri",
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "tax"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Email events@strikersjc.com to reserve a party package. A deposit and signed agreement are required for all group functions.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Make a reservation",
+      "url": "https://secure.meriq.com/strikersjc/"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 20,
+    "appliesTo": "all",
+    "note": "20% gratuity is added to all party packages."
+  },
+  "packages": [
+    {
+      "id": "golf-simulator-hour",
+      "name": "Golf Simulator (hourly)",
+      "description": "HD golf simulator rental. $35/hour Tuesday-Thursday, $45/hour Friday-Sunday.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 4,
+      "days": [
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 35,
+        "peakAmount": 45,
+        "minUnits": 1,
+        "guestsPerUnit": 4
+      },
+      "priceListed": true
+    },
+    {
+      "id": "gamer-package",
+      "name": "Gamer Package",
+      "description": "Party package priced per guest.",
+      "includes": [
+        "Pizza for each guest",
+        "Soft drinks for each guest",
+        "Two hours of unlimited arcade play (no redemption points)",
+        "500 redemption points for the birthday person"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 24.99,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "silver-package",
+      "name": "Silver Package",
+      "description": "Party package priced per guest. Choice of ONE entertainment option: 90 min bowling with shoes, 60 min Golf Simulator, or one $10 arcade game card per person (30 min unlimited arcade play, no redemption points). Bowling on regular lanes.",
+      "includes": [
+        "Pizza for each guest",
+        "Soft drinks for each guest",
+        "Choice of one entertainment option (bowling, Golf Simulator or arcade card)"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 24.99,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "gold-package",
+      "name": "Gold Package",
+      "description": "Party package priced per guest. Bowling on regular lanes.",
+      "includes": [
+        "Pizza for each guest",
+        "Soft drinks for each guest",
+        "Choice of: 90 minutes of bowling incl. shoe rental, or 60 minutes Golf Simulator",
+        "One $20 game card per person (one hour unlimited arcade play, no redemption points)",
+        "500 redemption points for the birthday person"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 29.99,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "platinum-package",
+      "name": "Platinum Package",
+      "description": "Party package priced per guest. Bowling on regular lanes.",
+      "includes": [
+        "Pizza for each guest",
+        "Soft drinks for each guest",
+        "60 minutes of bowling incl. shoe rental",
+        "60 minutes of Golf Simulator",
+        "$20 game card per person (one hour unlimited arcade play, no redemption points)",
+        "Birthday person gets a Strikers t-shirt OR bowling pin",
+        "500 redemption points for the birthday person"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 34.99,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "vip-silver",
+      "name": "VIP Silver Package",
+      "description": "Private VIP bowling lounge: 4 SPARK lanes for up to 24 bowlers, seating for up to 50 guests including the bowlers.",
+      "includes": [
+        "4 SPARK bowling lanes for up to 24 bowlers",
+        "VIP seating area for up to 50 guests",
+        "Shoe rental for 24 guests",
+        "2 hours of unlimited bowling",
+        "6 medium pizzas or 6 appetizers",
+        "Soft drinks for each guest"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 50,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 499,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "vip-gold",
+      "name": "VIP Gold Package",
+      "description": "Private VIP bowling lounge: 4 SPARK lanes for up to 24 bowlers, seating for up to 50 guests including the bowlers.",
+      "includes": [
+        "4 SPARK bowling lanes for up to 24 bowlers",
+        "VIP seating area for up to 50 guests",
+        "Shoe rental for 24 guests",
+        "2 hours of unlimited bowling",
+        "6 medium pizzas or 6 appetizers",
+        "Soft drinks for each guest",
+        "1 hour of Golf Simulator"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 50,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 549,
+        "peakAmount": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "vip-platinum",
+      "name": "VIP Platinum Package",
+      "description": "Private VIP bowling lounge: 4 SPARK lanes for up to 24 bowlers, seating for up to 50 guests including the bowlers.",
+      "includes": [
+        "4 SPARK bowling lanes for up to 24 bowlers",
+        "VIP seating area for up to 50 guests",
+        "Shoe rental for 24 guests",
+        "2 hours of unlimited bowling",
+        "6 medium pizzas or 6 appetizers",
+        "Soft drinks for each guest",
+        "1 hour of Golf Simulator",
+        "$20 arcade card for each guest (one hour unlimited arcade play, no redemption points)"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 50,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 599,
+        "peakAmount": null
+      },
+      "priceListed": true
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "360-camera",
+      "name": "360 Camera",
+      "description": "Add to a VIP package. Guests stand on a platform while the camera spins 360 degrees, making a shareable video with slow motion, effects, filters and music.",
+      "unit": "each",
+      "amount": 50
+    }
+  ],
+  "faq": [
+    {
+      "q": "Can we bring outside food or drinks?",
+      "a": "No outside food or drinks are allowed with the exception of cake or cupcakes."
+    },
+    {
+      "q": "Are there age restrictions?",
+      "a": "Anyone under the age of 16 must be accompanied by a parent or guardian during normal business hours."
+    },
+    {
+      "q": "Is a deposit required for parties?",
+      "a": "A deposit and signed agreement are required for all group functions."
+    },
+    {
+      "q": "Is gratuity added to parties?",
+      "a": "20% gratuity is added to all party packages."
+    },
+    {
+      "q": "How do I reserve a party?",
+      "a": "Email events@strikersjc.com to reserve."
+    },
+    {
+      "q": "Can we rent out the whole venue?",
+      "a": "Larger groups can reserve the entire venue for their festivities. Contact the Strikers team to learn more."
+    }
+  ],
+  "handoff": {
+    "email": "events@strikersjc.com",
+    "webhookUrl": null
+  }
+}

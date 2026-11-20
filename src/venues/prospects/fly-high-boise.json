@@ -1,0 +1,288 @@
+{
+  "slug": "fly-high-boise",
+  "name": "Fly High Boise",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Boise",
+  "address": "7672 W Fairview Ave Boise, ID 83704",
+  "phone": "(208) 205-9048",
+  "website": "https://boise.flyhighfun.com/",
+  "unit": {
+    "singular": "party table",
+    "plural": "party tables",
+    "count": null,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "10:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "10:00",
+        "close": "21:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [
+    {
+      "date": "2026-04-05",
+      "note": "Easter: Closed"
+    },
+    {
+      "date": "2026-11-26",
+      "note": "Thanksgiving: Closed"
+    },
+    {
+      "date": "2026-12-25",
+      "note": "Christmas Day: Closed"
+    }
+  ],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://boise.flyhighfun.com/book-a-party/",
+    "howItWorks": "Call 208-205-9048 or book online. A $100 non-refundable deposit is required upon booking.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": 100
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "create-your-own-party",
+      "name": "Create Your Own Party",
+      "description": "Base party price of $120, plus $16 per jumper 6+ and $12 per jumper 5 and under. All guests that are jumping must be paid for in addition to the base price. No food included.",
+      "includes": [
+        "2 Hour Jump/Table Time",
+        "Paper Products (tablecloths, plates, cups, utensils, napkins)",
+        "Water Pitchers",
+        "Party Host to Assist, Setup & Cleanup",
+        "Fridge and Freezer for Your Own Cake and Ice Cream",
+        "1 Free Flyer Pass for Future Visit"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 120,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [
+    {
+      "id": "pizza-soda-combo",
+      "name": "Combo: 2 Large Pizzas and 3 Pitchers of Soda",
+      "description": "",
+      "pricing": "flat",
+      "amount": 40
+    },
+    {
+      "id": "large-pizza",
+      "name": "1 Large Pizza",
+      "description": "",
+      "pricing": "flat",
+      "amount": 15
+    },
+    {
+      "id": "soda-pitcher",
+      "name": "Pitcher of Soda",
+      "description": "",
+      "pricing": "flat",
+      "amount": 6
+    },
+    {
+      "id": "cotton-candy-10",
+      "name": "10 Bags of Cotton Candy",
+      "description": "Choice of blue, pink or mixed",
+      "pricing": "flat",
+      "amount": 35
+    },
+    {
+      "id": "dippin-dots-10",
+      "name": "Dippin Dots - 10 Bags",
+      "description": "",
+      "pricing": "flat",
+      "amount": 40
+    },
+    {
+      "id": "dippin-dots-15",
+      "name": "Dippin Dots - 15 Bags",
+      "description": "",
+      "pricing": "flat",
+      "amount": 54
+    },
+    {
+      "id": "dippin-dots-20",
+      "name": "Dippin Dots - 20 Bags",
+      "description": "",
+      "pricing": "flat",
+      "amount": 72
+    }
+  ],
+  "addOns": [
+    {
+      "id": "jumper-6-plus",
+      "name": "Jumper 6+",
+      "description": "Every jumping guest aged 6+ must be paid for in addition to the base price",
+      "unit": "per_person",
+      "amount": 16
+    },
+    {
+      "id": "jumper-5-under",
+      "name": "Jumper 5 and Under",
+      "description": "Every jumping guest aged 5 and under must be paid for in addition to the base price",
+      "unit": "per_person",
+      "amount": 12
+    },
+    {
+      "id": "private-party-room",
+      "name": "Private Party Room Upgrade",
+      "description": "Beach, Pink Ice or Space Party Room (Fly High Shirt for Birthday Child)",
+      "unit": "each",
+      "amount": 40
+    },
+    {
+      "id": "grip-socks",
+      "name": "Grip Socks",
+      "description": "Grip socks are required",
+      "unit": "per_person",
+      "amount": 3
+    },
+    {
+      "id": "balloons-6",
+      "name": "6 Balloon Bouquet",
+      "description": "Request colors when booking: Blue, Green, Pink, Purple, Orange, Red or Combo",
+      "unit": "each",
+      "amount": 15
+    },
+    {
+      "id": "balloons-12",
+      "name": "12 Balloon Bouquet",
+      "description": "Request colors when booking: Blue, Green, Pink, Purple, Orange, Red or Combo",
+      "unit": "each",
+      "amount": 25
+    },
+    {
+      "id": "extra-table",
+      "name": "Extra Table",
+      "description": "",
+      "unit": "each",
+      "amount": 20
+    }
+  ],
+  "faq": [
+    {
+      "q": "Can we bring outside food?",
+      "a": "No food is included. We offer cotton candy and drinks as an add-on. Outside food and drink is allowed if you wish to cater yourself. Fridge and freezer available for your own cake and ice cream."
+    },
+    {
+      "q": "Do I need special socks?",
+      "a": "Fly High grip socks are required ($3). Non Fly High grip socks are subject to approval. Normal socks are not permitted."
+    },
+    {
+      "q": "Is there a deposit for parties?",
+      "a": "$100 non-refundable deposit required upon booking."
+    },
+    {
+      "q": "What if our party runs late?",
+      "a": "$25 fee for every 10 minutes that table is still occupied after official party end time."
+    },
+    {
+      "q": "Does the base party price cover everyone?",
+      "a": "Base price does NOT represent total price for party. All guests that are jumping must be paid for in addition to base price: $16 per jumper 6+, $12 per jumper 5 and under."
+    },
+    {
+      "q": "What are the jump prices?",
+      "a": "Ages 6+: 1 hour $16, 2 hours $24, 3 hours $32 (with free grip socks and small fountain drink). Ages 3-5: 1 hour $12, 2 hours $18, 3 hours $23 (with free grip socks and drink). Ages 2 and under $4 per hour. Parent access $10 per hour."
+    },
+    {
+      "q": "Do you have memberships?",
+      "a": "Monthly memberships with two hour jump time: ages 6 and up $34.95, ages 3-5 $24.95. $10 registration fee, 3-month contract (non-refundable), recurring credit card payment only."
+    },
+    {
+      "q": "What are the weekly specials?",
+      "a": "Monday Family Night 4-9 PM 20% off ticket price; Tuesday BOGO hour; Wednesday Buddy Night 2nd ticket 1/2 off; Thursday College Night $4 off with school ID and 50% off fountain drinks 4-9 PM; Friday Flight Night 7-10 pm for $23. Specials may not be valid on holidays / no school days."
+    },
+    {
+      "q": "Do you have Parents and Tots or sensory times?",
+      "a": "Parents and Tots (school year only): Mon & Fri from 10, Tues-Thurs 12-2 PM, 2 hours for $8 per child 5 & under with paying parent ($10). Sensory Bounce Fridays 10 AM to Noon, $6 per jumper, 1 caretaker free."
+    },
+    {
+      "q": "Military / law enforcement discount?",
+      "a": "10% off regular jump admission with ID. Cannot be combined with memberships, daily specials, parties, group events and concessions."
+    },
+    {
+      "q": "What are your summer hours?",
+      "a": "Summer: Monday-Thursday 10 am to 9 pm, Friday-Saturday 10 am to 10 pm, Sunday 10 am to 8 pm. School year hours differ Tuesday-Thursday (12 pm to 9 pm)."
+    },
+    {
+      "q": "Holiday hours?",
+      "a": "4th of July: close at 6pm. Oct 31: close at 4pm. Christmas Eve: close at 4 pm. Thanksgiving, Christmas Day and Easter: closed. Check our Facebook/Instagram for unexpected closures due to facility rentals."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

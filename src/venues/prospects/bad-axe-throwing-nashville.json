@@ -1,0 +1,214 @@
+{
+  "slug": "bad-axe-throwing-nashville",
+  "name": "Bad Axe Throwing Nashville",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "652 Fogg St, Nashville, TN 37203",
+  "phone": "(629) 203-6158",
+  "website": "https://badaxethrowing.com/locations/axe-throwing-nashville/",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": null,
+    "guestsPerUnit": 12
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "15:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "15:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "15:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "15:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "11:00",
+        "close": "23:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "11:00",
+        "close": "23:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Team building and events are booked through the website's Book Now / Request a Booking buttons. Facility buyouts: contact the venue.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "team-building-1-lane",
+      "name": "Team Building - 1 Lane",
+      "description": "Up to 12 people, 2 hours, flat rate. Time extensions and buyout options available.",
+      "includes": [
+        "Private lanes for your group",
+        "Expert coaching",
+        "Specialized team building games & tournament"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 450,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "team-building-2-lanes",
+      "name": "Team Building - 2 Lanes",
+      "description": "Most popular. Up to 24 people, 2 hours, flat rate. Time extensions and buyout options available.",
+      "includes": [
+        "Private lanes for your group",
+        "Expert coaching",
+        "Specialized team building games & tournament"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 24,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 850,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "team-building-3-lanes",
+      "name": "Team Building - 3 Lanes",
+      "description": "Up to 36 people, 2 hours, flat rate. Time extensions and buyout options available.",
+      "includes": [
+        "Private lanes for your group",
+        "Expert coaching",
+        "Specialized team building games & tournament"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 36,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 1250,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "facility-buyout",
+      "name": "Facility Buyout / Private Event Space",
+      "description": "Full or partial venue rental for corporate events, birthdays, holiday parties and more. Customized timing, layout, catering coordination and tournament format. Contact us for pricing.",
+      "includes": [
+        "Private event space",
+        "Axe throwing with expert coaching",
+        "Music and AV options",
+        "Flexible layout",
+        "Setup and cleanup handled"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Can we bring our own food and drinks?",
+      "a": "BYO food & drinks. Bring whatever you want. We handle the rest. BYO catering welcome."
+    },
+    {
+      "q": "Do I need experience?",
+      "a": "No experience needed. Expert coaching: your team will be throwing accurately in minutes."
+    },
+    {
+      "q": "Is there parking?",
+      "a": "Free parking."
+    },
+    {
+      "q": "What payment do you accept?",
+      "a": "Cash & cards accepted: Visa, Mastercard, Amex, Interac."
+    },
+    {
+      "q": "Do you have leagues?",
+      "a": "Standard Leagues are 8 weeks, 32 matches, $18.75/week (8 weeks = $150 total). Leagues run 4 times per year at any location with enough sign-ups."
+    },
+    {
+      "q": "What are the walk-in hours?",
+      "a": "Mon-Thu 3:00 PM - 9:00 PM, Fri-Sat 11:00 AM - 10:00 PM, Sun 12:00 PM - 7:00 PM."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

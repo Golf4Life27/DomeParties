@@ -1,0 +1,85 @@
+{
+  "slug": "sample-lanes",
+  "name": "Sample Lanes",
+  "kind": "bowling",
+  "sample": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "100 Example Ave, Springfield, IL",
+  "phone": "555-0100",
+  "website": "https://example.com/sample-lanes",
+  "unit": { "singular": "lane", "plural": "lanes", "count": 24, "guestsPerUnit": 6 },
+  "hours": {
+    "mon": [{ "open": "16:00", "close": "22:00" }],
+    "tue": [{ "open": "16:00", "close": "22:00" }],
+    "wed": [{ "open": "16:00", "close": "22:00" }],
+    "thu": [{ "open": "16:00", "close": "23:00" }],
+    "fri": [{ "open": "12:00", "close": "01:00" }],
+    "sat": [{ "open": "10:00", "close": "01:00" }],
+    "sun": [{ "open": "10:00", "close": "21:00" }]
+  },
+  "closures": [
+    { "date": "2026-11-26", "note": "Thanksgiving" },
+    { "date": "2026-12-25", "note": "Christmas Day" }
+  ],
+  "peak": { "days": ["fri", "sat"], "from": "17:00" },
+  "booking": {
+    "partyUrl": "https://example.com/sample-lanes/parties",
+    "howItWorks": "Pick your package and time online, then pay the deposit to lock in your lanes.",
+    "leadTimeDays": 2
+  },
+  "otherLinks": [{ "what": "Open bowling and lane reservations", "url": "https://example.com/sample-lanes/lanes" }],
+  "deposit": { "flat": 50 },
+  "taxPercent": 8.25,
+  "serviceCharge": { "percent": 18, "appliesTo": "with_food", "note": "Covers your party host and the extra staff for group events." },
+  "packages": [
+    {
+      "id": "kids-birthday",
+      "name": "Kids Birthday Bash",
+      "description": "Two hours for kids 12 and under with a party host.",
+      "includes": ["2 hours of bowling", "Shoe rental", "Bumpers", "Reserved party table", "Party host"],
+      "durationMinutes": 120,
+      "minGuests": 8,
+      "maxGuests": 30,
+      "days": ["fri", "sat", "sun"],
+      "pricing": { "type": "per_person", "amount": 21.99, "peakAmount": 24.99 }
+    },
+    {
+      "id": "lane-party",
+      "name": "Group Lane Party",
+      "description": "Lanes by the hour for any group. Shoes included.",
+      "includes": ["Shoe rental", "Reserved lanes"],
+      "durationMinutes": 120,
+      "minGuests": 6,
+      "maxGuests": 72,
+      "pricing": { "type": "per_unit_hour", "amount": 45, "peakAmount": 55, "minUnits": 1 }
+    },
+    {
+      "id": "corporate-buyout",
+      "name": "Corporate Half-House",
+      "description": "Half the center for three hours, for team events and holiday parties.",
+      "includes": ["12 lanes for 3 hours", "Shoe rental", "Private event coordinator", "Your logo on the lane screens"],
+      "durationMinutes": 180,
+      "minGuests": 30,
+      "maxGuests": 72,
+      "days": ["mon", "tue", "wed", "thu", "sun"],
+      "pricing": { "type": "flat", "amount": 1800 }
+    }
+  ],
+  "food": [
+    { "id": "pizza-pop", "name": "Pizza and Soda", "description": "Two slices and unlimited soda per guest.", "pricing": "per_person", "amount": 9 },
+    { "id": "game-day-buffet", "name": "Game Day Buffet", "description": "Wings, sliders, fries, salad and soda.", "pricing": "per_person", "amount": 19 }
+  ],
+  "addOns": [
+    { "id": "arcade-card", "name": "Arcade Card", "description": "$10 of arcade play.", "unit": "each", "amount": 10 },
+    { "id": "goodie-bag", "name": "Goodie Bag", "description": "A take-home bag for each kid.", "unit": "per_person", "amount": 4 }
+  ],
+  "faq": [
+    { "q": "Can we bring our own cake?", "a": "Yes, birthday cakes and cupcakes are welcome. No other outside food or drinks." },
+    { "q": "Do you have bumpers?", "a": "Yes, every lane has bumpers that can go up for kids and down for adults on the same lane." },
+    { "q": "Is there a minimum age?", "a": "No minimum. Ramps are available for little bowlers." }
+  ],
+  "handoff": { "email": null, "webhookUrl": null }
+}

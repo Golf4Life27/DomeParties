@@ -1,0 +1,329 @@
+{
+  "slug": "getout-games-provo",
+  "name": "Getout Games Provo",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Denver",
+  "address": "283 N University Ave., Provo, UT 84601",
+  "phone": "801-310-4434",
+  "website": "https://getoutgames.com/",
+  "unit": {
+    "singular": "escape room",
+    "plural": "escape rooms",
+    "count": 5,
+    "guestsPerUnit": 10
+  },
+  "hours": {
+    "sun": [],
+    "mon": [
+      {
+        "open": "13:00",
+        "close": "22:40"
+      }
+    ],
+    "tue": [
+      {
+        "open": "13:00",
+        "close": "22:40"
+      }
+    ],
+    "wed": [
+      {
+        "open": "13:00",
+        "close": "22:40"
+      }
+    ],
+    "thu": [
+      {
+        "open": "13:00",
+        "close": "22:40"
+      }
+    ],
+    "fri": [
+      {
+        "open": "11:00",
+        "close": "23:40"
+      }
+    ],
+    "sat": [
+      {
+        "open": "11:00",
+        "close": "23:40"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://getoutgames.com/group-packages-provo/",
+    "howItWorks": "Single rooms: book online or call 801-310-4434 at least 2 hours ahead; a small deposit per person reserves. Groups: fill out the request form, the venue confirms and takes payment. At least 1 week ahead recommended for groups.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book an escape room",
+      "url": "https://getoutgames.com/book/"
+    },
+    {
+      "what": "Corporate events",
+      "url": "https://getoutgames.com/corporate-events-provo/"
+    },
+    {
+      "what": "Youth group activities",
+      "url": "https://getoutgames.com/youth-groups-provo/"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": "Corporate bookings are charged an automatic 15% gratuity."
+  },
+  "packages": [
+    {
+      "id": "the-heist",
+      "name": "The Heist",
+      "description": "Take down the mob and crack the safe before the boss returns. Private booking.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 4,
+      "maxGuests": 8,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 26.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "reactor-meltdown",
+      "name": "Reactor Meltdown",
+      "description": "Stop a nuclear disaster before the reactor goes critical. Private booking.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 4,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 26.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "egyptian-tomb",
+      "name": "Egyptian Tomb",
+      "description": "Solve the ancient riddles and escape the pharaoh's tomb. Private booking.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 4,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 26.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "getout-spaceflight",
+      "name": "Getout Spaceflight",
+      "description": "Launch, navigate, and survive a mission to Mars. Private booking.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 4,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 26.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "space-2",
+      "name": "Space 2",
+      "description": "The next chapter of the Spaceflight mission. Private booking.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 4,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 26.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "zombie-on-a-chain",
+      "name": "Zombie on a Chain",
+      "description": "Find the cure while a zombie strains at its chain. Private booking.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 6,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 26.99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-package",
+      "name": "Group Package",
+      "description": "Flat rate per room plus tax, max 10 guests per room. All rooms start at the same time. Up to 50 guests / 5 rooms. Recommended for groups over 12.",
+      "includes": [
+        "All booked rooms start at the same time",
+        "Flexible scheduling"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 50,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 212.4,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "corporate-event",
+      "name": "Corporate Event Package",
+      "description": "Flat rate per room plus tax, max 10 guests per room, up to 50 guests / 5 rooms. Corporate bookings are charged an automatic 15% gratuity.",
+      "includes": [
+        "All booked rooms start at the same time",
+        "Flexible scheduling"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 50,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 212.4,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "youth-group",
+      "name": "Youth Group Package",
+      "description": "Flat rate per room plus tax, max 10 guests per room, up to 50 guests / 5 rooms. Wednesday evenings are common but other times are available. Youth must bring printed waivers signed by a parent or guardian.",
+      "includes": [
+        "All booked rooms start at the same time"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 50,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 212.4,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Will other people join my group?",
+      "a": "No — every booking is private. As long as your group meets the room minimum, no one will be in the room unless you bring them with you!"
+    },
+    {
+      "q": "What if I don't have 4 people?",
+      "a": "Our rooms are designed for a minimum of 4 people (6 for Zombie on a Chain). We can make exceptions, but smaller groups are still required to pay for the minimum of 4 people."
+    },
+    {
+      "q": "Do we need a reservation?",
+      "a": "Yes! We are appointment only. Reservations must be made at least 2 hours in advance, either over the phone or online. A credit card is required to reserve a room."
+    },
+    {
+      "q": "Can I add more people?",
+      "a": "You can add people up to the room maximum — 10 people in most rooms (8 in The Heist). If you have already booked, please give us a call and we can add them."
+    },
+    {
+      "q": "How much does it cost?",
+      "a": "Our escape rooms are $26.99 per person (plus tax). Groups booking multiple rooms can use our flat group rate of $212.40 per room (plus tax). A deposit is required to reserve; full payment is not charged until after your game."
+    },
+    {
+      "q": "Can kids play?",
+      "a": "Our rooms are intended for those 12 and up. Kids 12 and older must be accompanied by a responsible adult at all times. Kids 4 to 11 can participate when a group books an entire room. Kids 0 to 3 are not required to pay and are allowed when a group books an entire room."
+    },
+    {
+      "q": "How early should we arrive?",
+      "a": "Arrive a few minutes early. The door is locked M-F until your game master opens it. Games typically last 60 minutes; plan on staying at least an hour and a half."
+    },
+    {
+      "q": "Do you have parking?",
+      "a": "Limited parking in the back, along the street in front of the building, and on the street on the north side. You can also park in the corner lot to the north on weekday evenings after 5 and on Saturdays."
+    },
+    {
+      "q": "What should we wear?",
+      "a": "Most people wear normal clothes. However, feel free to dress up and get in character for your particular room or mission!"
+    },
+    {
+      "q": "Do you have a student discount?",
+      "a": "With a Starving Student Card you can use EITHER the 50% off discount OR a maximum of 2 free admissions per booking. Starving Student Cards are only accepted Monday through Thursday."
+    },
+    {
+      "q": "Can we play outside business hours?",
+      "a": "We are happy to schedule a game outside of business hours. Just email us at provo@getoutgames.com."
+    }
+  ],
+  "handoff": {
+    "email": "provo@getoutgames.com",
+    "webhookUrl": null
+  }
+}

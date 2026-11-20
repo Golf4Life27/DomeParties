@@ -1,0 +1,203 @@
+{
+  "slug": "royal-scot",
+  "name": "Royal Scot Golf & Bowl",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Detroit",
+  "address": "4722 West Grand River Avenue, Lansing, MI 48906",
+  "phone": "(517) 321-3071",
+  "website": "https://royalscot.net/",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "09:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "09:00",
+        "close": "23:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "09:00",
+        "close": "23:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "09:00",
+        "close": "23:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "09:00",
+        "close": "00:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "09:00",
+        "close": "00:00"
+      }
+    ]
+  },
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Reservations can be made on the website, but not less than two hours in advance. For last-minute reservations call 517.321.3071.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Reserve Trackman indoor golf bay",
+      "url": "https://royalscot.net/indoor-golf/"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "bowling-party",
+      "name": "Bowling Party Package",
+      "description": "Party package with two hours of bowling, shoes, pizza or nachos, and pitchers of pop.",
+      "includes": [
+        "Two hours of bowling",
+        "Shoes",
+        "Pizza OR nachos",
+        "Pitchers of pop"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false
+    },
+    {
+      "id": "tee-box-party",
+      "name": "The Tee Box Trackman Party",
+      "description": "The Tee Box Golf Simulator & Bourbon Bar with four Trackman bays and a full bar. Small parties for groups of 12 and under; the space fits up to 50 guests for private party rental. Catering menu available.",
+      "includes": [
+        "Trackman golf simulator bays",
+        "Full bar with Michigan-made and fine bourbon"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 50,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Can people of all ages go bowling?",
+      "a": "Bowling is the perfect activity for people of all ages! For our younger bowlers, our centers offer bumpers and ball ramps at no extra charge."
+    },
+    {
+      "q": "Can I bring my own ball and shoes?",
+      "a": "Yes, you can make it even more enjoyable by bringing your own ball and shoes!"
+    },
+    {
+      "q": "How many people fit on a lane?",
+      "a": "A maximum of six people can bowl on each lane."
+    },
+    {
+      "q": "Does Royal Scot offer party packages?",
+      "a": "Yes! We have packages available that include two hours of bowling, shoes, pizza OR nachos, and pitchers of pop! You can make your reservation right on our website!"
+    },
+    {
+      "q": "Are bumpers available?",
+      "a": "Royal Scot Golf & Bowl provides bumpers and ball ramps at no extra charge. You can also request bumpers at any time during your visit or while you're making your reservation."
+    },
+    {
+      "q": "Can I reserve a lane online?",
+      "a": "You can make your reservation on our website, but you can't book online if your reservation is less than two hours in advance. For a last-minute reservation, call 517.321.3071."
+    },
+    {
+      "q": "Can I add more people to my reservation?",
+      "a": "We are happy to accommodate additional guests until the day of your party. However, we cannot guarantee accommodations for your entire group. Please provide an accurate headcount at the time of booking."
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "If you need to cancel your event, please reach out to joanie@royalscot.net or by phone at 517.321.3071."
+    },
+    {
+      "q": "What should I wear?",
+      "a": "Please wear bowling shoes! Street shoes can mess up the lanes or make you slip and fall."
+    },
+    {
+      "q": "Can we have food and drinks at the lanes?",
+      "a": "Keep your food and drinks off the lanes to avoid spills and messes."
+    },
+    {
+      "q": "When is Laser Bowl?",
+      "a": "Laser Bowl starts around 9:00 p.m. every Friday and Saturday."
+    },
+    {
+      "q": "Do you have indoor golf?",
+      "a": "The Tee Box features four Trackman golf simulators and a full bar. The space fits up to 50 guests and is available for public bay rental or private party rental."
+    },
+    {
+      "q": "Is there an indoor golf league?",
+      "a": "The Tuesday Drop-In League runs Tuesdays at 6 p.m. from Oct. 27, 2026 through the beginning of April 2027. No need to register, just show up. Cost: $25/week per person. Contact golf@royalscot.net to start your own league."
+    },
+    {
+      "q": "Who do I call for banquets or golf?",
+      "a": "Banquets: 517.321.0408. Tee times and golf inquiries: 517.321.GOLF (4653)."
+    }
+  ],
+  "handoff": {
+    "email": "joanie@royalscot.net",
+    "webhookUrl": null
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ]
+}

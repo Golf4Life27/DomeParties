@@ -1,0 +1,573 @@
+{
+  "slug": "surge-baton-rouge",
+  "name": "Surge Entertainment Center Baton Rouge",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "5555 Burbank Dr, Baton Rouge, LA 70820",
+  "phone": "(225) 339-1188",
+  "website": "https://surgefun.com/locations/baton-rouge/fun/laser-tag/",
+  "unit": {
+    "singular": "simulator",
+    "plural": "simulators",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "11:00",
+        "close": "00:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "09:00",
+        "close": "00:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [
+      "fri"
+    ],
+    "from": "17:00",
+    "allDay": [
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Book online or contact the events team. Parties must be booked at least 48 hours ahead; a $100 non-refundable deposit secures the reservation if not paid in full, balance due on arrival.",
+    "leadTimeDays": 2
+  },
+  "otherLinks": [
+    {
+      "what": "Book With Us",
+      "url": "https://surgefun.com/locations/baton-rouge/bookwithus"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": 100
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "sports-simulator-hourly",
+      "name": "Sports Simulator Rental",
+      "description": "Rent a multi-sport simulator booth by the hour for up to 6 people. 13 sports and games including golf, football, basketball, hockey, baseball and Zombie Dodgeball. Peak: Friday after 5pm, all day Saturday and Sunday, and selected holidays.",
+      "includes": [
+        "13 virtual sports and games",
+        "Sports equipment available with a security deposit"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 28,
+        "peakAmount": 45,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "mini-golf-party-weekday",
+      "name": "Mini Golf Party (Mon-Thu)",
+      "description": "2-hour birthday party for up to 10 kids (ages 17 and under). Each additional kid $20, food not included, up to 15 max.",
+      "includes": [
+        "Two games of mini golf",
+        "Ball and putter rental",
+        "Party host for 2 hours",
+        "Private party room",
+        "Plates, napkins, utensils, table cloth",
+        "2 large single-topping pizzas and fountain drinks for 10",
+        "Free gift for the birthday VIP",
+        "$5 play card for each child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 15,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 215,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "mini-golf-party-weekend",
+      "name": "Mini Golf Party (Fri-Sun)",
+      "description": "2-hour birthday party for up to 10 kids (ages 17 and under). Each additional kid $20, food not included, up to 15 max.",
+      "includes": [
+        "Two games of mini golf",
+        "Ball and putter rental",
+        "Party host for 2 hours",
+        "Private party room",
+        "Plates, napkins, utensils, table cloth",
+        "2 large single-topping pizzas and fountain drinks for 10",
+        "Free gift for the birthday VIP",
+        "$5 play card for each child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 15,
+      "days": [
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 285,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "laser-tag-party-weekday",
+      "name": "Laser Tag Party (Mon-Thu)",
+      "description": "2-hour birthday party for up to 10 kids (ages 17 and under). Each additional kid $20, food not included, up to 25 max.",
+      "includes": [
+        "Two games of laser tag",
+        "Private party room",
+        "Party host for 2 hours",
+        "Plates, napkins, utensils, table cloth",
+        "2 large single-topping pizzas and fountain drinks for 10",
+        "Free gift for the birthday VIP",
+        "$5 play card for each child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 25,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 215,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "laser-tag-party-weekend",
+      "name": "Laser Tag Party (Fri-Sun)",
+      "description": "2-hour birthday party for up to 10 kids (ages 17 and under). Each additional kid $20, food not included, up to 25 max.",
+      "includes": [
+        "Two games of laser tag",
+        "Private party room",
+        "Party host for 2 hours",
+        "Plates, napkins, utensils, table cloth",
+        "2 large single-topping pizzas and fountain drinks for 10",
+        "Free gift for the birthday VIP",
+        "$5 play card for each child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 25,
+      "days": [
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 285,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "arcade-party-weekday",
+      "name": "Arcade Action Party (Mon-Thu)",
+      "description": "2-hour birthday party for up to 10 kids (ages 17 and under). Each additional kid $20, food not included, up to 25 max.",
+      "includes": [
+        "Unlimited arcade play (excludes prize and redemption games)",
+        "Party host for 2 hours",
+        "Private party room",
+        "Plates, napkins, utensils, table cloth",
+        "2 large single-topping pizzas and fountain drinks for 10",
+        "Free gift for the birthday VIP",
+        "$10 play card per child for a future visit, $20 for birthday child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 25,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 309,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "arcade-party-weekend",
+      "name": "Arcade Action Party (Fri-Sun)",
+      "description": "2-hour birthday party for up to 10 kids (ages 17 and under). Each additional kid $20, food not included, up to 25 max.",
+      "includes": [
+        "Unlimited arcade play (excludes prize and redemption games)",
+        "Party host for 2 hours",
+        "Private party room",
+        "Plates, napkins, utensils, table cloth",
+        "2 large single-topping pizzas and fountain drinks for 10",
+        "Free gift for the birthday VIP",
+        "$10 play card per child for a future visit, $20 for birthday child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 25,
+      "days": [
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 359,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "bowling-party-weekday",
+      "name": "Bowling Party (Mon-Thu)",
+      "description": "2-hour bowling birthday party for up to 12 kids (ages 17 and under). Each additional kid $20, food not included, up to 20 max. 30% weekday coupon does not apply to bowling parties.",
+      "includes": [
+        "2 hours of traditional bowling",
+        "Table space near the lanes",
+        "Shoe rental",
+        "Party host for 2 hours",
+        "Plates, napkins, utensils, table cloth",
+        "2 large single-topping pizzas and fountain drinks for 12",
+        "Free gift for the birthday VIP",
+        "$5 play card for each child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 20,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 179,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "bowling-party-weekend",
+      "name": "Bowling Party (Fri-Sun)",
+      "description": "2-hour bowling birthday party for up to 12 kids (ages 17 and under). Each additional kid $20, food not included, up to 20 max.",
+      "includes": [
+        "2 hours of traditional bowling",
+        "Table space near the lanes",
+        "Shoe rental",
+        "Party host for 2 hours",
+        "Plates, napkins, utensils, table cloth",
+        "2 large single-topping pizzas and fountain drinks for 12",
+        "Free gift for the birthday VIP",
+        "$5 play card for each child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 20,
+      "days": [
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 229,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "bowling-party-lite",
+      "name": "Bowling Party LITE",
+      "description": "2-hour bowling birthday party for up to 6 kids (ages 17 and under), same price all week. Each additional kid $20, food not included, up to 8 max.",
+      "includes": [
+        "2 hours of traditional bowling",
+        "Table space near the lanes",
+        "Shoe rental",
+        "Party host for 2 hours",
+        "Plates, napkins, utensils, table cloth",
+        "1 large single-topping pizza and fountain drinks for 6",
+        "Free gift for the birthday VIP",
+        "$5 play card for each child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 8,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 149,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "sports-sim-party-weekday",
+      "name": "Sports Simulator Party (Mon-Thu)",
+      "description": "2-hour sports simulator birthday party for up to 12 kids (ages 17 and under). Each additional kid $20, food not included, up to 18 max.",
+      "includes": [
+        "Unlimited sports activities",
+        "Sports equipment (clubs, balls, bats, etc.)",
+        "Party host for 2 hours",
+        "Plates, napkins, utensils, table cloth",
+        "2 large single-topping pizzas and fountain drinks for 12",
+        "Free gift for the birthday VIP",
+        "$5 play card for each child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 18,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 230,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "sports-sim-party-weekend",
+      "name": "Sports Simulator Party (Fri-Sun)",
+      "description": "2-hour sports simulator birthday party for up to 12 kids (ages 17 and under). Each additional kid $20, food not included, up to 18 max.",
+      "includes": [
+        "Unlimited sports activities",
+        "Sports equipment (clubs, balls, bats, etc.)",
+        "Party host for 2 hours",
+        "Plates, napkins, utensils, table cloth",
+        "2 large single-topping pizzas and fountain drinks for 12",
+        "Free gift for the birthday VIP",
+        "$5 play card for each child"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 18,
+      "days": [
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 300,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "faith-and-fun",
+      "name": "Faith & Fun (Youth/Church Groups)",
+      "description": "Exclusively for youth groups. $5 per student (17 and under), $7 per youth leader (18 and over). Minimum 20 paying students. Reservation and deposit required. Price does not include tax; tax-exempt groups must provide documentation. One bowling lane per 8 guests.",
+      "includes": [
+        "1.5 hours of traditional bowling",
+        "30 minutes in a private party room",
+        "Bowling shoe rental"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 20,
+      "maxGuests": 40,
+      "days": [
+        "wed"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 5,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "additional-kid",
+      "name": "Additional child (birthday party)",
+      "description": "Each additional kid beyond the package count; food not included.",
+      "unit": "each",
+      "amount": 20,
+      "amountTo": null
+    },
+    {
+      "id": "youth-leader",
+      "name": "Youth leader (Faith & Fun)",
+      "description": "Per youth leader 18 and over.",
+      "unit": "per_person",
+      "amount": 7,
+      "amountTo": null
+    },
+    {
+      "id": "group-laser-tag",
+      "name": "1 game of laser tag (Faith & Fun)",
+      "description": "Per student/adult.",
+      "unit": "per_person",
+      "amount": 7,
+      "amountTo": null
+    },
+    {
+      "id": "group-dark-ride",
+      "name": "1 Dark Ride experience (Faith & Fun)",
+      "description": "Per student/adult.",
+      "unit": "per_person",
+      "amount": 5,
+      "amountTo": null
+    },
+    {
+      "id": "group-mini-golf",
+      "name": "1 game of mini golf (Faith & Fun)",
+      "description": "Per student/adult.",
+      "unit": "per_person",
+      "amount": 8,
+      "amountTo": null
+    },
+    {
+      "id": "laser-tag-walk-in",
+      "name": "Laser tag",
+      "description": "Two-story glow-in-the-dark arena. No reservations required.",
+      "unit": "per_person",
+      "amount": 10,
+      "amountTo": null
+    }
+  ],
+  "faq": [
+    {
+      "q": "Can we bring outside food?",
+      "a": "No outside food or drinks are permitted, except you can bring your own cake or cupcakes."
+    },
+    {
+      "q": "What ages are birthday packages for?",
+      "a": "Party packages are strictly for guests ages 17 & under. The listed guest count does not include parents/adults. Over 17? Contact our Special Events Manager."
+    },
+    {
+      "q": "Is there a weekday party discount?",
+      "a": "30% off weekday parties (Monday – Thursday) with coupon code SURGE30 at checkout. Does not apply to any bowling parties."
+    },
+    {
+      "q": "What is the deposit and cancellation policy?",
+      "a": "A $100 non-refundable deposit is required to secure your reservation if not paid in full at booking; the remaining balance is collected on arrival. In the event of a cancellation, party deposits are non-refundable and cannot be applied to other activities."
+    },
+    {
+      "q": "How far ahead must we book or make changes?",
+      "a": "Parties must be booked a minimum of 48 hours from the event date. Changes may be made no less than 24 hours prior to the original scheduled date and are subject to availability."
+    },
+    {
+      "q": "Can we pick a party room?",
+      "a": "Party rooms are first come, first serve. Include your preference in the reservation notes. Rooms have 3 tables and 20 chairs, with themes such as Princess & The Frog, LSU Football, Dinosaurs, Saints Football and Space."
+    },
+    {
+      "q": "What decorations are allowed?",
+      "a": "Age-appropriate decorations only. No tape, nails, adhesives (including Command strips), glitter or confetti. Balloon arches must be fully assembled by guests. All decorations must be removed at the end. Party room entry is not allowed before your scheduled start time."
+    },
+    {
+      "q": "Do I need a reservation for sports simulators or laser tag?",
+      "a": "Simulators: walk-ins are welcome or reserve online. Laser tag: no reservations required."
+    },
+    {
+      "q": "Is sports equipment provided at the simulators?",
+      "a": "Sports equipment is available to use with a security deposit."
+    },
+    {
+      "q": "When is the kitchen open?",
+      "a": "Kitchen opens at 4 PM Mon.–Thurs. and 11 AM Fri–Sun, except on select holidays when hours may vary."
+    }
+  ],
+  "handoff": {
+    "email": "events.batonrouge@surgefun.com",
+    "webhookUrl": null
+  }
+}

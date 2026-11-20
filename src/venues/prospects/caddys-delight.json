@@ -1,0 +1,160 @@
+{
+  "slug": "caddys-delight",
+  "name": "Caddy's Delight Virtual Golf Lounge",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "1158 W 3rd Avenue, Suite B, Columbus, OH 43212",
+  "phone": "614-725-4209",
+  "website": null,
+  "unit": {
+    "singular": "bay",
+    "plural": "bays",
+    "count": 2,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [],
+    "tue": [
+      {
+        "open": "14:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "14:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "14:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "12:00",
+        "close": "00:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "12:00",
+        "close": "00:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "fri",
+      "sat"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Book golf bays online through the website's booking link or call 614-725-4209. For parties and private events, send the Event/Party Inquiry form on the website. Mondays are reserved for private events.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Golf bay rates and booking",
+      "url": "https://www.caddysdelight.com/golf"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "bay-hour",
+      "name": "Virtual golf bay (hourly)",
+      "description": "Simulator bay rental priced per bay per hour, one-hour minimum. Summer rates: Tue-Thu and Sun $25/hour, Fri-Sat $45/hour. About 40 virtual courses.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 8,
+      "days": [
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 25,
+        "peakAmount": 45,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "club-rental",
+      "name": "Club rental",
+      "description": "Per session. Or bring your own clubs, washed and ready to go.",
+      "unit": "each",
+      "amount": 10
+    }
+  ],
+  "faq": [
+    {
+      "q": "Can I bring my own clubs?",
+      "a": "Yes, bring your own clubs \"washed and ready to go,\" or rent clubs for $10 per session."
+    },
+    {
+      "q": "Is there a minimum booking time?",
+      "a": "Yes. Bays are priced per hour with a one-hour minimum."
+    },
+    {
+      "q": "Are you open on Mondays?",
+      "a": "Mondays are closed to the public and reserved for private events."
+    },
+    {
+      "q": "How do I book a party or private event?",
+      "a": "Fill in the Event/Party Inquiry form on our website."
+    },
+    {
+      "q": "Do you serve food and drinks?",
+      "a": "Yes. We have a full restaurant, patio and bar & grill with a locally sourced menu, craft beers, cocktails and frozen drinks. Virtual Golf and the Patio Bar & Grill share the same hours."
+    }
+  ],
+  "handoff": {
+    "email": "CaddysDelight@yahoo.com",
+    "webhookUrl": null
+  }
+}
