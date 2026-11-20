@@ -3,6 +3,7 @@ import { getVenue } from '@/venues'
 import { runVenueAgent, type ChatTurn } from '@/lib/venue-agent/run'
 import { draftFromPasted, draftFromSite } from '@/lib/venue-agent/draft'
 import { PASTED_FIXTURES } from '@/venues/pasted-fixtures'
+import { PROSPECTS } from '@/venues/prospects'
 import { READER_USER_AGENT, readVenueSite } from '@/lib/venue-agent/read-site'
 import { checkPrices } from '@/lib/venue-agent/price-check'
 import { isPreview, venueProductOn } from '@/lib/venue-agent/gate'
@@ -69,23 +70,30 @@ export async function GET(req: NextRequest) {
       links: site.links.slice(0, 60),
     })
   }
-  // ?pricecheck=<slug>[&page=<url>…][&pages=<n>]: re-reads a built demo's venue website and checks
-  // that every price the demo quotes is written as a price there. No model call.
-  const checkSlug = req.nextUrl.searchParams.get('pricecheck')
-  if (checkSlug) {
-    const venue = getVenue(checkSlug)
-    if (!venue) return NextResponse.json({ error: 'No such venue' }, { status: 404 })
-    if (!venue.website) return NextResponse.json({ slug: venue.slug, error: 'No website' })
-    const site = await readVenueSite(venue.website, readOpts(req)).catch((e: unknown) => ({ error: String(e) }))
-    if ('error' in site) return NextResponse.json({ slug: venue.slug, ...site })
-    const findings = checkPrices(venue, site.pages.map((p) => p.text))
-    return NextResponse.json({
-      slug: venue.slug,
-      prices: findings.length,
-      priced: findings.filter((f) => f.found === 'priced').length,
-      notPriced: findings.filter((f) => f.found !== 'priced'),
-      pages: site.pages.map((p) => p.url),
-    })
+  // ?pricecheck=<slug>[,<slug>…|all][&page=<url>…][&pages=<n>]: re-reads each built demo's venue
+  // website and checks that every price the demo quotes is written as a price there. No model call.
+  const checkSlugs = req.nextUrl.searchParams.get('pricecheck')
+  if (checkSlugs) {
+    const slugs = checkSlugs === 'all' ? PROSPECTS.map((v) => String((v as { slug: string }).slug)) : checkSlugs.split(',').map((x) => x.trim()).filter(Boolean)
+    const opts = readOpts(req)
+    const one = async (slug: string) => {
+      const venue = getVenue(slug)
+      if (!venue) return { slug, error: 'No such venue' }
+      if (!venue.website) return { slug, error: 'No website' }
+      const site = await readVenueSite(venue.website, opts).catch((e: unknown) => ({ error: String(e) }))
+      if ('error' in site) return { slug, error: site.error }
+      const findings = checkPrices(venue, site.pages.map((p) => p.text))
+      return {
+        slug,
+        prices: findings.length,
+        priced: findings.filter((f) => f.found === 'priced').length,
+        notPriced: findings.filter((f) => f.found !== 'priced').map((f) => `${f.where}: ${f.amount}${f.kind === 'percent' ? '%' : ''} (${f.found})`),
+        pages: site.pages.length,
+      }
+    }
+    const results: unknown[] = []
+    for (let i = 0; i < slugs.length; i += 6) results.push(...(await Promise.all(slugs.slice(i, i + 6).map(one))))
+    return NextResponse.json({ results })
   }
   const fixture = req.nextUrl.searchParams.get('pasted')
   if (fixture) {
