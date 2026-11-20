@@ -79,8 +79,11 @@ export async function GET(req: NextRequest) {
     const one = async (slug: string) => {
       const venue = getVenue(slug)
       if (!venue) return { slug, error: 'No such venue' }
-      if (!venue.website) return { slug, error: 'No website' }
-      const site = await readVenueSite(venue.website, opts).catch((e: unknown) => ({ error: String(e) }))
+      // &site=<slug>|<address>: the venue's own website, for a demo set up from pasted text.
+      const given = req.nextUrl.searchParams.getAll('site').map((x) => x.split('|')).find((x) => x[0] === slug)?.[1]
+      const website = venue.website ?? given
+      if (!website) return { slug, error: 'No website' }
+      const site = await readVenueSite(website, opts).catch((e: unknown) => ({ error: String(e) }))
       if ('error' in site) return { slug, error: site.error }
       const findings = checkPrices(venue, site.pages.map((p) => p.text))
       return {
