@@ -21,7 +21,10 @@ const MAX_PDFS = 1
 const MAX_PDF_BYTES = 30 * 1024 * 1024
 /** A PDF worth reading names parties, groups or prices in its file name or link text. */
 const PDF_KEYWORDS = /part(y|ies)|birthday|event|group|corporate|package|pric|rate|menu|food|field ?trip|camp|outing/i
-const KEYWORDS = /part(y|ies)|birthday|event|group|corporate|package|pric|rate|hour|menu|food|book|reserv|faq|league|lane|bay|simulator|team/i
+/** Nov 19: bowling and banquet pages held the prices on 2 of 10 venues and weren't followed. */
+const KEYWORDS = /part(y|ies)|birthday|event|group|corporate|package|pric|rate|cost|hour|menu|food|book|reserv|faq|league|lane|bay|simulator|team|bowl|banquet|hall|rental|room|admission/i
+/** A page whose name says it lists prices. */
+const PRICE_PAGE = /pric|\brates?\b|cost|admission/i
 
 export class SiteError extends Error {}
 
@@ -282,13 +285,15 @@ export function linkScore(text: string, path: string): number {
   let n = 0
   if (/part(y|ies)|birthday|bday|private|celebrat/.test(s)) n += 6
   if (/package|pkg|event|group|corporate|team ?build|outing|field ?trip/.test(s)) n += 4
-  if (/pric|rate|cost/.test(s)) n += 3
-  if (/hour|faq|book|reserv|menu|food|lane|bay|simulator/.test(s)) n += 1
+  if (/pric|\brates?\b|cost|admission/.test(s)) n += 3
+  if (/bowl|banquet|hall|rental/.test(s)) n += 3
+  if (/hour|faq|book|reserv|menu|food|lane|bay|simulator|room/.test(s)) n += 1
   if (/league|teams?\b(?! ?build)|member|career|job|employ|blog|news|waiver|privacy|terms|login|account|gift ?card|cart/.test(s)) n -= 4
   return n
 }
 
-export async function readVenueSite(input: string): Promise<SitePages> {
+export async function readVenueSite(input: string, opts: { maxPages?: number; extraPages?: string[] } = {}): Promise<SitePages> {
+  const maxPages = opts.maxPages ?? MAX_PAGES
   const home = normaliseUrl(input)
   const tryPage = (u: URL) =>
     fetchFirstPage(u).catch((e: unknown) => {
@@ -321,14 +326,39 @@ export async function readVenueSite(input: string): Promise<SitePages> {
     }
   }
   enqueue(first.html, first.url)
-  while (pages.length < MAX_PAGES && queue.length) {
+  // Pages asked for by name (a price check re-reading a demo's venue) go first.
+  for (const e of opts.extraPages ?? []) {
+    try {
+      const u = normaliseUrl(e)
+      if (!sameSite(u.hostname, first.url.hostname) || seen.has(u.toString())) continue
+      queue.push({ url: u, score: 100, order: order++ })
+    } catch {
+      /* not an address */
+    }
+  }
+  let pricePageTaken = false
+  while (pages.length < maxPages && queue.length) {
     // Best first; ties keep the order the site lists them in.
     queue.sort((a, b) => b.score - a.score || a.order - b.order)
-    const batch = queue.splice(0, Math.min(BATCH, MAX_PAGES - pages.length))
+    const batch = queue.splice(0, Math.min(BATCH, maxPages - pages.length))
+    // Nov 19: party pages filled all 8 reads and the venue's own pricing page was never opened, on
+    // 2 of 10 venues. The best-scored pricing page always gets one of the first reads.
+    if (!pricePageTaken) {
+      pricePageTaken = true
+      const isPrice = (q: { url: URL }) => PRICE_PAGE.test(q.url.pathname)
+      if (!batch.some(isPrice)) {
+        const i = queue.findIndex(isPrice)
+        if (i >= 0) {
+          const [p] = queue.splice(i, 1)
+          if (batch.length >= BATCH) queue.unshift(batch.pop()!)
+          batch.push(p)
+        }
+      }
+    }
     for (const c of batch) seen.add(c.url.toString())
     const got = await Promise.all(batch.map((c) => fetchPage(c.url).catch(() => null)))
     got.forEach((page, i) => {
-      if (!page || pages.length >= MAX_PAGES || pages.some((x) => x.url === page.url.toString())) return
+      if (!page || pages.length >= maxPages || pages.some((x) => x.url === page.url.toString())) return
       pages.push({ url: page.url.toString(), text: htmlToText(page.html).slice(0, 12000) })
       for (const h of bookingHostsIn(page.html, page.url)) bookingHosts.add(h)
       for (const r of rankedPdfLinksIn(page.html, page.url)) if (!pdfLinks.some((x) => x.url.toString() === r.url.toString())) pdfLinks.push(r)

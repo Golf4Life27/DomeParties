@@ -100,3 +100,10 @@ test('link ranking: party, private event and package pages come before hours, le
   assert.ok(linkScore('Team Building', '/teambuilding') >= 4)
 })
 
+
+test('bowling, banquet and pricing pages are worth opening (Nov 19: 3 of 10 setups missed them)', () => {
+  assert.ok(linkScore('Pricing', '/pricing/') >= 3)
+  assert.ok(linkScore('Bowling', '/bowling') >= 3)
+  assert.ok(linkScore('Banquet Hall', '/banquet') >= 3)
+  assert.ok(linkScore('Pricing', '/pricing/') > linkScore('Hours', '/hours'))
+})

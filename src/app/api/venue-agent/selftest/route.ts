@@ -3,7 +3,8 @@ import { getVenue } from '@/venues'
 import { runVenueAgent, type ChatTurn } from '@/lib/venue-agent/run'
 import { draftFromPasted, draftFromSite } from '@/lib/venue-agent/draft'
 import { PASTED_FIXTURES } from '@/venues/pasted-fixtures'
-import { READER_USER_AGENT } from '@/lib/venue-agent/read-site'
+import { READER_USER_AGENT, readVenueSite } from '@/lib/venue-agent/read-site'
+import { checkPrices } from '@/lib/venue-agent/price-check'
 import { isPreview, venueProductOn } from '@/lib/venue-agent/gate'
 
 // GET /api/venue-agent/selftest?case=N, ?venue=<slug>&q=<message>, ?draft=<website>, or
@@ -24,6 +25,14 @@ const CASES: [string, string[]][] = [
   ['sample-tokyo-range', ['12月5日（土）に20人で社内イベントできますか？お弁当つきでいくらですか？']],
 ]
 
+function readOpts(req: NextRequest) {
+  const n = Number(req.nextUrl.searchParams.get('pages'))
+  return {
+    maxPages: Number.isInteger(n) && n >= 1 && n <= 20 ? n : undefined,
+    extraPages: req.nextUrl.searchParams.getAll('page').filter(Boolean).slice(0, 8),
+  }
+}
+
 export async function GET(req: NextRequest) {
   if (!isPreview() || !venueProductOn()) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   // ?probe=<url>: what the setup reader's own request gets back from a site, to
@@ -38,6 +47,45 @@ export async function GET(req: NextRequest) {
     if ('error' in r) return NextResponse.json(r)
     const h = (k: string) => r.headers.get(k)
     return NextResponse.json({ status: r.status, contentType: h('content-type'), server: h('server'), location: h('location'), cfRay: Boolean(h('cf-ray')), snippet: (await r.text()).slice(0, 300) })
+  }
+  // ?read=<site>[&find=<number>…][&page=<url>…][&pages=<n>]: what the setup reader reads on a site,
+  // and where each number asked for appears on it, to trace a price back to its page.
+  const readSite = req.nextUrl.searchParams.get('read')
+  if (readSite) {
+    const finds = req.nextUrl.searchParams.getAll('find').filter(Boolean).slice(0, 12)
+    const site = await readVenueSite(readSite, readOpts(req)).catch((e: unknown) => ({ error: String(e) }))
+    if ('error' in site) return NextResponse.json(site)
+    return NextResponse.json({
+      pages: site.pages.map((p) => ({ url: p.url, chars: p.text.length })),
+      finds: finds.map((n) => ({
+        find: n,
+        hits: site.pages.flatMap((p) =>
+          [...p.text.matchAll(new RegExp(`(?<![\\d])${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\d])`, 'g'))].slice(0, 4).map((m) => ({
+            url: p.url,
+            around: p.text.slice(Math.max(0, (m.index ?? 0) - 90), (m.index ?? 0) + 60).replace(/\s+/g, ' '),
+          })),
+        ),
+      })),
+      links: site.links.slice(0, 60),
+    })
+  }
+  // ?pricecheck=<slug>[&page=<url>…][&pages=<n>]: re-reads a built demo's venue website and checks
+  // that every price the demo quotes is written as a price there. No model call.
+  const checkSlug = req.nextUrl.searchParams.get('pricecheck')
+  if (checkSlug) {
+    const venue = getVenue(checkSlug)
+    if (!venue) return NextResponse.json({ error: 'No such venue' }, { status: 404 })
+    if (!venue.website) return NextResponse.json({ slug: venue.slug, error: 'No website' })
+    const site = await readVenueSite(venue.website, readOpts(req)).catch((e: unknown) => ({ error: String(e) }))
+    if ('error' in site) return NextResponse.json({ slug: venue.slug, ...site })
+    const findings = checkPrices(venue, site.pages.map((p) => p.text))
+    return NextResponse.json({
+      slug: venue.slug,
+      prices: findings.length,
+      priced: findings.filter((f) => f.found === 'priced').length,
+      notPriced: findings.filter((f) => f.found !== 'priced'),
+      pages: site.pages.map((p) => p.url),
+    })
   }
   const fixture = req.nextUrl.searchParams.get('pasted')
   if (fixture) {

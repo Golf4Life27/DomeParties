@@ -3,12 +3,20 @@ import { z } from 'zod'
 import { parseProfile, venueProfileSchema, type VenueProfile, type Weekday } from './profile'
 import { readVenueSite, SiteError, type SitePages } from './read-site'
 import { venueAgentModel } from './run'
+import { checkPrices, unconfirmedLine, type PriceFinding } from './price-check'
 
 // Turns a venue's website into a ready-to-check setup, so the owner only
 // confirms or fixes it instead of filling in a form. The website is only ever
 // data here: whatever its pages say, all that comes back is a setup to check.
 
-export type Draft = { profile: VenueProfile; unsure: string[]; sources: string[]; usage: { inputTokens: number; outputTokens: number } }
+export type Draft = {
+  profile: VenueProfile
+  unsure: string[]
+  sources: string[]
+  usage: { inputTokens: number; outputTokens: number }
+  /** Prices the setup holds that the pages read don't write as a price (website drafts only). */
+  unconfirmed?: PriceFinding[]
+}
 
 const SYSTEM = `You set up a website chat agent for an entertainment venue (golf dome, indoor golf simulators, driving range, bowling center or family entertainment center) by reading the venue's own website.
 
@@ -87,6 +95,13 @@ export async function draftFromSite(website: string, contactEmail: string | null
     contactEmail,
     sources: [...site.pages.map((p) => p.url), ...site.pdfs.map((f) => f.url)],
   })
+  // Every saved price is looked for, word for word, on the pages read. One the pages don't write as a
+  // price goes on the owner's checklist, so nothing reaches a guest that the venue never set.
+  const unconfirmed = checkPrices(d.profile, site.pages.map((p) => p.text)).filter((f) => f.found !== 'priced')
+  if (unconfirmed.length) {
+    d.unconfirmed = unconfirmed
+    d.unsure = [...unconfirmed.map(unconfirmedLine), ...d.unsure].slice(0, 30)
+  }
   if (!hasAnyPrice(d.profile) && site.bookingHosts.length > 0) {
     throw new SiteError(
       `We couldn’t see any prices on ${site.home.hostname}; they may load inside your booking system (${site.bookingHosts[0]}). Paste your party page or price list, or upload a PDF of it, so the chat can quote exact totals.`,
