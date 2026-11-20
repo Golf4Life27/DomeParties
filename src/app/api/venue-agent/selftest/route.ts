@@ -51,7 +51,18 @@ export async function GET(req: NextRequest) {
   if (site) {
     const t0 = Date.now()
     const d = await draftFromSite(site, null).catch((e: unknown) => ({ error: String(e) }))
-    return NextResponse.json({ seconds: (Date.now() - t0) / 1000, ...d })
+    const draftSeconds = (Date.now() - t0) / 1000
+    // &q=<guest message>: also ask the fresh draft one guest question, so the
+    // time measured runs from the website address to a chat that answers.
+    const ask = req.nextUrl.searchParams.get('q')?.trim()
+    if (!ask || 'error' in d) return NextResponse.json({ seconds: draftSeconds, ...d })
+    const r = await runVenueAgent(d.profile, [{ role: 'guest', text: ask }], { mode: 'dry' }).catch((e: unknown) => ({ error: String(e) }))
+    return NextResponse.json({
+      seconds: draftSeconds,
+      secondsToFirstReply: (Date.now() - t0) / 1000,
+      chat: 'error' in r ? r : { ask, reply: r.reply, tools: r.toolsUsed, usage: r.usage },
+      ...d,
+    })
   }
   // ?venue=<slug>&q=<guest message>[&q=<next message>…]: one chat against
   // any set-up venue, sample or prospect.
