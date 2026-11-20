@@ -75,6 +75,9 @@ export function findPrice(line: PriceLine, text: string): PriceFinding['found'] 
     'i',
   )
   if (priced.test(t)) return 'priced'
+  // A menu often lists "Pizza ...... 17.99" with no sign: a number with cents is a price.
+  const fixed = line.amount.toFixed(2)
+  if (new RegExp(`(?<![\\d.,])(?:${esc(fixed)}|${esc(fixed.replace('.', ','))})(?![\\d])`).test(t)) return 'priced'
   return new RegExp(num).test(t) ? 'bare' : 'missing'
 }
 

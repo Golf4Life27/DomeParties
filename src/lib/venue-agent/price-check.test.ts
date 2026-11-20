@@ -18,6 +18,7 @@ test('a price counts only when the page writes it as a price', () => {
   // 1500 inside 15000 or 150 inside 1500 is not a match
   assert.equal(findPrice(m(150), 'Buyout $1500'), 'missing')
   assert.equal(findPrice(m(15), 'Party $15.50 each'), 'missing')
+  assert.equal(findPrice(m(17.99), '16" Large Pizza 17.99'), 'priced')
   assert.equal(findPrice(pc(20), 'A 20% gratuity on groups of 10'), 'priced')
   assert.equal(findPrice(pc(6), 'Lane 6 is open'), 'bare')
 })
