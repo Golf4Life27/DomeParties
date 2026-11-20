@@ -195,10 +195,10 @@
       "days": [],
       "pricing": {
         "type": "per_person",
-        "amount": 95,
+        "amount": 0,
         "peakAmount": null
       },
-      "priceListed": true,
+      "priceListed": false,
       "priceFrom": false
     },
     {

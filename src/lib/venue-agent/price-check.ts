@@ -67,11 +67,13 @@ export function findPrice(line: PriceLine, text: string): PriceFinding['found'] 
   const alts = spellings(line.amount).map(esc).join('|')
   const num = `(?<![\\d.,])(?:${alts})(?![\\d]|[.,]\\d)`
   if (line.kind === 'percent') {
-    if (new RegExp(`${num}\\s?(?:%|percent)`, 'i').test(t)) return 'priced'
+    if (new RegExp(`${num}\\s*(?:%|percent)`, 'i').test(t)) return 'priced'
+    // A 100% deposit is usually written as "payment must be in full".
+    if (line.amount === 100 && /\b(?:in full|full payment|full prepayment|prepaid|pay(?:ment)? upfront)\b/i.test(t)) return 'priced'
     return new RegExp(num).test(t) ? 'bare' : 'missing'
   }
   const priced = new RegExp(
-    `${CURRENCY}\\s?${num}|${num}\\s?(?:${CURRENCY}|dollars|pounds|euros|/\\s?(?:hr|hour|person|guest|lane|bay|child|kid|pp)|\\s?(?:per|each|pp|p\\.p\\.|a head|an hour|/))`,
+    `${CURRENCY}(?:\\s*${CURRENCY})?\\s*${num}|${num}\\s*(?:${CURRENCY}|dollars|pounds|euros|/\\s?(?:hr|hour|person|guest|lane|bay|child|kid|pp)|\\s?(?:per|each|pp|p\\.p\\.|a head|an hour|/))`,
     'i',
   )
   if (priced.test(t)) return 'priced'

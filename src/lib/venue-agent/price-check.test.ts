@@ -21,6 +21,11 @@ test('a price counts only when the page writes it as a price', () => {
   assert.equal(findPrice(m(17.99), '16" Large Pizza 17.99'), 'priced')
   assert.equal(findPrice(pc(20), 'A 20% gratuity on groups of 10'), 'priced')
   assert.equal(findPrice(pc(6), 'Lane 6 is open'), 'bare')
+  // Nov 20: a sign on its own line, or written twice by the site builder, is still a price
+  assert.equal(findPrice(m(60), 'Bay hire €\n60 per hour'), 'priced')
+  assert.equal(findPrice(m(25), '1 Hour $ $ 25'), 'priced')
+  // Nov 20: Golf-In writes its 100% deposit as "payment must be in full"
+  assert.equal(findPrice(pc(100), 'Payment must be in full to book your time.'), 'priced')
 })
 
 test('a built demo checks clean against its own price text', () => {

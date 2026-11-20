@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError, tooThinToDraft, bookingHostsIn, pdfLinksIn, rankedPdfLinksIn, linkScore } from './read-site'
+import { cfDecode, htmlToText, linksIn, normaliseUrl, SiteError, tooThinToDraft, bookingHostsIn, pdfLinksIn, rankedPdfLinksIn, linkScore, otherLanguage } from './read-site'
 
 test('website addresses: plain names work, anything not a public site is refused', () => {
   assert.equal(normaliseUrl('example.com').toString(), 'https://example.com/')
@@ -106,4 +106,12 @@ test('bowling, banquet and pricing pages are worth opening (Nov 19: 3 of 10 setu
   assert.ok(linkScore('Bowling', '/bowling') >= 3)
   assert.ok(linkScore('Banquet Hall', '/banquet') >= 3)
   assert.ok(linkScore('Pricing', '/pricing/') > linkScore('Hours', '/hours'))
+})
+
+test('translated copies of a site are skipped, country paths are not (Nov 20: T-Shotz spent its pages on /pt-pt/ and /nl/)', () => {
+  assert.equal(otherLanguage('/pt-pt/parties', '/'), true)
+  assert.equal(otherLanguage('/nl/', '/'), true)
+  assert.equal(otherLanguage('/us/mo/springfield', '/'), false)
+  assert.equal(otherLanguage('/de/feiern', '/de/'), false)
+  assert.equal(otherLanguage('/parties', '/'), false)
 })

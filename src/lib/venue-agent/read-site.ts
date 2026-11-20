@@ -274,6 +274,16 @@ async function checkPdf(start: URL): Promise<{ url: string } | null> {
   return null
 }
 
+/** A translated copy of the site (/pt-pt/, /nl/, /de/) holds the same prices again and would use up
+ *  the page budget, so only the home page's own language is followed. Country paths like /us/ stay. */
+const LANG = /^\/(pt|nl|de|fr|es|it|ja|zh|ko|ru|pl|sv|da|fi|no|nb|tr|ar|he|cs|hu|ro|el|uk|en)(?:-[a-z]{2,4})?(?:\/|$)/i
+export function otherLanguage(path: string, homePath: string): boolean {
+  const m = LANG.exec(path)
+  if (!m) return false
+  const h = LANG.exec(homePath)
+  return !h || h[1].toLowerCase() !== m[1].toLowerCase()
+}
+
 /** A link scoring this high is a party page, whose own links are followed. */
 const PARTY_PAGE = 4
 
@@ -317,6 +327,7 @@ export async function readVenueSite(input: string, opts: { maxPages?: number; ex
       if (bare(l.url.hostname) !== bare(first.url.hostname)) continue
       if (!(KEYWORDS.test(l.text) || KEYWORDS.test(l.url.pathname))) continue
       if (/\.(pdf|jpe?g|png|gif|zip)$/i.test(l.url.pathname)) continue
+      if (otherLanguage(l.url.pathname, first.url.pathname)) continue
       const key = l.url.toString()
       if (seen.has(key)) continue
       const score = linkScore(l.text, l.url.pathname)
