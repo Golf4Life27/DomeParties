@@ -72,6 +72,12 @@ const STOP = new RegExp(
     String.raw`\bspam\b`,
     String.raw`\bpass(?:ing)? on this\b`,
     String.raw`\bnot for us\b`,
+    String.raw`^\W*(?:pass|no|nope|no thanks?)\W*$`,
+    String.raw`^\W*(?:pass|nope)[.!]`,
+    String.raw`(?:^|[.!?]\s+)(?:pass|we'?ll pass|hard pass)[.!]?\s*$`,
+    String.raw`\bdelete (?:my|our) (?:e-?mail|address|info|details)\b`,
+    String.raw`\b(?:appreciate|thanks for) (?:it|the offer|reaching out),? but (?:no|we'?ll pass|not)\b`,
+    String.raw`\bwe'?ll pass\b`,
   ].join('|'),
   'im',
 )
@@ -182,7 +188,7 @@ function topicLine(t: Topic, o: OwnerOffer): string | null {
     case 'after':
       return pilot
         ? `After the ${PILOT.days} days you pick Pro or Starter if you want to keep it. Nothing switches over on its own, and if you don't pick, the chat comes off with nothing more to pay.`
-        : "After the free month it's the monthly price. If you'd rather not keep it, tell me before the month is up and you pay nothing."
+        : "Near the end of the free month I'll ask whether you want to keep it. Nothing switches to paid on its own, and if you don't say yes, the chat comes off with nothing owed."
     case 'counts':
       return pilot
         ? 'A request counts only when a guest asks about a party or event and leaves a date, a headcount, their name and an email or phone. Someone who just asks a price and leaves no details costs you nothing. The same guest asking about the same date within a week counts once, and complaints never count.'
