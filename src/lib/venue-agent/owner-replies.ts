@@ -94,7 +94,7 @@ const YES = new RegExp(
     String.raw`\b(?:i'?m|we'?re|count (?:me|us)) in\b`, String.raw`\b(?:i'?m|we'?re|i am|we are) sold\b`, String.raw`\bgo ahead\b`, String.raw`\bsend (?:it|it over|me)\b`,
     String.raw`\bset (?:it|us|me) up\b`, String.raw`\bhow (?:do|can) (?:i|we) (?:get|start|add|install|sign|set|put|turn|switch)\b`,
     String.raw`\b(?:get|put) (?:this|it) (?:on|onto|up on)\b`, String.raw`\bwant (?:it|this|to (?:try|start|do|use|get))\b`,
-    String.raw`\b(?:we'?d|i'?d) (?:like|love) (?:to|it|this)\b`, String.raw`\binterested\b`, String.raw`\bready to\b`,
+    String.raw`\b(?:we'?d|i'?d) (?:like|love) (?:to|it|this)\b`, String.raw`\bready to\b`, String.raw`\binterested in (?:trying|starting|signing|doing|getting|giving)\b`,
     String.raw`\bon board\b`, String.raw`\bgive it a (?:try|shot|go)\b`, String.raw`\bdo it\b`, String.raw`\bnext steps?\b`,
   ].join('|'),
   'i',
@@ -141,7 +141,9 @@ export function sortReply(text: string): ReplyKind {
   if (stop) return /\bbut\b[^.!]*\?/i.test(t) ? 'unsure' : 'stop'
   if (ALREADY.test(t) && !question && !YES.test(t)) return 'stop'
   const notYet = /\b(?:not|n'?t) (?:sure|ready|now|yet)\b|\bmaybe\b|\bnext (?:year|season|spring|summer|fall|winter)\b|\bbefore (?:i|we)\b|\bneed to know before\b|\byes or no\b/i
-  if (YES.test(t) && !notYet.test(t)) return 'yes'
+  // A plain go-ahead is a yes whatever questions come with it.
+  const goAhead = /\b(?:we'?re|i'?m|count (?:me|us)) in\b|\bgo ahead\b|\bsign (?:me|us) up\b|\blet'?s do it\b|\bset it up\b|\b(?:i'?m|we'?re) sold\b/i
+  if (goAhead.test(t) || (YES.test(t) && !notYet.test(t))) return 'yes'
   if (PRICE.test(t) || Object.values(TOPICS).some((r) => r.test(t))) return 'price'
   return 'unsure'
 }
@@ -216,9 +218,10 @@ function topicLine(t: Topic, o: OwnerOffer): string | null {
     case 'scope':
       return "It's built for parties and group events. For other questions, like leagues, it answers only from what's in your setup; anything it doesn't have, it says so and passes the guest to you with their details. It never makes up an answer."
     case 'site':
-      return "It works on any website that lets you add a line of code. Most site builders have a spot for it, though some only allow it on a paid plan. Your demo is already set up from your own pages, so the only step left is that one line. We never sign in to your site: paste it yourself, forward it to whoever runs your site, or reply with their email and I'll send them the steps."
+      return "It works on any website that lets you add a line of code, though some site builders only allow that on a paid plan. Your demo is already set up from your own pages, so the only step left is that one line. We never sign in to your site: paste it yourself, forward it to whoever runs your site, or reply with their email and I'll send them the steps."
     case 'speed':
-      return "It goes live the moment the line is on your site, so it can be answering guests today."
+      // No measured timing to promise, so a speed or rush question goes to a person.
+      return null
     case 'language':
       return 'Yes. It answers each guest in the language they write in, Spanish included, using your same prices.'
     case 'locations':
@@ -295,7 +298,7 @@ export function planReply(text: string, o: OwnerOffer, subject = ''): ReplyPlan 
   const name = signed && !o.venueName.toLowerCase().includes(signed.toLowerCase()) ? signed : null
   const hello = name ? `Hi ${name},` : 'Hi,'
   const topics = topicsIn(text)
-  const unanswered = questions(text).filter((q) => !CORE.test(q) && !(Object.keys(TOPICS) as Topic[]).some((k) => TOPICS[k].test(q)))
+  const unanswered = questions(text).filter((q) => !CORE.test(q) && !(Object.keys(TOPICS) as Topic[]).some((k) => TOPICS[k].test(q) && (k === 'plans' || topicLine(k, o) !== null)))
   const correction = offerCorrection(text, o)
   // The billing answer already says what happens after the free month or the pilot.
   const skip: Topic[] = [...IN_COST_LINE, ...(topics.includes('billing') ? (['after'] as Topic[]) : [])]
