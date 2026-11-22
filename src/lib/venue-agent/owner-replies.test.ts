@@ -29,7 +29,8 @@ test('a yes gets the switch-on steps with the offer from its own email', () => {
   assert.equal(p.kind, 'yes')
   assert.match(p.email!.text, /^Hi Dana,/)
   assert.match(p.email!.text, /\$20 for each party request/)
-  assert.match(p.email!.text, /Wix/)
+  assert.match(p.email!.text, /never sign in to your site/)
+  assert.doesNotMatch(p.email!.text, /install it for you/)
   assert.match(p.email!.text, /offer=pilot/)
 })
 
@@ -50,4 +51,29 @@ test('overseas offers are priced in their own money', () => {
 test('a signature name is picked up, a sign-off word is not', () => {
   assert.equal(signedName('ok sounds good\nThanks,\nMike'), 'Mike')
   assert.equal(signedName('ok sounds good\nThanks'), null)
+})
+
+test('an owner writing in Spanish is held for a person; a Spanish no is a stop', () => {
+  const p = planReply('Hola, ¿cuánto cuesta para nuestro negocio? Tenemos muchas fiestas los sábados.', free)
+  assert.equal(p.email, null)
+  assert.equal(p.needsPerson, true)
+  const s = planReply('No gracias, no nos interesa.', free)
+  assert.equal(s.kind, 'stop')
+  assert.equal(s.doNotContact, true)
+})
+
+test('a yes with questions is still a yes, with the offer correction before the steps', () => {
+  const p = planReply("ok im sold. we're in for the pilot. does it do spanish?", free)
+  assert.equal(p.kind, 'yes')
+  const t = p.email!.text
+  assert.ok(t.indexOf('One thing first') < t.indexOf('how to switch it on'))
+  assert.match(t, /Spanish included/)
+  assert.equal(p.needsPerson, false)
+})
+
+test('held topics now have written answers', () => {
+  const p = planReply('Can we pause it in the summer? Any discount for two locations? Do you take a check? Can it text me? Who eats a wrong price?', free)
+  assert.equal(p.needsPerson, false)
+  for (const r of [/pause it for any months/, /no discount for two/, /can't take checks/, /email only for now/, /don't cover the cost/]) assert.match(p.email!.text, r)
+  assert.equal(sortReply('Who eats a wrong price? Need to know before we put it on the site.'), 'price')
 })

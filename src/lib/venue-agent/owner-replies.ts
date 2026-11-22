@@ -78,6 +78,11 @@ const STOP = new RegExp(
     String.raw`\bdelete (?:my|our) (?:e-?mail|address|info|details)\b`,
     String.raw`\b(?:appreciate|thanks for) (?:it|the offer|reaching out),? but (?:no|we'?ll pass|not)\b`,
     String.raw`\bwe'?ll pass\b`,
+    // Spanish ways of saying no or stop.
+    String.raw`\bno,? gracias\b`,
+    String.raw`\bno (?:me|nos) interesa\b`,
+    String.raw`\b(?:qu[ií]tenme|qu[ií]tennos|b[oó]rrenme|s[aá]quenme|s[aá]quennos)\b`,
+    String.raw`\bno (?:me|nos) (?:escriban?|env[ií]en?|contacten?|manden?)\b`,
   ].join('|'),
   'im',
 )
@@ -86,7 +91,7 @@ const YES = new RegExp(
   [
     String.raw`\byes\b`, String.raw`\byeah\b`, String.raw`\byep\b`, String.raw`\byup\b`, String.raw`\bsure\b`,
     String.raw`\blet'?s (?:do|try|go|get)\b`, String.raw`\bsign (?:me|us) up\b`, String.raw`\bsounds (?:good|great)\b`,
-    String.raw`\b(?:i'?m|we'?re|count (?:me|us)) in\b`, String.raw`\bgo ahead\b`, String.raw`\bsend (?:it|it over|me)\b`,
+    String.raw`\b(?:i'?m|we'?re|count (?:me|us)) in\b`, String.raw`\b(?:i'?m|we'?re|i am|we are) sold\b`, String.raw`\bgo ahead\b`, String.raw`\bsend (?:it|it over|me)\b`,
     String.raw`\bset (?:it|us|me) up\b`, String.raw`\bhow (?:do|can) (?:i|we) (?:get|start|add|install|sign|set|put|turn|switch)\b`,
     String.raw`\b(?:get|put) (?:this|it) (?:on|onto|up on)\b`, String.raw`\bwant (?:it|this|to (?:try|start|do|use|get))\b`,
     String.raw`\b(?:we'?d|i'?d) (?:like|love) (?:to|it|this)\b`, String.raw`\binterested\b`, String.raw`\bready to\b`,
@@ -103,12 +108,21 @@ const TOPICS = {
   after: /\bafter (?:the )?(?:free|first|trial|pilot|60|sixty|month|that)|when (?:the )?(?:free|trial|pilot) (?:month )?(?:ends|is up|runs out)|then what\b/i,
   counts: /\bwhat counts|count as|counted|per request|each request|what(?:'s| is) a (?:party )?request|how (?:do you|are) (?:requests )?count|\$20\b/i,
   plans: /\b(?:499|299|pro\b|starter|difference|vs\.?|versus|which plan|two plans|both plans)\b/i,
-  site: /\bwix|squarespace|wordpress|godaddy|weebly|shopify|webflow|our (?:web)?site (?:is|runs|uses|was built|is through)|website (?:is )?(?:through|done by|run by)|website builder|work on (?:our|my) site|who (?:installs|puts it)|install(?:ed)? it for|get it installed|work with (?:him|her|them|our)|don'?t know how to (?:add|install|code)|not (?:techy|technical|tech savvy)|web ?guy|local guy|web person|web designer|developer|do you (?:set it up|install)|or do (?:i|we) have to\b/i,
+  site: /\bset (?:it|this) up for (?:us|me)|do (?:it|the setup|the install) for (?:us|me)|\bwix|squarespace|wordpress|godaddy|weebly|shopify|webflow|our (?:web)?site (?:is|runs|uses|was built|is through)|website (?:is )?(?:through|done by|run by)|website builder|work on (?:our|my) site|who (?:installs|puts it)|install(?:ed)? it for|get it installed|work with (?:him|her|them|our)|don'?t know how to (?:add|install|code)|not (?:techy|technical|tech savvy)|web ?guy|local guy|web person|web designer|developer|do you (?:set it up|install)|or do (?:i|we) have to\b/i,
   speed: /\bhow (?:fast|quick|soon|long)|by (?:this|next) (?:week|weekend)|before (?:the )?(?:holidays|christmas|december)|up and running\b/i,
   pick: /\bwhich (?:one|plan) (?:would|will|do|are) (?:we|i)|do (?:i|we) (?:get to )?(?:pick|choose)|can (?:i|we) (?:pick|choose|switch|change)|switch plans|change plans|upgrade|downgrade\b/i,
   worth: /\bworth it|really need (?:it|pro|the pro)|do (?:i|we) need (?:pro|the pro|it)|what does (?:the )?pro (?:plan )?(?:actually )?do|what do (?:i|we) get\b/i,
   scope: /\bleagues?\b|only (?:for )?parties|other questions|general questions|hours questions|non-?party|anything (?:else|besides)\b/i,
   billing: /\bbilled|billing|invoice|when (?:do|would|will) (?:i|we) (?:pay|get charged|be charged)|right away or|end of (?:the )?month|start(?:s)? charging|just start charging|check with (?:me|us)|auto(?:matically)? (?:charge|bill|renew)\b/i,
+  language: /\bspanish|espa[nñ]ol|other languages?|another language|languages?\b|bilingual|translat/i,
+  locations: /\b(?:two|2|second|another|both|multiple|other|new) (?:locations?|stores?|sites?|venues?|spots?)|locations\b|opening (?:another|a second|one)|\$\d+ each|\bdo both\b|\bboth (?:places|spots)\b/i,
+  pause: /\bpause|slow (?:season|months?|in (?:the )?summer|may|june|july|august)|summer|off ?season|seasonal|closed (?:for|in) (?:the )?(?:summer|winter)\b/i,
+  yearly: /\byearly|\bannual|for the (?:whole |full )?year|a year up ?front|\b(?:a|by|take|takes|accept|mail(?: you)?(?: a)?|send(?: you)?(?: a)?) checks?\b|cheque|autopay|auto-pay|automatic payments?\b/i,
+  liability: /\bus or you\b|\byou or us\b|\bwrong price|who (?:eats|pays for|covers|is responsible)|liab|responsib|honou?r (?:the|a|that) (?:price|quote)|expecting (?:it|that price)|mistake|wrong (?:answer|quote|total)\b/i,
+  alerts: /\btext (?:me|us|my|our)|\bsms\b|text messages?|text alerts?|by text|a text\b|push notif|on my phone\b/i,
+  compare: /\btidio|intercom|drift|zendesk|tawk|livechat|hubspot chat|already (?:pay|have|use)[^.?!]{0,30}chat|another chat|current chat|our chat|what makes (?:it|yours|this) different|why would (?:i|we) pay|\d+x\b|ten times\b/i,
+  bookings: /\btake bookings|book (?:it|parties|them) (?:itself|on its own)|confirm every|staff (?:to )?confirm|before anything is promised|promis(?:e|es|ing) (?:a |the )?(?:party|booking|date|time|slot)|won'?t (?:book|take)|double ?book\b/i,
+  sides: /\bboth (?:sides|parts|halves)\b|\b\w+ side (?:and|&) (?:the )?\w+ side\b|\bsides? both\b|\bbowling and (?:the )?golf\b|\bgolf and (?:the )?bowling\b/i,
   leads: /\bwho gets|where do (?:the )?(?:requests|leads|inquiries) go|send (?:the )?(?:requests|leads|inquiries) to|my manager|our (?:events|event|party) (?:coordinator|manager|person)|notif|get (?:the )?(?:party )?(?:requests|leads|inquiries)|go to (?:my|our|her|his|their) (?:email|inbox)|both (?:of us|get)|more than one (?:email|person|address)\b/i,
 } as const
 type Topic = keyof typeof TOPICS
@@ -126,7 +140,7 @@ export function sortReply(text: string): ReplyKind {
   // "Not interested in the pilot, but what's the monthly?" is a question, not a stop. A plain no is a stop.
   if (stop) return /\bbut\b[^.!]*\?/i.test(t) ? 'unsure' : 'stop'
   if (ALREADY.test(t) && !question && !YES.test(t)) return 'stop'
-  const notYet = /\b(?:not|n'?t) (?:sure|ready|now|yet)\b|\bmaybe\b|\bnext (?:year|season|spring|summer|fall|winter)\b|\bbefore (?:i|we) (?:say yes|agree|sign|commit|decide|go ahead)|\byes or no\b/i
+  const notYet = /\b(?:not|n'?t) (?:sure|ready|now|yet)\b|\bmaybe\b|\bnext (?:year|season|spring|summer|fall|winter)\b|\bbefore (?:i|we)\b|\bneed to know before\b|\byes or no\b/i
   if (YES.test(t) && !notYet.test(t)) return 'yes'
   if (PRICE.test(t) || Object.values(TOPICS).some((r) => r.test(t))) return 'price'
   return 'unsure'
@@ -198,13 +212,33 @@ function topicLine(t: Topic, o: OwnerOffer): string | null {
     case 'pick':
       return `You pick. Your email led with ${o.lead === 'pro' ? 'Pro' : 'Starter'}, but you choose either one in the box when you switch it on, and you can change plans any time by replying.`
     case 'worth':
-      return `Pro is worth it if your packages or prices change often, or you'd rather not keep the chat's prices up to date yourself. If they change a couple of times a year, Starter (${money(m.starter, o.currency)} a month) is the better fit: reply with your new prices when they change and I'll update the chat. You can move to Pro any time.`
+      return `Pro is worth it if your packages or prices change often, or you'd rather not keep the chat's prices up to date yourself. If they change a couple of times a year, Starter (${money(m.starter, o.currency)} a month) is the better fit, and you keep the chat's prices up to date yourself. You can move to Pro any time.`
     case 'scope':
-      return "It's built for parties and group events. Other questions, like leagues, it answers from your hours, your common-question answers and the pages you book elsewhere; anything it doesn't have, it says so and passes the guest to you with their details. You can add league answers in the setup any time."
+      return "It's built for parties and group events. For other questions, like leagues, it answers only from what's in your setup; anything it doesn't have, it says so and passes the guest to you with their details. It never makes up an answer."
     case 'site':
-      return "It works on any website that lets you add a line of code. Most site builders have a spot for it, though some, like Wix, only allow it on a paid plan. If you'd rather not touch your site, we can install it for you, or send the line straight to whoever runs your site and work with them."
+      return "It works on any website that lets you add a line of code. Most site builders have a spot for it, though some only allow it on a paid plan. Your demo is already set up from your own pages, so the only step left is that one line. We never sign in to your site: paste it yourself, forward it to whoever runs your site, or reply with their email and I'll send them the steps."
     case 'speed':
       return "It goes live the moment the line is on your site, so it can be answering guests today."
+    case 'language':
+      return 'Yes. It answers each guest in the language they write in, Spanish included, using your same prices.'
+    case 'locations':
+      return "Each location is its own chat, set up from that location's own pages, at the same price as the first, so there's no discount for two yet. The second one can start whenever it opens, on the same terms as this offer."
+    case 'pause':
+      return pilot
+        ? `In the pilot you pay only for requests the chat takes, so a slow month costs little or nothing. After the ${PILOT.days} days, on a monthly plan, you can pause it for any months by replying: the chat comes off your site, nothing is charged while it's paused, and it comes back on the same setup when you say.`
+        : "Yes. You can pause it for any months you like by replying. The chat comes off your site while it's paused, nothing is charged, and it comes back on the same setup when you say."
+    case 'yearly':
+      return "It's monthly only for now, so there's no yearly price or discount. Nothing is on autopay: each month you get an emailed invoice and pay it yourself. We can't take checks yet."
+    case 'liability':
+      return "We don't cover the cost of a price you choose to honor, the same as a wrong price on your own website, so the chat is built to avoid it. It only quotes prices from your own setup, which are checked against your website, and it never takes payment or confirms a party itself; your staff or your booking page does. If it ever gives a wrong price, tell me and I'll fix it, and you can switch it off any time."
+    case 'alerts':
+      return 'Requests come by email only for now, not by text. Each one puts the headcount in its subject line, like "Chat lead: Sam, 24 guests", so a big group stands out.'
+    case 'compare':
+      return "It isn't a general chat box. It's set up from your own party packages and prices, so after hours it gives guests exact party totals and takes their date, headcount, name and contact for you. Ask your demo a few of your usual party questions to see the difference."
+    case 'bookings':
+      return "It never takes a booking or promises a party on its own. It quotes your own prices, takes the guest's date, headcount, name and contact, and passes the request to you. If your demo sends guests to a booking page, reply and I'll take that out so every party comes to your staff first."
+    case 'sides':
+      return 'One chat covers every kind of party in your setup, so both sides go through the same chat on your site. Check both in your demo, and reply with anything missing and I\'ll add it.'
     case 'leads':
       return 'Each request comes to you by email with the guest\'s details. It goes to one address you choose, so for more than one person, use a shared inbox you both read, or set the first inbox to forward. Reply with the address and I\'ll set it.'
   }
@@ -236,11 +270,23 @@ function offerCorrection(text: string, o: OwnerOffer): string | null {
 const FOOTER = ['Alex', 'PartyDesk, an AKB Solutions product', '[mailing address]', "If this isn't for you, reply \"no thanks\" and I won't write again."].join('\n')
 
 /** What to do with one owner reply. Nothing is sent from here; the plan says what to send, if anything. */
+/** An owner who writes in Spanish gets a person who answers in Spanish, not an English template. */
+const SPANISH_WORDS = /\b(?:que|qué|de|el|la|los|las|para|por|nuestro|nuestra|nosotros|tenemos|cuánto|cuanto|cuesta|precio|gracias|hola|sí|está|es|con|una|un|pero|también|fiestas?|negocio|clientes)\b/gi
+export function writtenInSpanish(text: string): boolean {
+  const t = ownWords(text)
+  const words = t.split(/\s+/).filter(Boolean).length
+  const hits = (t.match(SPANISH_WORDS) ?? []).length
+  return words > 0 && hits >= 3 && hits / words >= 0.2
+}
+
 export function planReply(text: string, o: OwnerOffer, subject = ''): ReplyPlan {
   const kind = sortReply(text)
   const re = subject ? (/^re:/i.test(subject) ? subject : `Re: ${subject}`) : `Re: your PartyDesk demo for ${o.venueName}`
   if (kind === 'stop') {
     return { kind, email: null, doNotContact: true, stopSequence: true, needsPerson: false, why: 'Asked not to be written to. No email, logged do-not-contact.' }
+  }
+  if (writtenInSpanish(text)) {
+    return { kind: 'unsure', email: null, doNotContact: false, stopSequence: true, needsPerson: true, why: 'Written in Spanish, so a person answers it in Spanish rather than an English template.' }
   }
   if (kind === 'unsure') {
     return { kind, email: null, doNotContact: false, stopSequence: true, needsPerson: true, why: "Not a clear yes, price question or stop, so it isn't answered automatically." }
@@ -262,13 +308,13 @@ export function planReply(text: string, o: OwnerOffer, subject = ''): ReplyPlan 
     const body = [
       hello,
       '',
+      ...(correction ? [correction, ''] : []),
       "Great, here's how to switch it on. It takes a few minutes and no call:",
       '',
       `1. Open your demo: ${o.demoUrl}`,
       "2. Ask it a few of your usual party questions. If anything is off, reply with the fix and I'll change it.",
-      `3. In the "Put this chat on your website" box at the bottom, pick ${planName}, add your name and email, and press the button. You'll get one line of code to paste on your site, or to forward to whoever runs it.${topics.includes('site') ? '' : ' We can install it for you too.'}`,
+      `3. In the "Put this chat on your website" box at the bottom, pick ${planName}, add your name and email, and press the button. You'll get one line of code to paste on your site, or to forward to whoever runs it.`,
       '',
-      ...(correction ? [correction, ''] : []),
       costLine(o),
       ...extras.flatMap((e) => ['', e]),
       '',
