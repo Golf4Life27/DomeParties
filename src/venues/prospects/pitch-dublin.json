@@ -1,0 +1,356 @@
+{
+  "slug": "pitch-dublin",
+  "name": "Pitch Dublin",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-IE",
+  "language": "English",
+  "currency": "EUR",
+  "timeZone": "Europe/Dublin",
+  "address": "60 Dawson Street, Dublin D02 K330",
+  "phone": "087 312 9677",
+  "website": "https://pitchgolf.ie/",
+  "unit": {
+    "singular": "bay",
+    "plural": "bays",
+    "count": 10,
+    "guestsPerUnit": 8
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "11:00",
+        "close": "21:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "10:00",
+        "close": "00:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "10:00",
+        "close": "00:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "10:00",
+        "close": "00:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "10:00",
+        "close": "00:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "10:00",
+        "close": "00:30"
+      }
+    ],
+    "sat": [
+      {
+        "open": "09:00",
+        "close": "00:30"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Bays are booked online in 60-minute blocks. For event packages, venue hire and group events, enquire with the events team at events@pitchgolf.ie.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book a bay",
+      "url": "https://bookings.pitchgolf.ie/"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "bay-hire",
+      "name": "Bay hire",
+      "description": "Trackman simulator bay, booked in 60-minute blocks. Up to 8 players per bay. Golf clubs included.",
+      "includes": [
+        "Trackman golf simulator bay",
+        "Wilson clubs included (TaylorMade upgrade available)"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 80,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 20,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "birdie",
+      "name": "Birdie",
+      "description": "Event package.",
+      "includes": [
+        "90 minutes of bay time",
+        "2 drinks",
+        "Reserved seating"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 80,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 39,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "eagle",
+      "name": "Eagle",
+      "description": "Event package.",
+      "includes": [
+        "2 hours of bay time",
+        "3 premium drinks",
+        "Sharing platters",
+        "Priority seating"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 80,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 69,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "albatross",
+      "name": "Albatross",
+      "description": "Event package.",
+      "includes": [
+        "3 hours of bay time",
+        "4 premium drinks",
+        "Sharing platters & nibbles",
+        "Reserved seating",
+        "Dedicated golf host"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 80,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "whiskey-experience",
+      "name": "Pitch Whiskey Experience",
+      "description": "Guided tasting of region-specific whiskies paired with a golf simulator session. Sessions Wed-Fri at 12pm, 1pm, 2pm, 3pm, 4pm, 5pm and 6pm. Book at pitchwhiskeycollection.eventbrite.ie.",
+      "includes": [
+        "Golf simulator session",
+        "Guided whiskey tasting",
+        "Golf & Whiskey Journal"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "wed",
+        "thu",
+        "fri"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 49,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "corporate-whiskey",
+      "name": "Corporate Whiskey Experience",
+      "description": "Dedicated whiskey experience for corporate groups of 12 to 40 guests. Enquire at events@pitchgolf.ie.",
+      "includes": [],
+      "durationMinutes": 90,
+      "minGuests": 12,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 150,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "half-venue-hire",
+      "name": "Half Venue Hire",
+      "description": "Private event space with reserved bays, premium AV, branding opportunities and support from the events team. Minimum spend may apply.",
+      "includes": [
+        "Reserved bays",
+        "Premium AV",
+        "Branding opportunities"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 80,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "full-venue-hire",
+      "name": "Full Venue Hire",
+      "description": "Exclusive hire of the whole venue with bespoke catering, premium AV, branding opportunities and dedicated event management. Minimum spend may apply.",
+      "includes": [
+        "Full venue access",
+        "Bespoke catering",
+        "Premium AV",
+        "Dedicated event management"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 80,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "How many people can fit in a bay?",
+      "a": "Each bay accommodates up to eight players. Additional guests are always welcome to join the fun."
+    },
+    {
+      "q": "How long does a bay booking last?",
+      "a": "Bay sessions are booked in 60-minute increments. For first-time visitors, we recommend 2 hours."
+    },
+    {
+      "q": "Do I need to know how to play golf?",
+      "a": "Not at all. Pitch is designed to be enjoyed by everyone, regardless of golfing ability. Golf clubs are included with all bay bookings."
+    },
+    {
+      "q": "Is there a dress code?",
+      "a": "Pitch is a smart casual venue. Overly casual sportswear isn't permitted after 6pm."
+    },
+    {
+      "q": "Is Pitch suitable for children?",
+      "a": "Pitch welcomes guests of all ages during daytime hours, but under 18s must be supervised by a parent or guardian throughout their visit. The venue is strictly over 18s after 5pm daily."
+    },
+    {
+      "q": "Is there a minimum spend?",
+      "a": "There is no minimum spend for general visits. For private events and full venue hire, minimum spend requirements may apply. Our events team will give you all the details when you enquire."
+    },
+    {
+      "q": "Can I bring my own golf clubs?",
+      "a": "We provide brand new Wilson clubs with every bay booking, with the option to upgrade to TaylorMade clubs. You're also welcome to use your own equipment."
+    },
+    {
+      "q": "What is the cancellation policy?",
+      "a": "Casual golf and online bay bookings are non-refundable. Event and private bookings have separate cancellation terms, which are confirmed at the time of booking."
+    },
+    {
+      "q": "Can I walk in without a reservation?",
+      "a": "Yes, walk-ins are always welcome, subject to availability. We recommend booking online to guarantee your time, especially on weekend evenings."
+    },
+    {
+      "q": "How far in advance should I book?",
+      "a": "We recommend booking at least 48-72 hours in advance, especially for weekend evenings and peak times. For groups of six or more, or private events, book as early as possible."
+    },
+    {
+      "q": "Can I just come for drinks?",
+      "a": "Absolutely. Our cocktail bar and kitchen are open to all guests, no bay booking required."
+    },
+    {
+      "q": "Do you have food?",
+      "a": "Yes. The kitchen is open daily from 10am to 10pm, serving breakfast, light bites, lunch favourites and pan-Asian cuisine. Vegetarian, vegan and gluten-free options are available."
+    },
+    {
+      "q": "Can I pre-order food and drinks for a group?",
+      "a": "Yes. For group bookings and private events, we offer pre-arranged food and drinks packages, tailored by our events team."
+    },
+    {
+      "q": "Do you offer gift vouchers?",
+      "a": "Yes. Gift vouchers start from €50, are valid for 5 years and can be used for bay hire, food, drinks, whiskey experiences and group bookings. Buy them online or at reception."
+    },
+    {
+      "q": "What is the maximum group size?",
+      "a": "Please contact events@pitchgolf.ie for more details."
+    },
+    {
+      "q": "Does Pitch host Christmas parties?",
+      "a": "Yes. Experiences book up quickly, so we recommend getting in touch from June to secure your date."
+    },
+    {
+      "q": "Do you host live DJs?",
+      "a": "Yes, live DJs play every Thursday and Friday evening."
+    }
+  ],
+  "handoff": {
+    "email": "events@pitchgolf.ie",
+    "webhookUrl": null
+  },
+  "pilot": null
+}

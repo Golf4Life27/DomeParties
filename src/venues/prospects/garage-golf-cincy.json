@@ -1,0 +1,179 @@
+{
+ "slug": "garage-golf-cincy",
+ "name": "Garage Golf Cincy",
+ "kind": "indoor_golf",
+ "sample": false,
+ "prospect": true,
+ "locale": "en-US",
+ "language": "English",
+ "currency": "USD",
+ "timeZone": "America/New_York",
+ "address": "4242 Mt. Carmel Tobasco Rd., Cincinnati, OH 45255",
+ "phone": "513.528.0186",
+ "website": "https://www.garagegolfcincy.com/",
+ "unit": {
+  "singular": "bay",
+  "plural": "bays",
+  "count": 4,
+  "guestsPerUnit": 4
+ },
+ "hours": {
+  "sun": [
+   {
+    "open": "09:00",
+    "close": "21:00"
+   }
+  ],
+  "mon": [
+   {
+    "open": "09:00",
+    "close": "21:00"
+   }
+  ],
+  "tue": [
+   {
+    "open": "09:00",
+    "close": "21:00"
+   }
+  ],
+  "wed": [
+   {
+    "open": "09:00",
+    "close": "21:00"
+   }
+  ],
+  "thu": [
+   {
+    "open": "09:00",
+    "close": "21:00"
+   }
+  ],
+  "fri": [
+   {
+    "open": "09:00",
+    "close": "22:00"
+   }
+  ],
+  "sat": [
+   {
+    "open": "09:00",
+    "close": "22:00"
+   }
+  ]
+ },
+ "closures": [],
+ "peak": {
+  "days": [
+   "mon",
+   "tue",
+   "wed",
+   "thu",
+   "fri"
+  ],
+  "from": "16:00",
+  "allDay": [
+   "sat",
+   "sun"
+  ]
+ },
+ "booking": {
+  "partyUrl": null,
+  "howItWorks": "Events and private rentals are scheduled by email or by calling 513.528.0186. Hourly bay play is booked online.",
+  "leadTimeDays": 0
+ },
+ "otherLinks": [
+  {
+   "what": "Book a simulator bay",
+   "url": "https://yourgolfbooking.com/venues/garage-golf-cincy/booking/bays"
+  }
+ ],
+ "deposit": {
+  "percent": null,
+  "flat": null
+ },
+ "taxPercent": 0,
+ "taxOnServiceCharge": false,
+ "serviceCharge": {
+  "percent": 0,
+  "appliesTo": "all",
+  "note": ""
+ },
+ "packages": [
+  {
+   "id": "bay-hourly",
+   "name": "Simulator Bay by the Hour",
+   "description": "Off Peak Rate Mon-Fri 9am-4pm: 40 per hour. Peak Rate Mon-Fri 4pm-9pm: 50 per hour. Saturday/Sunday: 50 per hour.",
+   "includes": [
+    "Trackman golf simulator bay",
+    "8-foot video board, TVs and premium sound system"
+   ],
+   "durationMinutes": 60,
+   "minGuests": 1,
+   "maxGuests": 16,
+   "days": [
+    "sun",
+    "mon",
+    "tue",
+    "wed",
+    "thu",
+    "fri",
+    "sat"
+   ],
+   "pricing": {
+    "type": "per_unit_hour",
+    "amount": 40,
+    "peakAmount": 50,
+    "minUnits": 1
+   }
+  }
+ ],
+ "food": [],
+ "addOns": [
+  {
+   "id": "rental-clubs",
+   "name": "Rental Clubs",
+   "description": "Per set. Adult right and left handed, ladies right handed, kids left and right handed.",
+   "unit": "each",
+   "amount": 10
+  }
+ ],
+ "faq": [
+  {
+   "q": "Do you have rental clubs?",
+   "a": "Rental Clubs Available: 10 per set. Available sets: Adult right handed and left handed, ladies right handed, kids left and right handed."
+  },
+  {
+   "q": "Do you serve food and drinks?",
+   "a": "We offer Bites & Beers including pizza, soft pretzels, hot dogs, bagged snacks, bottled drinks and a variety of canned beer and seltzer options."
+  },
+  {
+   "q": "What else is there to do?",
+   "a": "Get here early to warm up on our custom-built putting green, or stick around after your round to play Golden Tee or try your luck on our No Good Gofers pinball machine, claw machine or Keno."
+  },
+  {
+   "q": "What courses can I play?",
+   "a": "Trackman currently offers over 500 courses around the world, and this list is growing every month."
+  },
+  {
+   "q": "How do I book an event?",
+   "a": "Whether it's a birthday, team building event, or draft party, we've got you covered. Schedule today by email or call us at 513.528.0186."
+  },
+  {
+   "q": "Do you have leagues?",
+   "a": "Winter leagues are currently full, but spots will open Mid-January and February 2026."
+  },
+  {
+   "q": "Are hours different in summer?",
+   "a": "Summer Hours may vary."
+  }
+ ],
+ "handoff": {
+  "email": "garagegolfcincy@gmail.com",
+  "webhookUrl": null
+ },
+ "notStated": [
+  "tax",
+  "deposit",
+  "service_charge"
+ ]
+}

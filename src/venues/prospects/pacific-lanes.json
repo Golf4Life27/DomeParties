@@ -1,0 +1,114 @@
+{
+  "slug": "pacific-lanes",
+  "name": "Pacific Lanes Bowling Center",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Los_Angeles",
+  "address": "7015 S D St, Tacoma, WA 98408",
+  "phone": "(253) 474-0594",
+  "website": "https://bowling.placefull.com/pacific-lanes-bowling-center-tacoma-wa",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": 36,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": false,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Parties and group events are booked by sending an inquiry with your preferred dates and times, or by calling (253) 474-0594.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "birthday-party",
+      "name": "Birthday Parties",
+      "description": "Bowling parties for birthdays and other celebrations for all ages. Inquire about times, dates and party options.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 216,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "corporate-group-event",
+      "name": "Corporate and Group Events",
+      "description": "A fun evening out with colleagues or a group of friends. Send an inquiry to request your best dates and times.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 216,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Do you have bowling leagues?",
+      "a": "We provide bowling leagues for all ages. Please inquire about our pricing, seasons and special offers for league bowling."
+    },
+    {
+      "q": "Do you have food and drinks?",
+      "a": "We have 36 lanes along with our Beach Shack Cafe and 2 lounges to serve your needs."
+    },
+    {
+      "q": "What kinds of events can I hold?",
+      "a": "Birthdays (children AND adults), anniversaries, team building outings, fund raising efforts etc."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

@@ -1,0 +1,273 @@
+{
+  "slug": "ri-riddle-room",
+  "name": "RI Riddle Room: Escape Game",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "1150 Bald Hill Road, Warwick, RI 02886 (behind the Sonic)",
+  "phone": "(401) 398-8177",
+  "website": "https://www.ririddleroom.com/",
+  "unit": {
+    "singular": "escape room",
+    "plural": "escape rooms",
+    "count": 5,
+    "guestsPerUnit": 10
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": false,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://offthecouch.io/book/riddleroom",
+    "howItWorks": "Book a private escape game online at least 30 minutes ahead. For the birthday party room, corporate packages, Monster in the Museum premium pricing or groups over 10, call (401) 398-8177 or email.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Gift cards",
+      "url": "https://offthecouch.io/book/riddleroom/gift-card"
+    },
+    {
+      "what": "Book Monster in the Museum",
+      "url": "https://offthecouch.io/book/riddleroom/2834"
+    },
+    {
+      "what": "Book Rocky Point Park",
+      "url": "https://offthecouch.io/book/riddleroom/2021"
+    },
+    {
+      "what": "Book Vanishing at The Velmont",
+      "url": "https://offthecouch.io/book/riddleroom/2020"
+    },
+    {
+      "what": "Book Forest of Fortune",
+      "url": "https://offthecouch.io/book/riddleroom/2019"
+    },
+    {
+      "what": "Book Imaginasium of Intrigue",
+      "url": "https://offthecouch.io/book/riddleroom/2011"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "private-escape-game",
+      "name": "Private Escape Game / Basic Party Package",
+      "description": "Choose Rocky Point Park, Vanishing at The Velmont, Forest of Fortune or Imaginasium of Intrigue. $85 private booking fee includes the first 2 tickets; $29 per person for up to 8 additional players. 3-10 participants recommended for parties.",
+      "includes": [
+        "Private room for your group",
+        "2 tickets",
+        "Gamemaster intro to rules and story",
+        "60-minute escape game",
+        "Post-game team photo",
+        "Complimentary birthday customization on request"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 2,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 85,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "monster-in-the-museum",
+      "name": "Monster in the Museum (premium game)",
+      "description": "Premium game with live actors, dynamic lighting and theatrics. Special dynamic pricing based on group size. Recommended for ages 10 and over.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 2,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "corporate-basic",
+      "name": "Corporate Basic Package",
+      "description": "Per-person pricing, private room fee waived. $35/person Monday-Friday, $40/person Saturday-Sunday. Up to 10 per room, 4 rooms (40 total). War room free for one hour with 10+ tickets; entire facility private with 25+ participants.",
+      "includes": [
+        "Private escape room",
+        "Private room fee waived",
+        "War room free for 1 hour with 10+ tickets",
+        "Entire facility private with 25+ participants"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 35,
+        "peakAmount": 40,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "corporate-double-header",
+      "name": "Corporate Double-Header (add-on game)",
+      "description": "Add a second escape room to the corporate package. $25/person add-on Monday-Friday, $30/person Saturday-Sunday. Up to 40 participants per hour.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 25,
+        "peakAmount": 30,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "premium-team-building",
+      "name": "Premium Team Building - Monster in the Museum",
+      "description": "Premium team building packages for Monster in the Museum with live actors and expansive sets. Call or email for information.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "additional-player",
+      "name": "Additional player",
+      "description": "Each player beyond the 2 included tickets, up to 8 additional players.",
+      "unit": "per_person",
+      "amount": 29,
+      "amountTo": null
+    },
+    {
+      "id": "birthday-party-room",
+      "name": "Birthday party room (1 hour)",
+      "description": "One hour in the party room after the escape game; flat fee due at booking. Hosts may arrive an hour early to set up. Fridge/freezer, tables and seating. No confetti.",
+      "unit": "each",
+      "amount": 159,
+      "amountTo": null
+    }
+  ],
+  "faq": [
+    {
+      "q": "How much does it cost?",
+      "a": "Our starting price is $85, which includes the private booking fee & your first 2 tickets. Each additional ticket is $29 per person. Monster in the Museum is a premium game with special pricing that is dynamic based on group size."
+    },
+    {
+      "q": "Are there discounts?",
+      "a": "We do provide a discount for nonprofits, students, and active military, give us a call to receive your discount. Corporate: 15% discount for Schools and Non-Profits; 10% discount for prepayment in full 14 days or more in advance."
+    },
+    {
+      "q": "Can we split payment?",
+      "a": "Give us a call to make a minimum down payment. We can handle the rest the day of your booking."
+    },
+    {
+      "q": "Do I need to book in advance?",
+      "a": "Yes, we require bookings to be made 30 minutes in advance. Call (401) 398-8177 for walk in availability."
+    },
+    {
+      "q": "How many participants can I bring?",
+      "a": "Our games are designed for groups of 2-10. If you have more than 10 participants, please send us an email. We can accommodate up to 28 people in our facility for parties."
+    },
+    {
+      "q": "Which game is best for big groups?",
+      "a": "We recommend The Forest of Fortune for bigger groups as it is our most spacious game."
+    },
+    {
+      "q": "Are we actually locked in a room?",
+      "a": "No. The exit door is always unlocked in case of claustrophobia or an emergency."
+    },
+    {
+      "q": "Is it scary?",
+      "a": "Our games are designed to be family friendly. Our intention is never to scare you. Monster in the Museum is recommended for 10 years old and over."
+    },
+    {
+      "q": "Will other people play with us?",
+      "a": "No, all of our games are private. Once you've booked a room, it's just you and your group."
+    },
+    {
+      "q": "Are the games handicap accessible?",
+      "a": "Yes, for the most part. Some of our games contain uneven surfaces or small steps up. Contact us for more information."
+    },
+    {
+      "q": "Where can we park?",
+      "a": "We have a private parking lot with plenty of spaces."
+    },
+    {
+      "q": "Are waivers required?",
+      "a": "All team members will need to fill out a waiver; the link is in your confirmation email."
+    },
+    {
+      "q": "Can I reschedule?",
+      "a": "Yes. If you can't make your game, please give us a call or email to reschedule."
+    },
+    {
+      "q": "Can we bring food and cake?",
+      "a": "We don't provide any food or beverages. We have a refrigerator/freezer for storage, please bring your own food & drinks. Outside catering is welcomed."
+    },
+    {
+      "q": "Can we decorate the party room?",
+      "a": "You may decorate the party room any way you like and arrive an hour early to set up. No confetti or obtrusive decorations, extreme cleaning fee will apply."
+    }
+  ],
+  "handoff": {
+    "email": "contactus@ririddleroom.com",
+    "webhookUrl": null
+  }
+}

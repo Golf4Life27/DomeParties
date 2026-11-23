@@ -1,0 +1,280 @@
+{
+  "slug": "exeter-bowling-lanes",
+  "name": "Exeter Bowling Lanes & Shooters Sports Pub",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "6 Columbus Avenue, Exeter, NH 03833",
+  "phone": "(603) 772-3856",
+  "website": "https://shooterspub.squarespace.com/lanes",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": 12,
+    "guestsPerUnit": 5
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "09:30",
+        "close": "20:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "15:00",
+        "close": "21:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "09:30",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "09:30",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "09:30",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "09:30",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "09:30",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Call (603) 772-3856 for lane availability and to book parties, stop by to see the space, or contact the venue online.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "open-bowling-hour",
+      "name": "Open Candlepin Bowling (per hour)",
+      "description": "Open candlepin bowling, $30 per lane per hour. Shoe rental $3 per person extra.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 60,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 30,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "open-bowling-half-hour",
+      "name": "Open Candlepin Bowling (half hour)",
+      "description": "Open candlepin bowling, $20 per lane for a half hour. Shoe rental $3 per person extra.",
+      "includes": [],
+      "durationMinutes": 30,
+      "minGuests": 1,
+      "maxGuests": 5,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 20,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "single-pizza-bowling",
+      "name": "Single Pizza & Bowling Deal",
+      "description": "One lane, up to 5 people, 90 mins of bowling.",
+      "includes": [
+        "One lane",
+        "90 mins of bowling",
+        "Shoe rentals",
+        "One large cheese pizza",
+        "Pitcher of soda"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 1,
+      "maxGuests": 5,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 57,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "double-pizza-bowling",
+      "name": "Double Pizza & Bowling Deal",
+      "description": "Two lanes, 6 to 10 people, 90 mins of bowling.",
+      "includes": [
+        "Two lanes",
+        "90 mins of bowling",
+        "Shoe rentals",
+        "Two pizzas",
+        "Two pitchers of soda"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 6,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 105,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "party-option-1",
+      "name": "Lanes Party Option 1",
+      "description": "One hour of bowling with shoe rentals for all guests. Upgrade with food, extra time, or custom touches.",
+      "includes": [
+        "One hour of bowling",
+        "Shoe rentals for all guests"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 60,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 10,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "party-option-2",
+      "name": "Lanes Party Option 2",
+      "description": "One hour of bowling, shoe rentals and use of the party room. Upgrade with food, extra time, or custom touches.",
+      "includes": [
+        "One hour of bowling",
+        "Shoe rentals",
+        "Use of our party room",
+        "Setup and cleanup handled by staff",
+        "Option to bring in your own cake or dessert"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 60,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 14,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "shoe-rental",
+      "name": "Shoe rental",
+      "description": "For open bowling",
+      "unit": "per_person",
+      "amount": 3
+    }
+  ],
+  "faq": [
+    {
+      "q": "Do you take cards?",
+      "a": "Cash Only. ATM on site."
+    },
+    {
+      "q": "How much is bowling by the game?",
+      "a": "$5.00 Per Game/Per Person, plus $3.00 Shoe Rental/Per Person."
+    },
+    {
+      "q": "When is Glow Bowl?",
+      "a": "Bowl with us on Fridays and Saturdays from 4-10 pm and enjoy Cosmic Glow Bowling at NO extra charge!"
+    },
+    {
+      "q": "Do you have bumpers for kids?",
+      "a": "Yes, Children's Bumpers are available."
+    },
+    {
+      "q": "Can we bring our own cake?",
+      "a": "Party Option 2 includes the option to bring in your own cake or dessert."
+    },
+    {
+      "q": "Are the hours ever different?",
+      "a": "Extended hours on rainy days. League Nights & Holiday Hours, and School Vacation weeks may vary. Please call to confirm."
+    },
+    {
+      "q": "Can I host a party at Shooters Pub?",
+      "a": "Yes. Reserved space inside or out, access to pool, darts, shuffleboard, cornhole & TVs, full bar, outdoor beer garden (seasonal). No rental fee with food and drink purchase. Custom catering packages available."
+    },
+    {
+      "q": "Do you offer catering?",
+      "a": "Pizzas, party subs, taco bars, grilled favorites, and more. Available for events at Shooters & Exeter Bowling Lanes. Get in touch to start planning."
+    },
+    {
+      "q": "Do you have leagues?",
+      "a": "Yes, candlepin leagues on Monday (women), Tuesday (men, 16+), Wednesday and Thursday (co-ed, teams of 4) nights plus a Sunday Pro-League. Join as a team, with a friend, or by yourself. Call 772-3856 or see us at the front desk."
+    },
+    {
+      "q": "Is there a senior bowl?",
+      "a": "Wednesday Morning Senior Social Bowl, drop in weekly at 10:00 am, $12 for 3 games, free shoe rental available."
+    },
+    {
+      "q": "Is there a youth program?",
+      "a": "Youth Bowl for grades 3 to 5, Mondays 3:30pm - 4:30pm, March 2nd - March 30th, includes instruction, shoe rentals & end of season pizza party, $50 for all weeks."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

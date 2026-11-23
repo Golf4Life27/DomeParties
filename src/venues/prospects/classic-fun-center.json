@@ -1,0 +1,335 @@
+{
+  "slug": "classic-fun-center",
+  "name": "Classic Skating & Fun Center",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Denver",
+  "address": "250 S State Street, Orem, UT",
+  "phone": "801-224-5016",
+  "website": "https://classicfuncenter.squarespace.com/birthday-parties",
+  "unit": {
+    "singular": "party",
+    "plural": "parties",
+    "count": null,
+    "guestsPerUnit": 8
+  },
+  "hours": {
+    "sun": [],
+    "mon": [
+      {
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "12:00",
+        "close": "00:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "12:00",
+        "close": "00:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "12:00",
+        "close": "00:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "fri",
+      "sat"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://funhq.app/book/orem?locationId=c83fabd1-9e57-4d4c-a74a-59e719e093d0&type=birthday&packageId=9d760b5a-8efe-4e62-a07f-058904007daa&skipEntrySelector=1",
+    "howItWorks": "Book a birthday package online with a $25 refundable booking deposit. You pay the rest at the end of your party.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book Basic birthday package",
+      "url": "https://funhq.app/book/orem?locationId=c83fabd1-9e57-4d4c-a74a-59e719e093d0&type=birthday&packageId=78a1173b-e95e-4ea3-ba32-64b332ae1e0a&skipEntrySelector=1"
+    },
+    {
+      "what": "Book Platinum birthday package",
+      "url": "https://funhq.app/book/orem?locationId=c83fabd1-9e57-4d4c-a74a-59e719e093d0&type=birthday&packageId=d4ac84a8-2a09-4f05-8104-3d912f3a2b8d&skipEntrySelector=1"
+    },
+    {
+      "what": "Book Semi-Private package",
+      "url": "https://funhq.app/book/orem?locationId=c83fabd1-9e57-4d4c-a74a-59e719e093d0&type=birthday&packageId=c6913d13-906f-46b5-9aa8-79b9ca77fc34&skipEntrySelector=1"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": 25
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "basic",
+      "name": "Basic Package",
+      "description": "Includes 8 guests. Unlimited skating, Space Adventure and bouncing, skate/blade/scooter rentals, 2 hours of tables and service with all-day admission, 30 arcade credits per guest, 2 pitchers of drinks. Laser tag not included. Extra guests $14 Mon-Thu / $17 Fri-Sat. Party room add-on at full price.",
+      "includes": [
+        "8 guests",
+        "Unlimited skating, Space Adventure & bouncing",
+        "Rentals: skates, blades, scooters",
+        "2 hours of tables/service, all-day admission",
+        "30 arcade credits per guest",
+        "2 pitchers of drinks",
+        "Table cover & place settings, dedicated party host",
+        "Cup of ice cream per guest",
+        "Birthday kid: prize cube, prize wheel spin, DJ shoutout, birthday shirt, free month of skating & bouncing"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 125,
+        "peakAmount": 155
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "classic",
+      "name": "Classic Package",
+      "description": "Most popular. Includes 8 guests. Unlimited skating, Space Adventure and bouncing, rentals, 2 hours of tables and service with all-day admission, Gold Punch Card per guest ($15 credit for arcade, laser tag and more), unlimited drinks, 2 large pizzas. Extra guests $16 Mon-Thu / $20 Fri-Sat. Party room add-on 50% off.",
+      "includes": [
+        "8 guests",
+        "Unlimited skating, Space Adventure & bouncing",
+        "Rentals: skates, blades, scooters",
+        "2 hours of tables/service, all-day admission",
+        "Gold Punch Card per guest ($15 credit)",
+        "Unlimited drinks",
+        "2 large pizzas",
+        "Table cover & place settings, dedicated party host",
+        "Cup of ice cream per guest",
+        "Birthday kid: prize cube, prize wheel spin, DJ shoutout, birthday shirt, free month of skating & bouncing"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 150,
+        "peakAmount": 195
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "platinum",
+      "name": "Platinum Package",
+      "description": "Includes 8 guests. Unlimited skating, Space Adventure and bouncing, all rentals plus Skate Mates, 3 hours of tables and service with all-day admission, Platinum Punch Card per guest ($25 credit for arcade, laser tag and more), unlimited drinks, 1 large pizza per 4 guests, party room included. Extra guests $25 Mon-Thu / $30 Fri-Sat.",
+      "includes": [
+        "8 guests",
+        "Unlimited skating, Space Adventure & bouncing",
+        "Rentals: everything + Skate Mates",
+        "3 hours of tables/service, all-day admission",
+        "Platinum Punch Card per guest ($25 credit)",
+        "Unlimited drinks",
+        "1 large pizza per 4 guests",
+        "Party room included",
+        "Dedicated party host, ice cream per guest",
+        "Birthday kid: prize cube, prize wheel spin, DJ shoutout, birthday shirt, free month of skating & bouncing"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 270,
+        "peakAmount": 320
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "semi-private",
+      "name": "Semi-Private Package",
+      "description": "Best for ages 10 and under. Saturdays 10 AM-12 PM only. Share the bounce houses and arcade with just a few other parties. No skating 10am-12pm; guests may roller skate from 12pm. Extra guests $15 each. Pizza can be added for $18 each.",
+      "includes": [
+        "8 guests",
+        "2-hour table reservation & host",
+        "Table cloth, plates, cups & napkins",
+        "Unlimited bouncing & Space Adventure",
+        "50 arcade credits per guest",
+        "2 pitchers of soda"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [
+        "sat"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 150,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [
+    {
+      "id": "large-pizza",
+      "name": "Large Pizza (16 small slices)",
+      "description": "Add-on for parties",
+      "pricing": "flat",
+      "amount": 18
+    }
+  ],
+  "addOns": [
+    {
+      "id": "basic-extra-guest",
+      "name": "Additional guest - Basic",
+      "description": "$14 Mon-Thu, $17 Fri-Sat",
+      "unit": "per_person",
+      "amount": 14
+    },
+    {
+      "id": "classic-extra-guest",
+      "name": "Additional guest - Classic",
+      "description": "$16 Mon-Thu, $20 Fri-Sat",
+      "unit": "per_person",
+      "amount": 16
+    },
+    {
+      "id": "platinum-extra-guest",
+      "name": "Additional guest - Platinum",
+      "description": "$25 Mon-Thu, $30 Fri-Sat",
+      "unit": "per_person",
+      "amount": 25
+    },
+    {
+      "id": "semi-private-extra-guest",
+      "name": "Additional guest - Semi-Private",
+      "description": "",
+      "unit": "per_person",
+      "amount": 15
+    },
+    {
+      "id": "extra-hour",
+      "name": "Extra Hour of Table Reservation & Service",
+      "description": "",
+      "unit": "each",
+      "amount": 50
+    },
+    {
+      "id": "adult-skater",
+      "name": "Add Adult Skater (includes skate rental)",
+      "description": "",
+      "unit": "per_person",
+      "amount": 8
+    },
+    {
+      "id": "toddler",
+      "name": "Add Toddler (3 & under, attractions only)",
+      "description": "",
+      "unit": "per_person",
+      "amount": 5
+    },
+    {
+      "id": "extra-birthday-person",
+      "name": "Extra Birthday Person Inclusions",
+      "description": "",
+      "unit": "each",
+      "amount": 15
+    },
+    {
+      "id": "favor-bag",
+      "name": "Party Favor Bag",
+      "description": "Per bag",
+      "unit": "each",
+      "amount": 4
+    }
+  ],
+  "faq": [
+    {
+      "q": "Is a deposit required?",
+      "a": "$25 refundable booking deposit required - you'll pay the rest at the end of your party!"
+    },
+    {
+      "q": "What is the Classic Promise?",
+      "a": "If it's not fun-filled and stress-free, we'll make it right or redo it!"
+    },
+    {
+      "q": "Are there age limits in the evening?",
+      "a": "Thursday: ages 16+ after 9:00PM for skating. Friday: 14+ after 9:00PM for skating. Saturday: ages 16+ after 9:00PM for skating."
+    },
+    {
+      "q": "Can guests skate at a Semi-Private party?",
+      "a": "No skating 10am-12pm. Guests are welcome to roller skate beginning at 12pm."
+    },
+    {
+      "q": "Is a party room included?",
+      "a": "Party room add-on is full price with Basic, 50% off with Classic, and included with Platinum."
+    }
+  ],
+  "handoff": {
+    "email": "classicfuncenterorem@gmail.com",
+    "webhookUrl": null
+  }
+}

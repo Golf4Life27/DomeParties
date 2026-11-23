@@ -1,0 +1,259 @@
+{
+  "slug": "triad-lanes",
+  "name": "Triad Lanes",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "21 Oak Branch Dr., Greensboro, NC 27407",
+  "phone": "336-292-0181",
+  "website": "https://triadlanes.com/",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "09:00",
+        "close": "00:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "09:00",
+        "close": "01:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "09:00",
+        "close": "00:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "09:00",
+        "close": "00:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "09:00",
+        "close": "02:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "09:00",
+        "close": "02:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "09:00",
+        "close": "02:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "service_charge",
+    "tax"
+  ],
+  "booking": {
+    "partyUrl": "https://www.triadlanes.com/Events-Parties/Birthday-Parties",
+    "howItWorks": "Talk to the events team to book a party. For corporate/group events, leagues, tournaments and fundraisers, call the sales office at (336) 292-0181, 9 AM - 5 PM every day.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Pricing & Specials",
+      "url": "https://triadlanes.com/Pricing-Specials"
+    },
+    {
+      "what": "Coupons",
+      "url": "https://triadlanes.com/Pricing-Specials/Coupons"
+    },
+    {
+      "what": "Field Trips",
+      "url": "https://triadlanes.com/Youth/Daycare-School-Field-Trips"
+    },
+    {
+      "what": "League Sign Up",
+      "url": "https://triadlanes.com/Leagues"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": 25
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "birthday-party",
+      "name": "Birthday Party Special",
+      "description": "Bowling birthday party. Ranges from $16.95 to $20.95 plus tax per guest depending on time of day, the package chosen and how many attend. Minimum of eight participants, no maximum. $25 deposit goes towards the total price.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 8,
+      "maxGuests": 200,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 16.95,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "open-bowling",
+      "name": "Bowling",
+      "description": "Bowling rate listed as $5.00 Sunday-Thursday (the website does not say if this is per game or per person). Shoe rental $4.50. Friday-Saturday rate not listed.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 6,
+      "days": [
+        "sun",
+        "mon",
+        "tue",
+        "wed",
+        "thu"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 5,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "corporate-events",
+      "name": "Corporate & Group Events",
+      "description": "Corporate and group events. Call the sales office (336) 292-0181, 9 AM - 5 PM every day, for details.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 200,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "fundraisers",
+      "name": "Fundraisers",
+      "description": "Two different types of fundraisers. Bring your group in, have fun and raise money for your favorite cause. Call the sales office for more information and to schedule.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 200,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "field-trips",
+      "name": "Daycare & School Field Trips",
+      "description": "Field trips for youth groups of 10 or more, available Monday-Friday 9 AM - 5 PM. Four packages available; see the Field Trips page for details and pricing.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 200,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "shoe-rental",
+      "name": "Shoe Rental",
+      "description": "",
+      "unit": "per_person",
+      "amount": 4.5
+    },
+    {
+      "id": "locker-rental",
+      "name": "Locker Rental (per year)",
+      "description": "Fill out a locker request form at the front counter.",
+      "unit": "each",
+      "amount": 30
+    }
+  ],
+  "faq": [
+    {
+      "q": "How much does a birthday party cost?",
+      "a": "Our Birthday Special ranges from $16.95 to $20.95 plus tax per guest depending on time of day, the package chosen and how many attend the bowling party. There is a $25 deposit that goes towards the total price of the party. There is just a minimum of eight participants and no maximum."
+    },
+    {
+      "q": "How can I get a locker?",
+      "a": "Go to front counter and fill out a locker request form. Locker rentals are $30 per year."
+    },
+    {
+      "q": "How do I get information about leagues, tournaments or corporate/group events?",
+      "a": "Call the sales office: 9 AM - 5 PM every day, (336) 292-0181."
+    },
+    {
+      "q": "How often are the lanes oiled?",
+      "a": "The lanes are generally oiled daily and before one of bowling leagues or tournament events."
+    },
+    {
+      "q": "Do you offer field trips for schools, daycares or camps?",
+      "a": "Yes! We offer field trips for youth groups of 10 or more. They are available Monday \u2013 Friday 9 AM \u2013 5 PM. We have four packages available."
+    },
+    {
+      "q": "Do you offer fundraisers?",
+      "a": "Yes! We offer two different types of fundraisers. Call the sales office for more information and to schedule your event!"
+    },
+    {
+      "q": "Where are you located?",
+      "a": "21 Oak Branch Drive, Greensboro, NC 27407."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

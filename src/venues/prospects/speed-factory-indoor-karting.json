@@ -1,0 +1,156 @@
+{
+  "slug": "speed-factory-indoor-karting",
+  "name": "Speed Factory Indoor Karting",
+  "kind": "other",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "130 East Daniel Morgan Ave, Spartanburg, SC",
+  "phone": "864.447.4000",
+  "website": "https://www.speedfactoryindoorkarting.com/",
+  "unit": {
+    "singular": "kart",
+    "plural": "karts",
+    "count": null,
+    "guestsPerUnit": 2
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "14:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [],
+    "tue": [],
+    "wed": [
+      {
+        "open": "16:00",
+        "close": "21:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "16:00",
+        "close": "21:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "15:00",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Fill in the event enquiry form on the website (location, dates, event type, age range, group size) or call the track; the team follows up to plan the party.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "group-party",
+      "name": "Party / Group Event",
+      "description": "Birthday parties, team building, corporate events, graduations, bachelor & bachelorette parties, fundraisers, church groups and more. Hospitality areas and private rooms available. Contact for pricing.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 2,
+      "maxGuests": 275,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "exclusive-facility-rental",
+      "name": "Exclusive Facility Rental",
+      "description": "Exclusive rental of the entire facility for private events, available 7 days a week. Contact guest services for pricing.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 275,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "How does it work?",
+      "a": "After arriving you will need to provide proof of identity, attend a safety briefing and kart orientation, and then get ready to race. All karts are identical. Every lap is timed and you receive a printout of your lap times and finishing position. Each race includes a DOT approved full face helmet, balaclava (head sock) and neck brace."
+    },
+    {
+      "q": "What are the requirements to drive?",
+      "a": "Drivers 16 yrs & older between 4'6\" - 7'0\", and under 300 lbs, can drive in all open sessions. Drivers under 18 yrs old must have signed parental approval and state issued drivers license."
+    },
+    {
+      "q": "What do I have to wear?",
+      "a": "Closed toe shoes, full face DOT approved helmet, head sock (balaclava) and neck brace. Long hair must be tied in a pony tail and placed up inside the helmet. Personal full face DOT approved helmets are allowed; motocross helmets are allowed with goggles."
+    },
+    {
+      "q": "Can we have a party?",
+      "a": "Yes, parties are our specialty. We have hospitality areas that can hold groups over 250 people, and private rooms available for any special occasion. We have handled parties with groups from 2 to 275 people."
+    },
+    {
+      "q": "Can we rent the entire facility?",
+      "a": "Yes, exclusive rental of the entire facility is available 7 days a week. Contact our guest services team to plan your event."
+    },
+    {
+      "q": "Where are you located?",
+      "a": "Two locations: Downtown Spartanburg, 130 E Daniel Morgan Ave, 864.447.4000 (one and two seater karts); Greenville, 1524 Roper Mountain Road near Woodruff Rd, 864.412.3323 (one seater karts)."
+    },
+    {
+      "q": "What are the Greenville track hours?",
+      "a": "Monday closed, Tuesday-Thursday 3-9pm, Friday 2-10pm, Saturday 12pm-12am, Sunday 12pm-9pm."
+    }
+  ],
+  "handoff": {
+    "email": null,
+    "webhookUrl": null
+  }
+}

@@ -1,0 +1,326 @@
+{
+  "slug": "the-golf-dome",
+  "name": "The Golf Dome",
+  "kind": "golf_dome",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "8198 E Washington St, Chagrin Falls, OH 44023",
+  "phone": "(440) 543-1211",
+  "website": "https://thegolfdome.com/",
+  "unit": {
+    "singular": "studio",
+    "plural": "studios",
+    "count": 31,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "09:00",
+        "close": "18:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "09:00",
+        "close": "20:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "09:00",
+        "close": "20:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "09:00",
+        "close": "20:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "09:00",
+        "close": "20:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "09:00",
+        "close": "20:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "09:00",
+        "close": "20:00"
+      }
+    ]
+  },
+  "closures": [],
+  "peak": {
+    "days": [
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri"
+    ],
+    "from": "17:00",
+    "allDay": [
+      "sat",
+      "sun"
+    ]
+  },
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Studios are booked and paid by the hour online up to 7 days in advance (members 14 days). Walk-ins welcome, priority to reservations. Birthday parties are booked by phone at 440-543-1211.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book a studio (TopTracer or TrackMan)",
+      "url": "https://clients.uschedule.com/thegolfdome/booking"
+    },
+    {
+      "what": "Club fitting days",
+      "url": "https://clients.uschedule.com/thegolfdome/booking/event?filter=cat[5423]"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "toptracer-weekday",
+      "name": "TopTracer Practice Range Studio - Weekdays",
+      "description": "$30 per hour weekdays before 5 pm, $35 per hour weekdays after 5 pm. Half-hour minimum booking, which can be shared by two players. Senior & Military Special: $25 per hour weekdays before 12pm.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 112,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 30,
+        "peakAmount": 35,
+        "minUnits": 1
+      }
+    },
+    {
+      "id": "toptracer-weekend",
+      "name": "TopTracer Practice Range Studio - Weekends",
+      "description": "$40 per hour on weekends. Half-hour minimum booking, which can be shared by two players.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 112,
+      "days": [
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 40,
+        "peakAmount": 40,
+        "minUnits": 1
+      }
+    },
+    {
+      "id": "trackman-weekday",
+      "name": "TrackMan Studio - Weekdays",
+      "description": "$45 per hour weekdays before 5 pm, $55 per hour weekdays after 5 pm. 3 TrackMan Studios.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 12,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 45,
+        "peakAmount": 55,
+        "minUnits": 1
+      }
+    },
+    {
+      "id": "trackman-weekend",
+      "name": "TrackMan Studio - Weekends",
+      "description": "$65 per hour on weekends. 3 TrackMan Studios.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 12,
+      "days": [
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 65,
+        "peakAmount": 65,
+        "minUnits": 1
+      }
+    },
+    {
+      "id": "party-a-8-12",
+      "name": "Party Package A (8-12 kids)",
+      "description": "Outdoor kids birthday party, weather permitting, available May-August. Choice of ONE activity: miniature golf, dodge ball, gaga, batting cages, wiffle ball / kick ball.",
+      "includes": [
+        "Your choice of ONE activity",
+        "Staff member(s) assist from start to finish",
+        "Reserved eating area for the party",
+        "1.5 hour party time total, with the last half hour reserved for cake and presents"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 8,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 200,
+        "peakAmount": null
+      }
+    },
+    {
+      "id": "party-a-13-18",
+      "name": "Party Package A (13-18 kids)",
+      "description": "Outdoor kids birthday party, weather permitting, available May-August. Choice of ONE activity: miniature golf, dodge ball, gaga, batting cages, wiffle ball / kick ball.",
+      "includes": [
+        "Your choice of ONE activity",
+        "Staff member(s) assist from start to finish",
+        "Reserved eating area for the party",
+        "1.5 hour party time total, with the last half hour reserved for cake and presents"
+      ],
+      "durationMinutes": 90,
+      "minGuests": 13,
+      "maxGuests": 18,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 250,
+        "peakAmount": null
+      }
+    },
+    {
+      "id": "party-b-8-12",
+      "name": "Party Package B (8-12 kids)",
+      "description": "Outdoor kids birthday party, weather permitting, available May-August. Choice of any TWO activities: miniature golf, dodge ball, gaga, batting cages, wiffle ball / kick ball.",
+      "includes": [
+        "Your choice of any TWO activities",
+        "Staff member(s) assist from start to finish",
+        "Reserved eating area for the party",
+        "2 hour party time total, with the last half hour reserved for cake and presents"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 8,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 275,
+        "peakAmount": null
+      }
+    },
+    {
+      "id": "party-b-13-18",
+      "name": "Party Package B (13-18 kids)",
+      "description": "Outdoor kids birthday party, weather permitting, available May-August. Choice of any TWO activities: miniature golf, dodge ball, gaga, batting cages, wiffle ball / kick ball.",
+      "includes": [
+        "Your choice of any TWO activities",
+        "Staff member(s) assist from start to finish",
+        "Reserved eating area for the party",
+        "2 hour party time total, with the last half hour reserved for cake and presents"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 13,
+      "maxGuests": 18,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 350,
+        "peakAmount": null
+      }
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "How far in advance can I book a studio?",
+      "a": "Any Studio can be reserved online up to 7 days in advance for any available time the facility is open. Members get 14 day advance bookings."
+    },
+    {
+      "q": "Do you take walk-ins?",
+      "a": "Walk-ins are always welcome for either Studio option, but priority is given to advance reservations."
+    },
+    {
+      "q": "Is there a minimum booking time?",
+      "a": "Half-hour minimum booking on all TopTracer Practice Range Studio rentals, which can be shared by two players."
+    },
+    {
+      "q": "Do you have a senior or military discount?",
+      "a": "Senior & Military Special – $25 per hour Weekdays before 12pm (TopTracer Studios)."
+    },
+    {
+      "q": "Are birthday parties indoors?",
+      "a": "Parties are outdoors, so they are weather permitting and are available May-August. Parties will be rescheduled in the event of rain."
+    },
+    {
+      "q": "When do I need to confirm my party size?",
+      "a": "Party size must be confirmed one week prior to the party."
+    },
+    {
+      "q": "How do I book a party?",
+      "a": "Call now to book your party at The Golf Dome! 440-543-1211"
+    },
+    {
+      "q": "Do you sell gift cards?",
+      "a": "The Golf Dome Gift Cards come in standard $25, $50, $100 and $250 values, plus amounts that match lesson packages and memberships."
+    },
+    {
+      "q": "Are mini golf and the batting cages open?",
+      "a": "Miniature Golf is open on an offseason basis, weather permitting. Please stop in the Golf Shop for assistance. Batting Cages are closed for the season."
+    },
+    {
+      "q": "Do you have memberships?",
+      "a": "Yes: the '59' annual membership (4 units per month), the '79' month-to-month club, Practice Range Memberships (3 months $675, 6 months $1,050, 12 months $1,500, billed monthly) and a Weekday Practice Range Membership at $195/mo. Membership can be shared between immediate family members."
+    },
+    {
+      "q": "Do you have simulator leagues?",
+      "a": "Play 9 holes once per week at your convenience. The Golf Dome offers both a Fall League starting in October and a Winter League that begins in January."
+    }
+  ],
+  "handoff": {
+    "email": "info@thegolfdome.com",
+    "webhookUrl": null
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ]
+}

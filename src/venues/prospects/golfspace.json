@@ -1,0 +1,389 @@
+{
+  "slug": "golfspace",
+  "name": "GolfSpace",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-AU",
+  "language": "English",
+  "currency": "AUD",
+  "timeZone": "Australia/Sydney",
+  "address": "Unit 4, Emporia, 29-31 O'Riordan St, Alexandria NSW 2015",
+  "phone": "02 8331 6868",
+  "website": "https://golfspace.com.au/",
+  "unit": {
+    "singular": "bay",
+    "plural": "bays",
+    "count": 18,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "08:00",
+        "close": "18:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "07:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "07:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "07:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "07:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "07:00",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "08:00",
+        "close": "21:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri"
+    ],
+    "from": "17:00",
+    "allDay": [
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://golfspace.com.au/entertain/",
+    "howItWorks": "Events for groups of 12 to 150 go through an event inquiry with Hayden Edwards, Head of Community and Events. Smaller groups (up to three bays, up to 12 guests) can book Social Golf online.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book simulator bays, lessons, Weekend Social and packs",
+      "url": "https://golfspace.com.au/book-now/"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "sim-bay-solo",
+      "name": "Simulator Bay - 1 player",
+      "description": "Your own TrackMan bay. Off-peak $40 per hour solo, peak $60 per hour.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 1,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 40,
+        "peakAmount": 60,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "sim-bay-2",
+      "name": "Simulator Bay - 2 players",
+      "description": "Your own TrackMan bay. Off-peak $60 per hour for 2, peak $80 per hour.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 2,
+      "maxGuests": 2,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 60,
+        "peakAmount": 80,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "sim-bay-3-4",
+      "name": "Simulator Bay - 3 to 4 players",
+      "description": "Your own TrackMan bay for up to 4. Off-peak $80 per hour for 3 to 4, peak $100 per hour. Social Golf online: up to three bays, up to 12 guests. Club hire available subject to availability.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 3,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 80,
+        "peakAmount": 100,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "weekend-social",
+      "name": "Weekend Social",
+      "description": "Friday and Saturday nights in The Reserve, the members' lounge upstairs. Two hours on a TrackMan iO bay with the bar, pool table and darts on hand. Groups up to 4 per bay.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 4,
+      "days": [
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 200,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "event-signature-bays",
+      "name": "Event - The Signature Bays",
+      "description": "Premium. Semi-private. Personal. Up to 24 guests. 2hrs from $1,000.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 12,
+      "maxGuests": 24,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 1000,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "event-club-bays",
+      "name": "Event - The Club Bays",
+      "description": "Energetic. Inclusive. Open. Up to 40 guests. 3hrs from $2,800.",
+      "includes": [],
+      "durationMinutes": 180,
+      "minGuests": 12,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 2800,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "event-reserve",
+      "name": "Event - The Reserve",
+      "description": "Flagship multi-entertainment space: 6 TrackMan iO bays, whiskey & champagne bar, pool table, darts and lounge. Up to 80 guests. 3hrs from $4,000.",
+      "includes": [],
+      "durationMinutes": 180,
+      "minGuests": 12,
+      "maxGuests": 80,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 4000,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "event-pavilion",
+      "name": "Event - The Pavilion",
+      "description": "Twelve bays. The full downstairs. Up to 80 guests. 3hrs from $5,200.",
+      "includes": [],
+      "durationMinutes": 180,
+      "minGuests": 12,
+      "maxGuests": 80,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 5200,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "event-whole-venue",
+      "name": "Event - The Whole Venue",
+      "description": "Every space. Every guest. Every detail. Up to 150 guests. Enquire for pricing.",
+      "includes": [],
+      "durationMinutes": 180,
+      "minGuests": 12,
+      "maxGuests": 150,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "pga-lesson-30",
+      "name": "PGA Lesson - 30 minutes",
+      "description": "One-on-one with a GolfSpace PGA coach on TrackMan.",
+      "includes": [],
+      "durationMinutes": 30,
+      "minGuests": 1,
+      "maxGuests": 1,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 90,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "pga-lesson-60",
+      "name": "PGA Lesson - 1 hour",
+      "description": "One-on-one with a GolfSpace PGA coach on TrackMan.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 1,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 160,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "sam-puttlab",
+      "name": "SAM PuttLab practice session",
+      "description": "The tour standard in putting analysis. 30 minute practice session.",
+      "includes": [],
+      "durationMinutes": 30,
+      "minGuests": 1,
+      "maxGuests": 1,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 20,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [
+    {
+      "id": "silver",
+      "name": "Silver experience",
+      "description": "From $25 per person. Casual catering, relaxed energy, bar tab available. Catered by The Grounds of Alexandria.",
+      "pricing": "per_person",
+      "amount": 25,
+      "amountTo": null
+    },
+    {
+      "id": "gold",
+      "name": "Gold experience",
+      "description": "From $40 per person. Upgraded menu, broader catering, 10% off your bar tab. Catered by The Grounds of Alexandria.",
+      "pricing": "per_person",
+      "amount": 40,
+      "amountTo": null
+    },
+    {
+      "id": "platinum",
+      "name": "Platinum experience",
+      "description": "From $50 per person. Catering by Doltone House or Laissez-Faire. Bottomless beverages, PGA Professional coaching, dedicated mixologist, full AV and branding.",
+      "pricing": "per_person",
+      "amount": 50,
+      "amountTo": null
+    }
+  ],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Is there a dress code?",
+      "a": "No dress codes. No gatekeeping. Just good people, great energy, and a community that's always alive."
+    },
+    {
+      "q": "Can I hire clubs?",
+      "a": "Club hire available at the venue subject to availability."
+    },
+    {
+      "q": "Do I need to book the driving range?",
+      "a": "No booking needed. Our TrackMan driving range is walk-on. Create your free range account, top it up, then scan your QR at the ball machine. Medium bucket $25, Large $30, XLarge $35. Top up $200, get $250 of range credit."
+    },
+    {
+      "q": "How big a group can you host?",
+      "a": "Built for groups of 12 to 150. Smaller group? Book Social Golf direct: up to three bays, up to 12 guests, book online and turn up ready to play."
+    },
+    {
+      "q": "How many people per simulator bay?",
+      "a": "Your own TrackMan bay for up to 4."
+    },
+    {
+      "q": "Do you have simulator or lesson packs?",
+      "a": "Yes. Simulator packs from $100 (Off-Peak Pack, 3 x 1 hour sessions Mon to Fri 7am to 5pm) and PGA lesson packs from $380. Credits land in your account straight away, no membership needed."
+    },
+    {
+      "q": "What is the 21 Day Pass?",
+      "a": "21 days of GolfSpace for $199: two PGA lessons, ten TrackMan sessions, range buckets, putting analysis and the full club. No lock-in. No pressure."
+    },
+    {
+      "q": "Who do I talk to about an event?",
+      "a": "Call us and ask for Hayden Edwards, Head of Community and Events, on 02 8331 6868 or email hayden@golfspace.com.au."
+    }
+  ],
+  "handoff": {
+    "email": "hayden@golfspace.com.au",
+    "webhookUrl": null
+  },
+  "pilot": null
+}

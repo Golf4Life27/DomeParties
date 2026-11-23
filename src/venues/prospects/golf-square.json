@@ -1,0 +1,241 @@
+{
+  "slug": "golf-square",
+  "name": "Golf Square",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-AU",
+  "language": "English",
+  "currency": "AUD",
+  "timeZone": "Australia/Melbourne",
+  "address": "8 Annastasia Way, Sunshine North, Victoria 3020, Australia",
+  "phone": "+61 3 9689 1888",
+  "website": "https://www.golfsquare.com.au/",
+  "unit": {
+    "singular": "simulator",
+    "plural": "simulators",
+    "count": 9,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": true,
+  "hoursUnclear": [
+    "fri",
+    "sat"
+  ],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Parties and events are booked by enquiry: fill in the enquiry form on the website or call (03) 9689 1888 / 1800 166 168 for a personalised quote.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book golf simulators",
+      "url": "https://golfsquare.vendigolf.com.au/secure/customer/booking/v2/public/venue/1"
+    },
+    {
+      "what": "Book bar & restaurant",
+      "url": "https://www.opentable.com.au/r/golf-square-reservations-sunshine-north?restref=273863&lang=en-AU&ot_source=Restaurant%20website"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "bucks-party",
+      "name": "Bucks Party Package",
+      "description": "Golf simulators, food, drinks, darts and live sport. Pizzas, share plates, plus beers and wines included in the package.",
+      "includes": [
+        "Golf simulators",
+        "Pizzas and share plates",
+        "Beers and wines",
+        "Darts and live sport"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 200,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 99,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "birthday-celebration",
+      "name": "Birthday & Celebration Package",
+      "description": "Golf simulators, great food, drinks and plenty of competition, with interactive golf games, darts and live sports on the big screens.",
+      "includes": [
+        "Golf simulators",
+        "Pizzas and share plates",
+        "Drinks"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 200,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 57,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "childrens-party",
+      "name": "Children's Party",
+      "description": "All-in-one packages with easy-to-play games and tasty snacks for 10 or more. No golfing experience required.",
+      "includes": [
+        "Easy-to-play golf games",
+        "Snacks"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 200,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 37,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "end-of-year-event",
+      "name": "End-of-Year / Christmas Party",
+      "description": "Food, drinks and private golf bays with flexible packages for groups of 10-200. Quote on enquiry.",
+      "includes": [
+        "Private golf bays",
+        "Food",
+        "Drinks"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 200,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "corporate-event",
+      "name": "Corporate Event",
+      "description": "Golf, games, food and drinks with full stage and AV setup for presentations, team building and celebrations. Spaces for 10-200. Quote on enquiry.",
+      "includes": [
+        "Golf simulators",
+        "Full stage & AV setup",
+        "Canapé, plated meal or classic bite options"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 200,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Is there parking?",
+      "a": "Ample and free, on-site parking is available for all guests, located just steps from the main entrance."
+    },
+    {
+      "q": "Can I get there by public transport?",
+      "a": "We are located just 400m from Sunshine Train Station as well as major bus networks, and just off the M80 Ring Road near Ballarat Road."
+    },
+    {
+      "q": "Do I need golf experience?",
+      "a": "No golf experience required."
+    },
+    {
+      "q": "How many guests can you host?",
+      "a": "Event spaces for 10–200 guests. For whole-venue events: up to 600 standing, up to 350 theatre-style, up to 220 seated for formal dining."
+    },
+    {
+      "q": "Do you have AV for presentations?",
+      "a": "Yes, a 12sqm raised stage with concert-quality speakers, plug-and-play AV, microphone inputs, 2 giant LED screens and large display screens on request."
+    },
+    {
+      "q": "When is the kitchen open?",
+      "a": "Mon–Thu 5pm–9pm; Fri–Sun 12pm–9pm."
+    }
+  ],
+  "handoff": {
+    "email": "sales@golfsquare.com.au",
+    "webhookUrl": null
+  },
+  "pilot": null
+}

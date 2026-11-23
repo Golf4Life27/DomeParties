@@ -1,0 +1,312 @@
+{
+  "slug": "tussey-mountain-fun-centre",
+  "name": "Tussey Mountain Fun Centre",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "301 Bear Meadows Road, Boalsburg, PA 16827",
+  "phone": "814-466-6266",
+  "website": null,
+  "unit": {
+    "singular": "go-kart",
+    "plural": "go-karts",
+    "count": null,
+    "guestsPerUnit": 2
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": false,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": [
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Reserve birthday parties, private track rentals and wristband packages by emailing info@tusseymountain.com. For questions, call 814-466-6266.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "birthday-party",
+      "name": "Birthday Party",
+      "description": "Birthday party during public hours. Minimum 6 people.",
+      "includes": [
+        "3 go-kart driver tickets per guest",
+        "1 round of mini golf per guest"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 6,
+      "maxGuests": 40,
+      "days": [
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 25,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "private-track-rental",
+      "name": "Private Go-Kart Track Rental",
+      "description": "Private rental of the go-kart track during non-public hours. $350 per hour on weekdays, $500 per hour on weekends. The Fun Centre page adds $300 for each additional hour.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 350,
+        "peakAmount": 500,
+        "minUnits": 1,
+        "guestsPerUnit": 40
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "wristband-pavilion",
+      "name": "Wristband Package with Pavilion by the Pond",
+      "description": "Wristband package that goes with a Pavilion by the Pond group rental. The Fun Centre page says $20 per person for 2 hours of unlimited go-karts and mini golf. The Go-Karts page says $25 per person with 3 driver tickets and 1 round of mini golf.",
+      "includes": [
+        "Unlimited go-karts and mini golf for 2 hours (Fun Centre page)"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 160,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 20,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "pavilion-by-the-pond",
+      "name": "Pavilion by the Pond",
+      "description": "Holds 160 guests. Used for company picnics, family reunions and bridal showers. Fun Centre activities can be added. Contact us for pricing.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 160,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "the-lodge",
+      "name": "The Lodge",
+      "description": "Indoor and outdoor rooms, patio and deck with views of Mount Nittany. Includes the Skimont Room. Contact us for pricing.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "the-patio",
+      "name": "The Patio",
+      "description": "Three-season garden. Fire pits may be available to rent on cool evenings. Contact us for pricing.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "top-of-the-mountain",
+      "name": "Top of the Mountain",
+      "description": "Event space at the top of the mountain, reached by chairlift. Contact us for pricing.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "go-kart-driver",
+      "name": "Go-kart driver ticket",
+      "description": "One ride, about 4 to 5 minutes",
+      "unit": "each",
+      "amount": 8
+    },
+    {
+      "id": "go-kart-passenger",
+      "name": "Go-kart passenger ticket",
+      "description": "For 2-seat karts",
+      "unit": "each",
+      "amount": 2
+    },
+    {
+      "id": "mini-golf-13plus",
+      "name": "Mini golf, age 13+",
+      "description": "",
+      "unit": "per_person",
+      "amount": 9
+    },
+    {
+      "id": "mini-golf-6-12",
+      "name": "Mini golf, age 6-12",
+      "description": "Age 5 and under free with a paying adult",
+      "unit": "per_person",
+      "amount": 6
+    },
+    {
+      "id": "par3-adult",
+      "name": "Par 3 golf adult unlimited play (13+)",
+      "description": "9-hole pitch-and-putt, walking only",
+      "unit": "per_person",
+      "amount": 25
+    },
+    {
+      "id": "par3-junior",
+      "name": "Par 3 golf junior unlimited play (6-12)",
+      "description": "",
+      "unit": "per_person",
+      "amount": 15
+    },
+    {
+      "id": "par3-club-rental",
+      "name": "Par 3 club rental with putter",
+      "description": "Per round",
+      "unit": "each",
+      "amount": 8
+    },
+    {
+      "id": "par3-balls",
+      "name": "3 golf balls",
+      "description": "",
+      "unit": "each",
+      "amount": 6
+    },
+    {
+      "id": "range-small-basket",
+      "name": "Driving range small basket (1 token)",
+      "description": "",
+      "unit": "each",
+      "amount": 6
+    },
+    {
+      "id": "range-large-basket",
+      "name": "Driving range large basket (2 tokens)",
+      "description": "",
+      "unit": "each",
+      "amount": 12
+    },
+    {
+      "id": "range-club-rental",
+      "name": "Driving range club rental (irons only)",
+      "description": "",
+      "unit": "each",
+      "amount": 6
+    }
+  ],
+  "faq": [
+    {
+      "q": "How tall do go-kart drivers need to be?",
+      "a": "Drivers must be at least 54 inches tall and able to reach the pedals. Smaller passengers may ride in 2-seat karts."
+    },
+    {
+      "q": "How do I pay at the driving range?",
+      "a": "The self-serve machine takes credit cards only. Tokens are also sold at the Fun Centre desk when it's open."
+    },
+    {
+      "q": "Is mini golf accessible?",
+      "a": "Yes, the mini golf course is handicap accessible."
+    },
+    {
+      "q": "Do young kids pay for mini golf?",
+      "a": "Age 5 and under play free with a paying adult."
+    },
+    {
+      "q": "When are you open?",
+      "a": "We're open in spring, summer and fall. Go-karts run Thursday through Sunday, spring to fall. Mini golf and Par 3 golf are open Wednesday through Sunday in summer and autumn. The driving range is open daily spring through autumn. As of November 2026 we're closed for the season. See you next spring!"
+    },
+    {
+      "q": "What if the weather is bad?",
+      "a": "All hours depend on the weather. Please call ahead when the weather is poor or heavy rain is forecast."
+    },
+    {
+      "q": "What are the office hours?",
+      "a": "Monday to Friday, 10am to 4pm. Call 814-466-6266."
+    },
+    {
+      "q": "When is event season?",
+      "a": "Event season runs April through December. The Lodge is open to the public December through March during ski operating hours."
+    }
+  ],
+  "handoff": {
+    "email": "info@tusseymountain.com",
+    "webhookUrl": null
+  }
+}

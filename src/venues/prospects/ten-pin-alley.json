@@ -1,0 +1,151 @@
+{
+  "slug": "ten-pin-alley",
+  "name": "Ten Pin Alley",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "6285 Nesbitt Rd., Fitchburg, WI",
+  "phone": "608-845-1010",
+  "website": "https://www.tenpinalleys.com/",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": null,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "09:00",
+        "close": "23:59"
+      }
+    ],
+    "tue": [
+      {
+        "open": "11:00",
+        "close": "23:59"
+      }
+    ],
+    "wed": [
+      {
+        "open": "11:00",
+        "close": "23:59"
+      }
+    ],
+    "thu": [
+      {
+        "open": "09:00",
+        "close": "23:59"
+      }
+    ],
+    "fri": [
+      {
+        "open": "09:00",
+        "close": "23:59"
+      }
+    ],
+    "sat": [
+      {
+        "open": "09:00",
+        "close": "23:59"
+      }
+    ]
+  },
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Call 608-845-1010 to check lane availability and schedule a party, banquet or corporate event. Open bowling hours are subject to change due to league bowling and company parties.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Kids birthday party page",
+      "url": "https://www.tenpinalleys.com/kids-birthday-party"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "party-event",
+      "name": "Party / Banquet / Corporate Event (call for pricing)",
+      "description": "Kids & teen birthdays (three party packages offered), company events, group events and private banquets. Prices are not listed on the website; call for details.",
+      "includes": [],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 140,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Can I reserve a private room for my child's celebration?",
+      "a": "We offer dedicated party spaces for kids celebrations, where your group can gather for food, gifts, and cake separate from the general seating area. Our team can confirm room availability and coordinate setup based on your guest count. Reach out directly so we can match your needs to the right space."
+    },
+    {
+      "q": "What age groups are parties suited for?",
+      "a": "Our venue accommodates a wide range of ages. Younger children benefit from bumper bowling and the arcade room, while older kids and tweens enjoy the competitive lane experience and social atmosphere of the sports bar and grill area. Whether the guest of honor is turning five or fifteen, we can shape the event to fit the group."
+    },
+    {
+      "q": "How far in advance should I book a kids celebration?",
+      "a": "We recommend booking as early as possible, particularly for weekend dates, which fill quickly. Reaching out a few weeks ahead gives us the best opportunity to confirm your preferred date, package, and space. To check availability, visit our kids birthday party page or call us at (608) 845-1010."
+    },
+    {
+      "q": "How many guests can you seat for a banquet?",
+      "a": "We can accommodate seating for up to 140 guests. During the summer months, we utilize the outdoors with our three volleyball courts."
+    },
+    {
+      "q": "What food options are there for events?",
+      "a": "We offer options such as sit-down meals, all-you-can-eat buffets, picnic buffets, deli buffets, luncheons, and hors d'oeuvres. If you do not see what you are looking for, please ask us, and we will do our best to fulfill your requests."
+    },
+    {
+      "q": "Is there parking?",
+      "a": "With ample parking and a convenient location, it's the perfect spot for a corporate team-building activity."
+    },
+    {
+      "q": "Are open bowling hours guaranteed?",
+      "a": "Open bowling hours are subject to change due to league bowling and company parties. Call us today for lane availability."
+    }
+  ],
+  "handoff": {
+    "email": "bill@tenpinalleys.com",
+    "webhookUrl": null
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ]
+}

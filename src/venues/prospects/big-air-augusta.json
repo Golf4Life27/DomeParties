@@ -1,0 +1,445 @@
+{
+  "slug": "big-air-augusta",
+  "name": "Big Air Trampoline Park Augusta",
+  "kind": "family_entertainment",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "2807 Wylds Road Ext. Augusta, GA 30909",
+  "phone": "(706) 534-9505",
+  "website": "https://www.bigairusa.com/birthdays/augusta",
+  "unit": {
+    "singular": "party room",
+    "plural": "party rooms",
+    "count": 5,
+    "guestsPerUnit": 10
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "12:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "15:00",
+        "close": "20:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "15:00",
+        "close": "20:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "10:00",
+        "close": "20:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "10:00",
+        "close": "20:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "11:00",
+        "close": "21:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://bigairaugusta.centeredgeonline.com/event/events",
+    "howItWorks": "Pick a party package, reserve a date and choose add-ons online. The park then calls to confirm. Group rates are booked by phone in one-hour blocks, at least one week ahead.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book Handyman Hal Birthday Package",
+      "url": "https://bigairaugusta.centeredgeonline.com/event/description/3db3bc57-6ce1-48a0-977e-46e169168019"
+    },
+    {
+      "what": "Free Big Air party invitations on Evite",
+      "url": "https://www.evite.com/invites/venues/big-air/?utm_source=website&utm_medium=packages&utm_campaign=bigairaugusta"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": 100
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "handyman-hal",
+      "name": "Handyman Hal Birthday Package",
+      "description": "Covers 10 jumpers: 90 minutes of playtime on all attractions and 40 minutes in a reserved party room with a party host. Each additional jumper is $27.",
+      "includes": [
+        "10 jumpers",
+        "Handyman Hal vest for every jumper",
+        "Handyman Hal water bottle for every jumper",
+        "Handyman Hal Big Birthday BOGO jump pass",
+        "90 minutes of playtime on ALL attractions",
+        "40 minutes in reserved party room with party host",
+        "ICEE for every jumper",
+        "Big Air grip socks",
+        "Cups, utensils, setup & cleanup"
+      ],
+      "durationMinutes": 130,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 450,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "party-60",
+      "name": "60 Minutes Party",
+      "description": "Covers 10 jumpers: 60 minutes of jump time and 40 minutes in a reserved party area. Each additional jumper is $20.",
+      "includes": [
+        "60 minutes of jump time for 10 jumpers",
+        "40 minutes in reserved party area",
+        "2 large pizzas",
+        "2 refillable drink flavors",
+        "Grip socks for every jumper",
+        "Dedicated party host",
+        "Cups, plates and napkins",
+        "Setup and cleanup",
+        "Printed invitations",
+        "Playtime on ALL attractions"
+      ],
+      "durationMinutes": 100,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 300,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "party-90",
+      "name": "90 Minutes Party",
+      "description": "Covers 10 jumpers: 90 minutes of jump time and 40 minutes in a reserved party area. Each additional jumper is $22.",
+      "includes": [
+        "90 minutes of jump time for 10 jumpers",
+        "40 minutes in reserved party area",
+        "2 large pizzas",
+        "2 refillable drink flavors",
+        "Grip socks for every jumper",
+        "Dedicated party host",
+        "Cups, plates and napkins",
+        "Setup and cleanup",
+        "Printed invitations",
+        "Playtime on ALL attractions"
+      ],
+      "durationMinutes": 130,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 340,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "party-120",
+      "name": "120 Minutes Party",
+      "description": "Covers 10 jumpers: 120 minutes of jump time and 40 minutes in a reserved party area. Each additional jumper is $24.",
+      "includes": [
+        "120 minutes of jump time for 10 jumpers",
+        "40 minutes in reserved party area",
+        "2 large pizzas",
+        "2 refillable drink flavors",
+        "Grip socks for every jumper",
+        "Dedicated party host",
+        "Cups, plates and napkins",
+        "Setup and cleanup",
+        "Printed invitations",
+        "Playtime on ALL attractions"
+      ],
+      "durationMinutes": 160,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 375,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "little-big-air",
+      "name": "Little Big Air Party",
+      "description": "Covers 5 jumpers: 60 minutes of jump time and 40 minutes in a reserved party area. Each additional jumper is $20.",
+      "includes": [
+        "60 minutes of jump time for 5 jumpers",
+        "40 minutes in reserved party area",
+        "1 large pizza",
+        "1 refillable drink flavor",
+        "Grip socks for every jumper",
+        "Cups, plates and napkins",
+        "Setup and cleanup",
+        "Printed invitations (pick up in-park)",
+        "Free special gift from Big Air"
+      ],
+      "durationMinutes": 100,
+      "minGuests": 1,
+      "maxGuests": 5,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 200,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "cosmic-night",
+      "name": "Cosmic Night Party",
+      "description": "Covers 10 jumpers: 3 hours of jump time (Fri 6-9PM / Sat 7-10PM) and 3 hours in a reserved party area. Each additional jumper is $25.",
+      "includes": [
+        "3 hours of jump time for 10 jumpers",
+        "3 hours in reserved party area",
+        "2 large pizzas",
+        "2 refillable drink flavors",
+        "Grip socks for every jumper",
+        "Dedicated party host",
+        "Cups, plates and napkins",
+        "Setup and cleanup",
+        "Printed invitations",
+        "Playtime on ALL attractions"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 1,
+      "maxGuests": 10,
+      "days": [
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "flat",
+        "amount": 375,
+        "peakAmount": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-weekday",
+      "name": "Group Package (Mon-Thu)",
+      "description": "Group rate for 15 or more, booked in one-hour blocks at least one week ahead. Groups of 100+ need a deposit. Call to book.",
+      "includes": [
+        "Grip socks for all jumpers"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 15,
+      "maxGuests": 1000,
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 16.5,
+        "peakAmount": null,
+        "tiers": [
+          {
+            "minGuests": 31,
+            "amount": 16
+          },
+          {
+            "minGuests": 50,
+            "amount": 15.5
+          },
+          {
+            "minGuests": 100,
+            "amount": 15
+          }
+        ]
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-weekend",
+      "name": "Group Package (Fri-Sun)",
+      "description": "Group rate for 15 or more, booked in one-hour blocks at least one week ahead. Groups of 100+ need a deposit. Call to book.",
+      "includes": [
+        "Grip socks for all jumpers"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 15,
+      "maxGuests": 1000,
+      "days": [
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "pricing": {
+        "type": "per_person",
+        "amount": 18.5,
+        "peakAmount": null,
+        "tiers": [
+          {
+            "minGuests": 31,
+            "amount": 18
+          },
+          {
+            "minGuests": 50,
+            "amount": 17.5
+          },
+          {
+            "minGuests": 100,
+            "amount": 17
+          }
+        ]
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "extra-jumper-handyman-hal",
+      "name": "Additional jumper - Handyman Hal",
+      "description": "",
+      "unit": "per_person",
+      "amount": 27,
+      "amountTo": null
+    },
+    {
+      "id": "extra-jumper-60",
+      "name": "Additional jumper - 60 Minutes Party",
+      "description": "",
+      "unit": "per_person",
+      "amount": 20,
+      "amountTo": null
+    },
+    {
+      "id": "extra-jumper-90",
+      "name": "Additional jumper - 90 Minutes Party",
+      "description": "",
+      "unit": "per_person",
+      "amount": 22,
+      "amountTo": null
+    },
+    {
+      "id": "extra-jumper-120",
+      "name": "Additional jumper - 120 Minutes Party",
+      "description": "",
+      "unit": "per_person",
+      "amount": 24,
+      "amountTo": null
+    },
+    {
+      "id": "extra-jumper-little",
+      "name": "Additional jumper - Little Big Air Party",
+      "description": "",
+      "unit": "per_person",
+      "amount": 20,
+      "amountTo": null
+    },
+    {
+      "id": "extra-jumper-cosmic",
+      "name": "Additional jumper - Cosmic Night Party",
+      "description": "",
+      "unit": "per_person",
+      "amount": 25,
+      "amountTo": null
+    },
+    {
+      "id": "outside-food-fee",
+      "name": "Outside food catering fee",
+      "description": "For outside food other than cake/cupcakes and bottled water.",
+      "unit": "each",
+      "amount": 75,
+      "amountTo": null
+    }
+  ],
+  "faq": [
+    {
+      "q": "Can I bring my own food?",
+      "a": "Our guests are welcome to bring cake or cupcakes and bottled water at no extra charge. We have our signature Big Air cookie cakes available for purchase, therefore no cookie cakes are allowed. Other outside food is subject to a $75 catering fee."
+    },
+    {
+      "q": "Do you require a deposit?",
+      "a": "Yes. We require a $100 non-refundable deposit at the time of booking. If you choose to cancel your party, this deposit will be forfeited."
+    },
+    {
+      "q": "Do all guests have to pay?",
+      "a": "We only charge for jumpers. If you are participating in the trampoline activities you are considered a jumper! All other spectators are free of charge. Additional food options are available for your guests."
+    },
+    {
+      "q": "Why do I have to sign a waiver?",
+      "a": "Liability waivers are required for all Big Air guests. Everyone under the age of 18 years is required to have a signed waiver from parent or legal guardian. All guests 18 & over must show valid photo ID. After the first visit, you don't have to fill it out on future visits for a whole year!"
+    },
+    {
+      "q": "How does it work?",
+      "a": "Sign a waiver (online or in-park), buy tickets (online or in-park) and mandatory full-bottom grip socks, and have fun!"
+    },
+    {
+      "q": "When can I set up for my party?",
+      "a": "Party areas are available after the jump session. Typically, we allow guests access to their party area 10 minutes prior to the start of their party. Your party host will aid in set up."
+    },
+    {
+      "q": "Can I bring in my own decorations?",
+      "a": "Absolutely! Decorations must be assembled during your allotted time. Balloons must be weighted and wall decor may only be hung with gentle painters tape."
+    },
+    {
+      "q": "How far ahead should groups book?",
+      "a": "Group reservations should be made a minimum of one week in advance. A deposit is required for groups of 100+ and all private events."
+    }
+  ],
+  "handoff": {
+    "email": "info@bigairaugusta.com",
+    "webhookUrl": null
+  }
+}

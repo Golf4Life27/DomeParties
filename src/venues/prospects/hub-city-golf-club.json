@@ -1,0 +1,197 @@
+{
+  "slug": "hub-city-golf-club",
+  "name": "Hub City Golf Club",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/New_York",
+  "address": "12818 Shank Farm Way Ste D, Hagerstown, MD 21742",
+  "phone": "(301) 888-7775",
+  "website": "https://hubcitygolfclub.com/",
+  "unit": {
+    "singular": "bay",
+    "plural": "bays",
+    "count": 5,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "10:00",
+        "close": "20:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "10:00",
+        "close": "20:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "10:00",
+        "close": "20:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "10:00",
+        "close": "20:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "10:00",
+        "close": "20:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "10:00",
+        "close": "22:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Private events are booked by inquiry: share your date, estimated headcount and event type, and the team follows up (by text) with options. Book at least three weeks ahead.",
+    "leadTimeDays": 21
+  },
+  "otherLinks": [
+    {
+      "what": "Book a simulator bay",
+      "url": "https://hubcitygolfclub.com/client/hub-city-golf-club/booking"
+    },
+    {
+      "what": "Memberships",
+      "url": "https://bookedbays.com/client/hub-city-golf-club/subscribe"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "bay-rental",
+      "name": "Simulator bay rental",
+      "description": "Hourly simulator bay, up to 4 golfers per bay. Book multiple adjacent bays for bigger groups. Over 2,000 courses plus kids courses (Candyland, Jurassic Park, Minecraft).",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 20,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 0,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    },
+    {
+      "id": "private-event",
+      "name": "Private event",
+      "description": "Corporate outings, birthdays, fundraisers, bachelor/bachelorette, graduation and holiday parties, team celebrations. Five simulator bays; up to 20 golfing at once, up to 60 guests with rotation. Pricing depends on date, length, guest count and bays.",
+      "includes": [
+        "Five indoor golf simulator bays",
+        "Seating areas and cocktail-table setup",
+        "Catering coordination with The Greene Turtle or 301 Tacos and Pizza"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 1,
+      "maxGuests": 60,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "What types of private events can you host?",
+      "a": "We host corporate outings, birthday parties, fundraisers, bachelor and bachelorette parties, graduation parties, holiday celebrations, team outings, and networking events. Have something different in mind? Tell us about it—we'll help you decide if HCGC is the right fit."
+    },
+    {
+      "q": "How many guests can the venue accommodate?",
+      "a": "Hub City Golf Club can host events with up to 60 guests. We have five simulator bays, each designed for up to four golfers, so as many as 20 guests can play at one time. If everyone wants to golf continuously, 20 guests is the best fit."
+    },
+    {
+      "q": "Do guests need to know how to play golf?",
+      "a": "Not at all. Our private events are designed to be fun for golfers and non-golfers alike. Guests can play a course, compete in games, take a few swings, or simply hang out with the group."
+    },
+    {
+      "q": "Can we reserve the entire club?",
+      "a": "Full-club and multi-bay options depend on your date, group size, and availability. Tell us whether you're interested in a few bays or the entire space, and we'll recommend the best option for your event."
+    },
+    {
+      "q": "How much does a private event cost?",
+      "a": "Private-event pricing depends on your date, event length, guest count, and number of simulator bays. Submit your event details and we'll follow up with the options that best fit your group."
+    },
+    {
+      "q": "How far in advance should we plan our event?",
+      "a": "Private events must be booked at least three weeks in advance. We recommend contacting us as soon as you know your preferred date, especially for larger groups or popular dates."
+    },
+    {
+      "q": "Can we bring food or arrange catering?",
+      "a": "Yes. The Greene Turtle and 301 Tacos and Pizza are our in-house catering partners, and we'll coordinate the catering with either one for you. If you prefer another provider, you're welcome to arrange and manage outside catering yourself."
+    },
+    {
+      "q": "Do you serve drinks?",
+      "a": "Enjoy your favorite adult beverage while you play - just like on the course. The beverage cart is never more than a few steps away!"
+    },
+    {
+      "q": "Is it good for kids?",
+      "a": "You don't have to be a golf nut to enjoy sim golf! Our bays even have special kids courses like Candyland, Jurassic Park, and even Minecraft themed courses."
+    },
+    {
+      "q": "How many people fit in a bay?",
+      "a": "Our bays fit up to 4 golfers comfortably. Have a bigger group? You can book multiple, adjacent bays for even more fun!"
+    },
+    {
+      "q": "Is there after-hours access?",
+      "a": "24/7 Member Access: VIP - Monthly members and above have access to the facility around the clock, 7 days a week."
+    }
+  ],
+  "handoff": {
+    "email": "info@hubcitygolfclub.com",
+    "webhookUrl": null
+  }
+}

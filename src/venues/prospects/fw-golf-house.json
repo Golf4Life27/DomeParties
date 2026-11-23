@@ -1,0 +1,280 @@
+{
+  "slug": "fw-golf-house",
+  "name": "FW Golf House",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Indiana/Indianapolis",
+  "address": "3946 Ice Way, Fort Wayne, Indiana 46808",
+  "phone": "(260) 444-2788",
+  "website": "https://fwgolfhouse.com/",
+  "unit": {
+    "singular": "simulator",
+    "plural": "simulators",
+    "count": 3,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "11:00",
+        "close": "21:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "11:00",
+        "close": "21:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Book private and corporate events by emailing fwgolfhouse@gmail.com or calling 260-444-2788. Simulator bays can be reserved online or by walking in. Please call 24 hours before your tee time to book.",
+    "leadTimeDays": 1
+  },
+  "otherLinks": [
+    {
+      "what": "Reserve a simulator bay",
+      "url": "https://www.sevenrooms.com/reservations/golfhousefortwayne?duration-picker=true"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "open-floor-simulator",
+      "name": "Open Floor Simulator",
+      "description": "Full Swing simulator on the open floor, reserved by the hour. One player usually plays 18 holes in about an hour, so book extra time for groups.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 40,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true
+    },
+    {
+      "id": "private-room-simulator",
+      "name": "Private Room Simulator",
+      "description": "Full Swing simulator in the private sim room, reserved by the hour.",
+      "includes": [],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 4,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 50,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 4
+      },
+      "priceListed": true
+    },
+    {
+      "id": "the-bogey",
+      "name": "The Bogey",
+      "description": "Event package: private simulator room plus lounge area, $150 per hour.",
+      "includes": [
+        "Private Simulator Room",
+        "Lounge Area"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 4,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 150,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 4
+      },
+      "priceListed": true
+    },
+    {
+      "id": "the-par",
+      "name": "The Par",
+      "description": "Event package: 2 simulators plus lounge area, $200 per hour.",
+      "includes": [
+        "2 Simulators",
+        "Lounge Area"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 8,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 200,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 8
+      },
+      "priceListed": true
+    },
+    {
+      "id": "the-birdie",
+      "name": "The Birdie",
+      "description": "Event package: all 3 simulators plus lounge area, $300 per hour.",
+      "includes": [
+        "All 3 Simulators",
+        "Lounge Area"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 300,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 12
+      },
+      "priceListed": true
+    },
+    {
+      "id": "the-eagle",
+      "name": "The Eagle",
+      "description": "Event package: $1000 total for 4 hours with the space exclusive to your group and all amenities included.",
+      "includes": [
+        "3 Simulators",
+        "Lounge Area",
+        "Space Exclusive To Your Group",
+        "4 Hours Exclusivity Including All Amenities"
+      ],
+      "durationMinutes": 240,
+      "minGuests": 1,
+      "maxGuests": 12,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 1000,
+        "peakAmount": null
+      },
+      "priceListed": true
+    }
+  ],
+  "food": [],
+  "addOns": [
+    {
+      "id": "club-rental",
+      "name": "Club Rental",
+      "description": "Rental clubs",
+      "unit": "each",
+      "amount": 25
+    }
+  ],
+  "faq": [
+    {
+      "q": "Can I bring my own clubs?",
+      "a": "Yes. You can use your own clubs or our rental clubs. Club rental is $25."
+    },
+    {
+      "q": "How long does 18 holes take?",
+      "a": "It takes 1 hour for the average golfer to play 18 holes. As a rule of thumb if you have 4 players it will take 4 hours to play 18 holes. Because all golfers play at a different pace, we can't guarantee you will complete all 18 holes during your reservation."
+    },
+    {
+      "q": "Can I walk in?",
+      "a": "Book your bay online or walk right in and put your name down to reserve your simulator experience."
+    },
+    {
+      "q": "How far ahead should I book?",
+      "a": "Please call 24 hours prior to desired tee time to book."
+    },
+    {
+      "q": "What are the hours?",
+      "a": "Fall hours (Oct. 5, 2026 - Dec. 31, 2026): Monday thru Friday 12PM-9PM, Saturday & Sunday 11AM-9PM. Hours are subject to reservations (we will close after the last reservation)."
+    },
+    {
+      "q": "How do I book a private or corporate event?",
+      "a": "Contact fwgolfhouse@gmail.com or call 260-444-2788 to book your event today!"
+    },
+    {
+      "q": "What amenities are there?",
+      "a": "3 Full Swing Golf Simulators, a netted indoor driving range with 6 hitting bays and a putting/chipping green, 11 HD TVs, Corn Hole, and a full service lounge with snacks and beverage service."
+    },
+    {
+      "q": "Do you offer memberships?",
+      "a": "Yes. Members get club storage, daily range access (2 hr max) and 25% off simulator play. Single $45/month, Dual (2 people) $60/month, Family (4 people) $75/month. Memberships can be pro-rated from the start date."
+    },
+    {
+      "q": "Is there a Parkview employee discount?",
+      "a": "15% off to all Parkview employees. Just show your badge at the time of check-in. Discount does not apply to food or beverages."
+    },
+    {
+      "q": "Do you have leagues?",
+      "a": "Yes. The Fall League runs October 19 - December 20, 2026 and the Winter League runs January 11 - April 4, 2027, with 2 man teams playing a 9 hole round each week. Cash prizes available. Contact the Golf House to register."
+    },
+    {
+      "q": "Do you have scrambles?",
+      "a": "Yes, 2 Person and 4 Person 18-hole events with cash prizes. Turkey Scramble (2-Person) is November 21, 2026. Register early."
+    }
+  ],
+  "handoff": {
+    "email": "fwgolfhouse@gmail.com",
+    "webhookUrl": null
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "sample-swing-social",
+  "name": "Sample Swing Social",
+  "kind": "indoor_golf",
+  "sample": true,
+  "locale": "en-GB",
+  "language": "British English",
+  "currency": "GBP",
+  "timeZone": "Europe/London",
+  "address": "1 Example Street, London",
+  "phone": "020 7946 0000",
+  "website": "https://example.com/swing-social",
+  "unit": { "singular": "simulator bay", "plural": "simulator bays", "count": 10, "guestsPerUnit": 6 },
+  "hours": {
+    "mon": [{ "open": "12:00", "close": "23:00" }],
+    "tue": [{ "open": "12:00", "close": "23:00" }],
+    "wed": [{ "open": "12:00", "close": "23:00" }],
+    "thu": [{ "open": "12:00", "close": "00:00" }],
+    "fri": [{ "open": "12:00", "close": "01:00" }],
+    "sat": [{ "open": "10:00", "close": "01:00" }],
+    "sun": [{ "open": "10:00", "close": "22:00" }]
+  },
+  "closures": [{ "date": "2026-12-25", "note": "Christmas Day" }],
+  "peak": { "days": ["thu", "fri", "sat"], "from": "18:00" },
+  "booking": {
+    "partyUrl": "https://example.com/swing-social/events",
+    "howItWorks": "Choose your package and time, then pay a 25% deposit to confirm.",
+    "leadTimeDays": 3
+  },
+  "otherLinks": [{ "what": "Single bay bookings", "url": "https://example.com/swing-social/bays" }],
+  "deposit": { "percent": 25 },
+  "taxPercent": 0,
+  "serviceCharge": { "percent": 12.5, "appliesTo": "with_food", "note": "Discretionary service charge for table service, shared with the team." },
+  "packages": [
+    {
+      "id": "social-swing",
+      "name": "Social Swing",
+      "description": "Simulator bays by the hour with games like closest to the pin and long drive.",
+      "includes": ["Simulator bays", "Clubs and balls", "Game modes"],
+      "durationMinutes": 120,
+      "minGuests": 4,
+      "maxGuests": 60,
+      "pricing": { "type": "per_unit_hour", "amount": 45, "peakAmount": 60, "minUnits": 1 }
+    },
+    {
+      "id": "christmas-party",
+      "name": "Christmas Party",
+      "description": "Three hours, a dedicated host and a Christmas menu for office parties.",
+      "includes": ["3 hours of simulator play", "Dedicated host", "Christmas sharing menu", "Welcome drink"],
+      "durationMinutes": 180,
+      "minGuests": 12,
+      "maxGuests": 60,
+      "pricing": { "type": "per_person", "amount": 59, "peakAmount": 69 }
+    }
+  ],
+  "food": [{ "id": "sharing-platters", "name": "Sharing Platters", "description": "Burgers, wings and loaded fries to share.", "pricing": "per_person", "amount": 18 }],
+  "addOns": [{ "id": "drinks-package", "name": "Two Drinks Each", "description": "Two beers, wines or soft drinks per guest.", "unit": "per_person", "amount": 12 }],
+  "faq": [
+    { "q": "Do your prices include VAT?", "a": "Yes, every price includes VAT." },
+    { "q": "Do I need to be a golfer?", "a": "Not at all. Most guests have never played, and the games are made for beginners." },
+    { "q": "Is there an age limit?", "a": "Under 18s are welcome until 7pm with an adult." }
+  ],
+  "handoff": { "email": null, "webhookUrl": null }
+}

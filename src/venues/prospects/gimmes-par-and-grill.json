@@ -1,0 +1,191 @@
+{
+  "slug": "gimmes-par-and-grill",
+  "name": "Gimme's Par & Grill",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Detroit",
+  "address": "45 Ottawa Ave. NW, Grand Rapids, MI 49503",
+  "phone": "(616) 280-4050",
+  "website": null,
+  "unit": {
+    "singular": "bay",
+    "plural": "bays",
+    "count": 9,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "11:30",
+        "close": "20:30"
+      }
+    ],
+    "mon": [
+      {
+        "open": "11:30",
+        "close": "21:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "11:30",
+        "close": "21:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "11:30",
+        "close": "21:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "11:30",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "11:30",
+        "close": "23:45"
+      }
+    ],
+    "sat": [
+      {
+        "open": "11:30",
+        "close": "23:45"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Private events: send the \"Host an Event\" inquiry form on the website (name, email, phone, message). Bays: \"Book a Bay\" on the website. Tables: \"Book a Table\".",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "bay-rental",
+      "name": "Golf bay rental",
+      "description": "Hourly rental of a TrackMan simulator bay with a private table. Each bay holds up to 6 people. Three bays are also set up for other sports (cornhole, basketball, baseball, football) and games like zombie dodgeball.",
+      "includes": [
+        "TrackMan simulator bay",
+        "Private table",
+        "Up to 6 guests per bay"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 54,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 40,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "private-event",
+      "name": "Private event",
+      "description": "Private events for corporate groups, birthdays, bachelor/bachelorette parties, rehearsal dinners, showers and more. Includes golf and other simulated games, food, and alcoholic and non-alcoholic drinks. Spaces include the main bar and restaurant and the upstairs simulator lounge. 20-guest minimum. Contact the venue for pricing.",
+      "includes": [
+        "Golf and other simulated games",
+        "Food",
+        "Alcoholic and non-alcoholic drinks"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 20,
+      "maxGuests": 250,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false,
+      "priceFrom": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Can we bring outside food or drink?",
+      "a": "Outside food and drink are not allowed."
+    },
+    {
+      "q": "Do I need a golf reservation to eat?",
+      "a": "No golf reservation is required to dine."
+    },
+    {
+      "q": "Do you take walk-ins?",
+      "a": "Walk-ins are welcome. Booking ahead is recommended for peak hours and weekends."
+    },
+    {
+      "q": "How far ahead can I book?",
+      "a": "Bays can be booked up to 10 days ahead. Dining tables can be booked up to 30 days ahead."
+    },
+    {
+      "q": "How many people fit in a bay?",
+      "a": "Each bay holds up to 6 people and has a private table. Groups of 6 or fewer per bay are recommended."
+    },
+    {
+      "q": "Should I bring my own clubs?",
+      "a": "Bringing your own clubs is recommended."
+    },
+    {
+      "q": "Is it left-handed and kid-friendly?",
+      "a": "Yes. The bays are left-handed friendly and the venue is kid-friendly."
+    },
+    {
+      "q": "What is the minimum for a private event?",
+      "a": "Private events need at least 20 guests."
+    },
+    {
+      "q": "What do memberships include?",
+      "a": "Memberships include club storage and one free hour per day in the bays."
+    },
+    {
+      "q": "When is happy hour?",
+      "a": "Monday all day, Tuesday to Thursday 2 PM to 6 PM, and Friday 2 PM to 5 PM."
+    },
+    {
+      "q": "Where are you located?",
+      "a": "45 Ottawa Ave. NW, Grand Rapids, on the corner of Ottawa Avenue and Louis Street, downtown."
+    }
+  ],
+  "handoff": {
+    "email": "hello@gimmespar.com",
+    "webhookUrl": null
+  }
+}

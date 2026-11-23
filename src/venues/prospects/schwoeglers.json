@@ -1,0 +1,122 @@
+{
+  "slug": "schwoeglers",
+  "name": "Schwoegler's",
+  "kind": "bowling",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Chicago",
+  "address": "444 Grand Canyon Drive, Madison, WI 53719",
+  "phone": "(608) 833-7272",
+  "website": "https://schwoegler.com/",
+  "unit": {
+    "singular": "lane",
+    "plural": "lanes",
+    "count": 36,
+    "guestsPerUnit": 6
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Contact us to book your next party, meeting or function at 608-833-7272 or email info@schwoegler.com.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [],
+  "deposit": {
+    "percent": null,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "banquet-group-party",
+      "name": "Banquet Center group party",
+      "description": "Newly renovated banquet room for meetings, birthdays, business outings, family get-togethers or any special occasion. Reasonably priced food and beverages. Price not listed on the website; call 608-833-7272 or email info@schwoegler.com for a quote.",
+      "includes": [
+        "Banquet room seating up to 150 guests"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 150,
+      "days": [],
+      "pricing": {
+        "type": "flat",
+        "amount": 0,
+        "peakAmount": null
+      },
+      "priceListed": false
+    }
+  ],
+  "food": [],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "What are your hours?",
+      "a": "Sunday: 9am – Close. Monday: 11am – Close. Tuesday through Saturday: 9am – Close."
+    },
+    {
+      "q": "What are your holiday hours?",
+      "a": "Thanksgiving: 9:00am – Close. Christmas Eve: 11:00am – 4:00pm. Christmas Day: 3:00pm – Close. New Years Eve: 9:00am – Close. New Years Day: 11:00am – Close."
+    },
+    {
+      "q": "How many people does the banquet room hold?",
+      "a": "The Schwoegler's Banquet Center comfortably seats up to 150 guests and features reasonably priced food and beverages."
+    },
+    {
+      "q": "How do I book a party?",
+      "a": "Contact us to book your next party, meeting or function at 608-833-7272 or email: info@schwoegler.com"
+    },
+    {
+      "q": "Do you do kids birthday parties?",
+      "a": "Have your next kids birthday party with us. We do all the setup and clean up. Parties can feature bowling, food, beverage, party room and more."
+    },
+    {
+      "q": "Do you have food?",
+      "a": "Full bar and grill menu featuring appetizers, burgers, sandwiches, wings, salad, pizza and a Friday fish fry. Dine in or carryout."
+    },
+    {
+      "q": "What else do you have besides bowling?",
+      "a": "Two outdoor volleyball courts, pinball and darts, bumper bowling, Madd Interactive bowling games, a sports bar with happy hour, a banquet hall and a meeting room. Special events include Karaoke, Trivia, Bingo (Thursdays at 6:30pm) and Live Entertainment."
+    },
+    {
+      "q": "Do you have bowling leagues?",
+      "a": "We have multiple leagues for all types of bowlers. We have men's, women's, mixed, couples and youth leagues available."
+    },
+    {
+      "q": "What happens if volleyball is rained out?",
+      "a": "Check our Facebook page for any rain cancellations. Next week's schedule remains the same if a night is canceled. The week will be added to the end if cancelled."
+    }
+  ],
+  "handoff": {
+    "email": "info@schwoegler.com",
+    "webhookUrl": null
+  },
+  "notStated": [
+    "tax",
+    "deposit",
+    "service_charge"
+  ],
+  "hoursListed": false
+}

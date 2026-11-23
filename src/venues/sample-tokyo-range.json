@@ -1,0 +1,46 @@
+{
+  "slug": "sample-tokyo-range",
+  "name": "サンプル ゴルフレンジ東京",
+  "kind": "driving_range",
+  "sample": true,
+  "locale": "ja-JP",
+  "language": "Japanese",
+  "currency": "JPY",
+  "timeZone": "Asia/Tokyo",
+  "address": "東京都 サンプル区 1-1",
+  "phone": "03-0000-0000",
+  "website": "https://example.com/tokyo-range",
+  "unit": { "singular": "打席", "plural": "打席", "count": 60, "guestsPerUnit": 4 },
+  "hours": {
+    "mon": [{ "open": "07:00", "close": "23:00" }],
+    "tue": [{ "open": "07:00", "close": "23:00" }],
+    "wed": [{ "open": "07:00", "close": "23:00" }],
+    "thu": [{ "open": "07:00", "close": "23:00" }],
+    "fri": [{ "open": "07:00", "close": "23:00" }],
+    "sat": [{ "open": "06:00", "close": "23:00" }],
+    "sun": [{ "open": "06:00", "close": "22:00" }]
+  },
+  "closures": [{ "date": "2027-01-01", "note": "元日" }],
+  "peak": { "days": ["sat", "sun"], "from": null },
+  "booking": { "partyUrl": "https://example.com/tokyo-range/group", "howItWorks": "予約ページで日時とプランを選び、お支払いで確定します。", "leadTimeDays": 1 },
+  "otherLinks": [],
+  "deposit": { "percent": null, "flat": null },
+  "taxPercent": 10,
+  "serviceCharge": { "percent": 0, "appliesTo": "all", "note": "" },
+  "packages": [
+    {
+      "id": "company-event",
+      "name": "社内イベントプラン",
+      "description": "ドラコン・ニアピン大会つきの団体プラン。",
+      "includes": ["打席2時間", "ボール打ち放題", "ドラコン・ニアピン大会", "賞品"],
+      "durationMinutes": 120,
+      "minGuests": 10,
+      "maxGuests": 120,
+      "pricing": { "type": "per_person", "amount": 4500, "peakAmount": 5500 }
+    }
+  ],
+  "food": [{ "id": "bento", "name": "お弁当", "description": "幕の内弁当とお茶。", "pricing": "per_person", "amount": 1200 }],
+  "addOns": [],
+  "faq": [{ "q": "クラブのレンタルはありますか？", "a": "はい、無料でお貸しします。" }],
+  "handoff": { "email": null, "webhookUrl": null }
+}

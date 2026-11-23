@@ -1,0 +1,356 @@
+{
+  "slug": "del-mar-golf-center",
+  "name": "Del Mar Golf Center",
+  "kind": "driving_range",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-US",
+  "language": "English",
+  "currency": "USD",
+  "timeZone": "America/Los_Angeles",
+  "address": "15555 Jimmy Durante Blvd, Del Mar, CA 92014-1901, US",
+  "phone": "858.509.5130",
+  "website": "https://delmargolfcenter.com/pellys-mini-golf/birthday-parties/",
+  "unit": {
+    "singular": "Toptracer bay",
+    "plural": "Toptracer bays",
+    "count": 11,
+    "guestsPerUnit": 5
+  },
+  "hours": {
+    "sun": [],
+    "mon": [],
+    "tue": [],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": []
+  },
+  "hoursListed": true,
+  "hoursUnclear": [
+    "sun",
+    "mon",
+    "tue",
+    "wed",
+    "thu",
+    "fri",
+    "sat"
+  ],
+  "closures": [],
+  "peak": {
+    "days": [],
+    "from": null,
+    "allDay": []
+  },
+  "notStated": [
+    "tax"
+  ],
+  "booking": {
+    "partyUrl": null,
+    "howItWorks": "Parties and group events are booked by sending a reservation request form; staff confirm, then a $50 deposit secures a birthday party. Group event requests get a reply within 72 hours. Bays are booked online.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Reserve a Toptracer bay",
+      "url": "https://apimanager-cc34.clubcaddie.com/activities/view/jcfdabab"
+    }
+  ],
+  "deposit": {
+    "percent": null,
+    "flat": 50
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 18,
+    "appliesTo": "all",
+    "note": "18% gratuity added for birthday parties of 8 or more and for all group events."
+  },
+  "packages": [
+    {
+      "id": "toptracer-bay",
+      "name": "Toptracer Bay",
+      "description": "Hourly Toptracer bay rental. Up to 5 players per bay with seating for 4, unlimited golf balls for your time. Book more hours if you like. Contact us to reserve 3 or more bays.",
+      "includes": [
+        "Unlimited golf balls",
+        "Toptracer games and virtual golf"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 55,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 35,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "toptracer-suite",
+      "name": "Toptracer Suite",
+      "description": "Hourly suite rental with more space for groups of up to 9 people. Unlimited golf balls for your reserved time.",
+      "includes": [
+        "Unlimited golf balls",
+        "Toptracer games and virtual golf"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 9,
+      "days": [],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 45,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": 9
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "shark-package",
+      "name": "Shark Package (Mini Golf Birthday)",
+      "description": "Mini golf birthday party at Pelly's Mini Golf. Adults and non-party children pay extra.",
+      "includes": [
+        "2-hour reserved patio",
+        "Balloons for each table",
+        "1 round of mini golf for each child",
+        "1 slice of pizza or hot dog + chips",
+        "Unlimited drinks"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 8,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 20,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "whale-package",
+      "name": "Whale Package (Mini Golf Birthday)",
+      "description": "Mini golf birthday party at Pelly's Mini Golf. Adults and non-party children pay extra.",
+      "includes": [
+        "3-hour reserved patio",
+        "Balloons for each table",
+        "2 rounds of mini golf for each child",
+        "1 small shaved ice",
+        "1 slice of pizza or hot dog + chips",
+        "Unlimited drinks"
+      ],
+      "durationMinutes": 180,
+      "minGuests": 8,
+      "maxGuests": 40,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 25,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-mexican-fiesta",
+      "name": "Group Event - Mexican Fiesta",
+      "description": "Group event with Mexican fiesta lunch, mini golf and a reserved patio. Larger groups may be possible.",
+      "includes": [
+        "Lunch (Mexican fiesta)",
+        "Mini golf",
+        "Reserved patio"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 15,
+      "maxGuests": 75,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 40,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-pasta",
+      "name": "Group Event - Pasta",
+      "description": "Group event with pasta lunch, mini golf and a reserved patio. Larger groups may be possible.",
+      "includes": [
+        "Lunch (pasta)",
+        "Mini golf",
+        "Reserved patio"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 15,
+      "maxGuests": 75,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 40,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    },
+    {
+      "id": "group-burgers",
+      "name": "Group Event - Burgers",
+      "description": "Group event with burger lunch, mini golf and a reserved patio. Larger groups may be possible.",
+      "includes": [
+        "Lunch (burgers)",
+        "Mini golf",
+        "Reserved patio"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 15,
+      "maxGuests": 75,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 35,
+        "peakAmount": null,
+        "tiers": []
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [
+    {
+      "id": "large-cheese-pizza",
+      "name": "Large Cheese Pizza",
+      "description": "8 slices. Order 24 hours in advance.",
+      "pricing": "flat",
+      "amount": 18,
+      "amountTo": null
+    },
+    {
+      "id": "large-pepperoni-pizza",
+      "name": "Large Pepperoni Pizza",
+      "description": "8 slices. Order 24 hours in advance.",
+      "pricing": "flat",
+      "amount": 20,
+      "amountTo": null
+    },
+    {
+      "id": "fruit-tray",
+      "name": "Fruit Tray",
+      "description": "Feeds 15-20. Order 24 hours in advance.",
+      "pricing": "flat",
+      "amount": 40,
+      "amountTo": null
+    },
+    {
+      "id": "veggie-tray",
+      "name": "Veggie Tray",
+      "description": "Feeds 15-20. Order 24 hours in advance.",
+      "pricing": "flat",
+      "amount": 40,
+      "amountTo": null
+    },
+    {
+      "id": "chips-salsa",
+      "name": "Chips & Salsa",
+      "description": "Feeds 15-20. Order 24 hours in advance.",
+      "pricing": "flat",
+      "amount": 25,
+      "amountTo": null
+    },
+    {
+      "id": "cookie-tray",
+      "name": "Fresh Baked Cookie Tray",
+      "description": "Two dozen. Order 24 hours in advance.",
+      "pricing": "flat",
+      "amount": 30,
+      "amountTo": null
+    }
+  ],
+  "addOns": [],
+  "faq": [
+    {
+      "q": "Is there a minimum or maximum for birthday parties?",
+      "a": "There is a minimum of 8. Our largest patio can hold up to 40."
+    },
+    {
+      "q": "What size are group events?",
+      "a": "Group events require a minimum of 15 people and can accommodate up to 75 guests. Larger groups may also be possible depending on the package and event requirements."
+    },
+    {
+      "q": "Do I have to bring paper goods?",
+      "a": "We will provide generic paper goods (plates, cups, utensils). If you are having a themed party, you may bring themed plates, etc."
+    },
+    {
+      "q": "Do you offer cakes?",
+      "a": "No, you must provide your own cake or cupcakes."
+    },
+    {
+      "q": "Can I bring my own food?",
+      "a": "For birthday parties, the only outside food we allow is your cake or cupcakes. For group events outside food is not permitted; our on-site café can prepare food and refreshments."
+    },
+    {
+      "q": "Can we bring outside alcohol?",
+      "a": "Outside alcohol is not allowed. We offer beer, hard seltzers, hard ciders, and white and red wine."
+    },
+    {
+      "q": "Do you serve alcohol?",
+      "a": "Yes, beer and wine."
+    },
+    {
+      "q": "Is gratuity included?",
+      "a": "Birthday groups of 8 or more will have an 18% gratuity added to the final bill. An 18% gratuity is added to all group events."
+    },
+    {
+      "q": "Will staff stay with us for the entire party?",
+      "a": "Your party host will take your food order, serve your lunch, and make sure you have everything you need. They do not accompany you on the course."
+    },
+    {
+      "q": "Can the children play by themselves?",
+      "a": "Groups are 4 or 5 children, no more than 5. There must be at least 1 adult to accompany each group of children."
+    },
+    {
+      "q": "Do adults and siblings play for free?",
+      "a": "There will be an additional charge for the adults and non-party children."
+    },
+    {
+      "q": "What about food for the adults?",
+      "a": "You may order additional pizza, veggie trays, fruit trays, or chips and salsa; these must be ordered 24 hours in advance. Party children are always fed first."
+    },
+    {
+      "q": "What is the birthday party deposit?",
+      "a": "Once we confirm your reservation, a $50 deposit is required. The deposit is non-refundable within 48 hours of the party."
+    },
+    {
+      "q": "What if the weather is bad?",
+      "a": "Pelly's Mini Golf will reschedule the party at the earliest mutually agreed-upon time. If that time is not acceptable, the $50 deposit will be refunded."
+    },
+    {
+      "q": "What is the bay cancellation policy?",
+      "a": "Bay reservations are treated like tee times and are non-refundable within 24 hours. Bay reservations can be made up to 7 days in advance."
+    },
+    {
+      "q": "Is there a deposit for large bay groups?",
+      "a": "$50 deposit is required for groups of 15 or more. The deposit is non-refundable within 48 hours. Contact us to reserve 3 or more bays for your group."
+    },
+    {
+      "q": "Do you have dietary options and golf equipment?",
+      "a": "Yes. Vegetarian and gluten-free food options are available. We provide putters, golf balls, scorecards, and pencils."
+    }
+  ],
+  "handoff": {
+    "email": "info@delmargolfcenter.com",
+    "webhookUrl": null
+  }
+}

@@ -1,0 +1,394 @@
+{
+  "slug": "city-greens-golf",
+  "name": "City Greens Golf",
+  "kind": "indoor_golf",
+  "sample": false,
+  "prospect": true,
+  "locale": "en-GB",
+  "language": "English",
+  "currency": "GBP",
+  "timeZone": "Europe/London",
+  "address": "The Red Building, Old Bank of England Court, Queen Street, Norwich NR2 4SX",
+  "phone": "01603 905018",
+  "website": "https://citygreensgolf.co.uk/",
+  "unit": {
+    "singular": "room",
+    "plural": "rooms",
+    "count": 3,
+    "guestsPerUnit": 4
+  },
+  "hours": {
+    "sun": [
+      {
+        "open": "08:00",
+        "close": "21:00"
+      }
+    ],
+    "mon": [
+      {
+        "open": "08:00",
+        "close": "22:00"
+      }
+    ],
+    "tue": [
+      {
+        "open": "08:00",
+        "close": "22:00"
+      }
+    ],
+    "wed": [
+      {
+        "open": "08:00",
+        "close": "22:00"
+      }
+    ],
+    "thu": [
+      {
+        "open": "08:00",
+        "close": "22:00"
+      }
+    ],
+    "fri": [
+      {
+        "open": "08:00",
+        "close": "23:00"
+      }
+    ],
+    "sat": [
+      {
+        "open": "08:00",
+        "close": "23:00"
+      }
+    ]
+  },
+  "hoursListed": true,
+  "hoursUnclear": [],
+  "closures": [],
+  "peak": {
+    "days": [
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri"
+    ],
+    "from": "17:00",
+    "allDay": [
+      "sat",
+      "sun"
+    ]
+  },
+  "notStated": [
+    "service_charge"
+  ],
+  "booking": {
+    "partyUrl": "https://citygreensgolf.co.uk/corporate-events",
+    "howItWorks": "Events: build an instant quote online and send it; the team replies within one working day with availability and the final price. A 50% deposit secures the date. Rooms: book online up to 7 days ahead, from 12pm each day.",
+    "leadTimeDays": 0
+  },
+  "otherLinks": [
+    {
+      "what": "Book a room (casual sessions)",
+      "url": "https://yourgolfbooking.com/venues/city-greens-norwich/booking?utm_source=citygreensgolf.co.uk&utm_medium=website&utm_campaign=book-a-room&utm_content=header"
+    },
+    {
+      "what": "Buy a gift card",
+      "url": "https://yourgolfbooking.com/venues/city-greens-norwich/topups?utm_source=citygreensgolf.co.uk&utm_medium=website&utm_campaign=gift-card&utm_content=home-cards"
+    }
+  ],
+  "deposit": {
+    "percent": 50,
+    "flat": null
+  },
+  "taxPercent": 0,
+  "taxOnServiceCharge": false,
+  "serviceCharge": {
+    "percent": 0,
+    "appliesTo": "all",
+    "note": ""
+  },
+  "packages": [
+    {
+      "id": "private-room-hour",
+      "name": "Private TrackMan room",
+      "description": "Your own private TrackMan IO simulator room for up to 4 players, clubs included. You pay for the room; price depends on number of players, length and time (Off-Peak Mon–Fri 12pm–5pm, Peak evenings, weekends and bank holidays, Super Peak Fri & Sat 5pm–11pm). From £25 an hour inc. VAT. Visitors book from 12pm, up to 7 days ahead.",
+      "includes": [
+        "Private TrackMan IO simulator room",
+        "Clubs included",
+        "Bar and lounge on site"
+      ],
+      "durationMinutes": 60,
+      "minGuests": 1,
+      "maxGuests": 12,
+      "days": [
+        "sun",
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat"
+      ],
+      "pricing": {
+        "type": "per_unit_hour",
+        "amount": 25,
+        "peakAmount": null,
+        "minUnits": 1,
+        "guestsPerUnit": null
+      },
+      "priceListed": true,
+      "priceFrom": true
+    },
+    {
+      "id": "private-event",
+      "name": "Private event / party (2 hours of golf)",
+      "description": "Team socials, client entertaining, birthdays and Christmas parties for 4–24 guests. Up to 12 play at once across three rooms; groups up to 24 rotate between rooms and the lounge. Three hours recommended for groups over 12 (+£180 for the group). Prices include VAT.",
+      "includes": [
+        "Two hours of private golf",
+        "Private TrackMan rooms",
+        "Clubs included",
+        "Use of the bar and lounge"
+      ],
+      "durationMinutes": 120,
+      "minGuests": 4,
+      "maxGuests": 24,
+      "days": [],
+      "pricing": {
+        "type": "per_person",
+        "amount": 35,
+        "peakAmount": null,
+        "tiers": [
+          {
+            "minGuests": 9,
+            "amount": 30
+          },
+          {
+            "minGuests": 13,
+            "amount": 28
+          }
+        ]
+      },
+      "priceListed": true,
+      "priceFrom": false
+    }
+  ],
+  "food": [
+    {
+      "id": "welcome-drink",
+      "name": "Welcome drink",
+      "description": "",
+      "pricing": "per_person",
+      "amount": 6,
+      "amountTo": null
+    },
+    {
+      "id": "sparkling-reception",
+      "name": "Sparkling reception",
+      "description": "",
+      "pricing": "per_person",
+      "amount": 8,
+      "amountTo": null
+    },
+    {
+      "id": "signature-cocktail",
+      "name": "Signature cocktail",
+      "description": "",
+      "pricing": "per_person",
+      "amount": 10,
+      "amountTo": null
+    },
+    {
+      "id": "two-drink-package",
+      "name": "2-drink package",
+      "description": "",
+      "pricing": "per_person",
+      "amount": 11,
+      "amountTo": null
+    },
+    {
+      "id": "three-drink-package",
+      "name": "3-drink package",
+      "description": "",
+      "pricing": "per_person",
+      "amount": 15,
+      "amountTo": null
+    },
+    {
+      "id": "nibbles",
+      "name": "Nibbles",
+      "description": "Crisps, nuts, pretzels",
+      "pricing": "per_person",
+      "amount": 4,
+      "amountTo": null
+    },
+    {
+      "id": "snacks",
+      "name": "Snacks",
+      "description": "Olives, dips, sweet treats",
+      "pricing": "per_person",
+      "amount": 6,
+      "amountTo": null
+    },
+    {
+      "id": "tapas",
+      "name": "Sharing tapas",
+      "description": "Sharing plates",
+      "pricing": "per_person",
+      "amount": 14,
+      "amountTo": null
+    },
+    {
+      "id": "pizza",
+      "name": "Pizza",
+      "description": "Mixed flavours",
+      "pricing": "per_person",
+      "amount": 18,
+      "amountTo": null
+    }
+  ],
+  "addOns": [
+    {
+      "id": "third-hour",
+      "name": "Third hour of golf",
+      "description": "Extra hour for the whole group; recommended for groups over 12",
+      "unit": "each",
+      "amount": 180,
+      "amountTo": null
+    },
+    {
+      "id": "competition-package",
+      "name": "Competition package",
+      "description": "Challenges, leaderboard, voucher prizes",
+      "unit": "each",
+      "amount": 95,
+      "amountTo": null
+    },
+    {
+      "id": "winner-trophy",
+      "name": "Winner trophy",
+      "description": "",
+      "unit": "each",
+      "amount": 30,
+      "amountTo": null
+    },
+    {
+      "id": "personalise-trophy",
+      "name": "Personalise the trophy",
+      "description": "",
+      "unit": "each",
+      "amount": 10,
+      "amountTo": null
+    },
+    {
+      "id": "personalised-signage",
+      "name": "Personalised signage",
+      "description": "",
+      "unit": "each",
+      "amount": 50,
+      "amountTo": null
+    },
+    {
+      "id": "prize-upgrade",
+      "name": "Prize upgrade",
+      "description": "£15 per prize, up to 10",
+      "unit": "each",
+      "amount": 15,
+      "amountTo": null
+    },
+    {
+      "id": "photography",
+      "name": "Photography",
+      "description": "",
+      "unit": "each",
+      "amount": 150,
+      "amountTo": null
+    },
+    {
+      "id": "highlights-reel",
+      "name": "Highlights reel",
+      "description": "",
+      "unit": "each",
+      "amount": 250,
+      "amountTo": null
+    },
+    {
+      "id": "reel-and-photos",
+      "name": "Reel + photos",
+      "description": "",
+      "unit": "each",
+      "amount": 350,
+      "amountTo": null
+    },
+    {
+      "id": "bar-tab",
+      "name": "Pre-paid bar tab",
+      "description": "Choose £100, £200 or £300",
+      "unit": "each",
+      "amount": 100,
+      "amountTo": 300
+    }
+  ],
+  "faq": [
+    {
+      "q": "Do I need to be a member to play?",
+      "a": "No. Our rooms are open to pay-as-you-go visitors from 12pm every day, bookable up to 7 days ahead. 8am–12pm is members only."
+    },
+    {
+      "q": "How many people can book a room?",
+      "a": "Each room comfortably fits up to four players. Larger groups can book rooms side by side, subject to availability."
+    },
+    {
+      "q": "Do I need my own clubs or shoes?",
+      "a": "No. Clubs are included for everyone, with left-handed, women's and junior sets on request, first come, first served. Any clean, flat shoes are fine, including trainers. No golf spikes, please."
+    },
+    {
+      "q": "Is it suitable for beginners?",
+      "a": "Absolutely. Our team will help you get started, and there are relaxed mini-games for non-golfers too. No golf experience needed for events."
+    },
+    {
+      "q": "Can under-18s play?",
+      "a": "Yes. Children aged 14 and under play with an adult in the room. Juniors aged 15–17 can play without an adult in the room under the conditions in our Under-18 policy."
+    },
+    {
+      "q": "Can I get food and drink?",
+      "a": "Yes. Our bar and lounge serve a curated selection of local food and drinks. For events, add drinks packages, nibbles, snacks, sharing tapas or pizza; menus and dietary requirements are confirmed before booking."
+    },
+    {
+      "q": "Where can I park?",
+      "a": "St Andrew's and Monastery Court car parks are nearby. We're a 3 minute walk from Norwich Cathedral and 10 minutes from the railway station."
+    },
+    {
+      "q": "When should I arrive?",
+      "a": "Arrive 15 minutes early. Your booking time starts at the scheduled time, not from when you arrive."
+    },
+    {
+      "q": "How many people can attend an event?",
+      "a": "From 4 to 24 guests. Up to 12 play at once across three rooms, and larger groups rotate between the rooms and the lounge. For groups over 12 we suggest three hours."
+    },
+    {
+      "q": "What if there are fewer than four of us?",
+      "a": "The quote builder starts at four guests. For two or three people, book a standard session or ask us about a tailored experience."
+    },
+    {
+      "q": "How do event payments and cancellations work?",
+      "a": "Once availability and price are agreed, a 50% deposit reserves your event and the balance is due 14 days before. Within 14 days of the event, bookings are non-refundable."
+    },
+    {
+      "q": "What is the cancellation policy for room bookings?",
+      "a": "More than 7 days before: refunded or rescheduled. Between 7 days and 48 hours: refunded to your City Greens balance. Less than 48 hours and no-shows: not refundable."
+    },
+    {
+      "q": "Do prices include VAT?",
+      "a": "Yes, room and event prices include VAT. Business Membership prices are shown + VAT."
+    },
+    {
+      "q": "Is the event estimate a confirmed booking?",
+      "a": "No. The estimate helps you plan. We check the date, confirm the final price and explain how to secure your booking, replying within one working day."
+    }
+  ],
+  "handoff": {
+    "email": "info@citygreensgolf.co.uk",
+    "webhookUrl": null
+  },
+  "pilot": null
+}
