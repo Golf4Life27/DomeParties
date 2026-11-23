@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getVenue } from '@/venues'
 import { runVenueAgent, type ChatTurn } from '@/lib/venue-agent/run'
-import { draftFromPasted, draftFromSite } from '@/lib/venue-agent/draft'
-import { PASTED_FIXTURES } from '@/venues/pasted-fixtures'
+import { draftFromSite } from '@/lib/venue-agent/draft'
 import { PROSPECTS } from '@/venues/prospects'
 import { READER_USER_AGENT, readVenueSite } from '@/lib/venue-agent/read-site'
 import { checkPrices } from '@/lib/venue-agent/price-check'
 import { isPreview, venueProductOn } from '@/lib/venue-agent/gate'
 
-// GET /api/venue-agent/selftest?case=N, ?venue=<slug>&q=<message>, ?draft=<website>, or
-// ?pasted=<fixture> (drafts from saved pasted text, the path a blocked site's owner takes). Preview copies
+// GET /api/venue-agent/selftest?case=N, ?venue=<slug>&q=<message>, ?draft=<website>. Preview copies
 // only: runs one scripted guest chat against a sample venue (or drafts a setup
 // from a website) on the server and returns the replies and token counts, so
 // cost and quality can be measured without anyone's browser. Never on the
@@ -97,14 +95,6 @@ export async function GET(req: NextRequest) {
     const results: unknown[] = []
     for (let i = 0; i < slugs.length; i += 6) results.push(...(await Promise.all(slugs.slice(i, i + 6).map(one))))
     return NextResponse.json({ results })
-  }
-  const fixture = req.nextUrl.searchParams.get('pasted')
-  if (fixture) {
-    const f = PASTED_FIXTURES[fixture]
-    if (!f) return NextResponse.json({ error: 'No such fixture', fixtures: Object.keys(PASTED_FIXTURES) }, { status: 404 })
-    const t0 = Date.now()
-    const d = await draftFromPasted({ text: f.text, website: f.website }, null).catch((e: unknown) => ({ error: String(e) }))
-    return NextResponse.json({ seconds: (Date.now() - t0) / 1000, ...d })
   }
   const site = req.nextUrl.searchParams.get('draft')
   if (site) {
