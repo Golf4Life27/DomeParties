@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { runAgent, type AgentResult } from '@/lib/agent/run'
+import { readLive } from '@/lib/ygb'
 
 // GET /api/agent/bench?q=quote&reps=1 — preview-only speed test. Runs one
 // scripted guest question through each setup in turn, interleaved, so every
@@ -54,6 +55,18 @@ function quoteCheck(r: AgentResult): string {
 export async function GET(req: NextRequest) {
   if (process.env.VERCEL_ENV !== 'preview' || process.env.DOME_AGENT !== 'on' || !process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
+  // ?trackman=YYYY-MM-DD times the live occupancy read that check_times does on
+  // the live site (dry mode skips it). Read only: nothing is written.
+  const tm = req.nextUrl.searchParams.get('trackman')
+  if (tm && /^\d{4}-\d{2}-\d{2}$/.test(tm)) {
+    const times = []
+    for (let i = 0; i < 3; i++) {
+      const t0 = Date.now()
+      const c = await readLive(tm, 0, 1440, 0)
+      times.push({ seconds: +((Date.now() - t0) / 1000).toFixed(2), ok: c.ok })
+    }
+    return NextResponse.json({ trackman: tm, times })
   }
   const qid = req.nextUrl.searchParams.get('q') ?? 'quote'
   const question = QUESTIONS[qid]
