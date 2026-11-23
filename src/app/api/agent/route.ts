@@ -48,8 +48,12 @@ export async function POST(req: NextRequest) {
   // back in the response so the cost can be measured.
   const preview = process.env.VERCEL_ENV === 'preview'
   try {
+    const started = Date.now()
     const result = await runAgent(parsed.data.messages, { mode: preview ? 'dry' : 'live' })
     console.log('[agent] turn', {
+      ms: Date.now() - started,
+      modelMs: result.modelMs,
+      toolMs: result.trace.map((t) => `${t.name}:${t.ms}`),
       tools: result.toolsUsed,
       calls: result.usage.calls,
       in: result.usage.inputTokens,

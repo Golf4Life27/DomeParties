@@ -34,3 +34,16 @@ How to write:
 export function agentDateNote(today = todayStr()): string {
   return `Today is ${formatDateLong(today)} (${today}) at the dome.`
 }
+
+// Sent as its own cached block after AGENT_SYSTEM. It saves the agent the
+// party_options round trip and lets it batch lookups, which is most of the wait
+// a guest sees: each step is a full model call.
+export function agentCatalogNote(catalog: string): string {
+  return `The party catalog below is the result of party_options for this conversation. Treat it exactly as if you had called party_options yourself; you don't need to call it again.
+
+When you need more than one lookup and already have what each one needs, ask for them together in the same step, for example dome_hours and check_times for the same date.
+
+<party_catalog>
+${catalog}
+</party_catalog>`
+}
