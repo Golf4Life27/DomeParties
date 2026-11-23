@@ -14,6 +14,9 @@ export default async function EmbedPage() {
 <div id="whitetail-dome-booking"></div>
 <script src="${origin}/embed.js" async></script>`
 
+  const chatSnippet = `<!-- Whitetail Ridge Golf Dome — chat bubble -->
+<script src="${origin}/chat.js" async></script>`
+
   const iframeSnippet = `<iframe
   src="${origin}/book?embed=1"
   title="Book your event at Whitetail Ridge Golf Dome"
@@ -43,6 +46,16 @@ export default async function EmbedPage() {
           No script — a fixed-height frame. Use if your CMS blocks custom scripts.
         </p>
         <CopyBlock code={iframeSnippet} />
+      </section>
+
+      <section className="mt-8">
+        <h2 className="font-semibold text-brand-dark">Chat bubble</h2>
+        <p className="mb-3 mt-1 text-sm text-foreground/60">
+          Paste once, anywhere on every page (most sites have a footer or header scripts box). It
+          shows whichever chat is switched on here, so changing chats later never means editing the
+          website again.
+        </p>
+        <CopyBlock code={chatSnippet} />
       </section>
 
       <section className="mt-8 rounded-2xl bg-brand-light p-5 text-sm text-brand-dark">
