@@ -41,6 +41,11 @@ model Setting {
   cancelHoursLarge     Int      @default(48) // > cancelLargeThreshold guests
   cancelHoursSmall     Int      @default(24)
   cancelLargeThreshold Int      @default(15)
+  // Email health. sendEmail stamps these so the Overview and /api/health/email
+  // can say "emails are failing" instead of everyone finding out a week later.
+  emailLastOkAt        DateTime?
+  emailLastFailAt      DateTime?
+  emailFailAlertAt     DateTime? // last time the backup alert channel was used
   updatedAt            DateTime @updatedAt
 }
 
@@ -462,6 +467,11 @@ model Booking {
   // Staged abandoned-cart recovery (0 = none sent; up to 3 touches)
   recoveryStage Int @default(0)
 
+  // Furthest /book screen this try reached (0 Start .. 6 Pay), recorded by the
+  // booking page. Food & drink and Add-ons save nothing on Continue, so without
+  // this a family who stopped on either looked like one who stopped on Details.
+  furthestStep Int @default(0)
+
   // Promo code applied at checkout
   promoCode     String?
   promoDiscount Int     @default(0)
@@ -505,8 +515,10 @@ model BookingResource {
 // ---------------------------------------------------------------------------
 enum LeadStatus {
   NEW
-  CONTACTED
+  CONTACTED // staff reached out (first touch only)
+  REPLIED // the customer wrote back
   PROPOSAL_SENT
+  NO_RESPONSE // reached out, never heard back
   WON
   LOST
 }
@@ -553,6 +565,10 @@ model Lead {
   status         LeadStatus @default(NEW)
   source         String?    @default("website")
   followUpSentAt DateTime?
+  // How it ended. wonValue is the event's dollar value in cents, entered by
+  // staff when they mark the lead won.
+  wonValue       Int?
+  closedAt       DateTime?
 
   // First-touch marketing attribution, copied from the wtr_attr cookie at
   // submission. Nullable = organic / direct / cookie blocked. This is what turns
@@ -608,4 +624,31 @@ model VenuePartyRequest {
   summary    String
 
   @@index([venue, createdAt])
+}
+
+enum EmailOutboxStatus {
+  PENDING // held: the first send failed, the hourly cron retries it
+  SENT
+  GAVE_UP // stopped retrying; still shown to staff
+}
+
+// Emails that must not be lost when the mail provider is down: staff alerts,
+// a new inquiry's auto-reply, booking confirmations. The first send is tried
+// right away; if it fails the email waits here and the hourly cron retries it.
+model EmailOutbox {
+  id            String            @id @default(cuid())
+  kind          String // e.g. staff-alert, lead-auto-reply, booking-confirmation
+  to            String[]
+  subject       String
+  html          String
+  text          String
+  icsContent    String?
+  status        EmailOutboxStatus @default(PENDING)
+  attempts      Int               @default(1)
+  nextAttemptAt DateTime          @default(now())
+  sentAt        DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([status, nextAttemptAt])
 }

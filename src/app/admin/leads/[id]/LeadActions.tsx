@@ -3,16 +3,18 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-const STATUSES = ['NEW', 'CONTACTED', 'PROPOSAL_SENT', 'WON', 'LOST'] as const
+import { LEAD_STATUSES, leadLabel } from '@/lib/lead-status'
 
 export default function LeadActions({
   leadId,
   status,
+  wonValue,
   depositPercent,
   defaults,
 }: {
   leadId: string
   status: string
+  wonValue: number | null
   depositPercent: number
   defaults: { partySize: number; dateStr: string }
 }) {
@@ -29,14 +31,31 @@ export default function LeadActions({
   const [result, setResult] = useState<{ payUrl: string; reference: string; baysAssigned: boolean } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  const [wonDollars, setWonDollars] = useState(wonValue ? (wonValue / 100).toFixed(2) : '')
+  const [statusError, setStatusError] = useState<string | null>(null)
+
   async function setStatus(s: string) {
+    setStatusError(null)
+    let value: number | undefined
+    if (s === 'WON') {
+      value = Math.round(parseFloat(wonDollars || '0') * 100)
+      if (!value || value <= 0) {
+        setStatusError('Enter the event’s dollar value, then press won.')
+        return
+      }
+    }
     setBusy(true)
-    await fetch(`/api/admin/leads/${leadId}`, {
+    const res = await fetch(`/api/admin/leads/${leadId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: s }),
+      body: JSON.stringify(value ? { status: s, wonValue: value } : { status: s }),
     })
     setBusy(false)
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setStatusError(data.error ?? 'Could not update the status.')
+      return
+    }
     router.refresh()
   }
 
@@ -80,7 +99,7 @@ export default function LeadActions({
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
         <h2 className="mb-3 font-semibold text-brand-dark">Status</h2>
         <div className="flex flex-wrap gap-2">
-          {STATUSES.map((s) => (
+          {LEAD_STATUSES.map((s) => (
             <button
               key={s}
               onClick={() => setStatus(s)}
@@ -89,10 +108,26 @@ export default function LeadActions({
                 status === s ? 'bg-brand text-white ring-brand' : 'bg-white ring-black/10 hover:ring-brand'
               }`}
             >
-              {s.replace('_', ' ').toLowerCase()}
+              {leadLabel(s)}
             </button>
           ))}
         </div>
+        <label className="mt-4 flex flex-wrap items-center gap-2 text-sm">
+          <span className="text-foreground/70">Event value if won ($)</span>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            value={wonDollars}
+            onChange={(e) => setWonDollars(e.target.value)}
+            className="w-32 rounded-lg border border-black/15 px-3 py-1.5 outline-none focus:border-brand"
+            placeholder="2500.00"
+          />
+          {status === 'WON' && wonValue ? (
+            <span className="text-xs text-foreground/50">Saved: ${(wonValue / 100).toFixed(2)}</span>
+          ) : null}
+        </label>
+        {statusError && <p className="mt-2 text-sm text-red-600">{statusError}</p>}
       </div>
 
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">

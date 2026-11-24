@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db'
-import { sendEmail, buildStaffNotification, splitRecipients } from '@/lib/email'
+import { buildStaffNotification, splitRecipients } from '@/lib/email'
+import { sendEmailOrHold } from '@/lib/email-outbox'
 
 // Lives on its own rather than in booking.ts so the modules that only need to
 // raise a staff alert — trackman, accounts — don't have to import the entire
@@ -26,7 +27,9 @@ export async function notifyStaff(input: {
     const to = splitRecipients(setting?.staffNotifyEmail)
     if (to.length === 0) return
     const email = buildStaffNotification(input)
-    await sendEmail({ to, subject: email.subject, html: email.html, text: email.text })
+    // Held and retried hourly if it fails, so an outage delays an alert
+    // instead of losing it.
+    await sendEmailOrHold('staff-alert', { to, subject: email.subject, html: email.html, text: email.text })
   } catch (e) {
     console.error('staff notification failed', e)
   }

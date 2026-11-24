@@ -49,8 +49,14 @@ function furthestStep(b: {
   waiverSigned: boolean
   stripePaymentIntentId: string | null
   depositPaid: boolean
+  furthestStep: number
 }): number {
   if (b.depositPaid && b.status !== 'CANCELLED') return 7
+  return Math.max(inferredStep(b), b.furthestStep)
+}
+
+/** What the saved fields alone say about how far a try got (older tries). */
+function inferredStep(b: Parameters<typeof furthestStep>[0]): number {
   // Name, waiver and the hold are all saved together when "Your details" is
   // submitted, so any of them means the family reached Pay.
   if (b.status !== 'DRAFT' || b.stripePaymentIntentId || b.customerName || b.waiverSigned) return 6
@@ -77,6 +83,7 @@ export async function getFunnelStats(): Promise<FunnelStats> {
         waiverSigned: true,
         stripePaymentIntentId: true,
         depositPaid: true,
+        furthestStep: true,
         depositAmount: true,
         total: true,
         addOnsTotal: true,
@@ -97,11 +104,17 @@ export async function getFunnelStats(): Promise<FunnelStats> {
 
   // One row per family (lower-cased email); tries with no email count alone.
   const families = new Map<string, number>()
+  const tracked = new Set<string>() // families whose tries recorded each screen
   real.forEach((b, i) => {
     const key = b.customerEmail?.trim().toLowerCase() || `__noemail_${i}`
     families.set(key, Math.max(families.get(key) ?? 0, furthestStep(b)))
+    if (b.furthestStep > 0) tracked.add(key)
   })
   const furthest = [...families.values()]
+  // Families from before step tracking who stopped between Food & drink and
+  // Your details: we can't tell which of the three screens.
+  const unsplitOlder = [...families].filter(([k, f]) => f === 3 && !tracked.has(k)).length
+  const trackedStoppedAt = (s: number) => [...families].filter(([k, f]) => f === s && tracked.has(k)).length
   const startedFamilies = furthest.length
   const abandonedFamilies = furthest.filter((s) => s < 7).length
 
@@ -111,15 +124,16 @@ export async function getFunnelStats(): Promise<FunnelStats> {
     { step: 'Start', passed: passedAfter(0), stoppedHere: stoppedAt(0) },
     { step: 'Package', passed: passedAfter(1), stoppedHere: stoppedAt(1) },
     { step: 'Date & time', passed: passedAfter(2), stoppedHere: stoppedAt(2) },
-    // Not recorded separately yet: these three are one bucket for now.
-    { step: 'Food & drink', passed: null, stoppedHere: null, note: 'Counted under Your details for now' },
-    { step: 'Add-ons', passed: null, stoppedHere: null, note: 'Counted under Your details for now' },
     {
-      step: 'Your details',
-      passed: passedAfter(5),
-      stoppedHere: stoppedAt(3),
-      note: 'Includes families who stopped on Food & drink or Add-ons',
+      step: 'Food & drink',
+      passed: passedAfter(3),
+      stoppedHere: trackedStoppedAt(3),
+      note: unsplitOlder
+        ? `Plus ${unsplitOlder} earlier ${unsplitOlder === 1 ? 'family' : 'families'} who stopped somewhere from here to Your details, before each screen was recorded`
+        : undefined,
     },
+    { step: 'Add-ons', passed: passedAfter(4), stoppedHere: trackedStoppedAt(4) },
+    { step: 'Your details', passed: passedAfter(5), stoppedHere: trackedStoppedAt(5) },
     { step: 'Pay', passed: passedAfter(6), stoppedHere: stoppedAt(6) },
     { step: 'Paid', passed: stoppedAt(7), stoppedHere: null },
   ]

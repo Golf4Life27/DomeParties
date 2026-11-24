@@ -12,6 +12,7 @@ import {
 import { scanConflictsAndAlert } from '@/lib/trackman'
 import { syncExternalReservations } from '@/lib/ygb'
 import { sendAccountOutreachNudges } from '@/lib/accounts'
+import { flushEmailOutbox } from '@/lib/email-outbox'
 
 // Abandoned-cart recovery for stale drafts. Protected by CRON_SECRET when set.
 // Accepts POST (manual) and GET (Vercel Cron fires GET with an Authorization
@@ -33,6 +34,8 @@ async function run(req: NextRequest) {
     }
   }
   const minutes = parseInt(req.nextUrl.searchParams.get('minutes') || '60', 10)
+  // Held emails (failed alerts, auto-replies, confirmations) go out first.
+  const held = await flushEmailOutbox()
   const holds = await releaseExpiredHolds() // free bays from abandoned checkouts first
   const result = await sendRecoveryEmailsToStaleDrafts(minutes)
   const reminders = await sendEventReminders() // T-7 upsell + T-1 logistics
@@ -48,6 +51,7 @@ async function run(req: NextRequest) {
   const outreach = await sendAccountOutreachNudges() // annual accounts due a call
   return NextResponse.json({
     ok: true,
+    ...held,
     ...result,
     ...holds,
     ...reminders,

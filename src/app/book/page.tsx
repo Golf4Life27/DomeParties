@@ -158,6 +158,18 @@ export default function BookPage() {
   const [promoApplied, setPromoApplied] = useState(0)
   const [promoError, setPromoError] = useState<string | null>(null)
 
+  // Tell the server each screen this family reaches, so staff can see exactly
+  // where people stop. Fire-and-forget: it must never slow or break booking.
+  useEffect(() => {
+    if (!draftId) return
+    fetch(`/api/bookings/${draftId}/step`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ step }),
+      keepalive: true,
+    }).catch(() => {})
+  }, [draftId, step])
+
   // Load catalog
   useEffect(() => {
     fetch('/api/catalog')
