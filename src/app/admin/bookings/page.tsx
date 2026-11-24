@@ -3,42 +3,80 @@ import { prisma } from '@/lib/db'
 import { formatCents } from '@/lib/money'
 import { minutesToLabel } from '@/lib/time'
 import { StatusBadge } from '../StatusBadge'
-import type { BookingStatus } from '@/generated/prisma'
+import { BOOKING_FILTERS, bookingWhere, parseFilter } from '@/lib/booking-search'
 
 export const dynamic = 'force-dynamic'
 
-const FILTERS = ['ALL', 'NEEDS_REVIEW', 'CONFIRMED', 'PENDING', 'DRAFT', 'CANCELLED'] as const
+const PER_PAGE = 50
 
 export default async function BookingsList({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>
+  searchParams: Promise<{ status?: string; q?: string; page?: string }>
 }) {
-  const { status } = await searchParams
-  const active = (status?.toUpperCase() ?? 'ALL') as (typeof FILTERS)[number]
-  const where =
-    active === 'ALL'
-      ? {}
-      : active === 'NEEDS_REVIEW'
-        ? { status: 'PENDING' as BookingStatus, depositPaid: true, needsReview: true }
-        : { status: active as BookingStatus }
+  const { status, q, page } = await searchParams
+  const active = parseFilter(status)
+  const term = q?.trim() ?? ''
+  const where = bookingWhere(active, term)
+  const pageNum = Math.max(1, Number.parseInt(page ?? '1', 10) || 1)
 
-  const bookings = await prisma.booking.findMany({
-    where,
-    orderBy: { updatedAt: 'desc' },
-    take: 100,
-    include: { package: true },
-  })
+  const [total, bookings] = await Promise.all([
+    prisma.booking.count({ where }),
+    prisma.booking.findMany({
+      where,
+      orderBy: { updatedAt: 'desc' },
+      skip: (pageNum - 1) * PER_PAGE,
+      take: PER_PAGE,
+      include: { package: true },
+    }),
+  ])
+  const pages = Math.max(1, Math.ceil(total / PER_PAGE))
+
+  // Keep the search and filter when switching filters, pages or exporting.
+  const qs = (over: Record<string, string | undefined>) => {
+    const p = new URLSearchParams()
+    const merged = { status: active === 'ALL' ? undefined : active, q: term || undefined, ...over }
+    for (const [k, v] of Object.entries(merged)) if (v) p.set(k, v)
+    const s = p.toString()
+    return s ? `?${s}` : ''
+  }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-brand-dark">Bookings</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold text-brand-dark">Bookings</h1>
+        <a
+          href={`/api/admin/export/bookings${qs({})}`}
+          className="rounded-full bg-white px-4 py-1.5 text-sm font-medium ring-1 ring-black/10 hover:ring-brand"
+        >
+          Export CSV{term || active !== 'ALL' ? ' (this view)' : ' (all)'}
+        </a>
+      </div>
+
+      <form action="/admin/bookings" className="mt-4 flex gap-2">
+        {active !== 'ALL' && <input type="hidden" name="status" value={active} />}
+        <input
+          type="search"
+          name="q"
+          defaultValue={term}
+          placeholder="Search name, email, phone or reference"
+          className="w-full max-w-md rounded-full bg-white px-4 py-1.5 text-sm ring-1 ring-black/10 focus:outline-none focus:ring-brand"
+        />
+        <button type="submit" className="rounded-full bg-brand px-4 py-1.5 text-sm font-medium text-white">
+          Search
+        </button>
+        {term && (
+          <Link href={`/admin/bookings${qs({ q: undefined })}`} className="self-center text-sm text-brand hover:underline">
+            Clear
+          </Link>
+        )}
+      </form>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {FILTERS.map((f) => (
+        {BOOKING_FILTERS.map((f) => (
           <Link
             key={f}
-            href={f === 'ALL' ? '/admin/bookings' : `/admin/bookings?status=${f}`}
+            href={`/admin/bookings${qs({ status: f === 'ALL' ? undefined : f, page: undefined })}`}
             className={`rounded-full px-4 py-1.5 text-sm font-medium ring-1 transition ${
               active === f ? 'bg-brand text-white ring-brand' : 'bg-white ring-black/10 hover:ring-brand'
             }`}
@@ -65,7 +103,7 @@ export default async function BookingsList({
             {bookings.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-8 text-center text-foreground/50">
-                  No bookings here yet.
+                  {term ? `No bookings match “${term}”.` : 'No bookings here yet.'}
                 </td>
               </tr>
             )}
@@ -92,6 +130,24 @@ export default async function BookingsList({
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between text-sm text-foreground/60">
+        <span>
+          {total === 0 ? 'No bookings' : `${(pageNum - 1) * PER_PAGE + 1}–${Math.min(pageNum * PER_PAGE, total)} of ${total}`}
+        </span>
+        <span className="flex gap-3">
+          {pageNum > 1 && (
+            <Link href={`/admin/bookings${qs({ page: String(pageNum - 1) })}`} className="text-brand hover:underline">
+              ← Newer
+            </Link>
+          )}
+          {pageNum < pages && (
+            <Link href={`/admin/bookings${qs({ page: String(pageNum + 1) })}`} className="text-brand hover:underline">
+              Older →
+            </Link>
+          )}
+        </span>
       </div>
     </div>
   )
