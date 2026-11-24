@@ -88,7 +88,12 @@ const EVENT_TYPES = [
   { key: 'OTHER', label: '✨ Something else', instant: false },
 ] as const
 
-const STEPS = ['Start', 'Package', 'Date & time', 'Food & drink', 'Add-ons', 'Your details', 'Pay']
+// Step numbers are kept as they were (0-6) because saved drafts, reminder links
+// and the step tracking all speak in these numbers. Food and add-ons now share
+// one screen (step 3), so step 4 is no longer shown on its own: the bar below
+// shows six labels and maps step 4 onto the shared screen.
+const STEPS = ['Start', 'Package', 'Date & time', 'Food & extras', 'Your details', 'Pay']
+const progressIndex = (step: number) => (step <= 3 ? step : step - 1)
 
 function todayLocal(): string {
   const d = new Date()
@@ -157,6 +162,13 @@ export default function BookPage() {
   const [promoCode, setPromoCode] = useState('')
   const [promoApplied, setPromoApplied] = useState(0)
   const [promoError, setPromoError] = useState<string | null>(null)
+
+  // Errors render at the top of the step. With the pay button now also in the
+  // bottom bar on phones, bring the message into view so a missed tick box is
+  // seen rather than read as a button that does nothing.
+  useEffect(() => {
+    if (error) window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [error])
 
   // Load catalog
   useEffect(() => {
@@ -501,8 +513,21 @@ export default function BookPage() {
 
   const currentEventType = EVENT_TYPES.find((e) => e.key === eventType)
 
+  // Same arithmetic as OrderSummary (and the server's deposit intent): deposit
+  // after any gift card, plus the card fee on what is left.
+  const cardFeePct = catalog.setting.cardFeePct ?? 0
+  const depositLeft = Math.max(0, (quote?.depositAmount ?? 0) - giftApplied)
+  const dueNow = depositLeft + (cardFeePct > 0 ? Math.round((depositLeft * cardFeePct) / 100) : 0)
+
+  // On a phone the order summary sits below the whole step, so the one number
+  // that makes this easy (a small deposit today) was out of sight on every
+  // screen where families stopped. This bar keeps it in view from the moment a
+  // time is picked. Not shown when embedded: inside an auto-sized iframe a
+  // fixed bar would sit at the bottom of the frame, not the screen.
+  const showMobileBar = !embedded && !!quote && startMinutes !== null && (step === 3 || step === 4 || step === 5)
+
   return (
-    <main className="flex-1">
+    <main className={`flex-1 ${showMobileBar ? 'pb-28 lg:pb-0' : ''}`}>
       {/* Header (hidden when embedded in the marketing site) */}
       {!embedded && (
         <header className="bg-brand-dark text-white">
@@ -704,7 +729,7 @@ export default function BookPage() {
                     <div className="rounded-lg bg-amber-400/10 p-3 text-sm text-amber-300">
                       <p>
                         {emptyReason === 'closed'
-                          ? "Weekday parties are by arrangement until our full season opens Nov 2 — request a quote at /inquire and our events team will set it up."
+                          ? "We're not taking parties online that day. Pick another date, or request a quote at /inquire and our events team will see what they can do."
                           : emptyReason === 'too_soon'
                             ? `That date is sooner than we can take online. Give us ${catalog.setting.leadTimeDaysOnline} days' notice, or call ${VENUE.phone} and we'll see what we can do.`
                             : `That day is fully booked for ${quote?.baysNeeded ?? 1} bay(s).`}
@@ -754,9 +779,22 @@ export default function BookPage() {
             </Section>
           )}
 
-          {/* STEP 3 — F&B */}
-          {step === 3 && (
-            <Section title="Add food & drink" subtitle="Keep everyone fueled — or decide when you arrive.">
+          {/* STEP 3 — Food & extras (one screen; step 4 lands here too) */}
+          {(step === 3 || step === 4) && (
+            <Section title="Food & extras" subtitle="All optional. Lock your time first and add these now or at the venue.">
+              {/* Most families who picked a time never reached Your details.
+                  Two optional screens stood between them and the deposit, so
+                  they now share one, and skipping it is one obvious tap. */}
+              <button
+                onClick={() => setStep(5)}
+                className="mb-4 w-full rounded-xl border border-brand/40 bg-brand/10 px-4 py-3 text-left text-sm font-semibold text-brand transition hover:bg-brand/20"
+              >
+                Skip extras, go to your details →
+                <span className="block text-xs font-normal text-foreground/60">
+                  You can add food and extras later or decide when you arrive.
+                </span>
+              </button>
+              <h2 className="mb-3 text-lg font-bold text-brand">Food &amp; drink</h2>
               <div className="space-y-3">
                 {catalog.fnb.map((f) => (
                   <SelectableRow
@@ -784,16 +822,7 @@ export default function BookPage() {
                   body="Lock your bays now and choose food & drinks at the venue."
                 />
               </div>
-              <div className="mt-6 flex gap-3">
-                <BackButton onClick={() => setStep(2)} inline />
-                <PrimaryButton onClick={() => setStep(4)}>Continue →</PrimaryButton>
-              </div>
-            </Section>
-          )}
-
-          {/* STEP 4 — Add-ons */}
-          {step === 4 && (
-            <Section title="Make it unforgettable" subtitle="One-tap extras — add now, adjust later.">
+              <h2 className="mb-3 mt-8 text-lg font-bold text-brand">Extras</h2>
               <div className="space-y-3">
                 {catalog.addOns.map((a, i) => {
                   const qty = addOns[a.id] ?? 0
@@ -921,8 +950,8 @@ export default function BookPage() {
                 })}
               </div>
               <div className="mt-6 flex gap-3">
-                <BackButton onClick={() => setStep(3)} inline />
-                <PrimaryButton onClick={() => setStep(5)}>Continue →</PrimaryButton>
+                <BackButton onClick={() => setStep(2)} inline />
+                <PrimaryButton onClick={() => setStep(5)}>Continue to your details →</PrimaryButton>
               </div>
             </Section>
           )}
@@ -933,7 +962,15 @@ export default function BookPage() {
               <Label>Full name</Label>
               <input
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => {
+                  const next = e.target.value
+                  // Typing your name twice on a phone, one screen before paying,
+                  // is friction with no purpose. The signature follows the name
+                  // until they change it (someone else signing), and stays
+                  // visible and editable, with the box still to tick.
+                  if (waiverName === '' || waiverName === name) setWaiverName(next)
+                  setName(next)
+                }}
                 placeholder="Jordan Smith"
                 className="w-full rounded-lg border border-white/20 px-4 py-3 outline-none focus:border-brand"
               />
@@ -992,7 +1029,7 @@ export default function BookPage() {
                   </span>
                 </label>
                 <div className="mt-3">
-                  <Label>Type your full name to sign</Label>
+                  <Label>Signature (your name from above; change it if someone else is signing)</Label>
                   <input
                     value={waiverName}
                     onChange={(e) => setWaiverName(e.target.value)}
@@ -1003,9 +1040,13 @@ export default function BookPage() {
               </div>
 
               <div className="mt-6 flex gap-3">
-                <BackButton onClick={() => setStep(4)} inline />
+                <BackButton onClick={() => setStep(3)} inline />
                 <PrimaryButton onClick={goToCheckout} disabled={busy}>
-                  {busy ? 'Reserving…' : 'Review & pay deposit →'}
+                  {busy
+                    ? 'Reserving…'
+                    : quote
+                      ? `Lock it in: ${formatCents(dueNow)} today →`
+                      : 'Review & pay deposit →'}
                 </PrimaryButton>
               </div>
             </Section>
@@ -1102,6 +1143,30 @@ export default function BookPage() {
           />
         </aside>
       </div>
+
+      {showMobileBar && quote && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/15 bg-brand-dark/95 px-4 py-3 backdrop-blur lg:hidden">
+          <div className="mx-auto flex max-w-5xl items-center gap-3">
+            <div className="min-w-0 flex-1 text-sm leading-tight">
+              <div className="font-bold text-white">
+                {formatCents(dueNow)} today <span className="font-normal text-white/60">locks it in</span>
+              </div>
+              <div className="truncate text-xs text-white/60">
+                {formatCents(quote.total)} total
+                {dateStr ? ` · ${formatDateLong(dateStr)}` : ''}
+                {startMinutes !== null ? ` · ${minutesToLabel(startMinutes)}` : ''}
+              </div>
+            </div>
+            <button
+              onClick={() => (step === 5 ? goToCheckout() : setStep(5))}
+              disabled={busy}
+              className="shrink-0 rounded-full bg-accent px-5 py-3 text-sm font-bold text-ink shadow disabled:opacity-60"
+            >
+              {step === 5 ? (busy ? 'Reserving…' : 'Pay deposit →') : 'Continue →'}
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
@@ -1113,10 +1178,10 @@ function ProgressBar({ step }: { step: number }) {
       {STEPS.map((label, i) => (
         <div key={label} className="flex-1">
           <div
-            className={`h-1.5 rounded-full transition ${i <= step ? 'bg-brand' : 'bg-white/15'}`}
+            className={`h-1.5 rounded-full transition ${i <= progressIndex(step) ? 'bg-brand' : 'bg-white/15'}`}
           />
           <span
-            className={`mt-1 hidden text-xs sm:block ${i === step ? 'font-semibold text-brand' : 'text-foreground/40'}`}
+            className={`mt-1 hidden text-xs sm:block ${i === progressIndex(step) ? 'font-semibold text-brand' : 'text-foreground/40'}`}
           >
             {label}
           </span>
