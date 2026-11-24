@@ -1,16 +1,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { prisma } from '@/lib/db'
 import { VENUE } from '@/lib/venue'
+import { partiesBookedThisMonth } from '@/lib/admin-stats'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
-  const now = new Date()
-  const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
-  const partiesThisMonth = await prisma.booking
-    .count({ where: { status: 'CONFIRMED', createdAt: { gte: monthStart } } })
-    .catch(() => 0)
+  // Paid parties booked this month in venue time. Completed parties stay
+  // counted, and staff test bookings are left out.
+  const partiesThisMonth = await partiesBookedThisMonth().catch(() => 0)
 
   return (
     <main className="flex-1">

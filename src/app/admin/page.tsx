@@ -74,26 +74,65 @@ export default async function AdminOverview() {
         </div>
       )}
 
-      {/* KPI cards */}
+      {/* KPI cards. Paid parties = deposit paid and not cancelled, so a party
+          stays counted after its date passes and it turns Completed. */}
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi label="Revenue booked" value={formatCents(stats.revenueBooked)} sub={`${stats.confirmed} confirmed events`} accent />
+        <Kpi label="Revenue booked" value={formatCents(stats.revenueBooked)} sub={`${stats.paid} paid parties`} accent />
         <Kpi label="Deposits collected" value={formatCents(stats.depositsCollected)} sub="Cash in the door" />
-        <Kpi label="Avg order value" value={formatCents(stats.aov)} sub="Per confirmed event" />
-        <Kpi label="Conversion" value={`${stats.conversionPct}%`} sub={`${stats.confirmed}/${stats.started} started → booked`} />
+        <Kpi label="Paid parties" value={String(stats.paid)} sub={`${stats.paidUpcoming} upcoming · ${stats.paidPast} held`} />
+        <Kpi label="Conversion" value={`${stats.conversionPct}%`} sub={`of ${stats.startedFamilies} families who started`} />
+        <Kpi label="Avg order value" value={formatCents(stats.aov)} sub="Per paid party" />
         <Kpi label="Upsell take-rate" value={`${stats.upsellTakePct}%`} sub={`${formatCents(stats.addOnRevenue)} add-on revenue`} />
-        <Kpi label="In progress" value={String(stats.pending)} sub="Awaiting deposit" />
-        <Kpi label="Abandoned carts" value={String(stats.drafts)} sub="Recovery targets" />
-        <Kpi label="New leads" value={String(stats.leadsNew)} sub={<Link href="/admin/bookings" className="text-brand hover:underline">View bookings →</Link>} />
+        <Kpi
+          label="Abandoned"
+          value={String(stats.abandonedFamilies)}
+          sub={`families who never booked (${stats.abandonedTries} tries)`}
+        />
+        <Kpi label="New leads" value={String(stats.leadsNew)} sub={<Link href="/admin/leads" className="text-brand hover:underline">View leads →</Link>} />
       </div>
+      {stats.testPaid > 0 && (
+        <p className="mt-2 text-xs text-foreground/50">
+          Staff test bookings are left out of these numbers ({stats.testPaid} paid tests).
+        </p>
+      )}
 
-      {/* Funnel bar */}
+      {/* Where families stop, one row per booking step */}
       <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-        <h2 className="font-semibold text-brand-dark">Booking funnel</h2>
-        <div className="mt-4 space-y-2">
-          <FunnelRow label="Started (email captured)" count={stats.started} max={stats.started} />
-          <FunnelRow label="Reached payment (held)" count={stats.pending + stats.confirmed} max={stats.started} />
-          <FunnelRow label="Confirmed (deposit paid)" count={stats.confirmed} max={stats.started} accent />
-        </div>
+        <h2 className="font-semibold text-brand-dark">Where families stop</h2>
+        <p className="mt-1 text-xs text-foreground/50">
+          Each family counted once, at the furthest step they reached. {stats.startedFamilies} families started.
+        </p>
+        <table className="mt-4 w-full text-sm">
+          <thead>
+            <tr className="text-left text-xs text-foreground/50">
+              <th className="pb-2 font-medium">Step</th>
+              <th className="pb-2 text-right font-medium">Got past it</th>
+              <th className="pb-2 text-right font-medium">Stopped here</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-black/5">
+            {stats.steps.map((row, i) => (
+              <tr key={row.step}>
+                <td className="py-2">
+                  <span className="font-medium text-brand-dark">
+                    {row.step === 'Paid' ? 'Paid' : `${i + 1}. ${row.step}`}
+                  </span>
+                  {row.note && <span className="block text-xs text-foreground/50">{row.note}</span>}
+                  {row.passed !== null && (
+                    <div className="mt-1 h-1.5 rounded-full bg-black/5">
+                      <div
+                        className={`h-1.5 rounded-full ${row.step === 'Paid' ? 'bg-accent' : 'bg-brand'}`}
+                        style={{ width: `${stats.startedFamilies ? Math.round((row.passed / stats.startedFamilies) * 100) : 0}%` }}
+                      />
+                    </div>
+                  )}
+                </td>
+                <td className="py-2 text-right align-top">{row.passed ?? '—'}</td>
+                <td className={`py-2 text-right align-top ${row.stoppedHere ? 'font-semibold' : ''}`}>{row.stoppedHere ?? '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
@@ -161,21 +200,6 @@ function Kpi({
       <div className={`text-xs font-medium ${accent ? 'text-white/80' : 'text-foreground/50'}`}>{label}</div>
       <div className="mt-1 text-2xl font-extrabold">{value}</div>
       {sub && <div className={`mt-1 text-xs ${accent ? 'text-white/80' : 'text-foreground/50'}`}>{sub}</div>}
-    </div>
-  )
-}
-
-function FunnelRow({ label, count, max, accent }: { label: string; count: number; max: number; accent?: boolean }) {
-  const pct = max ? Math.round((count / max) * 100) : 0
-  return (
-    <div>
-      <div className="flex justify-between text-sm">
-        <span className="text-foreground/70">{label}</span>
-        <span className="font-medium">{count}</span>
-      </div>
-      <div className="mt-1 h-2 rounded-full bg-black/5">
-        <div className={`h-2 rounded-full ${accent ? 'bg-accent' : 'bg-brand'}`} style={{ width: `${pct}%` }} />
-      </div>
     </div>
   )
 }
