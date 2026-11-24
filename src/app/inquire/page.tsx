@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { track } from '@/lib/track'
 
@@ -51,6 +51,22 @@ export default function InquirePage({ searchParams }: { searchParams: Search }) 
   const [customerPhone, setPhone] = useState(q(sp, 'phone', 40))
   const [message, setMessage] = useState(q(sp, 'message', 2000))
   const [busy, setBusy] = useState(false)
+  // A family sent here from the booking page with a short-notice date already
+  // typed their email there; it comes through sessionStorage, never the address.
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('dome:inquire-prefill')
+      if (!raw) return
+      sessionStorage.removeItem('dome:inquire-prefill')
+      const saved = JSON.parse(raw) as { email?: unknown }
+      if (typeof saved.email === 'string' && saved.email.length <= 160) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setEmail((cur) => cur || saved.email as string)
+      }
+    } catch {
+      // Storage blocked or bad data: the form just starts without the email.
+    }
+  }, [])
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
   // Birdie appends ?src=birdie, so staff can see which leads the chatbot earned.

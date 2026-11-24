@@ -311,7 +311,14 @@ async function openTimes(date: string, partySize: number, packageId: string, mod
     const candidate = addDays(from, i)
     if ((await availability.getSlots(candidate, bays, pkg.durationMinutes)).length > 0) next = candidate
   }
-  return { date, open_starts: [], why, next_open_date: next, next_open_day: next ? formatDateLong(next) : null }
+  return {
+    date,
+    open_starts: [],
+    why,
+    ...(date < earliest && ctx.party ? { book_online_at_least_days_ahead: setting.leadTimeDaysOnline } : {}),
+    next_open_date: next,
+    next_open_day: next ? formatDateLong(next) : null,
+  }
 }
 
 async function price(raw: unknown) {
