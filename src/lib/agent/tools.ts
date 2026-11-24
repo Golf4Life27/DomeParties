@@ -422,6 +422,17 @@ async function handToTeam(raw: unknown, mode: ToolMode) {
   }
 }
 
+// The catalog rarely changes, so the agent gets it up front instead of spending
+// a model round trip on party_options. Kept for a minute per server instance;
+// price_party still prices from the database, so a quote can never go stale.
+let catalogCache: { at: number; text: string } | null = null
+export async function partyCatalogText(): Promise<string> {
+  if (catalogCache && Date.now() - catalogCache.at < 60_000) return catalogCache.text
+  const text = JSON.stringify(await partyOptions())
+  catalogCache = { at: Date.now(), text }
+  return text
+}
+
 /** Run one tool call. Always returns JSON text, errors included, so the agent can recover. */
 export async function runTool(name: string, input: unknown, mode: ToolMode): Promise<string> {
   try {
