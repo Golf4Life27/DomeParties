@@ -27,7 +27,7 @@ const dollars = (cents: number) => (cents / 100).toFixed(2)
 
 export async function GET(req: Request) {
   const url = new URL(req.url)
-  const where = bookingWhere(parseFilter(url.searchParams.get('status')), url.searchParams.get('q'))
+  const where = await bookingWhere(parseFilter(url.searchParams.get('status')), url.searchParams.get('q'))
 
   const lines: string[] = [COLUMNS.join(',')]
   const PAGE = 500

@@ -17,7 +17,7 @@ export default async function BookingsList({
   const { status, q, page } = await searchParams
   const active = parseFilter(status)
   const term = q?.trim() ?? ''
-  const where = bookingWhere(active, term)
+  const where = await bookingWhere(active, term)
   const pageNum = Math.max(1, Number.parseInt(page ?? '1', 10) || 1)
 
   const [total, bookings] = await Promise.all([
