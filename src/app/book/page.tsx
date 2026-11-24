@@ -188,6 +188,29 @@ export default function BookPage() {
     return () => ro.disconnect()
   }, [embedded, step])
 
+  // Prefill from a quote request just sent in this tab (see /inquire). Read
+  // once and removed, so a later visit starts clean. A recovery link (?draft=)
+  // wins: that family already has choices saved.
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search)
+    if (sp.get('draft')) return
+    let raw: string | null = null
+    try {
+      raw = sessionStorage.getItem('dome:prefill')
+      sessionStorage.removeItem('dome:prefill')
+    } catch {}
+    if (!raw) return
+    try {
+      const p = JSON.parse(raw) as { eventType?: string; guests?: number; date?: string | null; email?: string }
+      /* eslint-disable react-hooks/set-state-in-effect */
+      if (p.eventType && EVENT_TYPES.some((e) => e.key === p.eventType && e.instant)) setEventType(p.eventType)
+      if (typeof p.guests === 'number' && p.guests > 0) setPartySize(p.guests)
+      if (p.date && /^\d{4}-\d{2}-\d{2}$/.test(p.date)) setDateStr(p.date)
+      if (p.email) setEmail(p.email)
+      /* eslint-enable react-hooks/set-state-in-effect */
+    } catch {}
+  }, [])
+
   // Resume an abandoned cart from a recovery link (?draft=<id>)
   useEffect(() => {
     const draft = new URLSearchParams(window.location.search).get('draft')
@@ -557,7 +580,8 @@ export default function BookPage() {
                   <Link href="/inquire" className="font-semibold underline">
                     Request a quote →
                   </Link>{' '}
-                  (we reply fast) — or book a standard package instantly below.
+                  (we reply fast). Groups of 13 or more can also see the price and book right
+                  now: pick 🎉 Group hangout above.
                 </div>
               )}
 

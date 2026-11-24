@@ -56,6 +56,12 @@ export default function InquirePage({ searchParams }: { searchParams: Search }) 
   // Birdie appends ?src=birdie, so staff can see which leads the chatbot earned.
   const source = q(sp, 'src') === 'birdie' ? 'chatbot' : 'website'
 
+  // Size used to offer the instant route after they send the request. Large
+  // Group packages book online from 13 guests; past 100 the events team should
+  // plan it, so no instant offer. Leagues are run differently and never offered.
+  const groupSize = parseInt(headcountMax || headcountMin || '0', 10) || 0
+  const offerInstant = eventType !== 'LEAGUE' && groupSize >= 13 && groupSize <= 100
+
   function toggleMust(m: string) {
     setMustHaves((s) => (s.includes(m) ? s.filter((x) => x !== m) : [...s, m]))
   }
@@ -92,6 +98,21 @@ export default function InquirePage({ searchParams }: { searchParams: Search }) 
       // server's Conversions API event dedupe into one conversion.
       const data = await res.json().catch(() => null)
       track('generate_lead', { eventId: data?.id })
+      // Hand what they just typed to the booking page in this tab only, so the
+      // "see my price" button below opens with their group size, date and
+      // email filled in. Kept out of the URL on purpose: page addresses are
+      // sent to the ad pixel, and an email address does not belong there.
+      try {
+        sessionStorage.setItem(
+          'dome:prefill',
+          JSON.stringify({
+            eventType: 'GROUP',
+            guests: groupSize,
+            date: preferredDate || null,
+            email: customerEmail,
+          }),
+        )
+      } catch {}
       setDone(true)
     }
     else setError('Something went wrong. Please try again or call us.')
@@ -115,6 +136,25 @@ export default function InquirePage({ searchParams }: { searchParams: Search }) 
               Check your inbox — we just sent a confirmation. Our events team will follow up
               shortly with a custom proposal (usually within one business day).
             </p>
+            {offerInstant && (
+              // Nearly every quote request is a group the online Large Group
+              // packages already cover, yet the only next step was waiting for a
+              // call back. Offering the instant route here lets the ones who are
+              // ready lock a date tonight; the request stays with the team either way.
+              <div className="mt-6 rounded-xl border border-accent/50 bg-accent/10 p-5 text-left">
+                <p className="font-semibold text-accent">Want it locked in now?</p>
+                <p className="mt-1 text-sm text-foreground/80">
+                  See the exact price for {groupSize} guests, pick an open time, and hold it with a
+                  10% deposit. Takes about 3 minutes. Our team still has your request.
+                </p>
+                <Link
+                  href="/book?from=quote"
+                  className="mt-4 inline-block rounded-full bg-accent px-6 py-3 font-bold text-ink shadow transition hover:bg-accent-dark"
+                >
+                  See my price and open times →
+                </Link>
+              </div>
+            )}
             <Link href="/" className="mt-6 inline-block text-sm font-medium text-brand hover:underline">
               ← Back to home
             </Link>
