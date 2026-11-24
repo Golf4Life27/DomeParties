@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getStripe } from '@/lib/stripe'
+import { getFunnelStats, partiesBookedThisMonth } from '@/lib/admin-stats'
 
 // TEMPORARY, READ-ONLY. Answers 404 anywhere except the staff-check preview.
 // Reads bookings, leads and Stripe payments so the staff Overview fixes can be
@@ -13,6 +14,12 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
   const part = new URL(req.url).searchParams.get('part') ?? 'summary'
+
+  if (part === 'newstats') {
+    // The new Overview code from the overview-real-numbers branch, run read-only.
+    const [stats, partiesThisMonth] = await Promise.all([getFunnelStats(), partiesBookedThisMonth()])
+    return NextResponse.json({ stats, partiesThisMonth })
+  }
 
   if (part === 'migrations') {
     const rows = await prisma.$queryRawUnsafe(
