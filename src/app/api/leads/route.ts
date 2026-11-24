@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/db'
-import { sendEmail, buildLeadAutoResponse } from '@/lib/email'
+import { buildLeadAutoResponse } from '@/lib/email'
+import { sendEmailOrHold } from '@/lib/email-outbox'
 import { notifyStaff } from '@/lib/booking'
 import { readAttribution } from '@/lib/attribution'
 import { sendMetaEvent } from '@/lib/meta'
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
   // Speed-to-lead: fire the instant auto-response (don't block on email failure).
   const email = buildLeadAutoResponse({ name: d.customerName, eventType: d.eventType })
   try {
-    await sendEmail({ to: d.customerEmail, subject: email.subject, html: email.html, text: email.text })
+    await sendEmailOrHold('lead-auto-reply', { to: d.customerEmail, subject: email.subject, html: email.html, text: email.text })
   } catch (e) {
     console.error('lead auto-response failed', e)
   }

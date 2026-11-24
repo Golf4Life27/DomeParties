@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/db'
 import { getFunnelStats } from '@/lib/admin-stats'
+import { getEmailHealth } from '@/lib/email-outbox'
 import { formatCents } from '@/lib/money'
 import { minutesToLabel, todayVenueMidnight } from '@/lib/time'
 import { StatusBadge } from './StatusBadge'
@@ -8,7 +9,7 @@ import { StatusBadge } from './StatusBadge'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminOverview() {
-  const [stats, upcoming, recent, needsReviewCount, unpaidBalances, newLeadCount, todayCount] =
+  const [stats, upcoming, recent, needsReviewCount, unpaidBalances, newLeadCount, todayCount, emailHealth] =
     await Promise.all([
       getFunnelStats(),
       prisma.booking.findMany({
@@ -34,6 +35,7 @@ export default async function AdminOverview() {
           OR: [{ status: 'CONFIRMED' }, { status: 'PENDING', depositPaid: true }],
         },
       }),
+      getEmailHealth().catch(() => null),
     ])
 
   const actions: { label: string; href: string; urgent?: boolean }[] = []
@@ -51,6 +53,20 @@ export default async function AdminOverview() {
     <div>
       <h1 className="text-2xl font-bold text-brand-dark">Overview</h1>
       <p className="mt-1 text-foreground/60">Your revenue funnel at a glance.</p>
+
+      {/* Outage safety net: say so loudly when the site's emails are failing. */}
+      {emailHealth?.failing && (
+        <div className="mt-6 rounded-xl bg-red-600 px-5 py-4 text-white shadow-sm">
+          <div className="font-bold">⚠️ The site’s emails are failing</div>
+          <div className="mt-1 text-sm text-white/90">
+            {emailHealth.held > 0
+              ? `${emailHealth.held} email${emailHealth.held === 1 ? ' is' : 's are'} held (staff alerts, guest auto-replies or confirmations) and will retry every hour. `
+              : 'The last send failed. '}
+            {emailHealth.gaveUp > 0 && `${emailHealth.gaveUp} stopped retrying after three days. `}
+            Check new leads and bookings here directly until this clears.
+          </div>
+        </div>
+      )}
 
       {/* Needs-your-attention queue — the daily to-do, one glance */}
       {actions.length > 0 && (

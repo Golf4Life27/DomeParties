@@ -27,6 +27,7 @@ import {
   buildRescheduledEmail,
 } from '@/lib/email'
 import { notifyStaff } from '@/lib/notify'
+import { sendEmailOrHold } from '@/lib/email-outbox'
 import { readLive, commitLive, CHECKOUT_MAX_AGE_MS } from '@/lib/ygb'
 import type { AddOnSelection } from '@/lib/types'
 import type { EventType } from '@/generated/prisma'
@@ -459,7 +460,7 @@ export async function createQuoteBookingFromLead(leadId: string, input: QuoteInp
     message: input.message,
   })
   if (lead.customerEmail) {
-    await sendEmail({ to: lead.customerEmail, subject: email.subject, html: email.html, text: email.text })
+    await sendEmailOrHold('quote', { to: lead.customerEmail, subject: email.subject, html: email.html, text: email.text })
   }
 
   return { booking, payUrl, baysAssigned: !!assignment }
@@ -615,7 +616,10 @@ export async function sendRecoveryEmail(
     slot,
     promo: stage >= 2 ? promo : null, // sweeten only the later touches
   })
-  await sendEmail({ to: booking.customerEmail, subject: email.subject, html: email.html, text: email.text })
+  const sent = await sendEmail({ to: booking.customerEmail, subject: email.subject, html: email.html, text: email.text })
+  // Only a send that worked counts. Stamping a failed send used to move the
+  // family to the next touch (or out of the queue) without any email arriving.
+  if (!sent.ok) return false
   await prisma.booking.update({
     where: { id },
     data: { recoveryEmailSentAt: new Date(), recoveryStage: stage },
@@ -708,7 +712,8 @@ export async function sendLeadFollowUps() {
   for (const lead of leads) {
     try {
       const email = buildLeadFollowUpEmail({ name: lead.customerName, inquireUrl: `${appUrl()}/inquire` })
-      await sendEmail({ to: lead.customerEmail, subject: email.subject, html: email.html, text: email.text })
+      const res = await sendEmail({ to: lead.customerEmail, subject: email.subject, html: email.html, text: email.text })
+      if (!res.ok) continue // not sent: leave it for the next run
       await prisma.lead.update({ where: { id: lead.id }, data: { followUpSentAt: new Date() } })
       sent++
     } catch (e) {
@@ -817,7 +822,7 @@ async function finalizeConfirmed(id: string, paymentIntentId?: string) {
   const links = guestLinks(updated.id)
   const email = buildConfirmationEmail({ ...data, manageUrl: links.manageUrl, inviteUrl: links.inviteUrl })
   if (updated.customerEmail) {
-    await sendEmail({
+    await sendEmailOrHold('booking-confirmation', {
       to: updated.customerEmail,
       subject: email.subject,
       html: email.html,
@@ -952,7 +957,7 @@ export async function confirmPaid(id: string, paymentIntentId?: string) {
     })
     const email = buildDepositReceivedEmail(confirmationData(updated))
     if (updated.customerEmail) {
-      await sendEmail({ to: updated.customerEmail, subject: email.subject, html: email.html, text: email.text })
+      await sendEmailOrHold('deposit-received', { to: updated.customerEmail, subject: email.subject, html: email.html, text: email.text })
     }
     // Give staff the one fact the Trackman check needs (which bays) and a
     // one-tap approve link so review doesn't require the admin login dance.
@@ -1042,7 +1047,8 @@ export async function sendEventReminders() {
           { ...confirmationData(b), balanceDue: b.balancePaid ? 0 : b.balanceDue, ...guestLinks(b.id) },
           kind,
         )
-        await sendEmail({ to: b.customerEmail!, subject: email.subject, html: email.html, text: email.text })
+        const res = await sendEmail({ to: b.customerEmail!, subject: email.subject, html: email.html, text: email.text })
+        if (!res.ok) continue // not sent: leave it for the next run
         await prisma.booking.update({ where: { id: b.id }, data: { [stamp]: new Date() } })
         sent++
       } catch (e) {
@@ -1534,6 +1540,7 @@ export async function sendBalanceReminders() {
     },
     take: 100,
   })
+  let balanceSent = 0
   for (const b of due) {
     const email = buildBalanceDueEmail({
       customerName: b.customerName ?? 'there',
@@ -1542,10 +1549,12 @@ export async function sendBalanceReminders() {
       balanceDue: b.balanceDue,
       balanceUrl: `${appUrl()}/balance/${b.id}`,
     })
-    await sendEmail({ to: b.customerEmail!, subject: email.subject, html: email.html, text: email.text })
+    const res = await sendEmail({ to: b.customerEmail!, subject: email.subject, html: email.html, text: email.text })
+    if (!res.ok) continue // not sent: leave it for the next run
     await prisma.booking.update({ where: { id: b.id }, data: { balanceReminderSentAt: new Date() } })
+    balanceSent++
   }
-  return { balanceReminders: due.length }
+  return { balanceReminders: balanceSent }
 }
 
 /**
@@ -1618,8 +1627,8 @@ export async function completePastEvents() {
         reviewUrl: setting.reviewUrl,
         bookUrl: `${appUrl()}/book`,
       })
-      await sendEmail({ to: b.customerEmail, subject: email.subject, html: email.html, text: email.text })
-      await prisma.booking.update({ where: { id: b.id }, data: { thankYouSentAt: new Date() } })
+      const res = await sendEmail({ to: b.customerEmail, subject: email.subject, html: email.html, text: email.text })
+      if (res.ok) await prisma.booking.update({ where: { id: b.id }, data: { thankYouSentAt: new Date() } })
     }
   }
   return { completed: past.length }

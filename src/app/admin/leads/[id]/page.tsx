@@ -56,6 +56,7 @@ export default async function LeadDetail({ params }: { params: Promise<{ id: str
         <LeadActions
           leadId={lead.id}
           status={lead.status}
+          wonValue={lead.wonValue}
           depositPercent={setting.depositPercent}
           defaults={{
             partySize: lead.headcountMax ?? lead.headcountMin ?? 20,

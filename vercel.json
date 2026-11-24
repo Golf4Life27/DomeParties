@@ -10,5 +10,10 @@
       "schedule": "0 14 1 * *"
     }
   ],
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "git": {
+    "deploymentEnabled": {
+      "email-safety-lead-outcomes": false
+    }
+  }
 }

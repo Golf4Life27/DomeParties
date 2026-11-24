@@ -3,7 +3,7 @@ import { prisma } from '@/lib/db'
 import { formatCents } from '@/lib/money'
 import { minutesToLabel } from '@/lib/time'
 
-type EmailInput = {
+export type EmailInput = {
   /** One address, or several — staff alerts go to the whole events team. */
   to: string | string[]
   subject: string
@@ -81,36 +81,7 @@ export async function sendEmail(input: EmailInput): Promise<{ ok: boolean; mode:
     (gmailUser ? `Whitetail Ridge Golf Dome <${gmailUser}>` : 'Whitetail Ridge Golf Dome <events@example.com>')
   const replyTo = await guestReplyTo(input.to)
 
-  // --- Gmail SMTP bridge ---
-  if (gmailUser && gmailPass) {
-    // Gmail only sends "from" the authenticated account — honor a display name
-    // but force the address to the Gmail account so it isn't silently rewritten.
-    const nameMatch = /^(.*?)\s*<.*>$/.exec(from)
-    const gmailFrom = nameMatch ? `${nameMatch[1].trim()} <${gmailUser}>` : gmailUser
-    try {
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: { user: gmailUser, pass: gmailPass.replace(/\s+/g, '') }, // app passwords are shown with spaces
-      })
-      await transporter.sendMail({
-        from: gmailFrom,
-        to: input.to,
-        replyTo,
-        subject: input.subject,
-        text: input.text,
-        html: input.html,
-        icalEvent: input.icsContent
-          ? { filename: 'whitetail-ridge-event.ics', content: input.icsContent }
-          : undefined,
-      })
-      return { ok: true, mode: 'gmail' }
-    } catch (e) {
-      console.error(`[email] Gmail SMTP send FAILED to=${input.to} subject="${input.subject}":`, e)
-      return { ok: false, mode: 'gmail' }
-    }
-  }
-
-  if (!apiKey) {
+  if (!(gmailUser && gmailPass) && !apiKey) {
     console.log('\n========== [DEV EMAIL] ==========')
     console.log('From:', from)
     console.log('To:', input.to)
@@ -123,6 +94,63 @@ export async function sendEmail(input: EmailInput): Promise<{ ok: boolean; mode:
     return { ok: true, mode: 'console' }
   }
 
+  // Gmail first when it is configured (unchanged), Resend second. Before, a
+  // Gmail failure returned straight away even with Resend set up, so one bad
+  // app password silenced every email the site sends.
+  const attempts: { mode: string; send: () => Promise<boolean> }[] = []
+  if (gmailUser && gmailPass) attempts.push({ mode: 'gmail', send: () => sendViaGmail(input, from, replyTo, gmailUser, gmailPass) })
+  if (apiKey) attempts.push({ mode: 'resend', send: () => sendViaResend(input, from, replyTo, apiKey) })
+
+  for (const a of attempts) {
+    if (await a.send()) {
+      await stampEmailHealth(true)
+      return { ok: true, mode: a.mode }
+    }
+  }
+  await stampEmailHealth(false)
+  return { ok: false, mode: attempts.map((a) => a.mode).join('+') }
+}
+
+async function sendViaGmail(
+  input: EmailInput,
+  from: string,
+  replyTo: string[] | undefined,
+  gmailUser: string,
+  gmailPass: string,
+): Promise<boolean> {
+  // Gmail only sends "from" the authenticated account — honor a display name
+  // but force the address to the Gmail account so it isn't silently rewritten.
+  const nameMatch = /^(.*?)\s*<.*>$/.exec(from)
+  const gmailFrom = nameMatch ? `${nameMatch[1].trim()} <${gmailUser}>` : gmailUser
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: gmailUser, pass: gmailPass.replace(/\s+/g, '') }, // app passwords are shown with spaces
+    })
+    await transporter.sendMail({
+      from: gmailFrom,
+      to: input.to,
+      replyTo,
+      subject: input.subject,
+      text: input.text,
+      html: input.html,
+      icalEvent: input.icsContent
+        ? { filename: 'whitetail-ridge-event.ics', content: input.icsContent }
+        : undefined,
+    })
+    return true
+  } catch (e) {
+    console.error(`[email] Gmail SMTP send FAILED to=${input.to} subject="${input.subject}":`, e)
+    return false
+  }
+}
+
+async function sendViaResend(
+  input: EmailInput,
+  from: string,
+  replyTo: string[] | undefined,
+  apiKey: string,
+): Promise<boolean> {
   const attachments = input.icsContent
     ? [
         {
@@ -131,28 +159,52 @@ export async function sendEmail(input: EmailInput): Promise<{ ok: boolean; mode:
         },
       ]
     : undefined
-
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from,
-      to: input.to,
-      reply_to: replyTo,
-      subject: input.subject,
-      html: input.html,
-      text: input.text,
-      attachments,
-    }),
-  })
-  if (!res.ok) {
-    const body = await res.text().catch(() => '(no body)')
-    console.error(`[email] Resend send FAILED (${res.status}) to=${input.to} subject="${input.subject}": ${body}`)
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from,
+        to: input.to,
+        reply_to: replyTo,
+        subject: input.subject,
+        html: input.html,
+        text: input.text,
+        attachments,
+      }),
+    })
+    if (!res.ok) {
+      const body = await res.text().catch(() => '(no body)')
+      console.error(`[email] Resend send FAILED (${res.status}) to=${input.to} subject="${input.subject}": ${body}`)
+    }
+    return res.ok
+  } catch (e) {
+    console.error(`[email] Resend send FAILED to=${input.to} subject="${input.subject}":`, e)
+    return false
   }
-  return { ok: res.ok, mode: 'resend' }
+}
+
+/**
+ * Remember when sending last worked and last failed, for the Overview banner
+ * and /api/health/email. A success only writes when it clears a failure, so a
+ * normal day adds no database writes.
+ */
+async function stampEmailHealth(ok: boolean) {
+  try {
+    if (ok) {
+      const s = await prisma.setting.findUnique({ where: { id: 1 }, select: { emailLastOkAt: true, emailLastFailAt: true } })
+      const stale = !s?.emailLastOkAt || Date.now() - s.emailLastOkAt.getTime() > 3_600_000
+      const clearsFailure = s?.emailLastFailAt && (!s.emailLastOkAt || s.emailLastFailAt > s.emailLastOkAt)
+      if (s && (stale || clearsFailure)) await prisma.setting.update({ where: { id: 1 }, data: { emailLastOkAt: new Date() } })
+    } else {
+      await prisma.setting.update({ where: { id: 1 }, data: { emailLastFailAt: new Date() } })
+    }
+  } catch (e) {
+    console.error('[email] could not record email health', e)
+  }
 }
 
 type ConfirmationData = {
