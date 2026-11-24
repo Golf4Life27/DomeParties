@@ -94,12 +94,6 @@ function todayLocal(): string {
   const d = new Date()
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
-function addDaysStr(base: string, days: number): string {
-  const [y, m, d] = base.split('-').map(Number)
-  const dt = new Date(y, m - 1, d)
-  dt.setDate(dt.getDate() + days)
-  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
-}
 
 export default function BookPage() {
   const [step, setStep] = useState(0)
@@ -289,7 +283,36 @@ export default function BookPage() {
     [draftId],
   )
 
-  const minDate = catalog ? addDaysStr(todayLocal(), catalog.setting.leadTimeDaysOnline) : todayLocal()
+  const leadDays = catalog?.setting.leadTimeDaysOnline ?? 0
+  // A date inside the online notice window is still pickable: it shows the
+  // short-notice request below instead of a picker that silently refuses it.
+  const minDate = todayLocal()
+  // Hand-off to the quote request for a date inside the notice window. Only
+  // non-personal details ride in the address (page addresses reach the ad
+  // pixel); the email goes through sessionStorage.
+  const shortNoticeHref = (() => {
+    const params = new URLSearchParams()
+    params.set('eventType', ['GROUP', 'CORPORATE', 'LEAGUE'].includes(eventType) ? eventType : 'OTHER')
+    if (dateStr) params.set('date', dateStr)
+    if (partySize) params.set('guests', String(partySize))
+    const bits = [
+      'Short notice',
+      eventType === 'BIRTHDAY' ? 'birthday party' : null,
+      dateStr ? `hoping for ${formatDateLong(dateStr)}` : null,
+      partySize ? `${partySize} guests` : null,
+      selectedPkg ? selectedPkg.name : null,
+    ].filter(Boolean)
+    params.set('message', bits.join(', ') + '.')
+    return `/inquire?${params.toString()}`
+  })()
+  const goShortNotice = () => {
+    try {
+      if (email) sessionStorage.setItem('dome:inquire-prefill', JSON.stringify({ email }))
+    } catch {
+      // Storage blocked: the form still opens with the date and headcount filled.
+    }
+    window.location.href = shortNoticeHref
+  }
 
   // ---- Step actions -------------------------------------------------------
   async function startBooking() {
@@ -666,7 +689,7 @@ export default function BookPage() {
 
           {/* STEP 2 — Date & time */}
           {step === 2 && (
-            <Section title="Choose your date & time" subtitle={`Online bookings start ${catalog.setting.leadTimeDaysOnline} days out. Need a sooner date? Call ${VENUE.phone}.`}>
+            <Section title="Choose your date & time" subtitle={`Online bookings start ${leadDays} days out so we can set staff and order food. Sooner than that? Pick the date and send a short-notice request.`}>
               <Label>Event date</Label>
               <input
                 type="date"
@@ -706,9 +729,17 @@ export default function BookPage() {
                         {emptyReason === 'closed'
                           ? "Weekday parties are by arrangement until our full season opens Nov 2 — request a quote at /inquire and our events team will set it up."
                           : emptyReason === 'too_soon'
-                            ? `That date is sooner than we can take online. Give us ${catalog.setting.leadTimeDaysOnline} days' notice, or call ${VENUE.phone} and we'll see what we can do.`
+                            ? `Short notice? We book online ${leadDays} days out so staff and food are set. Send a request and our team will check staffing for that date.`
                             : `That day is fully booked for ${quote?.baysNeeded ?? 1} bay(s).`}
                       </p>
+                      {emptyReason === 'too_soon' && (
+                        <button
+                          onClick={goShortNotice}
+                          className="mt-2 mr-2 rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-white transition hover:bg-brand-light"
+                        >
+                          Send a short-notice request →
+                        </button>
+                      )}
                       {nextAvailableDate && (
                         <button
                           onClick={() => {

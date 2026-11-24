@@ -5,7 +5,7 @@ import { availability } from '@/lib/availability'
 import { generateReference } from '@/lib/ref'
 import { getStripe, PAYMENT_METHOD_TYPES } from '@/lib/stripe'
 import { applyPercent, formatCents } from '@/lib/money'
-import { minutesToLabel, todayVenueMidnight, todayStr } from '@/lib/time'
+import { addDays, minutesToLabel, todayVenueMidnight, todayStr } from '@/lib/time'
 import { debitGiftCard } from '@/lib/giftcards'
 import { redeemPromo, featuredRecoveryPromo } from '@/lib/promos'
 import { signApproval, bookingToken } from '@/lib/sign'
@@ -219,6 +219,15 @@ export async function placeHold(id: string) {
     )
   }
   const settingCaps = await prisma.setting.findUniqueOrThrow({ where: { id: 1 } })
+  // The online notice window, checked at checkout too: the date picker only
+  // lists times outside it, but a draft started earlier (and resumed from a
+  // reminder link) can carry a date that is now inside it. Staff bookings and
+  // quotes never come through here, so the team can still say yes.
+  if (dateStr < addDays(todayStr(), settingCaps.leadTimeDaysOnline)) {
+    throw new BookingIncompleteError(
+      `That date is inside our ${settingCaps.leadTimeDaysOnline}-day online booking window, so we can set staff and order food. Send a short-notice request at /inquire and our team will check staffing.`,
+    )
+  }
   if (booking.partySize > settingCaps.maxGolfers) {
     throw new BookingIncompleteError(
       `We can seat up to ${settingCaps.maxGolfers} golfers online — call us for a larger event.`,
