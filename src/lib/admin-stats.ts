@@ -1,172 +1,67 @@
 import { prisma } from '@/lib/db'
-import { isTestEmail } from '@/lib/test-accounts'
-
-/** The seven screens of /book, in order (mirrors STEPS in src/app/book/page.tsx). */
-export const BOOKING_STEPS = ['Start', 'Package', 'Date & time', 'Food & drink', 'Add-ons', 'Your details', 'Pay'] as const
-
-export type StepRow = {
-  step: (typeof BOOKING_STEPS)[number] | 'Paid'
-  /** Families who got past this step. null = not recorded yet. */
-  passed: number | null
-  /** Families whose furthest point was this step. null = not recorded yet. */
-  stoppedHere: number | null
-  note?: string
-}
 
 export type FunnelStats = {
-  /** Unique families (by email) who started a booking, tests excluded. */
-  startedFamilies: number
-  startedTries: number
+  started: number
+  drafts: number
   pending: number
-  /** Paid parties: deposit paid and not cancelled (confirmed, completed, or awaiting review). */
-  paid: number
-  paidUpcoming: number
-  paidPast: number
-  testPaid: number
+  confirmed: number
   cancelled: number
   conversionPct: number
-  revenueBooked: number // cents, paid parties
-  depositsCollected: number // cents, paid parties
-  aov: number // cents, avg paid party total
-  upsellTakePct: number // % paid parties with >=1 add-on
-  addOnRevenue: number // cents from add-ons on paid parties
-  /** Families who started and never booked, counted once each. */
-  abandonedFamilies: number
-  abandonedTries: number
+  revenueBooked: number // cents, confirmed
+  depositsCollected: number // cents
+  aov: number // cents, avg confirmed total
+  upsellTakePct: number // % confirmed with >=1 add-on
+  addOnRevenue: number // cents from add-ons on confirmed
   leadsNew: number
-  steps: StepRow[]
 }
 
-const PAID_STATUSES = ['PENDING', 'CONFIRMED', 'COMPLETED'] as const
-
-/** Furthest step a single try reached, 0-based into BOOKING_STEPS; 7 = paid. */
-function furthestStep(b: {
-  status: string
-  packageId: string | null
-  startMinutes: number
-  date: Date
-  customerName: string | null
-  waiverSigned: boolean
-  stripePaymentIntentId: string | null
-  depositPaid: boolean
-}): number {
-  if (b.depositPaid && b.status !== 'CANCELLED') return 7
-  // Name, waiver and the hold are all saved together when "Your details" is
-  // submitted, so any of them means the family reached Pay.
-  if (b.status !== 'DRAFT' || b.stripePaymentIntentId || b.customerName || b.waiverSigned) return 6
-  // A time is saved on the Date & time screen; the next screen is Food & drink.
-  // Food & drink and Add-ons save nothing on Continue, so a family stopped on
-  // either of them, or on Your details, looks the same today.
-  const hasTime = b.startMinutes > 0 && b.date.getUTCFullYear() > 1971
-  if (hasTime) return 3
-  if (b.packageId) return 2
-  return 1
-}
-
-/** Revenue-funnel KPIs for the admin overview. Staff test bookings are left out. */
+/** Revenue-funnel KPIs for the admin overview. */
 export async function getFunnelStats(): Promise<FunnelStats> {
-  const [bookings, leadsNew] = await Promise.all([
-    prisma.booking.findMany({
-      select: {
-        status: true,
-        customerEmail: true,
-        customerName: true,
-        packageId: true,
-        startMinutes: true,
-        date: true,
-        waiverSigned: true,
-        stripePaymentIntentId: true,
-        depositPaid: true,
-        depositAmount: true,
-        total: true,
-        addOnsTotal: true,
-        _count: { select: { addOns: true } },
-      },
-    }),
-    prisma.lead.count({ where: { status: 'NEW' } }),
-  ])
+  const [byStatus, confirmedAgg, depositsAgg, confirmedWithAddOns, addOnAgg, leadsNew] =
+    await Promise.all([
+      prisma.booking.groupBy({ by: ['status'], _count: { _all: true } }),
+      prisma.booking.aggregate({
+        where: { status: 'CONFIRMED' },
+        _sum: { total: true },
+        _avg: { total: true },
+        _count: { _all: true },
+      }),
+      prisma.booking.aggregate({
+        where: { depositPaid: true },
+        _sum: { depositAmount: true },
+      }),
+      prisma.booking.count({
+        where: { status: 'CONFIRMED', addOns: { some: {} } },
+      }),
+      prisma.bookingAddOn.aggregate({
+        where: { booking: { status: 'CONFIRMED' } },
+        _sum: { lineTotal: true },
+      }),
+      prisma.lead.count({ where: { status: 'NEW' } }),
+    ])
 
-  const real = bookings.filter((b) => !isTestEmail(b.customerEmail))
-  const isPaid = (b: (typeof bookings)[number]) =>
-    b.depositPaid && (PAID_STATUSES as readonly string[]).includes(b.status)
-
-  const paid = real.filter(isPaid)
-  const testPaid = bookings.filter((b) => isPaid(b) && isTestEmail(b.customerEmail)).length
-  const today = new Date()
-  today.setUTCHours(0, 0, 0, 0)
-
-  // One row per family (lower-cased email); tries with no email count alone.
-  const families = new Map<string, number>()
-  real.forEach((b, i) => {
-    const key = b.customerEmail?.trim().toLowerCase() || `__noemail_${i}`
-    families.set(key, Math.max(families.get(key) ?? 0, furthestStep(b)))
-  })
-  const furthest = [...families.values()]
-  const startedFamilies = furthest.length
-  const abandonedFamilies = furthest.filter((s) => s < 7).length
-
-  const stoppedAt = (s: number) => furthest.filter((f) => f === s).length
-  const passedAfter = (s: number) => furthest.filter((f) => f > s).length
-  const steps: StepRow[] = [
-    { step: 'Start', passed: passedAfter(0), stoppedHere: stoppedAt(0) },
-    { step: 'Package', passed: passedAfter(1), stoppedHere: stoppedAt(1) },
-    { step: 'Date & time', passed: passedAfter(2), stoppedHere: stoppedAt(2) },
-    // Not recorded separately yet: these three are one bucket for now.
-    { step: 'Food & drink', passed: null, stoppedHere: null, note: 'Counted under Your details for now' },
-    { step: 'Add-ons', passed: null, stoppedHere: null, note: 'Counted under Your details for now' },
-    {
-      step: 'Your details',
-      passed: passedAfter(5),
-      stoppedHere: stoppedAt(3),
-      note: 'Includes families who stopped on Food & drink or Add-ons',
-    },
-    { step: 'Pay', passed: passedAfter(6), stoppedHere: stoppedAt(6) },
-    { step: 'Paid', passed: stoppedAt(7), stoppedHere: null },
-  ]
-
-  const revenueBooked = paid.reduce((s, b) => s + b.total, 0)
-  const withAddOns = paid.filter((b) => b._count.addOns > 0).length
+  const counts: Record<string, number> = {}
+  for (const row of byStatus) counts[row.status] = row._count._all
+  const drafts = counts.DRAFT ?? 0
+  const pending = counts.PENDING ?? 0
+  const confirmed = counts.CONFIRMED ?? 0
+  const cancelled = counts.CANCELLED ?? 0
+  const completed = counts.COMPLETED ?? 0
+  const started = drafts + pending + confirmed + cancelled + completed
+  const confirmedCount = confirmedAgg._count._all || 0
 
   return {
-    startedFamilies,
-    startedTries: real.length,
-    pending: real.filter((b) => b.status === 'PENDING' && !b.depositPaid).length,
-    paid: paid.length,
-    paidUpcoming: paid.filter((b) => b.date >= today).length,
-    paidPast: paid.filter((b) => b.date < today).length,
-    testPaid,
-    cancelled: real.filter((b) => b.status === 'CANCELLED').length,
-    conversionPct: startedFamilies ? Math.round((furthest.filter((s) => s === 7).length / startedFamilies) * 100) : 0,
-    revenueBooked,
-    depositsCollected: paid.reduce((s, b) => s + b.depositAmount, 0),
-    aov: paid.length ? Math.round(revenueBooked / paid.length) : 0,
-    upsellTakePct: paid.length ? Math.round((withAddOns / paid.length) * 100) : 0,
-    addOnRevenue: paid.reduce((s, b) => s + b.addOnsTotal, 0),
-    abandonedFamilies,
-    abandonedTries: real.filter((b) => b.status === 'DRAFT').length,
+    started,
+    drafts,
+    pending,
+    confirmed,
+    cancelled,
+    conversionPct: started ? Math.round((confirmed / started) * 100) : 0,
+    revenueBooked: confirmedAgg._sum.total ?? 0,
+    depositsCollected: depositsAgg._sum.depositAmount ?? 0,
+    aov: Math.round(confirmedAgg._avg.total ?? 0),
+    upsellTakePct: confirmedCount ? Math.round((confirmedWithAddOns / confirmedCount) * 100) : 0,
+    addOnRevenue: addOnAgg._sum.lineTotal ?? 0,
     leadsNew,
-    steps,
   }
-}
-
-/**
- * Paid parties booked this calendar month (venue time), tests excluded. Used by
- * the public home page. A party stays counted after its date passes.
- */
-export async function partiesBookedThisMonth(): Promise<number> {
-  const ym = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit' }).format(new Date())
-  // Venue midnight on the 1st, as an instant. Chicago is UTC-5 or UTC-6; a
-  // 6-hour cushion plus the exact month check below keeps the edge right.
-  const roughStart = new Date(`${ym}-01T00:00:00.000Z`)
-  roughStart.setUTCHours(-6)
-  const rows = await prisma.booking.findMany({
-    where: {
-      depositPaid: true,
-      status: { in: [...PAID_STATUSES] },
-      OR: [{ paidAt: { gte: roughStart } }, { paidAt: null, createdAt: { gte: roughStart } }],
-    },
-    select: { customerEmail: true, paidAt: true, createdAt: true },
-  })
-  const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit' })
-  return rows.filter((r) => !isTestEmail(r.customerEmail) && fmt.format(r.paidAt ?? r.createdAt) === ym).length
 }
