@@ -6,8 +6,9 @@ import { PROSPECTS } from '@/venues/prospects'
 import { READER_USER_AGENT, readVenueSite } from '@/lib/venue-agent/read-site'
 import { checkPrices } from '@/lib/venue-agent/price-check'
 import { isPreview, venueProductOn } from '@/lib/venue-agent/gate'
+import { readTrialToken } from '@/lib/venue-agent/trial-link'
 
-// GET /api/venue-agent/selftest?case=N, ?venue=<slug>&q=<message>, ?draft=<website>. Preview copies
+// GET /api/venue-agent/selftest?case=N, ?venue=<slug>&q=<message>, ?draft=<website>, ?trialcheck=<token>. Preview copies
 // only: runs one scripted guest chat against a sample venue (or drafts a setup
 // from a website) on the server and returns the replies and token counts, so
 // cost and quality can be measured without anyone's browser. Never on the
@@ -95,6 +96,26 @@ export async function GET(req: NextRequest) {
     const results: unknown[] = []
     for (let i = 0; i < slugs.length; i += 6) results.push(...(await Promise.all(slugs.slice(i, i + 6).map(one))))
     return NextResponse.json({ results })
+  }
+  // ?trialcheck=<token from an owner's demo link>[&page=<url>…][&pages=<n>]: re-reads that owner's website and
+  // checks every price their new chat quotes is written as a price there. No model call.
+  const trial = req.nextUrl.searchParams.get('trialcheck')
+  if (trial) {
+    const venue = readTrialToken(trial)
+    if (!venue) return NextResponse.json({ error: 'Bad link' }, { status: 400 })
+    if (!venue.website) return NextResponse.json({ slug: venue.slug, error: 'No website' })
+    const site = await readVenueSite(venue.website, readOpts(req)).catch((e: unknown) => ({ error: String(e) }))
+    if ('error' in site) return NextResponse.json({ slug: venue.slug, error: site.error })
+    const findings = checkPrices(venue, site.pages.map((p) => p.text))
+    return NextResponse.json({
+      slug: venue.slug,
+      name: venue.name,
+      website: venue.website,
+      prices: findings.length,
+      priced: findings.filter((f) => f.found === 'priced').length,
+      saved: findings.map((f) => `${f.where}: ${f.amount}${f.kind === 'percent' ? '%' : ''} (${f.found})`),
+      pages: site.pages.length,
+    })
   }
   const site = req.nextUrl.searchParams.get('draft')
   if (site) {

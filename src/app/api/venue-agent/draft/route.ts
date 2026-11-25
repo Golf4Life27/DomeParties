@@ -12,7 +12,7 @@ export const maxDuration = 120
 
 export async function POST(req: NextRequest) {
   if (!venueProductOn()) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  if (overLimit(`draft:${clientIp(req.headers)}`, 5, 60 * 60_000)) {
+  if (overLimit(`draft:${clientIp(req.headers)}`, isPreview() ? 40 : 5, 60 * 60_000)) {
     return NextResponse.json({ error: 'That’s a few setups in a row. Try again in an hour.' }, { status: 429 })
   }
   const body = z
