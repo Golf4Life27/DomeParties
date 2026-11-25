@@ -107,6 +107,13 @@ export default function StartFlow({ showTiming }: { showTiming: boolean }) {
         <h3 style={{ margin: '0 0 6px' }}>Try it as a guest</h3>
         <p style={{ margin: '0 0 8px' }}>Ask what a guest would ask at 11pm. Nothing is sent to anyone.</p>
         <VenueChat venueName={profile.name} welcome={`Hi! Planning a party at ${profile.name}? Tell me the date and how many people.`} endpoint="/api/venue-agent/demo" extra={extra} onCost={showTiming ? onCost : undefined} />
+        {showTiming && (
+          <p>
+            <a href={`/api/venue-agent/selftest?trialcheck=${encodeURIComponent(link.split('?t=')[1] ?? '')}`} target="_blank" rel="noopener noreferrer">
+              Preview only: check this chat’s prices against the live website
+            </a>
+          </p>
+        )}
         {showTiming && <p data-timing>{firstAnswer == null ? 'Preview timing: waiting for the first answer' : `Preview timing: ${firstAnswer.toFixed(1)} s from opening the page to the chat’s first answer`}</p>}
       </section>
 
