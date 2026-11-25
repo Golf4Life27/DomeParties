@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { venueProductOn } from '@/lib/venue-agent/gate'
+import { venueProductOn, isPreview } from '@/lib/venue-agent/gate'
 import { readTrialToken } from '@/lib/venue-agent/trial-link'
 import VenueChat from '../../VenueChat'
 
@@ -22,6 +22,11 @@ export default async function Trial({ searchParams }: { searchParams: Promise<{ 
       <h1 style={{ fontSize: 26 }}>{profile.name}</h1>
       <p>Your party chat, built from your website. Ask it what a guest would ask at 11pm. Nothing is sent to anyone while you try it.</p>
       <VenueChat venueName={profile.name} welcome={`Hi! Planning a party at ${profile.name}? Tell me the date and how many people.`} endpoint="/api/venue-agent/demo" extra={{ profile }} />
+      {isPreview() && (
+        <p style={{ fontSize: 14, marginTop: 16 }}>
+          <a href={`/api/venue-agent/selftest?trialcheck=${encodeURIComponent(t ?? '')}`}>Preview only: check this chat’s prices against the live website</a>
+        </p>
+      )}
     </main>
   )
 }
