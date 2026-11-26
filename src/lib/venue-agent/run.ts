@@ -30,6 +30,9 @@ function fallback(p: VenueProfile) {
   return `Sorry, I couldn't pull that up just now.${p.phone ? ` Give us a call at ${p.phone} and someone will sort it out.` : ' Please try again in a moment.'}`
 }
 
+/** A template stand-in where a number or name should be: $X, $N, [price], {amount}. */
+export const hasStandIn = (t: string) => /\$[A-Z]{1,2}\b|\[(?:price|amount|total|x|name|date)\]|\{\{?\s*\w+\s*\}\}?/i.test(t)
+
 export async function runVenueAgent(
   p: VenueProfile,
   history: ChatTurn[],
@@ -39,6 +42,7 @@ export async function runVenueAgent(
   const toolsUsed: string[] = []
   // What the chat passed to the team, so the self-test can show it.
   const handoffs: unknown[] = []
+  let rewrote = false
   const today = todayIn(p.timeZone, opts.now)
   const system = venueSystemPrompt(p)
   const messages: Anthropic.MessageParam[] = history.map((t) => ({ role: t.role === 'guest' ? 'user' : 'assistant', content: t.text }))
@@ -67,7 +71,17 @@ export async function runVenueAgent(
       .map((b) => b.text)
       .join('\n')
       .trim()
-    if (response.stop_reason !== 'tool_use') return { reply: text || fallback(p), toolsUsed, handoffs, usage, cutOff: false }
+    if (response.stop_reason !== 'tool_use') {
+      // A reply with a stand-in for a number ("plus $X for each extra guest", seen Nov 26) gets one
+      // rewrite, so a guest never reads a template.
+      if (text && hasStandIn(text) && !rewrote && step < MAX_STEPS - 1) {
+        rewrote = true
+        messages.push({ role: 'assistant', content: response.content })
+        messages.push({ role: 'user', content: 'Rewrite your last reply for the guest without stand-ins like $X: use the real amounts the tools gave you, or leave the number out. Reply with the rewritten message only.' })
+        continue
+      }
+      return { reply: text || fallback(p), toolsUsed, handoffs, usage, cutOff: false }
+    }
 
     const calls = response.content.filter((b): b is Anthropic.ToolUseBlock => b.type === 'tool_use')
     messages.push({ role: 'assistant', content: response.content })

@@ -33,6 +33,12 @@ const FIELDS: Record<string, string> = {
   faq: 'common questions',
 }
 
+// Plain words the reader uses as jargon (Nov 26, Classic Skating: "for handoff").
+const JARGON: [RegExp, string][] = [
+  [/\bhand-?offs?\b/gi, 'guest requests'],
+  [/\bwebhooks?\b/gi, 'team alert link'],
+]
+
 const split = (w: string) => w.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/_/g, ' ').toLowerCase()
 
 function plainField(token: string): string {
@@ -54,8 +60,9 @@ const FIELD = /`?\b(?:[a-z][A-Za-z0-9]*\.)+[a-z][A-Za-z0-9_]*\b`?|`?\b[a-z]+(?:[
 export function plainLine(line: string): string {
   const urls: string[] = []
   const kept = line.replace(/https?:\/\/\S+|\b[\w-]+(?:\.[\w-]+)*\.(?:com|net|org|co|uk|au|ie|de|ca|us|io|app|golf|fun)\b\S*/gi, (u) => `\u0000${urls.push(u) - 1}\u0000`)
-  const plain = kept
-    .replace(FIELD, (m) => plainField(m.replace(/`/g, '')))
+  let plain = kept.replace(FIELD, (m) => plainField(m.replace(/`/g, '')))
+  for (const [re, word] of JARGON) plain = plain.replace(re, word)
+  plain = plain
     .replace(/`/g, '')
     .replace(/\u0000(\d+)\u0000/g, (_, i) => urls[Number(i)])
   return plain.charAt(0).toUpperCase() + plain.slice(1)
@@ -66,5 +73,5 @@ export const plainLines = (lines: string[]) => lines.map(plainLine)
 /** True when a line still holds something that reads like a setup field name. */
 export function hasFieldName(line: string): boolean {
   const kept = line.replace(/https?:\/\/\S+|\b[\w-]+(?:\.[\w-]+)*\.(?:com|net|org|co|uk|au|ie|de|ca|us|io|app|golf|fun)\b\S*/gi, '')
-  return new RegExp(FIELD.source).test(kept)
+  return new RegExp(FIELD.source).test(kept) || JARGON.some(([re]) => new RegExp(re.source, 'i').test(kept))
 }

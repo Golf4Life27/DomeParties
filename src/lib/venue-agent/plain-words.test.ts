@@ -22,3 +22,15 @@ test('the checker spots a field name and passes the cleaned line', () => {
   assert.equal(hasFieldName('saved under otherLinks'), true)
   assert.equal(hasFieldName(plainLine('saved under otherLinks')), false)
 })
+
+test('jargon words become plain words', () => {
+  assert.equal(plainLine('Using the signup email for handoff'), 'Using the signup email for guest requests')
+  assert.equal(hasFieldName('Using the signup email for handoff'), true)
+})
+
+test('a reply with a stand-in for a number is caught', async () => {
+  const { hasStandIn } = await import('./run')
+  assert.equal(hasStandIn('each package includes 8 guests plus $X for each extra guest'), true)
+  assert.equal(hasStandIn('Total [price] before tax'), true)
+  for (const ok of ['Basic: $155.00 + 7 extra guests at $119.00 = $274.00', 'A$449 a month', '£229 or €269', 'Starts at $25/hr']) assert.equal(hasStandIn(ok), false, ok)
+})

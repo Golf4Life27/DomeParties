@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { parseProfile, venueProfileSchema, type VenueProfile, type Weekday } from './profile'
 import { readVenueSite, SiteError, type SitePages } from './read-site'
 import { venueAgentModel } from './run'
-import { checkPrices, unconfirmedLine, type PriceFinding } from './price-check'
+import { droppedLine, keepConfirmedPrices, type PriceFinding } from './price-check'
 import { plainLines } from './plain-words'
 
 // Turns a venue's website into a ready-to-check setup, so the owner only
@@ -98,11 +98,13 @@ export async function draftFromSite(website: string, contactEmail: string | null
     sources: [...site.pages.map((p) => p.url), ...site.pdfs.map((f) => f.url)],
   })
   // Every saved price is looked for, word for word, on the pages read. One the pages don't write as a
-  // price goes on the owner's checklist, so nothing reaches a guest that the venue never set.
-  const unconfirmed = checkPrices(d.profile, site.pages.map((p) => p.text)).filter((f) => f.found !== 'priced')
-  if (unconfirmed.length) {
-    d.unconfirmed = unconfirmed
-    d.unsure = [...unconfirmed.map(unconfirmedLine), ...d.unsure].slice(0, 30)
+  // price is taken out of the setup and named on the owner's list, so nothing reaches a guest that
+  // the venue never set.
+  const kept = keepConfirmedPrices(d.profile, site.pages.map((p) => p.text))
+  if (kept.dropped.length) {
+    d.profile = kept.profile
+    d.unconfirmed = kept.dropped
+    d.unsure = [...kept.dropped.map(droppedLine), ...d.unsure].slice(0, 30)
   }
   if (!hasAnyPrice(d.profile) && site.bookingHosts.length > 0) {
     throw new SiteError(
@@ -175,7 +177,9 @@ async function draftFrom(
       role: 'user',
       content: [
         ...material,
-        { type: 'text', text: `Draft the setup for this venue.${contactEmail ? ` The owner's contact email is ${contactEmail}; use it for handoff.email, even if the material shows another email.` : ''}` },
+        // The owner's email isn't given to the reader: it's set on the setup afterwards, so it can't
+        // turn up as a note on the owner's list (Nov 26, Classic Skating).
+        { type: 'text', text: 'Draft the setup for this venue.' },
       ],
     },
   ]
@@ -211,7 +215,8 @@ async function draftFrom(
       // The email the owner typed is where guest requests go, never one read off the website
       // (Nov 25: two venues' test requests went to the site's address instead).
       const profile = contactEmail ? { ...read, handoff: { email: contactEmail, webhookUrl: null } } : read
-      return { profile, unsure: plainLines(out.data.unsure), sources: meta.sources, usage }
+      const unsure = plainLines(out.data.unsure.filter((u) => !/\bhand-?off\b/i.test(u) || !/e-?mail/i.test(u)))
+      return { profile, unsure, sources: meta.sources, usage }
     } catch (e) {
       const problems = e instanceof z.ZodError ? e.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('\n') : String(e)
       lastProblem = problems

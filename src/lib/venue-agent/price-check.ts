@@ -93,3 +93,68 @@ export function unconfirmedLine(f: PriceFinding): string {
   const shown = f.kind === 'percent' ? `${f.amount}%` : String(f.amount)
   return `${f.where}: ${shown} isn't written as a price on the pages read. Check it before guests see it.`
 }
+
+/** A website setup keeps only prices the pages write as prices. Flagging one on the owner's list
+ *  wasn't enough: the chat still quoted it (Nov 26, Triad Lanes: a $16.95 base price the reader
+ *  worked out from a $19.95 example). A package with an unconfirmed base or peak price becomes
+ *  quote-by-request, an unconfirmed group tier is dropped (the base price still applies), a food or
+ *  add-on item with an unconfirmed price is left out, and an unconfirmed deposit, tax or service
+ *  charge becomes "not stated", so the chat says the team will confirm it. */
+export function keepConfirmedPrices(p: VenueProfile, pageTexts: string[]): { profile: VenueProfile; dropped: PriceFinding[] } {
+  const text = pageTexts.join('\n')
+  const dropped: PriceFinding[] = []
+  const ok = (where: string, amount: number | null | undefined, kind: PriceLine['kind'] = 'money') => {
+    if (!amount || amount <= 0) return true
+    const found = findPrice({ where, amount, kind }, text)
+    if (found === 'priced') return true
+    dropped.push({ where, amount, kind, found })
+    return false
+  }
+  const notStated = new Set(p.notStated)
+  const packages = p.packages.map((k) => {
+    if (!k.priceListed) return k
+    const base = ok(k.name, k.pricing.amount)
+    const peak = ok(`${k.name} (peak)`, k.pricing.peakAmount)
+    if (!base || !peak) {
+      return { ...k, priceListed: false, pricing: { ...k.pricing, amount: 0, peakAmount: null, ...(k.pricing.type === 'per_person' ? { tiers: [] } : {}) } } as typeof k
+    }
+    if (k.pricing.type !== 'per_person') return k
+    const tiers = k.pricing.tiers.filter((t) => ok(`${k.name} (${t.minGuests}+ guests)`, t.amount))
+    return { ...k, pricing: { ...k.pricing, tiers } } as typeof k
+  })
+  const items = <T extends { name: string; amount: number; amountTo: number | null }>(list: T[]) =>
+    list.filter((f) => {
+      const a = ok(f.name, f.amount)
+      const b = ok(`${f.name} (top of range)`, f.amountTo)
+      return a && b
+    })
+  const food = items(p.food)
+  const addOns = items(p.addOns)
+  const deposit = { ...p.deposit }
+  if (!ok('Deposit', deposit.flat)) {
+    deposit.flat = null
+    notStated.add('deposit')
+  }
+  if (!ok('Deposit', deposit.percent, 'percent')) {
+    deposit.percent = null
+    notStated.add('deposit')
+  }
+  let taxPercent = p.taxPercent
+  if (!ok('Tax', taxPercent, 'percent')) {
+    taxPercent = 0
+    notStated.add('tax')
+  }
+  const serviceCharge = { ...p.serviceCharge }
+  if (!ok('Service charge', serviceCharge.percent, 'percent')) {
+    serviceCharge.percent = 0
+    notStated.add('service_charge')
+  }
+  if (!dropped.length) return { profile: p, dropped }
+  return { profile: { ...p, packages, food, addOns, deposit, taxPercent, serviceCharge, notStated: [...notStated] }, dropped }
+}
+
+/** The owner's list line for a price the chat won't quote because the pages don't write it as one. */
+export function droppedLine(f: PriceFinding): string {
+  const shown = f.kind === 'percent' ? `${f.amount}%` : String(f.amount)
+  return `${f.where}: ${shown} isn't written as a price on your website, so the chat won't quote it. Reply with the right price and we'll add it.`
+}
