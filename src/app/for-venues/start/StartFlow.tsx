@@ -44,7 +44,7 @@ export default function StartFlow({ showTiming }: { showTiming: boolean }) {
       const s = await fetch('/api/venue-agent/start', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ profile: j.profile, email }) })
       const k = await s.json()
       if (!s.ok) throw new Error(k.error ?? 'Something went wrong.')
-      setProfile(j.profile)
+      setProfile(k.profile ?? j.profile)
       setUnsure(j.unsure ?? [])
       setLink(k.link)
       setPhase('done')

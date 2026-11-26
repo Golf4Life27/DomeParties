@@ -21,7 +21,9 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: 'The setup has a problem. Try setting it up again.' }, { status: 400 })
   }
-  const owner = { ...profile, prospect: true, handoff: { ...profile.handoff, email: profile.handoff.email || body.data.email } }
+  // Guest requests go to the email the owner typed here, never to one the setup reader found on
+  // their website, and no alert link the owner didn't set.
+  const owner = { ...profile, prospect: true, handoff: { email: body.data.email, webhookUrl: null } }
   const token = trialToken(owner)
   const link = `${req.nextUrl.origin}/for-venues/trial?t=${token}`
   const key = process.env.VENUE_AGENT_RESEND_KEY
@@ -41,5 +43,5 @@ export async function POST(req: NextRequest) {
       signal: AbortSignal.timeout(8000),
     }).catch(() => null)
   }
-  return NextResponse.json({ ok: true, link, path: `/for-venues/trial?t=${token}`, demo: isPreview() })
+  return NextResponse.json({ ok: true, link, path: `/for-venues/trial?t=${token}`, profile: owner, demo: isPreview() })
 }

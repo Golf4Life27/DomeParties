@@ -6,7 +6,7 @@ import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 // bubble when a venue's website loads it through /venue-chat.js. It posts the
 // visible conversation each time; the server keeps nothing.
 
-type Turn = { role: 'guest' | 'agent'; text: string }
+type Turn = { role: 'guest' | 'agent' | 'note'; text: string }
 
 function Linkified({ text }: { text: string }) {
   const parts = text.split(/(https?:\/\/[^\s)]+)/g)
@@ -61,6 +61,7 @@ export default function VenueChat(props: {
     setDraft('')
     setSending(true)
     let reply = 'Sorry, the chat is unavailable right now.'
+    let note: string | null = null
     try {
       const r = await fetch(endpoint, {
         method: 'POST',
@@ -70,10 +71,11 @@ export default function VenueChat(props: {
       const j = await r.json().catch(() => null)
       reply = j?.reply ?? j?.error ?? reply
       if (j?.usage && onCost) onCost(j.usage)
+      if (typeof j?.handoffTo === 'string') note = `Preview only: this guest request would go to ${j.handoffTo}. Nothing was sent.`
     } catch {
       /* keep the fallback line */
     }
-    setTurns([...next, { role: 'agent', text: reply }])
+    setTurns([...next, { role: 'agent', text: reply }, ...(note ? [{ role: 'note' as const, text: note }] : [])])
     setSending(false)
   }, [draft, sending, turns, endpoint, extra, onCost])
 
@@ -103,7 +105,7 @@ export default function VenueChat(props: {
         <p className="vc-msg vc-agent">{welcome}</p>
         {turns.map((t, i) => (
           <p key={i} className={`vc-msg vc-${t.role}`} style={t.role === 'guest' ? { background: accent } : undefined}>
-            {t.role === 'agent' ? <Linkified text={t.text} /> : t.text}
+            {t.role === 'agent' ? <Linkified text={t.text} /> : t.role === 'note' ? <small data-handoff-note>{t.text}</small> : t.text}
           </p>
         ))}
         {sending && <p className="vc-msg vc-agent vc-typing">…</p>}
@@ -133,6 +135,7 @@ const CSS = `
 .vc-msg{margin:0;padding:8px 12px;border-radius:14px;max-width:85%;white-space:pre-wrap;overflow-wrap:anywhere}
 .vc-agent{background:#fff;border:1px solid #e4e4e7;align-self:flex-start}
 .vc-guest{color:#fff;align-self:flex-end}
+.vc-note{align-self:center;background:#fef9c3;border:1px dashed #ca8a04;color:#713f12}
 .vc-agent a{color:#0f766e}
 .vc-typing{opacity:.6}
 .vc-form{display:flex;gap:8px;padding:10px;border-top:1px solid #e4e4e7;background:#fff}

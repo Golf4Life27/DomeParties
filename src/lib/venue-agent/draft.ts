@@ -4,6 +4,7 @@ import { parseProfile, venueProfileSchema, type VenueProfile, type Weekday } fro
 import { readVenueSite, SiteError, type SitePages } from './read-site'
 import { venueAgentModel } from './run'
 import { checkPrices, unconfirmedLine, type PriceFinding } from './price-check'
+import { plainLines } from './plain-words'
 
 // Turns a venue's website into a ready-to-check setup, so the owner only
 // confirms or fixes it instead of filling in a form. The website is only ever
@@ -25,6 +26,7 @@ A PDF the venue links to from its own website (a party menu or price list) is th
 
 Always answer by calling the save_setup tool once, with no text reply. Fill it in from what the pages say. Rules:
 - Use only facts the pages state. Never invent a price, an hour, a package or a policy. When something isn't on the pages, use the safest empty value (an empty list, null, 0) and add a short plain line about it to "unsure", for example "No party prices on the website" or "Hours for Sunday not listed".
+- The venue's owner reads every "unsure" line. Write them in plain words an owner would use, and never name the setup's own fields (no otherLinks, partyUrl, guestsPerUnit, unit.count, hoursUnclear, notStated, priceListed or any other field name).
 - Prices are plain numbers in the venue's currency, without symbols. Hours are 24-hour HH:MM in the venue's local time.
 - booking.partyUrl is the page where a guest books a party or event online, if the site has one, copied exactly from the page links. otherLinks are other booking pages (casual bays, open bowling, gift cards), copied exactly.
 - slug is short, lowercase, letters, numbers and hyphens, from the venue's name. ids are the same style.
@@ -173,7 +175,7 @@ async function draftFrom(
       role: 'user',
       content: [
         ...material,
-        { type: 'text', text: `Draft the setup for this venue.${contactEmail ? ` The owner's contact email is ${contactEmail}; use it for handoff.email if the material shows no events email.` : ''}` },
+        { type: 'text', text: `Draft the setup for this venue.${contactEmail ? ` The owner's contact email is ${contactEmail}; use it for handoff.email, even if the material shows another email.` : ''}` },
       ],
     },
   ]
@@ -202,11 +204,14 @@ async function draftFrom(
     const out = draftWrapper.safeParse(call.input)
     try {
       if (!out.success) throw out.error
-      const profile = keepPriceRanges(flagUnclearDays(
+      const read = keepPriceRanges(flagUnclearDays(
         flagUnpricedCharges(trimLinks(parseProfile({ ...(out.data.setup as object), sample: false, prospect: false, website })), out.data.unsure),
         out.data.unsure,
       ))
-      return { profile, unsure: out.data.unsure, sources: meta.sources, usage }
+      // The email the owner typed is where guest requests go, never one read off the website
+      // (Nov 25: two venues' test requests went to the site's address instead).
+      const profile = contactEmail ? { ...read, handoff: { email: contactEmail, webhookUrl: null } } : read
+      return { profile, unsure: plainLines(out.data.unsure), sources: meta.sources, usage }
     } catch (e) {
       const problems = e instanceof z.ZodError ? e.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('\n') : String(e)
       lastProblem = problems
