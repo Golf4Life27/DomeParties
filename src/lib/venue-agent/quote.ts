@@ -1,5 +1,6 @@
 import { fitsHours, hoursOn, isPeak, weekdayOf } from './clock'
 import { formatMoney, percentOf, toMinor } from './money'
+import { guessesIn } from './guesses'
 import type { VenueProfile } from './profile'
 
 // The one place a venue's price is worked out. The agent never does sums
@@ -21,6 +22,7 @@ export type QuoteRequest = {
 export type QuoteLine = { item: string; detail: string; amount: number }
 
 export type Quote = {
+  packageId: string
   lines: QuoteLine[]
   subtotal: number
   serviceCharge: number
@@ -84,7 +86,7 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
   let units: number | null = null
 
   if (pkg.pricing.type === 'flat') {
-    lines.push({ item: pkg.name, detail: `flat, up to ${pkg.maxGuests} guests`, amount: toMinor(rate, c) })
+    lines.push({ item: pkg.name, detail: p.guessed.includes(`pkg:${pkg.id}:guests`) ? 'flat' : `flat, up to ${pkg.maxGuests} guests`, amount: toMinor(rate, c) })
   } else if (pkg.pricing.type === 'per_person') {
     lines.push({ item: pkg.name, detail: `${r.guests} guests at ${formatMoney(toMinor(rate, c), c, p.locale)} each${tier ? ` (the price for ${tier.minGuests} or more)` : ''}`, amount: toMinor(rate, c) * r.guests })
   } else {
@@ -149,6 +151,7 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
   else if (p.deposit.percent != null) deposit = percentOf(total, p.deposit.percent)
 
   return {
+    packageId: pkg.id,
     lines,
     subtotal,
     serviceCharge,
@@ -166,8 +169,20 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
 }
 
 /** The quote written out for the agent, in the venue's money. */
-export function describeQuote(p: VenueProfile, q: Quote) {
+export function describeQuote(p: VenueProfile, q: Quote): Record<string, unknown> {
   const m = (n: number) => formatMoney(n, p.currency, p.locale)
+  // A total that rests on how many guests fit in a bay, or on whether an hourly price is per bay,
+  // when the website says neither, is never given (Nov 27: chats told guests "4 simulators, each
+  // fits 4" as fact). The guest gets the hourly price and the team puts the total together.
+  const pkg = p.packages.find((k) => k.id === q.packageId)
+  if (pkg && pkg.pricing.type === 'per_unit_hour' && pkg.pricing.guestsPerUnit == null && (p.guessed.includes('unit.guests') || p.guessed.includes('price.basis'))) {
+    const pr = pkg.pricing
+    return {
+      hourly_price: `${m(toMinor(pr.amount, p.currency))} per hour${pr.peakAmount != null ? `, ${m(toMinor(pr.peakAmount, p.currency))} at peak times` : ''}`,
+      peak_pricing: q.peak,
+      team_confirms: `The venue's website doesn't say ${guessesIn(p, q.packageId).join(', or ')}. Give the guest the hourly price as written here, say the team will put the total together for their group, and offer to send their details with hand_to_team. Never give a total, a number of ${p.unit.plural}, or how many fit in one.`,
+    }
+  }
   return {
     lines: q.lines.map((l) => ({ item: l.item, detail: l.detail, amount: m(l.amount) })),
     subtotal: m(q.subtotal),
@@ -177,13 +192,18 @@ export function describeQuote(p: VenueProfile, q: Quote) {
     deposit: q.deposit == null ? null : m(q.deposit),
     balance_later: q.balance == null ? null : m(q.balance),
     peak_pricing: q.peak,
-    estimate_only: q.estimate,
+    estimate_only: q.estimate || guessesIn(p, q.packageId).length > 0,
     ...(q.fromPrices.length
       ? { starting_price: `The venue lists ${q.fromPrices.join(', ')} as "starting at" this price. Say it's a starting price and the team confirms the final one. Never call it exact.` }
       : {}),
     ...(q.ranges.length && q.totalHigh != null
       ? {
           price_range: `The venue lists ${q.ranges.join(', ')} as a price range, so the total is ${m(q.total)} to ${m(q.totalHigh)}. Give both ends and say the team confirms the exact price. Never give one exact total.`,
+        }
+      : {}),
+    ...(guessesIn(p, q.packageId).length
+      ? {
+          team_confirms: `The venue's website doesn't say ${guessesIn(p, q.packageId).join(', or ')}, so this total rests on a guess. Call it an estimate, say the team will confirm those details, and never state them as fact.`,
         }
       : {}),
     ...(p.notStated.length

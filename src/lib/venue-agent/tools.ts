@@ -149,22 +149,29 @@ function venueHours(p: VenueProfile, raw: unknown) {
   return { days: out }
 }
 
-function partyOptions(p: VenueProfile) {
+export function partyOptionsFor(p: VenueProfile) {
   const m = (amount: number) => money(p, amount)
   return {
     venue: p.name,
-    booked_unit: `${p.unit.singular} (${p.unit.count != null ? `${p.unit.count} in all` : 'number not listed'}, up to ${p.unit.guestsPerUnit} guests each)`,
+    booked_unit: `${p.unit.singular} (${p.unit.count != null ? `${p.unit.count} in all` : 'number not listed'}, ${p.guessed.includes('unit.guests') ? `how many guests fit in one isn't on the website: the team confirms it, so never give a number` : `up to ${p.unit.guestsPerUnit} guests each`})`,
     packages: p.packages.map((pkg) => {
       const pr = pkg.pricing
-      const per = pr.type === 'flat' ? 'flat' : pr.type === 'per_person' ? 'per guest' : `per ${p.unit.singular} per hour`
+      // An hourly price the website doesn't tie to a bay is shown as the website words it, per hour (Nov 27: the chat repeated "per simulator").
+      const basisGuessed = pr.type === 'per_unit_hour' && p.guessed.includes('price.basis')
+      const per = pr.type === 'flat' ? 'flat' : pr.type === 'per_person' ? 'per guest' : basisGuessed ? 'per hour' : `per ${p.unit.singular} per hour`
       const price = pkg.priceListed
         ? `${m(pr.amount)} ${per}${pr.type === 'per_person' && pr.tiers.length ? pr.tiers.map((t) => `, ${m(t.amount)} per guest for ${t.minGuests} or more`).join('') : ''}${pr.peakAmount != null ? `, ${m(pr.peakAmount)} at peak times` : ''}`
         : "not listed online: never give or guess a number. Offer to get the guest a quote here: ask for whatever's missing of the date, headcount, name and email or phone, then send it with hand_to_team"
-      const shown = pkg.priceListed && pkg.priceFrom ? `starting at ${price}` : price
+      const basis = basisGuessed && pkg.priceListed
+        ? ` (the website doesn't say if this is per ${p.unit.singular} or per guest: say the team will confirm how it's charged, and never call it per ${p.unit.singular} or per guest)`
+        : ''
+      const shown = (pkg.priceListed && pkg.priceFrom ? `starting at ${price}` : price) + basis
       const example =
         pr.type === 'per_unit_hour'
           ? pr.guestsPerUnit != null
             ? `up to ${pr.guestsPerUnit} guests per booking; priced per hour, so pass hours to price_party`
+            : p.guessed.includes('unit.guests')
+            ? `priced per hour; how many ${p.unit.plural} a group needs isn't on the website, so the team confirms it`
             : `${pkg.minGuests} guests need ${unitsFor(p, pkg.minGuests, pr.minUnits)} ${p.unit.plural}; priced per hour, so pass hours to price_party`
           : null
       return {
@@ -172,8 +179,12 @@ function partyOptions(p: VenueProfile) {
         name: pkg.name,
         description: pkg.description,
         includes: pkg.includes,
-        hours: pkg.durationMinutes / 60,
-        guests: `${pkg.minGuests} to ${pkg.maxGuests}`,
+        hours: p.guessed.includes(`pkg:${pkg.id}:length`)
+          ? `not on the website: the team confirms the party length, so never give a length`
+          : pkg.durationMinutes / 60,
+        guests: p.guessed.includes(`pkg:${pkg.id}:guests`)
+          ? `not on the website: the team confirms how many guests it takes, so never give a limit`
+          : `${pkg.minGuests} to ${pkg.maxGuests}`,
         days: pkg.days.length ? pkg.days : 'every open day',
         price: shown,
         ...(example ? { sizing: example } : {}),
@@ -273,7 +284,7 @@ export async function runVenueTool(p: VenueProfile, name: string, input: unknown
         out = venueHours(p, input)
         break
       case 'party_options':
-        out = partyOptions(p)
+        out = partyOptionsFor(p)
         break
       case 'price_party':
         out = price(p, input, today)

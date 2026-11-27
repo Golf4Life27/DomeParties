@@ -24,7 +24,10 @@ export async function POST(req: NextRequest) {
   try {
     const r = await runVenueAgent(profile, body.data.messages, { mode: 'dry' })
     console.log('[venue-agent] demo turn', { venue: profile.slug, tools: r.toolsUsed, ...r.usage })
-    return NextResponse.json(isPreview() ? { reply: r.reply, usage: r.usage } : { reply: r.reply })
+    // Preview copies say where a guest request would have gone, so a test can check the address.
+    // Nothing is sent from here either way.
+    const handoffTo = r.handoffs.length ? (profile.handoff.email ?? 'nowhere: no email is set') : undefined
+    return NextResponse.json(isPreview() ? { reply: r.reply, usage: r.usage, handoffTo } : { reply: r.reply })
   } catch (e) {
     console.error('[venue-agent] demo failed', e)
     return NextResponse.json({ error: 'The demo is unavailable right now.' }, { status: 502 })
