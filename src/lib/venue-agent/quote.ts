@@ -1,5 +1,6 @@
 import { fitsHours, hoursOn, isPeak, weekdayOf } from './clock'
 import { formatMoney, percentOf, toMinor } from './money'
+import { guessesIn } from './guesses'
 import type { VenueProfile } from './profile'
 
 // The one place a venue's price is worked out. The agent never does sums
@@ -21,6 +22,7 @@ export type QuoteRequest = {
 export type QuoteLine = { item: string; detail: string; amount: number }
 
 export type Quote = {
+  packageId: string
   lines: QuoteLine[]
   subtotal: number
   serviceCharge: number
@@ -149,6 +151,7 @@ export function quote(p: VenueProfile, r: QuoteRequest): Quote {
   else if (p.deposit.percent != null) deposit = percentOf(total, p.deposit.percent)
 
   return {
+    packageId: pkg.id,
     lines,
     subtotal,
     serviceCharge,
@@ -177,13 +180,18 @@ export function describeQuote(p: VenueProfile, q: Quote) {
     deposit: q.deposit == null ? null : m(q.deposit),
     balance_later: q.balance == null ? null : m(q.balance),
     peak_pricing: q.peak,
-    estimate_only: q.estimate,
+    estimate_only: q.estimate || guessesIn(p, q.packageId).length > 0,
     ...(q.fromPrices.length
       ? { starting_price: `The venue lists ${q.fromPrices.join(', ')} as "starting at" this price. Say it's a starting price and the team confirms the final one. Never call it exact.` }
       : {}),
     ...(q.ranges.length && q.totalHigh != null
       ? {
           price_range: `The venue lists ${q.ranges.join(', ')} as a price range, so the total is ${m(q.total)} to ${m(q.totalHigh)}. Give both ends and say the team confirms the exact price. Never give one exact total.`,
+        }
+      : {}),
+    ...(guessesIn(p, q.packageId).length
+      ? {
+          team_confirms: `The venue's website doesn't say ${guessesIn(p, q.packageId).join(', or ')}, so this total rests on a guess. Call it an estimate, say the team will confirm those details, and never state them as fact.`,
         }
       : {}),
     ...(p.notStated.length

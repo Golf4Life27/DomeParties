@@ -5,6 +5,7 @@ import { readVenueSite, SiteError, type SitePages } from './read-site'
 import { venueAgentModel } from './run'
 import { droppedLine, keepConfirmedPrices, type PriceFinding } from './price-check'
 import { plainLines } from './plain-words'
+import { guessesLine, markGuesses } from './guesses'
 
 // Turns a venue's website into a ready-to-check setup, so the owner only
 // confirms or fixes it instead of filling in a form. The website is only ever
@@ -106,6 +107,12 @@ export async function draftFromSite(website: string, contactEmail: string | null
     d.unconfirmed = kept.dropped
     d.unsure = [...kept.dropped.map(droppedLine), ...d.unsure].slice(0, 30)
   }
+  // Party lengths, guest limits, guests per bay and whether an hourly price is per bay are
+  // looked for on the pages too; any the pages don't write is marked so the chat leaves it
+  // to the team (Nov 26: 4 of 9 chats told guests the reader's guesses as fact).
+  d.profile = markGuesses(d.profile, site.pages.map((p) => p.text))
+  const line = guessesLine(d.profile)
+  if (line) d.unsure = [line, ...d.unsure].slice(0, 30)
   if (!hasAnyPrice(d.profile) && site.bookingHosts.length > 0) {
     throw new SiteError(
       `We couldn’t see any prices on ${site.home.hostname}; they may load inside your booking system (${site.bookingHosts[0]}). Paste your party page or price list, or upload a PDF of it, so the chat can quote exact totals.`,

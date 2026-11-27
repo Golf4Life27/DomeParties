@@ -149,18 +149,21 @@ function venueHours(p: VenueProfile, raw: unknown) {
   return { days: out }
 }
 
-function partyOptions(p: VenueProfile) {
+export function partyOptionsFor(p: VenueProfile) {
   const m = (amount: number) => money(p, amount)
   return {
     venue: p.name,
-    booked_unit: `${p.unit.singular} (${p.unit.count != null ? `${p.unit.count} in all` : 'number not listed'}, up to ${p.unit.guestsPerUnit} guests each)`,
+    booked_unit: `${p.unit.singular} (${p.unit.count != null ? `${p.unit.count} in all` : 'number not listed'}, ${p.guessed.includes('unit.guests') ? `guests per ${p.unit.singular} not on the website (about ${p.unit.guestsPerUnit} is a guess: say the team will confirm it, never state it as fact)` : `up to ${p.unit.guestsPerUnit} guests each`})`,
     packages: p.packages.map((pkg) => {
       const pr = pkg.pricing
       const per = pr.type === 'flat' ? 'flat' : pr.type === 'per_person' ? 'per guest' : `per ${p.unit.singular} per hour`
       const price = pkg.priceListed
         ? `${m(pr.amount)} ${per}${pr.type === 'per_person' && pr.tiers.length ? pr.tiers.map((t) => `, ${m(t.amount)} per guest for ${t.minGuests} or more`).join('') : ''}${pr.peakAmount != null ? `, ${m(pr.peakAmount)} at peak times` : ''}`
         : "not listed online: never give or guess a number. Offer to get the guest a quote here: ask for whatever's missing of the date, headcount, name and email or phone, then send it with hand_to_team"
-      const shown = pkg.priceListed && pkg.priceFrom ? `starting at ${price}` : price
+      const basis = pr.type === 'per_unit_hour' && pkg.priceListed && p.guessed.includes('price.basis')
+        ? ` (the website doesn't say if this is per ${p.unit.singular} or per guest: give the price in the website's own words and say the team will confirm how it's charged)`
+        : ''
+      const shown = (pkg.priceListed && pkg.priceFrom ? `starting at ${price}` : price) + basis
       const example =
         pr.type === 'per_unit_hour'
           ? pr.guestsPerUnit != null
@@ -172,8 +175,12 @@ function partyOptions(p: VenueProfile) {
         name: pkg.name,
         description: pkg.description,
         includes: pkg.includes,
-        hours: pkg.durationMinutes / 60,
-        guests: `${pkg.minGuests} to ${pkg.maxGuests}`,
+        hours: p.guessed.includes(`pkg:${pkg.id}:length`)
+          ? `not on the website (${pkg.durationMinutes / 60} is a guess): say the team will confirm the party length, never state it as fact`
+          : pkg.durationMinutes / 60,
+        guests: p.guessed.includes(`pkg:${pkg.id}:guests`)
+          ? `guest limit not on the website (${pkg.maxGuests} is a guess): say the team will confirm how many guests it takes, never state a limit as fact`
+          : `${pkg.minGuests} to ${pkg.maxGuests}`,
         days: pkg.days.length ? pkg.days : 'every open day',
         price: shown,
         ...(example ? { sizing: example } : {}),
@@ -273,7 +280,7 @@ export async function runVenueTool(p: VenueProfile, name: string, input: unknown
         out = venueHours(p, input)
         break
       case 'party_options':
-        out = partyOptions(p)
+        out = partyOptionsFor(p)
         break
       case 'price_party':
         out = price(p, input, today)

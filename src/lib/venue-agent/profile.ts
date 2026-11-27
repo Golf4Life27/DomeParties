@@ -102,6 +102,13 @@ export const venueProfileSchema = z.object({
    * team will confirm instead of telling a guest there's no tax. */
   notStated: z.array(z.enum(['tax', 'deposit', 'service_charge'])).max(3).default([]),
 
+  /** Details the setup holds that the venue's website never wrote, set by code
+   * after a website setup (Nov 27): 'unit.guests' (guests per bay or lane),
+   * 'price.basis' (an hourly price the site doesn't say is per bay or per guest),
+   * 'pkg:<id>:length' and 'pkg:<id>:guests'. The agent says the team will confirm
+   * these instead of stating them. */
+  guessed: z.array(z.string().max(60)).max(80).default([]),
+
   booking: z.object({
     /** Where a guest books and pays for a party. The agent sends guests here. */
     partyUrl: z.string().url().nullable(),
