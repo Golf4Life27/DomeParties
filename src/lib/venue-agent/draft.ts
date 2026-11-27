@@ -110,7 +110,7 @@ export async function draftFromSite(website: string, contactEmail: string | null
   // Party lengths, guest limits, guests per bay and whether an hourly price is per bay are
   // looked for on the pages too; any the pages don't write is marked so the chat leaves it
   // to the team (Nov 26: 4 of 9 chats told guests the reader's guesses as fact).
-  d.profile = markGuesses(d.profile, site.pages.map((p) => p.text))
+  d.profile = markGuesses(d.profile, site.pages.map((p) => p.text), d.unsure)
   const line = guessesLine(d.profile)
   if (line) d.unsure = [line, ...d.unsure].slice(0, 30)
   if (!hasAnyPrice(d.profile) && site.bookingHosts.length > 0) {

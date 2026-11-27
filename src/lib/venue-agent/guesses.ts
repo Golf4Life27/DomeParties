@@ -36,21 +36,58 @@ export function writesLength(text: string, minutes: number): boolean {
   return hourRe.test(text) || minRe.test(text) || (h === 1.5 && /hour and a half/i.test(text)) || (h === 1 && /\b(?:an|one)\s*(?:-\s*)?hour\b/i.test(text))
 }
 
-/** True when the pages say an hourly price is per bay, lane or simulator ("$40 per bay per hour", "$30/lane"). */
+const esc = (w: string) => w.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const unitWords = (p: VenueProfile) =>
+  [...new Set([esc(p.unit.singular), esc(p.unit.plural), 'bays?', 'lanes?', 'simulators?', 'sims?', 'stalls?', 'suites?', 'rooms?', 'courts?', 'box(?:es)?', 'tables?'])].join('|')
+
+/** True when the pages tie an hourly price to a bay, lane or simulator: a price with "per bay" (or "/lane") right after it. */
 export function writesUnitBasis(p: VenueProfile, text: string): boolean {
-  const units = [p.unit.singular, p.unit.plural, 'bay', 'lane', 'simulator', 'sim', 'stall', 'suite', 'room', 'court', 'box', 'table']
-    .map((u) => u.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-  return new RegExp(`(?:per|each|/)\\s*(?:${[...new Set(units)].join('|')})\\b`, 'i').test(text)
+  const u = unitWords(p)
+  // "Simulators $20 per hour" doesn't count: it doesn't say whether that's per simulator or per player (Nov 27, NextGen Golf).
+  return new RegExp(`\\d(?:[.,]\\d{2})?\\s*(?:per|a|an|each|/)\\s*(?:${u})\\b`, 'i').test(text)
+}
+
+/** True when the pages say how many fit in one bay, lane or simulator ("up to 6 per lane", "each bay holds 4 players"). */
+export function writesUnitHeadcount(p: VenueProfile, text: string, n: number): boolean {
+  const u = unitWords(p)
+  const k = num(n)
+  return new RegExp(`\\b${k}\\s*(?:${PEOPLE})?\\s*(?:per|a|an|each|/|in each|in a|on a|on each)\\s*(?:${u})\\b`, 'i').test(text) ||
+    new RegExp(`\\b(?:${u})\\b[^.\\n]{0,40}${CAP}\\s*${k}\\b`, 'i').test(text)
+}
+
+const ADMITS = /assum|placeholder|guess|for now|\bdefault|filled in|not (?:listed|stated|given|shown|clear)|doesn.?t say|don.?t say|isn.?t (?:listed|stated|clear|said)|unclear|no (?:limit|maximum|max|length)/i
+
+/** Which details the reader's own owner notes say it assumed. */
+export function admittedGuesses(p: VenueProfile, unsure: string[]): Set<string> {
+  const out = new Set<string>()
+  const u = new RegExp(`\\b(?:${unitWords(p)})\\b`, 'i')
+  for (const line of unsure) {
+    if (!ADMITS.test(line)) continue
+    const named = p.packages.filter((k) => line.toLowerCase().includes(k.name.toLowerCase()))
+    const pkgs = named.length ? named : p.packages
+    const perUnit = u.test(line) && /guests?|people|players?|persons?|fit|holds?|per (?:bay|lane|simulator|sim)/i.test(line) && !/per (?:person|guest|player)\b.*\bor\b|\bor per\b|whole|each person/i.test(line)
+    if (perUnit) out.add('unit.guests')
+    if (/per (?:person|guest|player|golfer)\b|whole (?:simulator|bay|lane|room)|\bor per\b|how (?:the|it'?s) (?:charged|priced)/i.test(line) && /hour|hourly|\$|price|rate|charged/i.test(line)) out.add('price.basis')
+    if (/\b\d+(?:\.\d)?\s*-?\s*(?:hours?|hrs?)\b|hours? long|length|how long|duration|\d+\s*minutes|\bruns\b/i.test(line) && !/opening|\bopen|clos|hours for|business hours|per hour/i.test(line)) for (const k of pkgs) if (k.pricing.type !== 'per_unit_hour') out.add(`pkg:${k.id}:length`)
+    const limitWords = /max(?:imum)?|most guests|limit|capacity|how many (?:guests|people)|guest count|headcount/i.test(line)
+    if (limitWords || (!perUnit && /\b\d+ guests\b|\b\d+ (?:was|is) used/i.test(line))) for (const k of pkgs) out.add(`pkg:${k.id}:guests`)
+  }
+  return out
 }
 
 /** Marks every party length, guest limit, guests-per-bay count and hourly price basis the pages don't write. */
-export function markGuesses(p: VenueProfile, pageTexts: string[]): VenueProfile {
+export function markGuesses(p: VenueProfile, pageTexts: string[], unsure: string[] = []): VenueProfile {
   const text = pageTexts.join('\n')
-  const guessed = new Set<string>()
-  const unitGuests = writesHeadcount(text, p.unit.guestsPerUnit)
+  // Anything the reader's own notes say it assumed counts as a guess, whatever the pages seem to say;
+  // the page check then catches the guesses the notes leave out (Nov 27: a loose page check alone
+  // let "4 per bay" and "per simulator" through on 6 of 9 chats).
+  const admitted = admittedGuesses(p, unsure)
+  const guessed = new Set<string>(admitted)
+  const unitGuests = !admitted.has('unit.guests') && writesUnitHeadcount(p, text, p.unit.guestsPerUnit)
   const hourly = p.packages.filter((k) => k.pricing.type === 'per_unit_hour')
-  if (hourly.some((k) => k.pricing.type === 'per_unit_hour' && k.pricing.guestsPerUnit == null) && !unitGuests) guessed.add('unit.guests')
+  if (!unitGuests) guessed.add('unit.guests')
   if (hourly.some((k) => k.priceListed) && !writesUnitBasis(p, text)) guessed.add('price.basis')
+  if (!hourly.length) guessed.delete('price.basis')
   for (const k of p.packages) {
     // Hourly rentals are sold by the hour, so their 60 minutes is how they're priced, not a party length.
     if (k.pricing.type !== 'per_unit_hour' && !writesLength(text, k.durationMinutes)) guessed.add(`pkg:${k.id}:length`)

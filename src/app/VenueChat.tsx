@@ -66,7 +66,7 @@ export default function VenueChat(props: {
       const r = await fetch(endpoint, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ...extra, messages: next.slice(-20) }),
+        body: JSON.stringify({ ...extra, messages: next.filter((t) => t.role !== 'note').slice(-20) }),
       })
       const j = await r.json().catch(() => null)
       reply = j?.reply ?? j?.error ?? reply

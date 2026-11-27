@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { guessesIn, guessesLine, markGuesses, writesHeadcount, writesLength, writesUnitBasis } from './guesses'
+import { admittedGuesses, guessesIn, guessesLine, markGuesses, writesHeadcount, writesLength, writesUnitBasis, writesUnitHeadcount } from './guesses'
 import { describeQuote, quote } from './quote'
 import { partyOptionsFor } from './tools'
 import { getVenue } from '@/venues'
@@ -42,11 +42,15 @@ test('a party length and guest limit the pages never write are marked, named to 
   assert.doesNotMatch(guessesLine(p)!, /pkg:|guessed|unit\./)
   const opts = partyOptionsFor(p)
   const k = opts.packages.find((x) => x.id === 'party')!
-  assert.match(String(k.hours), /team will confirm/)
-  assert.match(String(k.guests), /team will confirm/)
+  assert.match(String(k.hours), /team confirms/)
+  assert.match(String(k.guests), /team confirms/)
   // The same details written on the pages are left alone.
-  const same = markGuesses(castle(), ['Our 2 hour birthday party is for up to 40 guests.'])
+  const c = castle()
+  const same = markGuesses(c, [`Our 2 hour birthday party is for up to 40 guests. Up to ${c.unit.guestsPerUnit} players per ${c.unit.singular}.`])
   assert.deepEqual(same.guessed, [])
+  // The reader's own note that it assumed them wins over a page that happens to mention the numbers.
+  const admitted = markGuesses(c, ['Our 2 hour birthday party is for up to 40 guests.'], ['2 hours was used as a placeholder for every party; 40 was used as a placeholder.'])
+  assert.ok(admitted.guessed.includes('pkg:party:length') && admitted.guessed.includes('pkg:party:guests'))
 })
 
 test('a quote resting on a guessed bay size or price basis says so (Nov 26, NextGen Golf)', () => {
@@ -58,9 +62,28 @@ test('a quote resting on a guessed bay size or price basis says so (Nov 26, Next
   assert.ok(p.guessed.includes('price.basis'))
   assert.ok(guessesIn(p, hourly.id).length >= 2)
   const q = describeQuote(p, quote(p, { packageId: hourly.id, guests: 15, date: null, start: null, hours: 2, foodId: null, foodGuests: null, addOns: [] }))
-  assert.match(String(q.team_confirms), /estimate/)
-  assert.equal(q.estimate_only, true)
+  // No total and no bay count when either rests on a guess: the hourly price as written, then the team.
+  assert.match(String(q.team_confirms), /Never give a total/)
+  assert.equal((q as { total?: string }).total, undefined)
+  assert.match(String((q as { hourly_price?: string }).hourly_price), /per hour$|per hour,/)
+  const opts = partyOptionsFor(p)
+  assert.doesNotMatch(JSON.stringify(opts), new RegExp(`per ${p.unit.singular} per hour|up to ${p.unit.guestsPerUnit} guests each`))
   // Venues set up by hand carry no guesses, so their quotes are unchanged.
   const plain = describeQuote(v, quote(v, { packageId: hourly.id, guests: 15, date: null, start: null, hours: 2, foodId: null, foodGuests: null, addOns: [] }))
   assert.equal(plain.team_confirms, undefined)
+})
+
+test('the reader\'s own notes mark what it assumed (Nov 27 runs)', () => {
+  const v = getVenue('golf-616')!
+  const a = admittedGuesses(v, [
+    'Each lane holds up to 6 guests was assumed, since the site doesn\'t say.',
+    'The site doesn\'t say if the $20 per hour is for the whole simulator or for each person.',
+    'Hours for Sunday not listed',
+  ])
+  assert.ok(a.has('unit.guests'))
+  assert.ok(a.has('price.basis'))
+  assert.ok(![...a].some((k) => k.endsWith(':length')))
+  assert.ok(writesUnitHeadcount(v, 'Each bay holds up to 4 players', 4))
+  assert.ok(writesUnitHeadcount(v, '6 bowlers per lane', 6))
+  assert.ok(!writesUnitHeadcount(v, 'Parties of 4 players or more. Book a bay.', 4))
 })
